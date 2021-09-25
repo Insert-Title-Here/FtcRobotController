@@ -53,18 +53,18 @@ public class ConceptGamepadTouchpad extends LinearOpMode
             boolean finger = false;
 
             // Display finger 1 x & y position if finger detected
-            if(gamepad1.touchpad_finger_1)
-            {
-                finger = true;
-                telemetry.addLine(String.format("Finger 1: x=%5.2f y=%5.2f\n", gamepad1.touchpad_finger_1_x, gamepad1.touchpad_finger_1_y));
-            }
-
-            // Display finger 2 x & y position if finger detected
-            if(gamepad1.touchpad_finger_2)
-            {
-                finger = true;
-                telemetry.addLine(String.format("Finger 2: x=%5.2f y=%5.2f\n", gamepad1.touchpad_finger_2_x, gamepad1.touchpad_finger_2_y));
-            }
+//            if(gamepad1.touchpad_finger_1)
+//            {
+//                finger = true;
+//                telemetry.addLine(String.format("Finger 1: x=%5.2f y=%5.2f\n", gamepad1.touchpad_finger_1_x, gamepad1.touchpad_finger_1_y));
+//            }
+//
+//            // Display finger 2 x & y position if finger detected
+//            if(gamepad1.touchpad_finger_2)
+//            {
+//                finger = true;
+//                telemetry.addLine(String.format("Finger 2: x=%5.2f y=%5.2f\n", gamepad1.touchpad_finger_2_x, gamepad1.touchpad_finger_2_y));
+//            }
 
             if(!finger)
             {
