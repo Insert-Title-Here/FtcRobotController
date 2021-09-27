@@ -74,6 +74,11 @@ public class CameraTest extends LinearOpMode {
                  */
                  webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
         });
 
         telemetry.addLine("Waiting for start");

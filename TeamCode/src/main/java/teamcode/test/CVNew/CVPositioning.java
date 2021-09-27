@@ -1,6 +1,5 @@
 package teamcode.test.CVNew;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -19,10 +18,10 @@ public class CVPositioning extends AbstractOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         GamePieceTracker tracker;
-        webcam.openCameraDeviceAsync(() -> {
-            webcam.startStreaming(320, 240); //specify cam orientation and calibrate the resolution
-        });
-        waitForStart();
+//        webcam.openCameraDeviceAsync(() -> {
+//            webcam.startStreaming(320, 240); //specify cam orientation and calibrate the resolution
+//        });
+//        waitForStart();
     }
 
     @Override

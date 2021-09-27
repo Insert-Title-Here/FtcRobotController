@@ -9,6 +9,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -51,9 +52,18 @@ public class SampleAutoScript extends AbstractOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         DetectionAlgorithm detector = new DetectionAlgorithm();
         webcam.setPipeline(detector);
-        webcam.openCameraDeviceAsync(() -> {
-            webcam.startStreaming(320, 240); //specify cam orientation and calibrate the resolution
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240); //specify cam orientation and calibrate the resolution
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
         });
+
     }
 
     enum DetectedPosition{

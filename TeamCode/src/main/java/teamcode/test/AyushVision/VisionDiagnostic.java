@@ -32,6 +32,11 @@ public class VisionDiagnostic extends AbstractOpMode {
             public void onOpened() {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN); //specify cam orientation and calibrate the resolution
             }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
         });
     }
 

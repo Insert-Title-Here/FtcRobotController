@@ -15,7 +15,16 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+
+repositories {
+    maven { url = "https://maven.0x778.tk" }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
+    implementation 'org.openftc:easyopencv:1.5.0'
+    implementation 'org.openftc:rev-extensions-2:1.2'
+
 }

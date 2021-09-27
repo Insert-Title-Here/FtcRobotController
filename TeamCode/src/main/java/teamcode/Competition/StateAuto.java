@@ -49,7 +49,12 @@ public class StateAuto extends AbstractOpMode {
             public void onOpened() {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPSIDE_DOWN); //specify cam orientation and calibrate the resolution
             }
-        });
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+                });
         while(!opModeIsActive()){
             rings = pipeline.getRings();
             telemetry.addData("rings", rings);
