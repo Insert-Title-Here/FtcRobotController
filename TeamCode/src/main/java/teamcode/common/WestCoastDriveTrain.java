@@ -147,6 +147,19 @@ public class WestCoastDriveTrain {
     }
 
 
+    public void setPower(double linear, double rotation){
+        rotation = -rotation;
+        AbstractOpMode.currentOpMode().telemetry.addData("linear", linear);
+        AbstractOpMode.currentOpMode().telemetry.addData("rotation", rotation);
+        AbstractOpMode.currentOpMode().telemetry.update();
+
+        fl.setPower(linear + rotation);
+        fr.setPower(-linear + rotation);
+        bl.setPower(linear + rotation);
+        br.setPower(-linear + rotation);
+    }
+
+
     public void moveToRotation(double desiredRotation, double desiredOmega) {
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
         double currentRotation = currentState.getRotation();
@@ -195,6 +208,8 @@ public class WestCoastDriveTrain {
         bl.setVelocity(blVelocity);
         br.setVelocity(brVelocity);
     }
+
+
 
 
 }

@@ -6,6 +6,7 @@ public class Constants {
     public static final String LEFT_VERTICAL_ODOMETER_NAME = "BackRightDrive";
     public static final String RIGHT_VERTICAL_ODOMETER_NAME = "FrontRightDrive";
     public static final String HORIZONTAL_ODOMETER_NAME = "BackLeftDrive";
+    public static final String LINEAR_SLIDE_ENCODER_NAME = "";
 
     //other relevant info
     public static final String SAVE_FILE_PATH = "";
@@ -17,5 +18,6 @@ public class Constants {
 
     //Game Constants
     public static final Point GOAL_POSITION = new Point();
+
 
 }

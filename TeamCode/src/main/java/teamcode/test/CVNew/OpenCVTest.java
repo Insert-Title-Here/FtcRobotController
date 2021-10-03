@@ -25,9 +25,9 @@ public class OpenCVTest extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         skystoneDetector detector = new skystoneDetector();
         webcam.setPipeline(detector);
-        webcam.openCameraDeviceAsync(() -> {
-            webcam.startStreaming(320, 240); //specify cam orientation and calibrate the resolution
-        });
+//        webcam.openCameraDeviceAsync(() -> {
+//            webcam.startStreaming(320, 240); //specify cam orientation and calibrate the resolution
+//        });
         waitForStart();
     }
 

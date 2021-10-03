@@ -2,6 +2,8 @@ package teamcode.Competition;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.common.AbstractOpMode;
@@ -9,13 +11,13 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
-
+import teamcode.common.WestCoastDriveTrain;
 
 
 @TeleOp(name="tele op")
 public class OfficialTeleOpScript extends AbstractOpMode {
 
-    MecanumDriveTrain drive; //TODO change this if necessary
+    WestCoastDriveTrain drive; //TODO change this if necessary
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
@@ -29,7 +31,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        drive = new MecanumDriveTrain(hardwareMap);
+        drive = new WestCoastDriveTrain(hardwareMap);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         //Initialize IMU parameters
@@ -81,34 +83,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     //TODO change this if necessary
     private void driveUpdate() {
-        if(gamepad1.right_stick_button){
-            drive.setPower(new Vector2D( gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER),
-                    gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER);
-        }else if(gamepad1.dpad_left){
-            while(gamepad1.dpad_left) {
-                drive.setPower(-ROTATE_DPAD, ROTATE_DPAD, -ROTATE_DPAD, ROTATE_DPAD);
-            }
-            drive.setPower(0,0,0,0);
-        }else if(gamepad1.dpad_right){
-            while(gamepad1.dpad_right){
-                drive.setPower(ROTATE_DPAD, -ROTATE_DPAD,ROTATE_DPAD,-ROTATE_DPAD);
-            }
-            drive.setPower(0,0,0,0);
-        }else if (gamepad1.dpad_up) {
-            while(gamepad1.dpad_up){
-                drive.setPower(LINEAR_DPAD, LINEAR_DPAD, LINEAR_DPAD, LINEAR_DPAD);
-            }
-            drive.zero();
-        }else if(gamepad1.dpad_down) {
-            while(gamepad1.dpad_down){
-                drive.setPower(-LINEAR_DPAD, -LINEAR_DPAD, -LINEAR_DPAD, -LINEAR_DPAD);
-            }
-            drive.zero();
-        }else{
-            drive.setPower(new Vector2D( gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER),
-                    gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER);
-        }
-
+      drive.setPower(gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
     }
 
     @Override
