@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -49,9 +50,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+@Autonomous(name="TestAutoOpMode", group="Linear Opmode")
 //@Disabled
-public class TestDriveTrain extends LinearOpMode {
+public class TestAutoOpMode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -75,6 +76,11 @@ public class TestDriveTrain extends LinearOpMode {
         lbDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rbDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
+        int lfTics = 0;
+        int rfTics = 0;
+        int lbTics = 0;
+        int rbTics = 0;
+
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         lfDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -89,23 +95,23 @@ public class TestDriveTrain extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
+            double leftPower = 0;
+            double rightPower = 0;
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
+            lfTics = lfDrive.getCurrentPosition();
+            rfTics = rfDrive.getCurrentPosition();
+            lbTics = lbDrive.getCurrentPosition();
+            rbTics = rbDrive.getCurrentPosition();
 
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
+            if (lfTics > 435) {
+                lfDrive.setPower(0);
+                lbDrive.setPower(0);
+                rfDrive.setPower(0);
+                rbDrive.setPower(0);
+            } else {
+                leftPower = 0.3;
+                rightPower = 0.3;
+            }
 
             // Send calculated power to wheels
             lfDrive.setPower(leftPower);
