@@ -98,11 +98,14 @@ public class TestAutoOpMode extends LinearOpMode {
             double leftPower = 0;
             double rightPower = 0;
 
+            // Store the number of tics the motors have rotated into a variable
             lfTics = lfDrive.getCurrentPosition();
             rfTics = rfDrive.getCurrentPosition();
             lbTics = lbDrive.getCurrentPosition();
             rbTics = rbDrive.getCurrentPosition();
 
+            // 435 tics is about 1 foot
+            // If the robot has travelled farther than a foot, stop it
             if (lfTics > 435) {
                 lfDrive.setPower(0);
                 lbDrive.setPower(0);
