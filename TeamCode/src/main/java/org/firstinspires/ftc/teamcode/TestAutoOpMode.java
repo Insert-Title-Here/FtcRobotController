@@ -72,10 +72,6 @@ public class TestAutoOpMode extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        lfDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        rfDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        lbDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rbDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
         int lfTics = 0;
         int rfTics = 0;
