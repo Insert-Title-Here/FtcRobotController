@@ -59,12 +59,18 @@ public class TestLinearOpMode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    DcMotor carousel;
+
+
 
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        carousel = hardwareMap.get(DcMotor.class, "CarouselMotor");
+        carousel.setDirection(DcMotorSimple.Direction.FORWARD);
 
         DriveTrain drive = new DriveTrain(hardwareMap);
 
@@ -96,12 +102,22 @@ public class TestLinearOpMode extends LinearOpMode {
 
             double linear = -gamepad1.left_stick_y;
             double rotational  =  gamepad1.right_stick_x;
+            double rotationPositiveCarousel = gamepad1.right_trigger;
+            double rotationNegativeCarousel = -gamepad1.left_trigger;
+
             /*
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
             */
 
             drive.setPower(linear, rotational);
+
+            if(gamepad1.right_trigger > 0.1){
+                carousel.setPower(rotationPositiveCarousel);
+            }else {
+                carousel.setPower(rotationNegativeCarousel);
+            }
+
 
 
             // Tank Mode uses one stick to control each wheel.
