@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
+
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
@@ -56,38 +57,16 @@ public class TestAutoOpMode extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor lfDrive = null;
-    private DcMotor rfDrive = null;
-    private DcMotor lbDrive = null;
-    private DcMotor rbDrive = null;
-
-
-
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        lfDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        rfDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        lbDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rbDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
-        int lfTics = 0;
-        int rfTics = 0;
-        int lbTics = 0;
-        int rbTics = 0;
+        DriveTrain drive = new DriveTrain(hardwareMap);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        lfDrive.setDirection(DcMotor.Direction.FORWARD);
-        rfDrive.setDirection(DcMotor.Direction.REVERSE);
-        lbDrive.setDirection(DcMotor.Direction.FORWARD);
-        rbDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -95,37 +74,21 @@ public class TestAutoOpMode extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower = 0;
-            double rightPower = 0;
-
             // Store the number of tics the motors have rotated into a variable
-            lfTics = lfDrive.getCurrentPosition();
-            rfTics = rfDrive.getCurrentPosition();
-            lbTics = lbDrive.getCurrentPosition();
-            rbTics = rbDrive.getCurrentPosition();
+            int[] motorTics = drive.getEncoders();
 
             // 435 tics is about 1 foot
             // If the robot has travelled farther than a foot, stop it
-            if (lfTics > 435) {
-                lfDrive.setPower(0);
-                lbDrive.setPower(0);
-                rfDrive.setPower(0);
-                rbDrive.setPower(0);
-            } else {
-                leftPower = 0.3;
-                rightPower = 0.3;
-            }
+            if (motorTics[1] > 435) {
+                drive.brake();
 
-            // Send calculated power to wheels
-            lfDrive.setPower(leftPower);
-            lbDrive.setPower(leftPower);
-            rfDrive.setPower(rightPower);
-            rbDrive.setPower(rightPower);
+            } else {
+                drive.setPower(0.3, 0);
+            }
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }
