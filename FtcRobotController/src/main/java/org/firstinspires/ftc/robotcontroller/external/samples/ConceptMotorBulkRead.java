@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Iterator;
@@ -80,6 +81,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
 
     final int       TEST_CYCLES    = 500;   // Number of control cycles to run to determine cycle times.
 
+    private NormalizedColorSensor sensor;
     private DcMotorEx m1, m2, m3, m4; // Motor Objects
     private long      e1, e2, e3, e4; // Encoder Values
     private double    v1, v2, v3, v4; // Velocities
@@ -99,6 +101,8 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         m2 = hardwareMap.get(DcMotorEx.class, "m2");  // or change these strings to match your existing Robot Configuration.
         m3 = hardwareMap.get(DcMotorEx.class, "m3");
         m4 = hardwareMap.get(DcMotorEx.class, "m4");
+
+        sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
         // Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -126,6 +130,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
             e2 = m2.getCurrentPosition();
             e3 = m3.getCurrentPosition();
             e4 = m4.getCurrentPosition();
+
 
             v1 = m1.getVelocity();
             v2 = m2.getVelocity();

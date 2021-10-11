@@ -95,7 +95,7 @@ public class BarcodeReaderPipeline extends OpenCvPipeline{
         return input;
     }
 
-    private enum BarcodePosition{
+    public enum BarcodePosition{
         LEFT, RIGHT, CENTER
     }
 

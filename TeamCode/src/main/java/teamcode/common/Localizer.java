@@ -66,6 +66,7 @@ public class Localizer extends Thread {
     //Kalman filter parameters, the ones declared up here must also be tuned for EVERY ROBOT
     Transform2d cameraToRobot = new Transform2d(new Translation2d(7.5 * 0.0254, 0), new Rotation2d());
     private static T265Camera slamra;
+    T265Camera.CameraUpdate currentSlamraPos;
     private Pose2d slamraStartingPose;
     private static final double TAO = 0.98;
     private static final double MEASUREMENT_VARIANCE = 0.01; // 0.01 + 0.02? account more for odo variance
@@ -76,7 +77,7 @@ public class Localizer extends Thread {
 
 
     //game specific components to be updated for the state
-    private final ExpansionHubMotor linearSlideEncoder;
+    private final ExpansionHubMotor linearSlideEncoder; //TODO add left and right intakeEncoder
     private NormalizedColorSensor houseSensor, conveyorSensor;
     private static final float HOUSE_GAIN = 1.0f;
     private static final float CONVEYOR_GAIN = 1.0f;
@@ -134,6 +135,7 @@ public class Localizer extends Thread {
 
         if(slamra == null) {
             slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
+            currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         }
         slamraStartingPose = new Pose2d(position.getY() * 0.0254, position.getX() * 0.0254, new Rotation2d(globalRads));
         this.previousEstimateUncertainty = previousEstimateUncertainty; //this should always be a high value otherwise bad things will happen
@@ -184,8 +186,11 @@ public class Localizer extends Thread {
         // make sure we reset our accounting of start times
         state.resetUpdateTime();
         startingTime = System.currentTimeMillis();
+
         if(slamra != null) {
-            slamra.setPose(slamraStartingPose);
+            while (currentSlamraPos.confidence != T265Camera.PoseConfidence.High) {
+                slamra.setPose(slamraStartingPose);
+            }
         }
         // max speed 300 Hz)
         while (!stop.get()) {
@@ -322,7 +327,7 @@ public class Localizer extends Thread {
     private synchronized void updateKalman(){
         // read sensor data
         data1 = hub1.getBulkInputData();
-        T265Camera.CameraUpdate currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+        currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         NormalizedRGBA houseRGBA = houseSensor.getNormalizedColors();
         NormalizedRGBA conveyorRGBA = conveyorSensor.getNormalizedColors();
         RobotPositionStateUpdater.RobotPositionState currentState = getCurrentState();
@@ -482,11 +487,10 @@ public class Localizer extends Thread {
         previousHorizontalArcLength = horizontalArcLength;
         previousEstimateUncertainty = currentEstimateUncertainty;
 
-
     }
 
     private double linearSlideEncoderTicksToInches(int motorCurrentPosition) {
-        return WINCH_RADIUS * motorCurrentPosition / TICKS_PER_REV;
+        return motorCurrentPosition / TICKS_PER_REV;
     }
 
 

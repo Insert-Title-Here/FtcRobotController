@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Debug;
@@ -22,6 +23,8 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     Thread armThread;
     BNO055IMU imu;
 
+    DcMotor carouselMotor;
+
     private static final double INTAKE_POWER = 1.0;
     private static final double SPRINT_LINEAR_MODIFIER = 1.0;
     private static final double NORMAL_LINEAR_MODIFIER = 1.0;
@@ -32,6 +35,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         drive = new WestCoastDriveTrain(hardwareMap);
+        carouselMotor = hardwareMap.dcMotor.get("Carousel");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         //Initialize IMU parameters
@@ -54,7 +58,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
         armThread = new Thread(){
             public void run(){
                 while(opModeIsActive()){
-                    shootUpdate();
+                    armUpdate();
                 }
             }
         };
@@ -74,7 +78,14 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     }
 
 
-    private void shootUpdate() {
+    private void armUpdate() {
+        if(gamepad1.right_trigger > 0.1){
+            carouselMotor.setPower(gamepad1.right_trigger);
+        }else if(gamepad1.left_trigger > 0.1){
+            carouselMotor.setPower(-gamepad1.left_trigger);
+        }else{
+            carouselMotor.setPower(0);
+        }
 
     }
 

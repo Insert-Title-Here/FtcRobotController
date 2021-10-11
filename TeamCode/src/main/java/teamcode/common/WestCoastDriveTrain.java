@@ -13,8 +13,12 @@ public class WestCoastDriveTrain {
     Localizer localizer;
 
     private final double P_LINEAR = 0;
+    private final double I_LINEAR = 0;
     private final double D_LINEAR = 0;
+
+
     private final double P_ROTATIONAL = 0;
+    private final double I_ROTATIONAL = 0;
     private final double D_ROTATIONAL = 0;
 
     private double previousVelocity;
@@ -32,8 +36,8 @@ public class WestCoastDriveTrain {
     public WestCoastDriveTrain(HardwareMap hardwareMap){
         fl = hardwareMap.get(ExpansionHubMotor.class,"FrontLeftDrive");
         fr = hardwareMap.get(ExpansionHubMotor.class, "FrontRightDrive");
-        bl = hardwareMap.get(ExpansionHubMotor.class, "BackLeftDrive");
-        br = hardwareMap.get(ExpansionHubMotor.class, "BackRightDrive");
+        //bl = hardwareMap.get(ExpansionHubMotor.class, "BackLeftDrive");
+        //br = hardwareMap.get(ExpansionHubMotor.class, "BackRightDrive");
         correctMotors();
 
     }
@@ -66,37 +70,31 @@ public class WestCoastDriveTrain {
 
         previousError =  0;
         double steadyStateError = 0;
-        previousOmegaError = 0;
-        moveToRotation( newDesiredPosition.getDirection() - currentState.getRotation(), desiredOmega);
+        moveToRotation( newDesiredPosition.getDirection(), desiredOmega);
+
+        long previousTimeMillis = System.currentTimeMillis();
 
         while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive())){
-
+            long currentCycleTimeMillis = System.currentTimeMillis() - previousTimeMillis;
+            double currentCycleTimeSeconds = currentCycleTimeMillis / 1000.0;
+            previousTimeMillis = System.currentTimeMillis();
             currentState = localizer.getCurrentState();
             Vector2D positionError = desiredPosition.subtract(currentState.getPosition());
             double errorAngle = positionError.getDirection();
-            //angleOfTravel += 0; // (Math.PI / 4.0)mecanum need this because all the math is shifted by pi/4
             Vector2D idealVelocity = Vector2D.fromAngleMagnitude(errorAngle, desiredVelocity);
 
             double recordedVelocity = currentState.getVelocity().magnitude();
-            //recordedVelocity.rotate(-Math.PI / 4.0);
 
 
             double error = idealVelocity.magnitude() - recordedVelocity;
-            //Vector2D crossTrackError = new Vector2D(xError, yError);
-            steadyStateError += error;
-            double deltaError = error - previousError;
-            error *= P_LINEAR;
-            deltaError *= D_LINEAR;
-            error += deltaError;
+            steadyStateError += (error * currentCycleTimeSeconds);
+            double deltaError = (error - previousError) / currentCycleTimeSeconds;
+
+            double output = error * P_LINEAR + deltaError * D_LINEAR + steadyStateError * I_LINEAR;
 
 
 
-//            double sign = 1.0;
-//            if(error.getX() < 0 || error.getY() < 0){
-//                sign = -1.0;
-//            }
-            //error.add(previousVelocity);
-            double passedValue = error + previousVelocity;
+            double passedValue = output + previousVelocity;
 
             if(passedValue > 1.0){
                 passedValue = 1.0;
@@ -106,17 +104,14 @@ public class WestCoastDriveTrain {
 
 
             previousVelocity = straightMovement(passedValue);
-
-            // previousVelocity.multiply(sign);
             previousError = error;
+
+
             //AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
-//
             //AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
             //AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
-
             AbstractOpMode.currentOpMode().telemetry.addData("", currentState);
             //AbstractOpMode.currentOpMode().telemetry.addData("error", (Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude())));
-
             AbstractOpMode.currentOpMode().telemetry.update();
         }
         brake();
@@ -155,11 +150,11 @@ public class WestCoastDriveTrain {
 
         fl.setPower(linear + rotation);
         fr.setPower(-linear + rotation);
-        bl.setPower(linear + rotation);
-        br.setPower(-linear + rotation);
+        //bl.setPower(linear + rotation);
+        //br.setPower(-linear + rotation);
     }
 
-
+//TODO reread this and the linear one
     public void moveToRotation(double desiredRotation, double desiredOmega) {
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
         double currentRotation = currentState.getRotation();
@@ -169,15 +164,22 @@ public class WestCoastDriveTrain {
         }else{
             newDesiredRotation -= 0.05;
         }
+        previousOmegaError = 0;
+        double steadyStateError = 0;
+        long previousTimeMillis = System.currentTimeMillis();
+
         while(Math.abs(newDesiredRotation - currentRotation) > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive()){
             currentState = localizer.getCurrentState();
             double recordedOmega = currentState.getAngularVelocity();
-            double omegaError = desiredOmega - recordedOmega;
-            double deltaOmegaError = omegaError - previousOmegaError;
-            omegaError *= P_ROTATIONAL;
-            deltaOmegaError *= D_ROTATIONAL;
+            long currentCycleTimeMillis = System.currentTimeMillis() - previousTimeMillis;
+            double currentCycleTimeSeconds = currentCycleTimeMillis / 1000.0;
+            previousTimeMillis = System.currentTimeMillis();
 
-            double passedOmega = previousOmega + omegaError + deltaOmegaError;
+            double omegaError = desiredOmega - recordedOmega;
+            double deltaOmegaError = (omegaError - previousOmegaError) / currentCycleTimeSeconds;
+            steadyStateError += omegaError * currentCycleTimeSeconds;
+
+            double passedOmega = previousOmega + omegaError * P_ROTATIONAL + steadyStateError * I_ROTATIONAL + deltaOmegaError * D_ROTATIONAL;
 
             if(passedOmega > 1.0){
                 passedOmega = 1.0;
