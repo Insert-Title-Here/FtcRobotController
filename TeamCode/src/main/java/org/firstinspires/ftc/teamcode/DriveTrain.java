@@ -25,7 +25,7 @@ public class DriveTrain {
         motors = new DcMotor[]{lf, rf, lb, rb};
 
         lf.setDirection(Direction.FORWARD);
-        rf.setDirection(Direction.REVERSE);
+        rf.setDirection(Direction.REVERSE); //keep in mind that this also reverses direction of encoders
         lb.setDirection(Direction.FORWARD);
         rb.setDirection(Direction.REVERSE);
 
@@ -63,6 +63,8 @@ public class DriveTrain {
         rb.setPower(linear - rotational);
     }
 
+    //probably want to use a bulk read for this, set up a sophisticated control loop,
+    //for now its ok but a later season thing maybe, feel free to ask me about it 
     public int[] getEncoders() {
         return new int[]{lf.getCurrentPosition(), rf.getCurrentPosition(),
                 lb.getCurrentPosition(), rb.getCurrentPosition()};
