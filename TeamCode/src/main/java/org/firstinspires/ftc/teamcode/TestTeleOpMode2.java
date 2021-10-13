@@ -29,13 +29,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
 
 
 /**
@@ -51,39 +51,43 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="TestAutoOpMode", group="Linear Opmode")
+@TeleOp(name="Test TeleOp Mode 2", group="Linear Opmode")
 //@Disabled
-public class TestAutoOpMode extends LinearOpMode {
+public class TestTeleOpMode2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    DcMotor carousel;
 
     @Override
     public void runOpMode() {
+        DriveTrain drive = new DriveTrain(hardwareMap);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        DriveTrain drive = new DriveTrain(hardwareMap);
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
+        carousel = hardwareMap.get(DcMotor.class, "Carousel");
+        carousel.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Store the number of tics the motors have rotated into a variable
-            int[] motorTics = drive.getEncoders();
-
-            // 435 tics is about 1 foot
-            // If the robot has travelled farther than a foot, stop it
-            if (motorTics[1] > 435) {
-                drive.brake();
-
+            if (gamepad1.right_bumper) {
+                drive.setPower(gamepad1.left_stick_y, gamepad1.right_stick_x);
             } else {
-                drive.setPower(0.3, 0);
+                drive.setPower(gamepad1.left_stick_y / 2, gamepad1.right_stick_x / 2);
+            }
+
+
+            if (gamepad1.left_trigger > 0.1) {
+                carousel.setPower(-gamepad1.left_trigger);
+            } else if (gamepad1.right_trigger > 0.1) {
+                carousel.setPower(gamepad1.right_trigger);
+            } else {
+                carousel.setPower(0);
             }
 
             // Show the elapsed game time and wheel power.
@@ -93,3 +97,4 @@ public class TestAutoOpMode extends LinearOpMode {
         }
     }
 }
+
