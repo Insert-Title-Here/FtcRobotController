@@ -27,13 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -51,68 +51,36 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Test TeleOp Mode 2", group="Linear Opmode")
+@Autonomous(name="EncoderTest", group="Linear Opmode")
 //@Disabled
-public class TestTeleOpMode2 extends LinearOpMode {
+public class EncoderTest extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    DcMotor carousel;
-
-    Thread armThread;
+    private DcMotor carousel = null;
 
     @Override
     public void runOpMode() {
-        DriveTrain drive = new DriveTrain(hardwareMap);
+        carousel = hardwareMap.get(DcMotor.class, "Carousel");
+
+        carousel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        carousel = hardwareMap.get(DcMotor.class, "Carousel");
-        carousel.setDirection(DcMotor.Direction.FORWARD);
-
-        armThread = new Thread(){
-            @Override
-            public void run(){
-                while(opModeIsActive()){
-                    armUpdate();
-                }
-            }
-        };
-        //Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        armThread.start();
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        if (opModeIsActive()) {
 
-            if (gamepad1.right_bumper) {
-                drive.setPower(gamepad1.left_stick_y, gamepad1.right_stick_x);
-            } else {
-                drive.setPower(gamepad1.left_stick_y / 2, gamepad1.right_stick_x / 2);
-            }
+            spinCarousel(5000, 1);
 
+            spinCarousel(-5000, -0.5);
 
-
-            // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
-    }
-
-    private void armUpdate() {
-        if (gamepad1.left_trigger > 0.1) {
-            carousel.setPower(-gamepad1.left_trigger);
-        } else if (gamepad1.right_trigger > 0.1) {
-            carousel.setPower(gamepad1.right_trigger);
-        } else {
-            carousel.setPower(0);
-        }
-
-        if (gamepad1.a) {
-            spinCarousel(5000, 0.5);
-        }
-
     }
 
     public void spinCarousel(int tics, double power) {
@@ -120,9 +88,9 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         carousel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        carousel.setTargetPosition(-tics);
+        carousel.setTargetPosition(tics);
 
-        carousel.setPower(-power);
+        carousel.setPower(power);
 
         while (carousel.isBusy()) {
 
@@ -133,6 +101,5 @@ public class TestTeleOpMode2 extends LinearOpMode {
         carousel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
-
 }
 
