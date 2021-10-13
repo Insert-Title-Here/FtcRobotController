@@ -14,12 +14,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class testAutoOpModeC extends LinearOpMode {
     //opmode members
-    private ElapsedTime  runtime = new ElapsedTime();
-    private DcMotor LbDrive = null;
-    private DcMotor RbDrive = null;
-    private DcMotor LfDrive = null;
-    private DcMotor RfDrive = null;
 
+    DriveTrain drivetrain = new DriveTrain();
+    private DcMotor carousel;
 
 
     @Override
@@ -28,14 +25,14 @@ public class testAutoOpModeC extends LinearOpMode {
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
 
-        //initiallizing hardware variables
-        LfDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        RfDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        LbDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        RbDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
-
-
+        //start moving
+        drivetrain.setPower(0.5, 0);
+        Thread.sleep(1000);
+        drivetrain.setPower(0, 0.5);
+        Thread.sleep(500);
+        drivetrain.setPower(0.5, 0);
+        Thread.sleep(1000);
+        drivetrain.brake();
 
     }
 }
