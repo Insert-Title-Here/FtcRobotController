@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.round;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -68,7 +70,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
         telemetry.update();
 
         carousel = hardwareMap.get(DcMotor.class, "Carousel");
-        carousel.setDirection(DcMotor.Direction.FORWARD);
+        carousel.setDirection(DcMotor.Direction.REVERSE);
 
         armThread = new Thread(){
             @Override
@@ -102,30 +104,42 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
     private void armUpdate() {
         if (gamepad1.left_trigger > 0.1) {
-            carousel.setPower(-gamepad1.left_trigger);
+            carousel.setPower(gamepad1.left_trigger);
         } else if (gamepad1.right_trigger > 0.1) {
-            carousel.setPower(gamepad1.right_trigger);
+            carousel.setPower(-gamepad1.right_trigger);
         } else {
             carousel.setPower(0);
         }
 
         if (gamepad1.a) {
-            spinCarousel(5000, 0.5);
+            spinCarousel(4000);
         }
 
     }
 
-    public void spinCarousel(int tics, double power) {
+    public void spinCarousel(int tics) {
+
+
+
         carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         carousel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        carousel.setTargetPosition(-tics);
+        carousel.setTargetPosition(tics);
 
-        carousel.setPower(-power);
+        double power;
+
+        carousel.setPower(0.1);
 
         while (carousel.isBusy()) {
-
+            power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
+            if (power < 0.1) {
+                carousel.setPower(0.3);
+            } else if (power > 1){
+                carousel.setPower(1);
+            } else {
+                carousel.setPower(power);
+            }
         }
 
         carousel.setPower(0);
