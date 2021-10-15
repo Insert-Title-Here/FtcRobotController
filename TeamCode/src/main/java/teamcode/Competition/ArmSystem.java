@@ -68,12 +68,13 @@ public class ArmSystem {
     public void intake(double intakePower){
         house.setPosition(INTAKE_POSITION);
         intakeDumb(intakePower);
+        linkage.setPosition(LINKAGE_DOWN);
         stage = Stage.INTAKING;
         NormalizedRGBA houseRGBA = localizer.getCurrentState().getHouseRGBA();
-        while(houseRGBA.green < GREEN_THRESHOLD && houseRGBA.red < RED_THRESHOLD){ //TODO replace with actual conditional that is true for both balls and cubes
+        while(houseRGBA.green < 0.9 && houseRGBA.red < 0.9){ //TODO calibrate the Gain
             houseRGBA = localizer.getCurrentState().getHouseRGBA();
         }
-        if(houseRGBA.blue >= BLUE_THRESHOLD){
+        if(houseRGBA.blue >= 0.9){
             //balls
             stage = Stage.BALL_HOUSED;
 

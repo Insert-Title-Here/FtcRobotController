@@ -21,8 +21,8 @@ import teamcode.common.WestCoastDriveTrain;
 public class OfficialTeleOpScript extends AbstractOpMode {
 
     WestCoastDriveTrain drive; //TODO change this if necessary
-    //ArmSystem arm;
-    //Localizer localizer;
+    ArmSystem arm;
+    Localizer localizer;
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
@@ -39,11 +39,9 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        //localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 0.9);
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 0.9);
         drive = new WestCoastDriveTrain(hardwareMap);
-        leftIntake = hardwareMap.dcMotor.get("LeftIntake");
-        rightIntake = hardwareMap.dcMotor.get("RightIntake");
-      //  arm = new ArmSystem(hardwareMap, localizer, true);
+        arm = new ArmSystem(hardwareMap, localizer, true);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         //Initialize IMU parameters
@@ -80,11 +78,9 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     private void armUpdate() {
         if(gamepad1.right_trigger > 0.3){
-            leftIntake.setPower(0.3);
-            rightIntake.setPower(-0.3);
+            arm.intake(0.3);
         }else if(gamepad1.left_trigger > 0.3){
-            leftIntake.setPower(-0.3);
-            rightIntake.setPower(0.3);
+
         }
     }
 
