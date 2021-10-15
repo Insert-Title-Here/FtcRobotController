@@ -8,47 +8,45 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.List;
 
+import teamcode.common.Constants;
 import teamcode.common.Localizer;
 import teamcode.common.RobotPositionStateUpdater;
 import teamcode.common.Utils;
 
+import static teamcode.common.Constants.*;
+
 public class ArmSystem {
-    private static final double TOP_POSITION = 15.5;
-    private static final double LOW_POSITION = 4.5;
-    private static final double MEDIUM_POSITION = 8.5;
-    private static final double BOTTOM_POSITION = 0;
 
     //House Servo values
-    private static final double INTAKE_POSITION = 0;
-    private static final double HOUSING_POSITION = 0; //TODO calibrate both these values
-    private static final double SCORING_POSITION = 0;
+    private static final double INTAKE_POSITION = 0.24;
+    private static final double HOUSING_POSITION = 0.42; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
+    private static final double SCORING_POSITION = 0.6;
 
-    private static final double LINKAGE_DOWN = 0;
-    private static final double LINKAGE_SCORE = 0.5;
+    private static final double LINKAGE_DOWN = 0.3; //these values need to be refined but they are good ballparks, will be better to tune when the rigid mount is done
+    private static final double LINKAGE_SCORE = 0.69;
 
-    private static final float GREEN_THRESHOLD = 255;
+    private static final float GREEN_THRESHOLD = 255; //not needed for now
     private static final float RED_THRESHOLD = 255;
     private static final float BLUE_THRESHOLD = 255;
     private static final int YELLOW_THRESHOLD = 02552550;
     private static final int WHITE_THRESHOLD = 0255255255;
 
-    private static final double CONVEYOR_POWER = 0.8;
-    private static final double SLIDE_POWER = 0.6;
+    private static final double SLIDE_POWER = 1.0;
 
     private Localizer localizer;
-    private DcMotor leftIntake, rightIntake, winchMotor, conveyorMotor;
+    private DcMotor leftIntake, rightIntake, winchMotor, carouselEncoder;
     private Servo house, linkage;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
 
 
     public ArmSystem(HardwareMap hardwareMap, Localizer localizer, boolean isTeleOp){
-        leftIntake = hardwareMap.dcMotor.get("leftIntake");
-        rightIntake = hardwareMap.dcMotor.get("rightIntake");
-        winchMotor = hardwareMap.dcMotor.get("winch");
-        conveyorMotor = hardwareMap.dcMotor.get("conveyor");
-        house = hardwareMap.servo.get("house");
-        linkage = hardwareMap.servo.get("Parallelogram");
+        leftIntake = hardwareMap.dcMotor.get("LeftIntake");
+        rightIntake = hardwareMap.dcMotor.get("RightIntake");
+        winchMotor = hardwareMap.dcMotor.get("Winch");
+        //carouselEncoder = hardwareMap.dcMotor.get("conveyor");
+        house = hardwareMap.servo.get("House");
+        linkage = hardwareMap.servo.get("Linkage");
         this.localizer = localizer;
         currentState = localizer.getCurrentState();
         if(isTeleOp){
@@ -65,6 +63,8 @@ public class ArmSystem {
         rightIntake.setPower(-power);
     }
 
+    @Deprecated //using a color sensor which is currently not on the robot
+    //deprecated until further notice
     public void intake(double intakePower){
         house.setPosition(INTAKE_POSITION);
         intakeDumb(intakePower);
@@ -75,9 +75,6 @@ public class ArmSystem {
         }
         if(houseRGBA.blue >= BLUE_THRESHOLD){
             //balls
-
-
-
             stage = Stage.BALL_HOUSED;
 
         }else{
@@ -90,6 +87,13 @@ public class ArmSystem {
         house.setPosition(HOUSING_POSITION);
     }
 
+
+    public void raise(double position) {
+        house.setPosition(HOUSING_POSITION);
+        moveSlide(SLIDE_POWER, position);
+        house.setPosition(SCORING_POSITION);
+    }
+
     private enum Stage{
         INTAKING, IDLE, BALL_HOUSED, CUBE_HOUSED
     }
@@ -99,20 +103,12 @@ public class ArmSystem {
     //get rid of the conveyor we need to change this
     public void score(){
         if(stage == Stage.CUBE_HOUSED) {
-            NormalizedRGBA conveyorRGBA = localizer.getCurrentState().getConveyorRGBA();
-            conveyorMotor.setPower(CONVEYOR_POWER);
-            while(conveyorRGBA.toColor() < YELLOW_THRESHOLD){
-                conveyorRGBA = localizer.getCurrentState().getConveyorRGBA();
-            }
-            Utils.sleep(1000);
-            conveyorMotor.setPower(0);
-        }else if(stage == Stage.BALL_HOUSED){
-            moveSlide(SLIDE_POWER, TOP_POSITION);
 
+        }else if(stage == Stage.BALL_HOUSED){
             linkage.setPosition(LINKAGE_SCORE);
+            moveSlide(SLIDE_POWER, TOP_POSITION);
             Utils.sleep(200);
             house.setPosition(SCORING_POSITION);
-
             Utils.sleep(500);
             moveSlide(-SLIDE_POWER, BOTTOM_POSITION);
 
@@ -133,7 +129,9 @@ public class ArmSystem {
     }
 
     //needs to be rewritten if the conveyor is implemented
-    public void score(BarcodeReaderPipeline.BarcodePosition position){
+    public void scoreAuto(BarcodeReaderPipeline.BarcodePosition position){
+        linkage.setPosition(LINKAGE_SCORE);
+        Utils.sleep(200);
         if(position == BarcodeReaderPipeline.BarcodePosition.LEFT){
             moveSlide(SLIDE_POWER, LOW_POSITION);
 
@@ -143,12 +141,8 @@ public class ArmSystem {
         }else if(position == BarcodeReaderPipeline.BarcodePosition.RIGHT){
             moveSlide(SLIDE_POWER, TOP_POSITION);
         }
-        linkage.setPosition(LINKAGE_SCORE);
-        Utils.sleep(200);
         house.setPosition(SCORING_POSITION);
-
         Utils.sleep(500);
-
         moveSlide(-SLIDE_POWER, BOTTOM_POSITION);
 
     }

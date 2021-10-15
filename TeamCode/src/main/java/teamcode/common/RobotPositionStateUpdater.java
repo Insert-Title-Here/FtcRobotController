@@ -17,12 +17,11 @@ public class RobotPositionStateUpdater {
         private Vector2D velocity;
         private double angularVelocity;
         private double linearSlidePosition;
-        public RobotPositionState(Vector2D position, Vector2D velocity, double rotation, double angularVelocity, double linearSlidePosition, NormalizedRGBA houseRGBA, NormalizedRGBA conveyorRGBA) {
+        public RobotPositionState(Vector2D position, Vector2D velocity, double rotation, double angularVelocity) {
             this.position = position;
             this.velocity = velocity;
             this.rotation = rotation;
             this.angularVelocity = angularVelocity;
-            this.linearSlidePosition = linearSlidePosition;
         }
         public Vector2D getPosition() {
             return position;
@@ -46,7 +45,7 @@ public class RobotPositionStateUpdater {
             return conveyorRGBA;
         }
         public RobotPositionState copy() {
-            return new RobotPositionState(this.position, this.velocity, this.rotation, this.angularVelocity, this.linearSlidePosition, this.houseRGBA, this.conveyorRGBA);
+            return new RobotPositionState(this.position, this.velocity, this.rotation, this.angularVelocity);
         }
 
         public String toString(){
@@ -63,10 +62,10 @@ public class RobotPositionStateUpdater {
     }
 
     public RobotPositionStateUpdater() {
-        this(new Vector2D(0,0), new Vector2D(0,0), 0, 0, 0, null, null);
+        this(new Vector2D(0,0), new Vector2D(0,0), 0, 0);
     }
-    public RobotPositionStateUpdater(Vector2D position, Vector2D velocity, double rotation, double angularVelocity, double linearSlidePosition, NormalizedRGBA houseRGBA, NormalizedRGBA conveyorRGBA) {
-        state = new RobotPositionState(position, velocity, rotation, angularVelocity, linearSlidePosition, houseRGBA, conveyorRGBA);
+    public RobotPositionStateUpdater(Vector2D position, Vector2D velocity, double rotation, double angularVelocity) {
+        state = new RobotPositionState(position, velocity, rotation, angularVelocity);
     }
     public synchronized RobotPositionState getCurrentState() {
         return state.copy();
@@ -90,17 +89,16 @@ public class RobotPositionStateUpdater {
     }
 
     public synchronized void updateState(double deltaX, double deltaY, double deltaPhi,
-                                         double deltaVx, double deltaVy, double omega,
-                                         double linearSlidePosition, NormalizedRGBA houseRGBA, NormalizedRGBA conveyorRGBA) {
+                                         double deltaVx, double deltaVy, double omega
+                                         ) {
         updatePositionTime();
         state.position = new Vector2D(deltaX, deltaY);
         state.rotation =  MathFunctions.angleWrap(deltaPhi);
         state.velocity = new Vector2D(deltaVx, deltaVy);
         state.angularVelocity = omega;
-        state.linearSlidePosition = linearSlidePosition;
-        state.houseRGBA = houseRGBA;
-        state.conveyorRGBA = conveyorRGBA;
     }
+
+    //double linearSlidePosition, NormalizedRGBA houseRGBA, NormalizedRGBA conveyorRGBA
 
 
 }

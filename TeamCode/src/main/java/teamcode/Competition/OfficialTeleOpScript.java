@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import teamcode.common.AbstractOpMode;
+import teamcode.common.Constants;
 import teamcode.common.Debug;
+import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
@@ -19,11 +21,14 @@ import teamcode.common.WestCoastDriveTrain;
 public class OfficialTeleOpScript extends AbstractOpMode {
 
     WestCoastDriveTrain drive; //TODO change this if necessary
+    //ArmSystem arm;
+    //Localizer localizer;
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
 
-    DcMotor carouselMotor;
+    DcMotor leftIntake, rightIntake;
+
 
     private static final double INTAKE_POWER = 1.0;
     private static final double SPRINT_LINEAR_MODIFIER = 1.0;
@@ -34,19 +39,14 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
+        //localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 0.9);
         drive = new WestCoastDriveTrain(hardwareMap);
-        carouselMotor = hardwareMap.dcMotor.get("Carousel");
+        leftIntake = hardwareMap.dcMotor.get("LeftIntake");
+        rightIntake = hardwareMap.dcMotor.get("RightIntake");
+      //  arm = new ArmSystem(hardwareMap, localizer, true);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         //Initialize IMU parameters
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        //parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu.initialize(parameters);
 
         driveThread = new Thread(){
             public void run(){
@@ -79,14 +79,13 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
 
     private void armUpdate() {
-        if(gamepad1.right_trigger > 0.1){
-            carouselMotor.setPower(gamepad1.right_trigger);
-        }else if(gamepad1.left_trigger > 0.1){
-            carouselMotor.setPower(-gamepad1.left_trigger);
-        }else{
-            carouselMotor.setPower(0);
+        if(gamepad1.right_trigger > 0.3){
+            leftIntake.setPower(0.3);
+            rightIntake.setPower(-0.3);
+        }else if(gamepad1.left_trigger > 0.3){
+            leftIntake.setPower(-0.3);
+            rightIntake.setPower(0.3);
         }
-
     }
 
     private static final double ROTATE_DPAD = 0.3;
