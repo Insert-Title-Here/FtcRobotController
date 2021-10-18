@@ -78,20 +78,20 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     private void armUpdate() {
         if(gamepad1.right_trigger > 0.3){
             startTime = AbstractOpMode.currentOpMode().time;
-            while(gamepad1.right_trigger > 0.3){
+            while(gamepad1.right_trigger > 0.3) {
                 double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
                 arm.intake(0.5 * Math.abs(Math.sin(2 * elapsedTime)) + 0.1);
                 telemetry.addData("right trigger", gamepad1.right_trigger);
                 telemetry.update();
             }
-            arm.preScore();
         }else if(gamepad1.left_trigger > 0.3){
             arm.intakeDumb(-0.3);
         }else if(gamepad1.x){
             arm.score();
-        }else if(gamepad1.a){
+        }else if(gamepad1.a) {
             arm.raise(Constants.TOP_POSITION);
-
+        } else if(gamepad1.b) {
+            arm.preScore();
         }else{
             arm.intakeDumb(0);
         }
