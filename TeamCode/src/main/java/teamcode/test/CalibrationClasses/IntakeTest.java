@@ -17,25 +17,28 @@ public class IntakeTest extends AbstractOpMode {
 
     @Override
     protected void onStart() {
+        double startTime = AbstractOpMode.currentOpMode().time;
         while(opModeIsActive()){
-            if(gamepad1.left_trigger > 0.3){
-                intakeMotorLeft.setPower(gamepad1.left_trigger);
-                intakeMotorRight.setPower(-gamepad1.left_trigger);
-            }else if(gamepad1.right_trigger > 0.3){
-                intakeMotorLeft.setPower(-gamepad1.right_trigger);
-                intakeMotorRight.setPower(gamepad1.right_trigger);
-            }else if(gamepad1.dpad_up){
-                intakeMotorRight.setPower(intakeMotorRight.getPower() + 0.1);
-                intakeMotorLeft.setPower(intakeMotorLeft.getPower() - 0.1);
-                while(gamepad1.dpad_up);
-            }else if(gamepad1.dpad_down){
-                intakeMotorRight.setPower(intakeMotorRight.getPower() - 0.1);
-                intakeMotorLeft.setPower(intakeMotorLeft.getPower() + 0.1);
-                while(gamepad1.dpad_down);
-            }else if(gamepad1.a){
-                intakeMotorLeft.setPower(0);
-                intakeMotorRight.setPower(0);
-            }
+            double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
+            //            if(gamepad1.left_trigger > 0.3){
+//                intakeMotorLeft.setPower(gamepad1.left_trigger);
+//                intakeMotorRight.setPower(-gamepad1.left_trigger);
+//            }else if(gamepad1.right_trigger > 0.3){
+//                intakeMotorLeft.setPower(-gamepad1.right_trigger);
+//                intakeMotorRight.setPower(gamepad1.right_trigger);
+//            }else if(gamepad1.dpad_up){
+//                intakeMotorRight.setPower(intakeMotorRight.getPower() + 0.1);
+//                intakeMotorLeft.setPower(intakeMotorLeft.getPower() - 0.1);
+//                while(gamepad1.dpad_up);
+//            }else if(gamepad1.dpad_down){
+//                intakeMotorRight.setPower(intakeMotorRight.getPower() - 0.1);
+//                intakeMotorLeft.setPower(intakeMotorLeft.getPower() + 0.1);
+//                while(gamepad1.dpad_down);
+//            }else if(gamepad1.a){
+//                intakeMotorLeft.setPower(0);
+//                intakeMotorRight.setPower(0);
+//            }
+
             telemetry.addData("left", intakeMotorLeft.getPower());
             telemetry.addData("right", intakeMotorRight.getPower());
             telemetry.update();

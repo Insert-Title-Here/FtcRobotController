@@ -6,7 +6,7 @@ public class Constants {
     public static final String LEFT_VERTICAL_ODOMETER_NAME = "BackRightDrive";
     public static final String RIGHT_VERTICAL_ODOMETER_NAME = "FrontRightDrive";
     public static final String HORIZONTAL_ODOMETER_NAME = "BackLeftDrive";
-    public static final String LINEAR_SLIDE_ENCODER_NAME = "";
+    public static final String LINEAR_SLIDE_ENCODER_NAME = "FrontLeftDrive";
 
     //other relevant info
     public static final String SAVE_FILE_PATH = "";
@@ -17,7 +17,7 @@ public class Constants {
     public static final double GRAVITY_IN_SEC = 386.09;
 
     //Game Constants
-    public static final double TOP_POSITION = 15.5;
+    public static final double TOP_POSITION = 15000;
     public static final double LOW_POSITION = 4.5; //TODO calibrate these values
     public static final double MEDIUM_POSITION = 8.5; //store these values as ticks, and just go with that, nothing fancy
     public static final double BOTTOM_POSITION = 0;

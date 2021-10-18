@@ -18,7 +18,8 @@ public class LinkageTest extends AbstractOpMode {
     //carousel, ticks per rev
     @Override
     protected void onInitialize() {
-        linkage = hardwareMap.servo.get("Linkage");
+        linkage = hardwareMap.servo.get("House");
+        linkage.setPosition(0.6);
    }
 
     @Override

@@ -36,8 +36,8 @@ public class WestCoastDriveTrain {
     public WestCoastDriveTrain(HardwareMap hardwareMap){
         fl = hardwareMap.get(ExpansionHubMotor.class,"FrontLeftDrive");
         fr = hardwareMap.get(ExpansionHubMotor.class, "FrontRightDrive");
-        //bl = hardwareMap.get(ExpansionHubMotor.class, "BackLeftDrive");
-        //br = hardwareMap.get(ExpansionHubMotor.class, "BackRightDrive");
+        bl = hardwareMap.get(ExpansionHubMotor.class, "BackLeftDrive");
+        br = hardwareMap.get(ExpansionHubMotor.class, "BackRightDrive");
         correctMotors();
 
     }
@@ -144,14 +144,12 @@ public class WestCoastDriveTrain {
 
     public void setPower(double linear, double rotation){
         rotation = -rotation;
-        AbstractOpMode.currentOpMode().telemetry.addData("linear", linear);
-        AbstractOpMode.currentOpMode().telemetry.addData("rotation", rotation);
-        AbstractOpMode.currentOpMode().telemetry.update();
+
 
         fl.setPower(linear + rotation);
         fr.setPower(-linear + rotation);
-        //bl.setPower(linear + rotation);
-        //br.setPower(-linear + rotation);
+        bl.setPower(linear + rotation);
+        br.setPower(-linear + rotation);
     }
 
 //TODO reread this and the linear one

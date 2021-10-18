@@ -9,14 +9,11 @@ import teamcode.common.PurePursuit.MathFunctions;
 public class RobotPositionStateUpdater {
     RobotPositionState state;
     public static class RobotPositionState {
-        private NormalizedRGBA houseRGBA;
-        private NormalizedRGBA conveyorRGBA;
         private Vector2D position;
         private double rotation;
         private long positionUpdateTime;
         private Vector2D velocity;
         private double angularVelocity;
-        private double linearSlidePosition;
         public RobotPositionState(Vector2D position, Vector2D velocity, double rotation, double angularVelocity) {
             this.position = position;
             this.velocity = velocity;
@@ -34,15 +31,6 @@ public class RobotPositionStateUpdater {
         }
         public Vector2D getVelocity() {
             return velocity;
-        }
-        public double getLinearSlidePosition(){
-            return linearSlidePosition;
-        }
-        public NormalizedRGBA getHouseRGBA(){
-            return houseRGBA;
-        }
-        public NormalizedRGBA getConveyorRGBA(){
-            return conveyorRGBA;
         }
         public RobotPositionState copy() {
             return new RobotPositionState(this.position, this.velocity, this.rotation, this.angularVelocity);

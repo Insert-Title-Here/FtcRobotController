@@ -76,11 +76,6 @@ public class Localizer extends Thread {
     Matrix previousVislamMat;
 
 
-    //game specific components to be updated for the state
-//    private final ExpansionHubMotor linearSlideEncoder; //TODO add left and right intakeEncoder
-//    private NormalizedColorSensor houseSensor, conveyorSensor;
-//    private static final float HOUSE_GAIN = 1.0f;
-//    private static final float CONVEYOR_GAIN = 1.0f;
 
 
 
@@ -102,11 +97,6 @@ public class Localizer extends Thread {
         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
         rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);
         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
-//        linearSlideEncoder = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LINEAR_SLIDE_ENCODER_NAME);
-//        houseSensor = hardwareMap.get(NormalizedColorSensor.class, "HouseSensor");
-//        conveyorSensor = hardwareMap.get(NormalizedColorSensor.class, "ConveyorSensor");
-//        conveyorSensor.setGain(HOUSE_GAIN);
-//        conveyorSensor.setGain(CONVEYOR_GAIN);
 
 
         // setup initial position;
@@ -149,7 +139,6 @@ public class Localizer extends Thread {
         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
         rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);
         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
-        //linearSlideEncoder = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LINEAR_SLIDE_ENCODER_NAME);
         // setup initial position;
         previousHorizontalArcLength = 0;
         previousInnerArcLength = 0;
@@ -224,11 +213,9 @@ public class Localizer extends Thread {
         leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //linearSlideEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //linearSlideEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //horizontal.setDirection(DcMotorSimple.Direction.REVERSE);
         //leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
     }
@@ -329,9 +316,7 @@ public class Localizer extends Thread {
         data1 = hub1.getBulkInputData();
         currentSlamraPos = slamra.getLastReceivedCameraUpdate();
 //        NormalizedRGBA houseRGBA = houseSensor.getNormalizedColors();
-//        NormalizedRGBA conveyorRGBA = conveyorSensor.getNormalizedColors();
         RobotPositionStateUpdater.RobotPositionState currentState = getCurrentState();
-//        double currentLinearSlideState = linearSlideEncoderTicksToInches(data1.getMotorCurrentPosition(linearSlideEncoder));
 
         double innerArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical));
         // encoder orientation is the same, which means they generate opposite rotation signals
@@ -479,6 +464,7 @@ public class Localizer extends Thread {
         double dvx = complementaryStateEstimtate.getValue(3,0);
         double dvy = complementaryStateEstimtate.getValue(4,0);
         double domega = complementaryStateEstimtate.getValue(5,0);
+
 
         state.updateState(dx, dy, dphi, dvx, dvy, domega);
         startingTime = System.currentTimeMillis();

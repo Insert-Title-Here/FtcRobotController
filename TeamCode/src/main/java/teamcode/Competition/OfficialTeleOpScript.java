@@ -21,13 +21,12 @@ import teamcode.common.WestCoastDriveTrain;
 public class OfficialTeleOpScript extends AbstractOpMode {
 
     WestCoastDriveTrain drive; //TODO change this if necessary
-    //ArmSystem arm;
-    //Localizer localizer;
+    ArmSystem arm;
+    Localizer localizer;
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
 
-    DcMotor leftIntake, rightIntake;
 
 
     private static final double INTAKE_POWER = 1.0;
@@ -39,11 +38,9 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        //localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 0.9);
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 0.9);
         drive = new WestCoastDriveTrain(hardwareMap);
-        leftIntake = hardwareMap.dcMotor.get("LeftIntake");
-        rightIntake = hardwareMap.dcMotor.get("RightIntake");
-      //  arm = new ArmSystem(hardwareMap, localizer, true);
+        arm = new ArmSystem(hardwareMap, localizer, true);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         //Initialize IMU parameters
@@ -77,14 +74,26 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     }
 
-
+    private double startTime;
     private void armUpdate() {
         if(gamepad1.right_trigger > 0.3){
-            leftIntake.setPower(0.3);
-            rightIntake.setPower(-0.3);
+            startTime = AbstractOpMode.currentOpMode().time;
+            while(gamepad1.right_trigger > 0.3){
+                double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
+                arm.intake(0.5 * Math.abs(Math.sin(2 * elapsedTime)) + 0.1);
+                telemetry.addData("right trigger", gamepad1.right_trigger);
+                telemetry.update();
+            }
+            arm.preScore();
         }else if(gamepad1.left_trigger > 0.3){
-            leftIntake.setPower(-0.3);
-            rightIntake.setPower(0.3);
+            arm.intakeDumb(-0.3);
+        }else if(gamepad1.x){
+            arm.score();
+        }else if(gamepad1.a){
+            arm.raise(Constants.TOP_POSITION);
+
+        }else{
+            arm.intakeDumb(0);
         }
     }
 
@@ -98,7 +107,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        //WGG.runToPosition(WobbleConstants.RETRACTED_POSITION, 0.5);
+        localizer.start();
         driveThread.start();
         armThread.start();
         //driverTwoThread.start();
@@ -107,6 +116,8 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     @Override
     protected void onStop() {
-
+        localizer.stopThread();
+        driveThread.interrupt();
+        armThread.interrupt();
     }
 }

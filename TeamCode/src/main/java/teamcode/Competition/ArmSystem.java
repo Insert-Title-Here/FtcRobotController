@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.List;
 
+import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Localizer;
 import teamcode.common.RobotPositionStateUpdater;
@@ -22,8 +23,8 @@ public class ArmSystem {
     private static final double HOUSING_POSITION = 0.42; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.6;
 
-    private static final double LINKAGE_DOWN = 0.3; //these values need to be refined but they are good ballparks, will be better to tune when the rigid mount is done
-    private static final double LINKAGE_SCORE = 0.69;
+    private static final double LINKAGE_DOWN = 0.2; //these values need to be refined but they are good ballparks, will be better to tune when the rigid mount is done
+    private static final double LINKAGE_SCORE = 0.7;
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
     private static final float RED_THRESHOLD = 255;
@@ -34,7 +35,7 @@ public class ArmSystem {
     private static final double SLIDE_POWER = 1.0;
 
     private Localizer localizer;
-    private DcMotor leftIntake, rightIntake, winchMotor, carouselEncoder;
+    private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, carouselEncoder;
     private Servo house, linkage;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
@@ -44,17 +45,19 @@ public class ArmSystem {
         leftIntake = hardwareMap.dcMotor.get("LeftIntake");
         rightIntake = hardwareMap.dcMotor.get("RightIntake");
         winchMotor = hardwareMap.dcMotor.get("Winch");
+        winchEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
         //carouselEncoder = hardwareMap.dcMotor.get("conveyor");
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
         this.localizer = localizer;
         currentState = localizer.getCurrentState();
+        winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         if(isTeleOp){
             house.setPosition(INTAKE_POSITION);
         }else{
             house.setPosition(HOUSING_POSITION);
         }
-        linkage.setPosition(LINKAGE_DOWN);
+        linkage.setPosition(LINKAGE_SCORE);
         stage = Stage.IDLE;
     }
 
@@ -63,13 +66,28 @@ public class ArmSystem {
         rightIntake.setPower(-power);
     }
 
-    @Deprecated //using a color sensor which is currently not on the robot
-    //deprecated until further notice
+
+
     public void intake(double intakePower){
         house.setPosition(INTAKE_POSITION);
+        linkage.setPosition(LINKAGE_DOWN);
         intakeDumb(intakePower);
         stage = Stage.INTAKING;
-        NormalizedRGBA houseRGBA = localizer.getCurrentState().getHouseRGBA();
+
+
+    }
+    //will be merged into intake() later
+    public void preScore(){
+        intakeDumb(0);
+        house.setPosition(HOUSING_POSITION);
+        Utils.sleep(250);
+        linkage.setPosition(LINKAGE_SCORE);
+
+
+    }
+
+    /* color sensor code
+    NormalizedRGBA houseRGBA = localizer.getCurrentState().getHouseRGBA();
         while(houseRGBA.green < GREEN_THRESHOLD && houseRGBA.red < RED_THRESHOLD){ //TODO replace with actual conditional that is true for both balls and cubes
             houseRGBA = localizer.getCurrentState().getHouseRGBA();
         }
@@ -81,17 +99,22 @@ public class ArmSystem {
             //cubes
             stage = Stage.CUBE_HOUSED;
         }
-
-        linkage.setPosition(LINKAGE_SCORE);
-        Utils.sleep(100);
-        house.setPosition(HOUSING_POSITION);
-    }
+     */
 
 
     public void raise(double position) {
-        house.setPosition(HOUSING_POSITION);
+        if(linkage.getPosition() != LINKAGE_SCORE){
+            preScore();
+        }
         moveSlide(SLIDE_POWER, position);
+
+    }
+
+    //temporary tele op scoring function w/o color sensor
+    public void score(){
         house.setPosition(SCORING_POSITION);
+        moveSlide(-SLIDE_POWER, 500);
+        house.setPosition(INTAKE_POSITION);
     }
 
     private enum Stage{
@@ -101,7 +124,8 @@ public class ArmSystem {
     //tele op scoring function, assumes the freight is encapsulated in the house already and that the
     //linkage is raised (not scoring). This method also assumes the Conveyor exists as well so if we
     //get rid of the conveyor we need to change this
-    public void score(){
+    //uses color sensor data
+    public void scoreCS(){
         if(stage == Stage.CUBE_HOUSED) {
 
         }else if(stage == Stage.BALL_HOUSED){
@@ -120,8 +144,9 @@ public class ArmSystem {
     }
 
     public void moveSlide(double power, double position){
-        while (Math.abs(currentState.getLinearSlidePosition() - position) > 0.1) {
-            currentState = localizer.getCurrentState();
+        while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {
+            AbstractOpMode.currentOpMode().telemetry.addData("linearSlidePosition", winchEncoder.getCurrentPosition());
+            AbstractOpMode.currentOpMode().telemetry.update();
             winchMotor.setPower(power);
         }
         winchMotor.setPower(0);
