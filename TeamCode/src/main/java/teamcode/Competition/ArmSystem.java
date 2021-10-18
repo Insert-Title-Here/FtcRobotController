@@ -113,6 +113,7 @@ public class ArmSystem {
     //temporary tele op scoring function w/o color sensor
     public void score(){
         house.setPosition(SCORING_POSITION);
+        Utils.sleep(200);
         moveSlide(-SLIDE_POWER, 500);
         house.setPosition(INTAKE_POSITION);
     }

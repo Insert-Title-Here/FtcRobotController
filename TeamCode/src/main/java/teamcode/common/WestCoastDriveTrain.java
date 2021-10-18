@@ -12,12 +12,12 @@ public class WestCoastDriveTrain {
     private ExpansionHubMotor fl, fr, bl, br;
     Localizer localizer;
 
-    private final double P_LINEAR = 0;
+    private final double P_LINEAR = 0.0001;
     private final double I_LINEAR = 0;
     private final double D_LINEAR = 0;
 
 
-    private final double P_ROTATIONAL = 0;
+    private final double P_ROTATIONAL = 0.02;
     private final double I_ROTATIONAL = 0;
     private final double D_ROTATIONAL = 0;
 
@@ -69,8 +69,9 @@ public class WestCoastDriveTrain {
         Vector2D newDesiredPosition = desiredPosition.add(new Vector2D(5.0 * Math.cos(desiredPositionPointer.getDirection()), 5.0 * Math.sin(desiredPositionPointer.getDirection())));
 
         previousError =  0;
+        previousVelocity = 0;
         double steadyStateError = 0;
-        moveToRotation( newDesiredPosition.getDirection(), desiredOmega);
+        //moveToRotation( newDesiredPosition.getDirection(), desiredOmega);
 
         long previousTimeMillis = System.currentTimeMillis();
 
@@ -90,8 +91,8 @@ public class WestCoastDriveTrain {
             steadyStateError += (error * currentCycleTimeSeconds);
             double deltaError = (error - previousError) / currentCycleTimeSeconds;
 
-            double output = error * P_LINEAR + deltaError * D_LINEAR + steadyStateError * I_LINEAR;
-
+            double output = error * P_LINEAR;
+// + deltaError * D_LINEAR + steadyStateError * I_LINEAR
 
 
             double passedValue = output + previousVelocity;
@@ -107,11 +108,11 @@ public class WestCoastDriveTrain {
             previousError = error;
 
 
-            //AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
-            //AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
+            AbstractOpMode.currentOpMode().telemetry.addData("passedVelocity", passedValue);
+            AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
             //AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
             AbstractOpMode.currentOpMode().telemetry.addData("", currentState);
-            //AbstractOpMode.currentOpMode().telemetry.addData("error", (Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude())));
+            AbstractOpMode.currentOpMode().telemetry.addData("error", (Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude())));
             AbstractOpMode.currentOpMode().telemetry.update();
         }
         brake();
@@ -128,7 +129,7 @@ public class WestCoastDriveTrain {
 
     public double straightMovement(double power){
 
-        setPower(power, power, power, power);
+        setPower(-power, power, -power, power);
         return power;
     }
 
@@ -150,6 +151,12 @@ public class WestCoastDriveTrain {
         fr.setPower(-linear + rotation);
         bl.setPower(linear + rotation);
         br.setPower(-linear + rotation);
+
+        AbstractOpMode.currentOpMode().telemetry.addData("fl", fl.getPower());
+        AbstractOpMode.currentOpMode().telemetry.addData("fl", fr.getPower());
+        AbstractOpMode.currentOpMode().telemetry.addData("fl", bl.getPower());
+        AbstractOpMode.currentOpMode().telemetry.addData("fl", br.getPower());
+        AbstractOpMode.currentOpMode().telemetry.update();
     }
 
 //TODO reread this and the linear one
@@ -190,8 +197,8 @@ public class WestCoastDriveTrain {
     }
 
     public double rotate(double omega) {
-        setPower(omega, omega, -omega, -omega);
-        return omega;
+        setPower(-omega, -omega, -omega, -omega);
+        return -omega;
     }
 
     public void setPower(double flPower, double frPower, double blPower, double brPower){

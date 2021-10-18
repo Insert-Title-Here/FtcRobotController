@@ -177,9 +177,15 @@ public class Localizer extends Thread {
         startingTime = System.currentTimeMillis();
 
         if(slamra != null) {
-            while (currentSlamraPos.confidence != T265Camera.PoseConfidence.High) {
+            while (currentSlamraPos.confidence != T265Camera.PoseConfidence.Medium || currentSlamraPos.confidence != T265Camera.PoseConfidence.High) {
+//                AbstractOpMode.currentOpMode().telemetry.addData("confidence", currentSlamraPos.confidence);
+//                AbstractOpMode.currentOpMode().telemetry.update();
+                currentSlamraPos = slamra.getLastReceivedCameraUpdate();
                 slamra.setPose(slamraStartingPose);
-            }
+
+           }
+            slamra.setPose(slamraStartingPose);
+//
         }
         // max speed 300 Hz)
         while (!stop.get()) {
