@@ -23,7 +23,7 @@ public class ArmSystem {
     private static final double HOUSING_POSITION = 0.42; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.6;
 
-    private static final double LINKAGE_DOWN = 0.2; //these values need to be refined but they are good ballparks, will be better to tune when the rigid mount is done
+    private static final double LINKAGE_DOWN = 0.28; //these values need to be refined but they are good ballparks, will be better to tune when the rigid mount is done
     private static final double LINKAGE_SCORE = 0.7;
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -34,14 +34,13 @@ public class ArmSystem {
 
     private static final double SLIDE_POWER = 1.0;
 
-    private Localizer localizer;
     private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, carouselEncoder;
     private Servo house, linkage;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
 
 
-    public ArmSystem(HardwareMap hardwareMap, Localizer localizer, boolean isTeleOp){
+    public ArmSystem(HardwareMap hardwareMap, boolean isTeleOp){
         leftIntake = hardwareMap.dcMotor.get("LeftIntake");
         rightIntake = hardwareMap.dcMotor.get("RightIntake");
         winchMotor = hardwareMap.dcMotor.get("Winch");
@@ -49,8 +48,6 @@ public class ArmSystem {
         //carouselEncoder = hardwareMap.dcMotor.get("conveyor");
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
-        this.localizer = localizer;
-        currentState = localizer.getCurrentState();
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         if(isTeleOp){
             house.setPosition(INTAKE_POSITION);
@@ -113,9 +110,12 @@ public class ArmSystem {
     //temporary tele op scoring function w/o color sensor
     public void score(){
         house.setPosition(SCORING_POSITION);
-        Utils.sleep(200);
+    }
+
+    public void retract(){
         moveSlide(-SLIDE_POWER, 500);
         house.setPosition(INTAKE_POSITION);
+
     }
 
     private enum Stage{
