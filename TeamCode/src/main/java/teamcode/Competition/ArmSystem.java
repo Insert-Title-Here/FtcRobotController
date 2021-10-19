@@ -112,7 +112,7 @@ public class ArmSystem {
 
     public void adjustUp() {
         linkage.setPosition(LINKAGE_DOWN + 0.02);
-        LINKAGE_DOWN += 0.02;
+        LINKAGE_DOWN +=  0.02;
     }
 
     public void adjustDown() {
