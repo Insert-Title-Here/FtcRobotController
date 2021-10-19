@@ -23,7 +23,7 @@ public class ArmSystem {
     private static final double HOUSING_POSITION = 0.42; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.6;
 
-    private static final double LINKAGE_DOWN = 0.2; //these values need to be refined but they are good ballparks, will be better to tune when the rigid mount is done
+    private static double LINKAGE_DOWN = 0.2; //these values need to be refined but they are good ballparks. AYUSH: Constant is no longer final as attributed to the adjust methods.
     private static final double LINKAGE_SCORE = 0.7;
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -108,6 +108,16 @@ public class ArmSystem {
         }
         moveSlide(SLIDE_POWER, position);
 
+    }
+
+    public void adjustUp() {
+        linkage.setPosition(LINKAGE_DOWN + 0.02);
+        LINKAGE_DOWN += 0.02;
+    }
+
+    public void adjustDown() {
+        linkage.setPosition(LINKAGE_DOWN - 0.02);
+        LINKAGE_DOWN -= 0.02;
     }
 
     //temporary tele op scoring function w/o color sensor

@@ -92,7 +92,11 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             arm.raise(Constants.TOP_POSITION);
         } else if(gamepad1.b) {
             arm.preScore();
-        }else{
+        } else if (gamepad1.dPad_up) {
+            arm.adjustUp();
+        } else if (gamepad1.dPad_down) {
+            arm.adjustDown();
+        } else {
             arm.intakeDumb(0);
         }
     }
