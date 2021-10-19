@@ -22,7 +22,6 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     WestCoastDriveTrain drive; //TODO change this if necessary
     ArmSystem arm;
-    Localizer localizer;
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
@@ -35,15 +34,21 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     private static final double SPRINT_ROTATIONAL_MODIFIER = 1.0;
     private static final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
     private boolean isSprint;
+    private long scoredSampleTime;
+    private ScoredButtonState state;
+    private PulleyState pulleyState;
+
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 0.9);
         drive = new WestCoastDriveTrain(hardwareMap);
-        arm = new ArmSystem(hardwareMap, localizer, true);
+        arm = new ArmSystem(hardwareMap, true);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         //Initialize IMU parameters
+
+        state = ScoredButtonState.RETRACTING;
+        pulleyState = PulleyState.RETRACTED;
 
         driveThread = new Thread(){
             public void run(){
@@ -80,16 +85,32 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             startTime = AbstractOpMode.currentOpMode().time;
             while(gamepad1.right_trigger > 0.3) {
                 double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
-                arm.intake(0.5 * Math.abs(Math.sin(2 * elapsedTime)) + 0.1);
+                arm.intake(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.3);
                 telemetry.addData("right trigger", gamepad1.right_trigger);
                 telemetry.update();
             }
         }else if(gamepad1.left_trigger > 0.3){
             arm.intakeDumb(-0.3);
         }else if(gamepad1.x){
-            arm.score();
+            long currentSampleTime = System.currentTimeMillis();
+            if(currentSampleTime - scoredSampleTime > 1000) {
+                if(pulleyState == PulleyState.EXTENDED) {
+                    if (state == ScoredButtonState.RETRACTING) {
+                        state = ScoredButtonState.SCORED;
+                        arm.score();
+                    } else if (state == ScoredButtonState.SCORED) {
+                        state = ScoredButtonState.RETRACTING;
+                        arm.retract();
+                        pulleyState = PulleyState.RETRACTED;
+                    }
+                }
+                scoredSampleTime = System.currentTimeMillis();
+            }
         }else if(gamepad1.a) {
-            arm.raise(Constants.TOP_POSITION);
+            if(pulleyState == PulleyState.RETRACTED) {
+                arm.raise(Constants.TOP_POSITION);
+                pulleyState = PulleyState.EXTENDED;
+            }
         } else if(gamepad1.b) {
             arm.preScore();
         } else if (gamepad1.dPad_up) {
@@ -109,9 +130,16 @@ public class OfficialTeleOpScript extends AbstractOpMode {
       drive.setPower(gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
     }
 
+    private enum ScoredButtonState{
+        SCORED, RETRACTING
+    }
+
+    private enum PulleyState{
+        EXTENDED, RETRACTED
+    }
+
     @Override
     protected void onStart() {
-        localizer.start();
         driveThread.start();
         armThread.start();
         //driverTwoThread.start();
@@ -120,7 +148,6 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     @Override
     protected void onStop() {
-        localizer.stopThread();
         driveThread.interrupt();
         armThread.interrupt();
     }

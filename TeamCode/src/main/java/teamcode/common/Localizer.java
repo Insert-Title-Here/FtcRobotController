@@ -158,7 +158,7 @@ public class Localizer extends Thread {
                 {0}
         };
         previousOdoMat = new Matrix(6,1);
-        slamra.start();
+
         resetEncoders();
     }
 
@@ -175,17 +175,10 @@ public class Localizer extends Thread {
         // make sure we reset our accounting of start times
         state.resetUpdateTime();
         startingTime = System.currentTimeMillis();
-
+        slamra.start();
         if(slamra != null) {
-            while (currentSlamraPos.confidence != T265Camera.PoseConfidence.Medium || currentSlamraPos.confidence != T265Camera.PoseConfidence.High) {
-//                AbstractOpMode.currentOpMode().telemetry.addData("confidence", currentSlamraPos.confidence);
-//                AbstractOpMode.currentOpMode().telemetry.update();
-                currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-                slamra.setPose(slamraStartingPose);
-
-           }
+            currentSlamraPos = slamra.getLastReceivedCameraUpdate();
             slamra.setPose(slamraStartingPose);
-//
         }
         // max speed 300 Hz)
         while (!stop.get()) {
@@ -388,13 +381,13 @@ public class Localizer extends Thread {
                 {currentSlamraPos.velocity.vxMetersPerSecond / 0.0254},
                 {currentSlamraPos.velocity.omegaRadiansPerSecond}
         };
-//        if(abs(vislamMat[3][0]) < 0.1){
+//        if(abs(vislamMat[3][0]) < 0.2){
 //            vislamMat[3][0] = 0;
 //        }
-//        if(abs(vislamMat[4][0]) < 0.1){
+//        if(abs(vislamMat[4][0]) < 0.2){
 //            vislamMat[4][0] = 0;
 //        }
-//        if(abs(vislamMat[5][0]) < 0.1){
+//        if(abs(vislamMat[5][0]) < 0.2){
 //            vislamMat[5][0] = 0;
 //        }
         Matrix slamraEstimate = new Matrix(vislamMat);
@@ -478,7 +471,6 @@ public class Localizer extends Thread {
         previousOuterArcLength = outerArcLength;
         previousHorizontalArcLength = horizontalArcLength;
         previousEstimateUncertainty = currentEstimateUncertainty;
-
     }
 
     private double linearSlideEncoderTicksToInches(int motorCurrentPosition) {
