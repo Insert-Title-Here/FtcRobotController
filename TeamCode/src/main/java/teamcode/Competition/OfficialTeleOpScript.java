@@ -42,6 +42,9 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         drive = new WestCoastDriveTrain(hardwareMap);
+
+
+
         arm = new ArmSystem(hardwareMap, true);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
@@ -113,9 +116,9 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             }
         } else if(gamepad1.b) {
             arm.preScore();
-        } else if (gamepad1.dPad_up) {
+        } else if (gamepad1.dpad_up) {
             arm.adjustUp();
-        } else if (gamepad1.dPad_down) {
+        } else if (gamepad1.dpad_down) {
             arm.adjustDown();
         } else {
             arm.intakeDumb(0);
@@ -128,6 +131,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     //TODO change this if necessary
     private void driveUpdate() {
       drive.setPower(gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
+
     }
 
     private enum ScoredButtonState{
@@ -143,7 +147,8 @@ public class OfficialTeleOpScript extends AbstractOpMode {
         driveThread.start();
         armThread.start();
         //driverTwoThread.start();
-        while(opModeIsActive());
+        while(opModeIsActive()){
+        }
     }
 
     @Override

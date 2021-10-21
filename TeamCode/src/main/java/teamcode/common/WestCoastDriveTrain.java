@@ -152,11 +152,6 @@ public class WestCoastDriveTrain {
         bl.setPower(linear + rotation);
         br.setPower(-linear + rotation);
 
-        AbstractOpMode.currentOpMode().telemetry.addData("fl", fl.getPower());
-        AbstractOpMode.currentOpMode().telemetry.addData("fl", fr.getPower());
-        AbstractOpMode.currentOpMode().telemetry.addData("fl", bl.getPower());
-        AbstractOpMode.currentOpMode().telemetry.addData("fl", br.getPower());
-        AbstractOpMode.currentOpMode().telemetry.update();
     }
 
 //TODO reread this and the linear one
