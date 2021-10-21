@@ -56,7 +56,6 @@ public class BarcodeReaderPipeline extends OpenCvPipeline{
 
         inputToCb(firstFrame);
 
-
         region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
         region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
         region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
@@ -67,7 +66,6 @@ public class BarcodeReaderPipeline extends OpenCvPipeline{
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cb, 2);
     }
-
 
     @Override
     public Mat processFrame(Mat input) {

@@ -14,12 +14,18 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import teamcode.Competition.BarcodeReaderPipeline;
 import teamcode.common.AbstractOpMode;
 
 @TeleOp(name = "MasonWebcamTest")
 public class CVInitTest extends AbstractOpMode {
+
+    // Get webcam and create an OpenCvCamera
     WebcamName wc;
     OpenCvCamera camera;
+
+    // global obj
+    static final BarcodeReaderPipeline brp = new BarcodeReaderPipeline();
 
     @Override
     protected void onInitialize() {
@@ -41,8 +47,11 @@ public class CVInitTest extends AbstractOpMode {
             @Override
             public void onOpened() {
 
+                /*
                 // create a rgb2gray mat pipeline
                 class GrayPipeline extends OpenCvPipeline {
+
+
                     Mat gray = new Mat();
 
                     @Override
@@ -51,11 +60,10 @@ public class CVInitTest extends AbstractOpMode {
                         Imgproc.cvtColor(input, gray, Imgproc.COLOR_RGB2GRAY);
                         return gray;
                     }
-                }
+                } */
 
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                GrayPipeline gp = new GrayPipeline();
-                camera.setPipeline(gp);
+                camera.setPipeline(brp);
             }
 
             // Method will be called if the camera cannot be opened
@@ -64,14 +72,15 @@ public class CVInitTest extends AbstractOpMode {
                 telemetry.addData("Camera Init Error", errorCode);
             }
         });
-
     }
 
     @Override
     protected void onStart() {
 
         // Keep the op mode running, to keep the system from coming to a halt
-        while (opModeIsActive());
+        while (opModeIsActive()) {
+            telemetry.addData("val: ", brp.getBarcodePosition());
+        }
     }
 
     @Override
