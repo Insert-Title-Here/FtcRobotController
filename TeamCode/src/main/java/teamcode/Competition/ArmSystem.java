@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.List;
 
 import teamcode.common.AbstractOpMode;
@@ -61,6 +63,9 @@ public class ArmSystem {
     public void intakeDumb(double power){
         leftIntake.setPower(power);
         rightIntake.setPower(-power);
+        AbstractOpMode.currentOpMode().telemetry.addData("left", leftIntake.getPower());
+        AbstractOpMode.currentOpMode().telemetry.addData("right", rightIntake.getPower());
+        AbstractOpMode.currentOpMode().telemetry.update();
     }
 
 

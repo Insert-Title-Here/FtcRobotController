@@ -75,6 +75,13 @@ public class Localizer extends Thread {
     Matrix previousIdealMat;
     Matrix previousVislamMat;
 
+    /**
+     * Adjust the following to weigh the following out of your program
+     *
+     * High Frequency Sensor, TAO = 0
+     * Low Frequency Sensor, TAO = 1
+     *
+     */
 
 
 
@@ -159,6 +166,7 @@ public class Localizer extends Thread {
         };
         previousOdoMat = new Matrix(6,1);
 
+        slamra.start();
         resetEncoders();
     }
 
@@ -175,7 +183,6 @@ public class Localizer extends Thread {
         // make sure we reset our accounting of start times
         state.resetUpdateTime();
         startingTime = System.currentTimeMillis();
-        slamra.start();
         if(slamra != null) {
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
             slamra.setPose(slamraStartingPose);
@@ -443,6 +450,7 @@ public class Localizer extends Thread {
         Matrix complementaryStateEstimtate = odoEstimate.add(slamraEstimate); //measured state, Z
 
         double kalmanGain = previousEstimateUncertainty / (previousEstimateUncertainty + MEASUREMENT_VARIANCE);
+
         double currentEstimateUncertainty = (1 - kalmanGain) * previousEstimateUncertainty;
 
 

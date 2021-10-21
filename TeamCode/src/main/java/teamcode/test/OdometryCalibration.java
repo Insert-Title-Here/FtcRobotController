@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
@@ -26,12 +29,12 @@ public class OdometryCalibration extends LinearOpMode {
 
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "FrontRightDrive", rbName = "BackRightDrive", lfName = "FrontLeftDrive", lbName = "BackLeftDrive";
-    String verticalLeftEncoderName = rbName, verticalRightEncoderName = rfName, horizontalEncoderName = lbName;
+    String verticalLeftEncoderName = lbName, verticalRightEncoderName = rfName, horizontalEncoderName = rbName;
 
-    final double PIVOT_SPEED = 0.5;
+    final double PIVOT_SPEED = 1.0;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
-    final double COUNTS_PER_INCH = 920.111004;
+    final double COUNTS_PER_INCH = 1892.30376;//920.111004
 
     ElapsedTime timer = new ElapsedTime();
 
@@ -70,13 +73,13 @@ public class OdometryCalibration extends LinearOpMode {
         //Begin calibration (if robot is unable to pivot at these speeds, please adjust the constant at the top of the code
         while(getZAngle() < 90 && opModeIsActive()){
             right_front.setPower(PIVOT_SPEED);
-            right_back.setPower(-PIVOT_SPEED);
-            left_front.setPower(-PIVOT_SPEED);
+            right_back.setPower(PIVOT_SPEED);
+            left_front.setPower(PIVOT_SPEED);
             left_back.setPower(PIVOT_SPEED);
             if(getZAngle() < 60) {
-                setPowerAll(PIVOT_SPEED, -PIVOT_SPEED, -PIVOT_SPEED, PIVOT_SPEED);
+                setPowerAll(PIVOT_SPEED, PIVOT_SPEED, PIVOT_SPEED, PIVOT_SPEED);
             }else{
-                setPowerAll(PIVOT_SPEED/2, -PIVOT_SPEED/2, -PIVOT_SPEED/2, PIVOT_SPEED/2);
+                setPowerAll(PIVOT_SPEED/2, PIVOT_SPEED/2, PIVOT_SPEED/2, PIVOT_SPEED/2);
             }
 
             telemetry.addData("IMU Angle", getZAngle());
@@ -105,7 +108,7 @@ public class OdometryCalibration extends LinearOpMode {
 
         double wheelBaseSeparation = (2*90*verticalEncoderTickOffsetPerDegree)/(Math.PI*COUNTS_PER_INCH);
 
-        horizontalTickOffset = horizontal.getCurrentPosition()/Math.toRadians(getZAngle());
+        horizontalTickOffset = horizontal.getCurrentPosition()/(COUNTS_PER_INCH * Math.toRadians(getZAngle()));
 
         //Write the constants to text files
         ReadWriteFile.writeFile(wheelBaseSeparationFile, String.valueOf(wheelBaseSeparation));
@@ -163,9 +166,6 @@ public class OdometryCalibration extends LinearOpMode {
         left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        left_front.setDirection(DcMotorSimple.Direction.REVERSE);
-        right_front.setDirection(DcMotorSimple.Direction.REVERSE);
-        right_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         telemetry.addData("Status", "Hardware Map Init Complete");
@@ -178,8 +178,10 @@ public class OdometryCalibration extends LinearOpMode {
      * @return the angle of the robot
      */
     private double getZAngle(){
-        return (-imu.getAngularOrientation().firstAngle);
+        return (imu.getAngularOrientation().firstAngle);
     }
+
+    //AxesReference.INTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES
 
     /**
      * Sets power to all four drive motors
