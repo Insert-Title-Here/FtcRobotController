@@ -8,6 +8,8 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import teamcode.common.AbstractOpMode;
+
 
 //TODO calibrate this pipeline
 //potentially will need to rewrite this as this is a condensed Skystone pipeline,
@@ -20,11 +22,12 @@ public class BarcodeReaderPipeline extends OpenCvPipeline{
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253,98);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,110);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(160,110);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(300,110);
     static final int REGION_WIDTH = 20;
-    static final int REGION_HEIGHT = 20;
+    static final int REGION_HEIGHT = 40;
+
 
     Point region1_pointA = new Point(
             REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -69,14 +72,33 @@ public class BarcodeReaderPipeline extends OpenCvPipeline{
 
     @Override
     public Mat processFrame(Mat input) {
+        Mat workingMat = new Mat();
+        input.copyTo(workingMat);
+        if (workingMat.empty()) {
+            return input;
+        }
+        Imgproc.cvtColor(workingMat, workingMat, Imgproc.COLOR_RGB2YCrCb);
+
+
+        Mat left = workingMat.submat((int) REGION1_TOPLEFT_ANCHOR_POINT.x, (int) REGION1_TOPLEFT_ANCHOR_POINT.y, REGION_WIDTH, REGION_HEIGHT);
+        Mat center = workingMat.submat((int) REGION2_TOPLEFT_ANCHOR_POINT.x, (int) REGION2_TOPLEFT_ANCHOR_POINT.y, REGION_WIDTH, REGION_HEIGHT);
+        Mat right = workingMat.submat((int) REGION3_TOPLEFT_ANCHOR_POINT.x, (int) REGION3_TOPLEFT_ANCHOR_POINT.y, REGION_WIDTH, REGION_HEIGHT);
+
         Imgproc.rectangle(input, region1_pointA, region1_pointB, GREEN, 1);
         Imgproc.rectangle(input, region2_pointA, region2_pointB, GREEN, 1);
         Imgproc.rectangle(input, region3_pointA, region3_pointB, GREEN, 1);
-        inputToCb(input);
 
-        avg1 = (int)Core.mean(region1_Cb).val[0];
-        avg2 = (int)Core.mean(region2_Cb).val[0];
-        avg3 = (int)Core.mean(region3_Cb).val[0];
+        //inputToCb(input);
+
+
+        avg1 = (int)Core.sumElems(left).val[2];
+        avg2 = (int)Core.sumElems(center).val[2];
+        avg3 = (int)Core.sumElems(right).val[2];
+
+        AbstractOpMode.currentOpMode().telemetry.addData("average 1", avg1);
+        AbstractOpMode.currentOpMode().telemetry.addData("average 2", avg2);
+        AbstractOpMode.currentOpMode().telemetry.addData("average 3", avg3);
+        AbstractOpMode.currentOpMode().telemetry.update();
 
         int max = Math.max(Math.max(avg1, avg2), avg3);
 

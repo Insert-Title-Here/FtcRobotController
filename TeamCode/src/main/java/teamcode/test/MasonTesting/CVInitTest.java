@@ -25,7 +25,7 @@ public class CVInitTest extends AbstractOpMode {
     OpenCvCamera camera;
 
     // global obj
-    static final BarcodeReaderPipeline brp = new BarcodeReaderPipeline();
+    static final BarcodePipeline brp = new BarcodePipeline();
 
     @Override
     protected void onInitialize() {
@@ -39,6 +39,7 @@ public class CVInitTest extends AbstractOpMode {
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
+        camera.setPipeline(brp);
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -63,7 +64,6 @@ public class CVInitTest extends AbstractOpMode {
                 } */
 
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                camera.setPipeline(brp);
             }
 
             // Method will be called if the camera cannot be opened
@@ -79,7 +79,6 @@ public class CVInitTest extends AbstractOpMode {
 
         // Keep the op mode running, to keep the system from coming to a halt
         while (opModeIsActive()) {
-            telemetry.addData("val: ", brp.getBarcodePosition());
         }
     }
 
