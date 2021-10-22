@@ -7,17 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 
-import teamcode.Competition.BarcodeReaderPipeline;
+import teamcode.Competition.BarcodePipeline;
 import teamcode.common.AbstractOpMode;
 
-@TeleOp(name = "MasonWebcamTest")
+@TeleOp(name = "AutoCalibrate")
 public class CVInitTest extends AbstractOpMode {
 
     // Get webcam and create an OpenCvCamera
@@ -78,13 +75,7 @@ public class CVInitTest extends AbstractOpMode {
     protected void onStart() {
 
         // Keep the op mode running, to keep the system from coming to a halt
-        while (opModeIsActive()) {
-            telemetry.addData("position", brp.position);
-            telemetry.addData("avg1", brp.avg1);
-            telemetry.addData("avg2", brp.avg2);
-            telemetry.addData("avg3", brp.avg3);
-            telemetry.update();
-        }
+        while (opModeIsActive()) { }
     }
 
     @Override
