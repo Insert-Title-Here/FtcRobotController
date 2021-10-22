@@ -79,6 +79,11 @@ public class CVInitTest extends AbstractOpMode {
 
         // Keep the op mode running, to keep the system from coming to a halt
         while (opModeIsActive()) {
+            telemetry.addData("position", brp.position);
+            telemetry.addData("avg1", brp.avg1);
+            telemetry.addData("avg2", brp.avg2);
+            telemetry.addData("avg3", brp.avg3);
+            telemetry.update();
         }
     }
 
