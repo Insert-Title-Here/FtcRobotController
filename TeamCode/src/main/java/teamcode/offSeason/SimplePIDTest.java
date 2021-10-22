@@ -16,24 +16,24 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.RobotPositionStateUpdater;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
+import teamcode.common.WestCoastDriveTrain;
 
 @Autonomous(name="PID test")
 public class SimplePIDTest extends AbstractOpMode {
 
     Localizer localizer;
-    MecanumDriveTrain driveTrain;
+    WestCoastDriveTrain driveTrain;
 
     @Override
     protected void onInitialize() {
         localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 10);
-        driveTrain = new MecanumDriveTrain(hardwareMap, localizer);
-        localizer.setPriority(10);
+        driveTrain = new WestCoastDriveTrain(hardwareMap, localizer);
     }
 
     @Override
     protected void onStart() {
         localizer.start();
-        driveTrain.moveToPosition(new Vector2D(0,24), 12, 0 , 0);
+        driveTrain.moveToPosition(new Vector2D(0,24), 12, 0);
         //driveTrain.moveToPosition(new Vector2D(0,0), 0, Math.PI / 2.0, 0.4);
         //driveTrain.moveToRotation(Math.PI / 2.0, 0.4);
 

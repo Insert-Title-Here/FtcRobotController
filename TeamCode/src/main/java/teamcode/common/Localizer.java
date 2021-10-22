@@ -31,8 +31,8 @@ public class Localizer extends Thread {
     private static final double TICKS_PER_REV = 8192;
     private static final double WHEEL_RADIUS = 1.421; //1.181 for 60 mm, 1.417 for 72mm
     private static final double GEAR_RATIO = 1;
-    private static final double CHASSIS_LENGTH = 12.4; //new bot + 2.83465
-    private static final double ODO_XY_DISTANCE = 1.925;
+    private static final double CHASSIS_LENGTH = 10.2; //new bot + 2.83465
+    private static final double ODO_XY_DISTANCE = 1.972;
     private static final double WINCH_RADIUS = 1;
 
     //debugging constants, not used very much
@@ -64,11 +64,13 @@ public class Localizer extends Thread {
     private long minElapsedTime, maxElapsedTime;
 
     //Kalman filter parameters, the ones declared up here must also be tuned for EVERY ROBOT
-    Transform2d cameraToRobot = new Transform2d(new Translation2d(9 * 0.0254, 0), new Rotation2d());
+
+    private static final double INCHES_TO_METERS = 0.0254;
+    Transform2d cameraToRobot = new Transform2d(new Translation2d(9 * INCHES_TO_METERS, 0), new Rotation2d());
     private static T265Camera slamra;
     T265Camera.CameraUpdate currentSlamraPos;
     private Pose2d slamraStartingPose;
-    private static final double TAO = 0;
+    private static final double TAO = 0.98;
     private static final double MEASUREMENT_VARIANCE = 0.01; // 0.01 + 0.02? account more for odo variance
     private double previousEstimateUncertainty;
     Matrix previousOdoMat;
@@ -134,7 +136,7 @@ public class Localizer extends Thread {
             slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         }
-        slamraStartingPose = new Pose2d(position.getY() * 0.0254, position.getX() * 0.0254, new Rotation2d(globalRads));
+        slamraStartingPose = new Pose2d(position.getY() * INCHES_TO_METERS, position.getX() * INCHES_TO_METERS, new Rotation2d(globalRads));
         this.previousEstimateUncertainty = previousEstimateUncertainty; //this should always be a high value otherwise bad things will happen
         minElapsedTime = 0;
         maxElapsedTime = 0;
@@ -248,12 +250,12 @@ public class Localizer extends Thread {
         data1 = hub1.getBulkInputData();
         double innerArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical));
         // encoder orientation is the same, which means they generate opposite rotation signals
-        double outerArcLength = - encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));
-        double horizontalArcLength = -encoderTicksToInches(data1.getMotorCurrentPosition(horizontal));
+        double outerArcLength =  encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));
+        double horizontalArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(horizontal));
 
         double leftVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(leftVertical));
         double rightVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(rightVertical));
-        double horizontalVelocity = -encoderTicksToInches(data1.getMotorVelocity(horizontal));
+        double horizontalVelocity = encoderTicksToInches(data1.getMotorVelocity(horizontal));
 
         // calculate positions
         double deltaInnerArcLength = innerArcLength - previousInnerArcLength;
@@ -326,12 +328,12 @@ public class Localizer extends Thread {
 
         double innerArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical));
         // encoder orientation is the same, which means they generate opposite rotation signals
-        double outerArcLength = - encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));
-        double horizontalArcLength = -encoderTicksToInches(data1.getMotorCurrentPosition(horizontal));
+        double outerArcLength =  encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));
+        double horizontalArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(horizontal));
 
         double leftVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(leftVertical));
-        double rightVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(rightVertical));
-        double horizontalVelocity = -encoderTicksToInches(data1.getMotorVelocity(horizontal));
+        double rightVerticalVelocity = -encoderTicksToInches(data1.getMotorVelocity(rightVertical));
+        double horizontalVelocity = encoderTicksToInches(data1.getMotorVelocity(horizontal));
 
         // calculate positions
         double deltaInnerArcLength = innerArcLength - previousInnerArcLength;
@@ -381,11 +383,11 @@ public class Localizer extends Thread {
         //matrix declarations
         Pose2d slamraEstimatePose = currentSlamraPos.pose;
         double[][] vislamMat = {
-                {-slamraEstimatePose.getY() / 0.0254},
-                {slamraEstimatePose.getX() / 0.0254},
+                {-slamraEstimatePose.getY() / INCHES_TO_METERS},
+                {slamraEstimatePose.getX() / INCHES_TO_METERS},
                 {slamraEstimatePose.getRotation().getRadians()},
-                {-currentSlamraPos.velocity.vyMetersPerSecond / 0.0254},
-                {currentSlamraPos.velocity.vxMetersPerSecond / 0.0254},
+                {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
+                {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
                 {currentSlamraPos.velocity.omegaRadiansPerSecond}
         };
 //        if(abs(vislamMat[3][0]) < 0.2){
@@ -503,6 +505,18 @@ public class Localizer extends Thread {
 
     public int getLeftVerticalOdometerPosition(){
         return leftVertical.getCurrentPosition();
+    }
+
+    public double getLeftVerticalOdometerVelocity(){
+        return leftVertical.getVelocity();
+    }
+
+    public double getRightVerticalOdometerVelocity(){
+        return rightVertical.getVelocity();
+    }
+
+    public double getHorizontalOdometerVelocity(){
+        return horizontal.getVelocity();
     }
 
     public int getRightVerticalOdometerPosition(){

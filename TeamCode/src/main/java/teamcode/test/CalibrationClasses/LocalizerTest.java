@@ -1,4 +1,4 @@
-package teamcode.test;
+package teamcode.test.CalibrationClasses;
 
 import android.graphics.drawable.VectorDrawable;
 
@@ -24,7 +24,7 @@ public class LocalizerTest extends AbstractOpMode {
     Thread movementAssignment;
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0),0);
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0),0,10000);
         driveTrain = new MecanumDriveTrain(hardwareMap, localizer);
     }
 

@@ -22,24 +22,12 @@ import teamcode.common.WestCoastDriveTrain;
 @TeleOp(name="OdoPushTest")
 public class OdometryDiagnostic extends AbstractOpMode {
 
-    Localizer localizer;
     WestCoastDriveTrain drive;
-    DcMotor leftVertical, rightVertical, horizontal;
-
-
+    Localizer localizer;
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
-        drive = new WestCoastDriveTrain(hardwareMap);
-        leftVertical = hardwareMap.dcMotor.get("FrontRightDrive");
-        horizontal = hardwareMap.dcMotor.get("BackLeftDrive");
-        rightVertical = hardwareMap.dcMotor.get("BackRightDrive");
-
-        leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 10);
         //localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0);
         //movement = new PurePursuitMovement(localizer);
         //allPoints.add(new CurvePoint(25, 0, 0.5, 0.3, 5, 0, 1));
@@ -52,10 +40,12 @@ public class OdometryDiagnostic extends AbstractOpMode {
     protected void onStart() {
         localizer.start();
         while(opModeIsActive()){
-            telemetry.addData("horizontal", leftVertical.getCurrentPosition());
-            telemetry.addData("rightVertical", rightVertical.getCurrentPosition());
-            telemetry.addData("leftVertica;", horizontal.getCurrentPosition());
-
+            telemetry.addData("horizontal", localizer.getHorizontalOdometerPosition());
+            telemetry.addData("rightVertical", localizer.getRightVerticalOdometerPosition());
+            telemetry.addData("leftVertical", localizer.getLeftVerticalOdometerPosition());
+            telemetry.addData("lvVelocity", localizer.getLeftVerticalOdometerVelocity());
+            telemetry.addData("rvVelocity", localizer.getRightVerticalOdometerVelocity());
+            telemetry.addData("hVelocity", localizer.getHorizontalOdometerVelocity());
 
             //movement.followCurve(allPoints, 0);
 

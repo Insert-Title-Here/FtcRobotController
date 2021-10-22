@@ -12,26 +12,27 @@ import teamcode.common.Utils;
 public class OdoWinchTest extends AbstractOpMode {
 
     Servo leftOdoWinch, rightOdoWinch;
+    final double LIFT_POSITION = 0.85;
 
     @Override
     protected void onInitialize() {
         leftOdoWinch = hardwareMap.servo.get("LeftOdoWinch");
         rightOdoWinch = hardwareMap.servo.get("RightOdoWinch");
-        leftOdoWinch.setDirection(Servo.Direction.REVERSE);
+        leftOdoWinch.setPosition(0);
+        rightOdoWinch.setPosition(0);
+        //leftOdoWinch.setDirection(Servo.Direction.REVERSE);
     }
 
     @Override
     protected void onStart() {
-        leftOdoWinch.setPosition(1);
-        rightOdoWinch.setPosition(1);
-        telemetry.addData("running to 0.5", "");
-        telemetry.update();
-        Utils.sleep(5000);
-        telemetry.addData("running to 0", "");
-        telemetry.update();
-        leftOdoWinch.setPosition(0.5);
-        rightOdoWinch.setPosition(0.5);
-        while(opModeIsActive());
+        leftOdoWinch.setPosition(LIFT_POSITION);
+        rightOdoWinch.setPosition(LIFT_POSITION);
+        while(opModeIsActive()){
+            telemetry.addData("position", leftOdoWinch.getPosition());
+            telemetry.addData("position", rightOdoWinch.getPosition());
+            telemetry.update();
+
+        }
 
     }
 
