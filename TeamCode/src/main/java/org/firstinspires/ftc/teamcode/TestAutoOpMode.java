@@ -78,6 +78,7 @@ public class TestAutoOpMode extends LinearOpMode {
             int[] motorTics = drive.getEncoders();
 
             // 435 tics is about 1 foot
+            // 537.7 tics per revolution
             // If the robot has travelled farther than a foot, stop it
             if (motorTics[1] > 435) {
                 drive.brake();
