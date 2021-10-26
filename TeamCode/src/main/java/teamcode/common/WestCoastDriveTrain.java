@@ -29,9 +29,6 @@ public class WestCoastDriveTrain {
     private final double WHEEL_RADIUS = 0; //TODO measure
 
 
-    public WestCoastDriveTrain(Localizer localizer, HardwareMap hardwareMap){
-
-    }
 
     public WestCoastDriveTrain(HardwareMap hardwareMap){
         fl = hardwareMap.get(ExpansionHubMotor.class,"FrontLeftDrive");
@@ -56,7 +53,15 @@ public class WestCoastDriveTrain {
 
     //TODO implement correctly
     private void correctMotors() {
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 

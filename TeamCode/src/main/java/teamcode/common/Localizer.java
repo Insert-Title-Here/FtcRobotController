@@ -32,7 +32,7 @@ public class Localizer extends Thread {
     private static final double WHEEL_RADIUS = 1.421; //1.181 for 60 mm, 1.417 for 72mm
     private static final double GEAR_RATIO = 1;
     private static final double CHASSIS_LENGTH = 10.2; //new bot + 2.83465
-    private static final double ODO_XY_DISTANCE = 1.972;
+    private static final double ODO_XY_DISTANCE = -1.972;
     private static final double WINCH_RADIUS = 1;
 
     //debugging constants, not used very much
@@ -66,7 +66,7 @@ public class Localizer extends Thread {
     //Kalman filter parameters, the ones declared up here must also be tuned for EVERY ROBOT
 
     private static final double INCHES_TO_METERS = 0.0254;
-    Transform2d cameraToRobot = new Transform2d(new Translation2d(9 * INCHES_TO_METERS, 0), new Rotation2d());
+    Transform2d cameraToRobot = new Transform2d(new Translation2d(0, 9 * INCHES_TO_METERS), new Rotation2d());
     private static T265Camera slamra;
     T265Camera.CameraUpdate currentSlamraPos;
     private Pose2d slamraStartingPose;
@@ -188,6 +188,7 @@ public class Localizer extends Thread {
         if(slamra != null) {
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
             slamra.setPose(slamraStartingPose);
+
         }
         // max speed 300 Hz)
         while (!stop.get()) {
@@ -323,17 +324,16 @@ public class Localizer extends Thread {
         // read sensor data
         data1 = hub1.getBulkInputData();
         currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-//        NormalizedRGBA houseRGBA = houseSensor.getNormalizedColors();
         RobotPositionStateUpdater.RobotPositionState currentState = getCurrentState();
 
         double innerArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical));
         // encoder orientation is the same, which means they generate opposite rotation signals
-        double outerArcLength =  encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));
-        double horizontalArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(horizontal));
+        double outerArcLength =  -encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));
+        double horizontalArcLength = -encoderTicksToInches(data1.getMotorCurrentPosition(horizontal));
 
         double leftVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(leftVertical));
         double rightVerticalVelocity = -encoderTicksToInches(data1.getMotorVelocity(rightVertical));
-        double horizontalVelocity = encoderTicksToInches(data1.getMotorVelocity(horizontal));
+        double horizontalVelocity = -encoderTicksToInches(data1.getMotorVelocity(horizontal));
 
         // calculate positions
         double deltaInnerArcLength = innerArcLength - previousInnerArcLength;
@@ -343,10 +343,14 @@ public class Localizer extends Thread {
         double arcLength = (deltaInnerArcLength + deltaOuterArcLength) / 2.0;
         double deltaVerticalDiff = (deltaInnerArcLength - deltaOuterArcLength) / 2.0;
 
+//        AbstractOpMode.currentOpMode().telemetry.addData("deltaVerticalDiff:", deltaVerticalDiff);
+//        AbstractOpMode.currentOpMode().telemetry.addData("arclength:", arcLength);
+//        AbstractOpMode.currentOpMode().telemetry.update();
+
 
         // CHASSIS_LENGTH is the diamater of the circle.
         // phi is arclength divided by radius for small phi
-        double phi =  (2.0 * arcLength) / (CHASSIS_LENGTH);
+        double phi =  (2.0 * deltaVerticalDiff) / (CHASSIS_LENGTH);
         double hypotenuse;
 
         // When phi is small, the full formula is numerically unstable.
@@ -456,7 +460,6 @@ public class Localizer extends Thread {
         double currentEstimateUncertainty = (1 - kalmanGain) * previousEstimateUncertainty;
 
 
-
         idealEstimate.multiply(1 - kalmanGain);
         //multiplying only the distance components since we assume constant velocity
         //the kinematic model assumes constant velocity meaning that the values was
@@ -476,6 +479,8 @@ public class Localizer extends Thread {
 
 
         state.updateState(dx, dy, dphi, dvx, dvy, domega);
+
+        //loggingString += state.toString() + "\n";
         startingTime = System.currentTimeMillis();
         previousInnerArcLength = innerArcLength;
         previousOuterArcLength = outerArcLength;
@@ -503,8 +508,8 @@ public class Localizer extends Thread {
         return (int)((TICKS_PER_REV / (WHEEL_RADIUS * 2 * PI * GEAR_RATIO)) * inches);
     }
 
-    public int getLeftVerticalOdometerPosition(){
-        return leftVertical.getCurrentPosition();
+    public double getLeftVerticalOdometerPosition(){
+        return encoderTicksToInches(leftVertical.getCurrentPosition());
     }
 
     public double getLeftVerticalOdometerVelocity(){

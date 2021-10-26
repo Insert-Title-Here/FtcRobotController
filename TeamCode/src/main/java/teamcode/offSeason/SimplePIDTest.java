@@ -33,7 +33,7 @@ public class SimplePIDTest extends AbstractOpMode {
     @Override
     protected void onStart() {
         localizer.start();
-        driveTrain.moveToPosition(new Vector2D(0,24), 12, 0);
+        driveTrain.moveToPosition(new Vector2D(0,24), 24, 0);
         //driveTrain.moveToPosition(new Vector2D(0,0), 0, Math.PI / 2.0, 0.4);
         //driveTrain.moveToRotation(Math.PI / 2.0, 0.4);
 

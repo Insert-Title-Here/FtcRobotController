@@ -14,18 +14,19 @@ import teamcode.common.PurePursuit.PurePursuitMovement;
 import teamcode.common.RobotPositionStateUpdater;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
+import teamcode.common.WestCoastDriveTrain;
 
 @TeleOp(name="Localizer Test")
 public class LocalizerTest extends AbstractOpMode {
 
     Localizer localizer;
-    MecanumDriveTrain driveTrain;
+    WestCoastDriveTrain driveTrain;
     PurePursuitMovement movement;
     Thread movementAssignment;
     @Override
     protected void onInitialize() {
         localizer = new Localizer(hardwareMap, new Vector2D(0,0),0,10000);
-        driveTrain = new MecanumDriveTrain(hardwareMap, localizer);
+        driveTrain = new WestCoastDriveTrain(hardwareMap, localizer);
     }
 
     @Override
@@ -37,8 +38,9 @@ public class LocalizerTest extends AbstractOpMode {
         //driveTrain.moveToRotation( Math.PI/2.0, 0.5);
         while(opModeIsActive()) {
             RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
-            telemetry.addData("", state.toString());
+            telemetry.addData("state", state.toString());
             telemetry.update();
+
         }
 
     }

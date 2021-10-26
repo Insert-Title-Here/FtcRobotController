@@ -20,7 +20,7 @@ import teamcode.common.WestCoastDriveTrain;
 @TeleOp(name="tele op")
 public class OfficialTeleOpScript extends AbstractOpMode {
 
-    WestCoastDriveTrain drive; //TODO change this if necessary
+    WestCoastDriveTrain drive;
     ArmSystem arm;
     Thread driveThread, driverTwoThread;
     Thread armThread;
@@ -41,11 +41,9 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
+        arm = new ArmSystem(hardwareMap, true);
         drive = new WestCoastDriveTrain(hardwareMap);
 
-
-
-        arm = new ArmSystem(hardwareMap, true);
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         //Initialize IMU parameters
@@ -120,8 +118,11 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             arm.adjustUp();
         } else if (gamepad1.dpad_down) {
             arm.adjustDown();
-        } else {
+        } else if(gamepad2.x){
+            arm.scoreDuck();
+        } else{
             arm.intakeDumb(0);
+
         }
     }
 

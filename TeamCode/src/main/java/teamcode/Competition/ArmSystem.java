@@ -1,6 +1,8 @@
 package teamcode.Competition;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -23,7 +25,7 @@ public class ArmSystem {
     //House Servo values
     private static final double INTAKE_POSITION = 0.24;
     private static final double HOUSING_POSITION = 0.42; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
-    private static final double SCORING_POSITION = 0.6;
+    private static final double SCORING_POSITION = 0.5;
 
     private static double LINKAGE_DOWN = 0.28; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_SCORE = 0.7;
@@ -38,6 +40,7 @@ public class ArmSystem {
 
     private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, carouselEncoder;
     private Servo house, linkage;
+    private CRServo carousel;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
 
@@ -47,10 +50,16 @@ public class ArmSystem {
         rightIntake = hardwareMap.dcMotor.get("RightIntake");
         winchMotor = hardwareMap.dcMotor.get("Winch");
         winchEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
-        //carouselEncoder = hardwareMap.dcMotor.get("conveyor");
+        carouselEncoder = hardwareMap.dcMotor.get("CarouselEncoder");
+
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
+        carousel = hardwareMap.get(CRServo.class, "Carousel");
+
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        carousel.setDirection(DcMotorSimple.Direction.REVERSE);
+
         if(isTeleOp){
             house.setPosition(INTAKE_POSITION);
         }else{
@@ -63,9 +72,6 @@ public class ArmSystem {
     public void intakeDumb(double power){
         leftIntake.setPower(power);
         rightIntake.setPower(-power);
-        AbstractOpMode.currentOpMode().telemetry.addData("left", leftIntake.getPower());
-        AbstractOpMode.currentOpMode().telemetry.addData("right", rightIntake.getPower());
-        AbstractOpMode.currentOpMode().telemetry.update();
     }
 
 
@@ -75,8 +81,6 @@ public class ArmSystem {
         linkage.setPosition(LINKAGE_DOWN);
         intakeDumb(intakePower);
         stage = Stage.INTAKING;
-
-
     }
     //will be merged into intake() later
     public void preScore(){
@@ -131,6 +135,20 @@ public class ArmSystem {
         moveSlide(-SLIDE_POWER, 500);
         house.setPosition(INTAKE_POSITION);
 
+    }
+
+    public void scoreDuck() {
+        carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        carouselEncoder.setTargetPosition(40000);
+        carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(carouselEncoder.getCurrentPosition() < carouselEncoder.getTargetPosition() && AbstractOpMode.currentOpMode().opModeIsActive()){
+            carousel.setPower(1);
+        }
+        carousel.setPower(0);
+    }
+
+    public void setWinchPower(double v) {
+        winchMotor.setPower(0.5);
     }
 
     private enum Stage{
