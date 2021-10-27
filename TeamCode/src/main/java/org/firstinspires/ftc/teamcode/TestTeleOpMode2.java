@@ -29,11 +29,15 @@
 
 package org.firstinspires.ftc.teamcode;
 
+
+import static java.lang.Math.round;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -58,9 +62,13 @@ public class TestTeleOpMode2 extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor carousel;
+    DcMotor extender;
+    Servo grabber;
 
     Thread armThread;
 
+    boolean isExtended = false;
+    boolean isGrabbing = false;
     @Override
     public void runOpMode() {
         DriveTrain drive = new DriveTrain(hardwareMap);
@@ -68,7 +76,12 @@ public class TestTeleOpMode2 extends LinearOpMode {
         telemetry.update();
 
         carousel = hardwareMap.get(DcMotor.class, "Carousel");
-        carousel.setDirection(DcMotor.Direction.FORWARD);
+        carousel.setDirection(DcMotor.Direction.REVERSE);
+
+        extender = hardwareMap.get(DcMotor.class, "ExtensionArm");
+        extender.setDirection(DcMotor.Direction.FORWARD);
+
+        grabber = hardwareMap.get(Servo.class, "Grabber");
 
         armThread = new Thread(){
             @Override
@@ -82,6 +95,9 @@ public class TestTeleOpMode2 extends LinearOpMode {
         waitForStart();
         runtime.reset();
         armThread.start();
+        //extendArm(200);
+        grabber.setPosition(0.5);
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -95,6 +111,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Extender Tics", "Tics: " + extender.getCurrentPosition());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
@@ -102,36 +119,91 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
     private void armUpdate() {
         if (gamepad1.left_trigger > 0.1) {
-            carousel.setPower(-gamepad1.left_trigger);
+            carousel.setPower(gamepad1.left_trigger);
         } else if (gamepad1.right_trigger > 0.1) {
-            carousel.setPower(gamepad1.right_trigger);
+            carousel.setPower(-gamepad1.right_trigger);
         } else {
             carousel.setPower(0);
         }
 
         if (gamepad1.a) {
-            spinCarousel(5000, 0.5);
+            spinCarousel(4000);
         }
 
+        // ~6.28 inches per rotation, need to extend 28 inches, Don't Overshoot!!!,
+        // 4.45 rotations, ~2220.4 tics/rotation
+        if (gamepad1.b && !isExtended) {
+            isExtended = true;
+            extendArm(2000);
+        }
+
+        if (gamepad1.x && isExtended) {
+            isExtended = false;
+            extendArm(-2000);
+        }
+
+        if (gamepad1.left_bumper) {
+            extendArm(-200);
+        }
+        if (gamepad1.y) {
+            if(isGrabbing){
+                grabber.setPosition(1);
+                isGrabbing = false;
+
+            }else{
+                grabber.setPosition(0.5);
+                isGrabbing = true;
+            }
+        }
     }
 
-    public void spinCarousel(int tics, double power) {
+    public void spinCarousel(int tics) {
+
+
+
         carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         carousel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        carousel.setTargetPosition(-tics);
+        carousel.setTargetPosition(tics);
 
-        carousel.setPower(-power);
+        double power;
+
+        carousel.setPower(0.3);
 
         while (carousel.isBusy()) {
-
+            power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
+            if (power < 0.3) {
+                carousel.setPower(0.3);
+            } else if (power > 1){
+                carousel.setPower(1);
+            } else {
+                carousel.setPower(power);
+            }
         }
 
         carousel.setPower(0);
 
         carousel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+    }
+
+    public void extendArm(int tics) {
+        extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        extender.setTargetPosition(tics);
+
+        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        extender.setPower(1);
+
+        while (extender.isBusy()) {
+
+        }
+
+        extender.setPower(0);
+
+        extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 }

@@ -16,13 +16,21 @@ public class DriveTrain {
 
     DcMotor[] motors;
 
+    double power;
+
+    // Makes it easier to remember which is which
+    int LINEAR = 0;
+    int ROTATION = 1;
+
+
+
     public DriveTrain(HardwareMap hardwareMap) {
         lf  = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
         rf = hardwareMap.get(DcMotor.class, "RightFrontDrive");
         //lb = hardwareMap.get(DcMotor.class, "LeftBackDrive");
         //rb = hardwareMap.get(DcMotor.class, "RightBackDrive");
 
-        motors = new DcMotor[]{lf, rf, lb, rb};
+        motors = new DcMotor[]{lf, rf}; //motors = new DcMotor[]{lf, rf, lb, rb};
 
         lf.setDirection(Direction.FORWARD);
         rf.setDirection(Direction.REVERSE); //keep in mind that this also reverses direction of encoders
@@ -64,11 +72,49 @@ public class DriveTrain {
         //rb.setPower(linear + rotational);
     }
 
+    public void goToPosition (int tics, int mode) {
+        for(DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setTargetPosition(tics);
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        if(mode == 1) {
+            rf.setDirection(Direction.REVERSE);
+            rb.setDirection(Direction.REVERSE);
+        }
+
+        setPower(1, 0);
+
+        while (lf.isBusy()) {
+            power = Math.abs(lf.getCurrentPosition() - tics) / (double) tics;
+            if (power < 0.1) {
+                setPower(0.3, 0);
+            } else if (power > 1) {
+                setPower(1, 0);
+            } else {
+                setPower(power, 0);
+            }
+        }
+
+        brake();
+
+        for(DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        if(mode == 1) {
+            rf.setDirection(Direction.FORWARD);
+            //rb.setDirection(Direction.FORWARD);
+        }
+    }
+
     //probably want to use a bulk read for this, set up a sophisticated control loop,
     //for now its ok but a later season thing maybe, feel free to ask me about it 
     public int[] getEncoders() {
-        return new int[]{lf.getCurrentPosition(), rf.getCurrentPosition(),
-                lb.getCurrentPosition(), rb.getCurrentPosition()};
+        return new int[]{lf.getCurrentPosition(), rf.getCurrentPosition()};
+        //return new int[]{lf.getCurrentPosition(), rf.getCurrentPosition(),
+        //                lb.getCurrentPosition(), rb.getCurrentPosition()};
 
     }
 
