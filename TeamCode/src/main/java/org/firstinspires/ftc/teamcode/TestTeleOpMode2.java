@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+
 import static java.lang.Math.round;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -118,11 +119,11 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
     private void armUpdate() {
         if (gamepad1.left_trigger > 0.1) {
-            extender.setPower(gamepad1.left_trigger);
+            carousel.setPower(gamepad1.left_trigger);
         } else if (gamepad1.right_trigger > 0.1) {
-            extender.setPower(-gamepad1.right_trigger);
+            carousel.setPower(-gamepad1.right_trigger);
         } else {
-            extender.setPower(0);
+            carousel.setPower(0);
         }
 
         if (gamepad1.a) {
@@ -168,11 +169,11 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         double power;
 
-        carousel.setPower(0.1);
+        carousel.setPower(0.3);
 
         while (carousel.isBusy()) {
             power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
-            if (power < 0.1) {
+            if (power < 0.3) {
                 carousel.setPower(0.3);
             } else if (power > 1){
                 carousel.setPower(1);
@@ -190,9 +191,9 @@ public class TestTeleOpMode2 extends LinearOpMode {
     public void extendArm(int tics) {
         extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         extender.setTargetPosition(tics);
+
+        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         extender.setPower(1);
 

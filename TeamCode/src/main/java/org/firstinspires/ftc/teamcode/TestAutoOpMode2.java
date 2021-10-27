@@ -31,11 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
 
 
 /**
@@ -53,7 +49,7 @@ import com.qualcomm.robotcore.util.Range;
 
 @Autonomous(name="TestAutoOpMode", group="Linear Opmode")
 //@Disabled
-public class TestAutoOpMode extends LinearOpMode {
+public class TestAutoOpMode2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -65,9 +61,6 @@ public class TestAutoOpMode extends LinearOpMode {
 
         DriveTrain drive = new DriveTrain(hardwareMap);
 
-        double power;
-        int targetTics = 435;
-
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
 
@@ -78,27 +71,14 @@ public class TestAutoOpMode extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Store the number of tics the motors have rotated into a variable
-            int leftTics = drive.lf.getCurrentPosition();
-            int rightTics = drive.rf.getCurrentPosition();
-
-            // 435 tics is about 1 foot
-            // 537.7 tics per revolution
-            // If the robot has travelled farther than a foot, stop it
-            power = 1.0 - (1.0 / (targetTics - leftTics));
-            if (leftTics > targetTics) {
-                drive.brake();
-
-            } else {
-                drive.setPower(.5, 0);
-            }
+            drive.goToPosition(2000, drive.LINEAR);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower)
-            telemetry.addData("Left Tics", "Tics: " + leftTics);
-            telemetry.addData("Right Tics", "Tics: " + rightTics);
-            telemetry.addData("Power", "Power: " + power);
+            telemetry.addData("Left Tics", "Tics: " + drive.lf.getCurrentPosition());
+            telemetry.addData("Right Tics", "Tics: " + drive.rf.getCurrentPosition());
+            telemetry.addData("Power", "Power: " + drive.power);
             telemetry.update();
         }
     }
