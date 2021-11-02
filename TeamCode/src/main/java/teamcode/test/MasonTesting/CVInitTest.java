@@ -30,7 +30,7 @@ public class CVInitTest extends AbstractOpMode {
         // Init webcam and create a cam object using CvFactory
         // Make sure to have the name of the webcam set in the config settings of the robot
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        wc = hardwareMap.get(WebcamName.class, "webcamDevice1");
+        wc = hardwareMap.get(WebcamName.class, "Webcam");
 
         // W/ or W/ out live preview
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);

@@ -24,10 +24,10 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.24;
-    private static final double HOUSING_POSITION = 0.42; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
-    private static final double SCORING_POSITION = 0.5;
+    private static final double HOUSING_POSITION = 0.37; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
+    private static final double SCORING_POSITION = 0.62;
 
-    private static double LINKAGE_DOWN = 0.28; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
+    private static final double LINKAGE_DOWN = 0.28; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_SCORE = 0.7;
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -38,7 +38,7 @@ public class ArmSystem {
 
     private static final double SLIDE_POWER = 1.0;
 
-    private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, carouselEncoder;
+    private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder;
     private Servo house, linkage;
     private CRServo carousel;
     RobotPositionStateUpdater.RobotPositionState currentState;
@@ -50,14 +50,12 @@ public class ArmSystem {
         rightIntake = hardwareMap.dcMotor.get("RightIntake");
         winchMotor = hardwareMap.dcMotor.get("Winch");
         winchEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
-        carouselEncoder = hardwareMap.dcMotor.get("CarouselEncoder");
 
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
         carousel = hardwareMap.get(CRServo.class, "Carousel");
 
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carousel.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if(isTeleOp){
@@ -76,9 +74,10 @@ public class ArmSystem {
 
 
 
-    public void intake(double intakePower){
-        house.setPosition(INTAKE_POSITION);
-        linkage.setPosition(LINKAGE_DOWN);
+    public void intake(double intakePower, boolean isAuto){
+        if(isAuto){
+            lowerLinkage();
+        }
         intakeDumb(intakePower);
         stage = Stage.INTAKING;
     }
@@ -116,16 +115,6 @@ public class ArmSystem {
 
     }
 
-    public void adjustUp() {
-        linkage.setPosition(LINKAGE_DOWN + 0.02);
-        LINKAGE_DOWN += 0.02;
-    }
-
-    public void adjustDown() {
-        linkage.setPosition(LINKAGE_DOWN - 0.02);
-        LINKAGE_DOWN -= 0.02;
-
-    }
     //temporary tele op scoring function w/o color sensor
     public void score(){
         house.setPosition(SCORING_POSITION);
@@ -137,18 +126,14 @@ public class ArmSystem {
 
     }
 
-    public void scoreDuck() {
-        carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        carouselEncoder.setTargetPosition(40000);
-        carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(carouselEncoder.getCurrentPosition() < carouselEncoder.getTargetPosition() && AbstractOpMode.currentOpMode().opModeIsActive()){
-            carousel.setPower(1);
-        }
-        carousel.setPower(0);
-    }
 
     public void setWinchPower(double v) {
-        winchMotor.setPower(0.5);
+        winchMotor.setPower(v);
+    }
+
+    public void lowerLinkage() {
+        house.setPosition(INTAKE_POSITION);
+        linkage.setPosition(LINKAGE_DOWN);
     }
 
     private enum Stage{
@@ -188,16 +173,14 @@ public class ArmSystem {
     }
 
     //needs to be rewritten if the conveyor is implemented
-    public void scoreAuto(BarcodeReaderPipeline.BarcodePosition position){
+    public void scoreAuto(BarcodePipeline.BarcodePosition position){
         linkage.setPosition(LINKAGE_SCORE);
         Utils.sleep(200);
-        if(position == BarcodeReaderPipeline.BarcodePosition.LEFT){
-            moveSlide(SLIDE_POWER, LOW_POSITION);
-
-        }else if(position == BarcodeReaderPipeline.BarcodePosition.CENTER){
+        if(position == BarcodePipeline.BarcodePosition.LEFT){ ;
+        }else if(position == BarcodePipeline.BarcodePosition.CENTER || position == BarcodePipeline.BarcodePosition.LEFT){
             moveSlide(SLIDE_POWER, MEDIUM_POSITION);
 
-        }else if(position == BarcodeReaderPipeline.BarcodePosition.RIGHT){
+        }else if(position == BarcodePipeline.BarcodePosition.RIGHT){
             moveSlide(SLIDE_POWER, TOP_POSITION);
         }
         house.setPosition(SCORING_POSITION);

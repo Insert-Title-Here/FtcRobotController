@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.spartronics4915.lib.T265Camera;
 
@@ -18,6 +19,9 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Math.*;
@@ -29,18 +33,25 @@ public class Localizer extends Thread {
 
     //odometry wheel constants, MUST BE CALIBRATED FOR EACH ROBOT
     private static final double TICKS_PER_REV = 8192;
-    private static final double WHEEL_RADIUS = 1.421; //1.181 for 60 mm, 1.417 for 72mm
+    private static final double WHEEL_DIAMETER = 1.378; //1.181 for 60 mm, 1.417 for 72mm
     private static final double GEAR_RATIO = 1;
-    private static final double CHASSIS_LENGTH = 10.2; //new bot + 2.83465
-    private static final double ODO_XY_DISTANCE = -1.972;
+    private static final double CHASSIS_LENGTH = 6.478;
+    private static final double ODO_XY_DISTANCE = 4.05; //x value
+    private static final double ODO_YX_DISTANCE = 1; //Y value
     private static final double WINCH_RADIUS = 1;
 
+
     //debugging constants, not used very much
-    File loggingFile = AppUtil.getInstance().getSettingsFile("LinearEncoderReadings.txt");
-    public String loggingString;
+
+    File loggingFile = AppUtil.getInstance().getSettingsFile("Variance.txt");
+    File secondaryLoggingFile = AppUtil.getInstance().getSettingsFile("Phi.txt");
+    File tertiaryloggingFile = AppUtil.getInstance().getSettingsFile("Hypotenuse.txt");
+    File fourthLoggingFile = AppUtil.getInstance().getSettingsFile("Rotation.txt");
+    File fifthLoggingFile = AppUtil.getInstance().getSettingsFile("vomega.txt");
+    File sixthLoggingFile = AppUtil.getInstance().getSettingsFile("vy.txt");
+    public String loggingString, secondaryLoggingString, tertiaryLoggingString, fourthLoggingString, fifthLoggingString, sixthLoggingString;
+    private int iterator;
     //-2.641358450698 - (-2.641358450698 * 1.2)
-
-
 
 
 
@@ -70,12 +81,17 @@ public class Localizer extends Thread {
     private static T265Camera slamra;
     T265Camera.CameraUpdate currentSlamraPos;
     private Pose2d slamraStartingPose;
-    private static final double TAO = 0.98;
+    private static double TAO = 1.0; //0.9 optimal
     private static final double MEASUREMENT_VARIANCE = 0.01; // 0.01 + 0.02? account more for odo variance
     private double previousEstimateUncertainty;
     Matrix previousOdoMat;
     Matrix previousIdealMat;
     Matrix previousVislamMat;
+
+    //Game specific fields
+    Servo odoWinch, secondaryOdoWinch;
+    OdoState odoState;
+
 
     /**
      * Adjust the following to weigh the following out of your program
@@ -100,6 +116,7 @@ public class Localizer extends Thread {
         maxElapsedTime = 0;
         hub1 = hardwareMap.get(ExpansionHubEx.class,"Control Hub");
         loggingString = "";
+        secondaryLoggingString = "";
         //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
         // initialize hardware
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -115,6 +132,8 @@ public class Localizer extends Thread {
         startingTime = System.currentTimeMillis();
         state = new RobotPositionStateUpdater(position, new Vector2D(0,0), globalRads, 0);
         resetEncoders();
+
+        odoState = OdoState.LOWERED;
 
     }
 
@@ -142,12 +161,17 @@ public class Localizer extends Thread {
         maxElapsedTime = 0;
         hub1 = hardwareMap.get(ExpansionHubEx.class,"Control Hub");
         loggingString = "";
+        secondaryLoggingString = "";
         //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
         // initialize hardware
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
         rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);
         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
+
+        odoWinch = hardwareMap.servo.get("OdoWinch");
+        secondaryOdoWinch = hardwareMap.servo.get("SecondaryOdoWinch");
+
         // setup initial position;
         previousHorizontalArcLength = 0;
         previousInnerArcLength = 0;
@@ -166,10 +190,12 @@ public class Localizer extends Thread {
                 {0}, //this whole class assumes constant velocity and it is fair to assume the robot starts still
                 {0}
         };
-        previousOdoMat = new Matrix(6,1);
-
+        previousOdoMat = new Matrix(previousOdoArray);
         slamra.start();
+        //lowerOdo();
         resetEncoders();
+        iterator = 1;
+        odoState = OdoState.LOWERED;
     }
 
 
@@ -229,6 +255,22 @@ public class Localizer extends Thread {
         //leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public void liftOdo(){
+        odoWinch.setPosition(0.4);
+        secondaryOdoWinch.setPosition(0.25);
+        odoState = OdoState.RAISED;
+    }
+
+    public void lowerOdo(){
+        odoWinch.setPosition(0);
+        secondaryOdoWinch.setPosition(0);
+        odoState = OdoState.LOWERED;
+    }
+
+    private enum OdoState{
+        RAISED, LOWERED
+    }
+
     //zeroing the odo
     public void resetOdometersTravelling(){
         leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -249,6 +291,8 @@ public class Localizer extends Thread {
     private synchronized void update() {
         // read sensor data
         data1 = hub1.getBulkInputData();
+
+
         double innerArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical));
         // encoder orientation is the same, which means they generate opposite rotation signals
         double outerArcLength =  encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));
@@ -269,8 +313,9 @@ public class Localizer extends Thread {
 //(deltaOuterArcLength - deltaInnerArcLength)
         // CHASSIS_LENGTH is the diamater of the circle.
         // phi is arclength divided by radius for small phi
-        double phi =  (2.0 * arcLength) / (CHASSIS_LENGTH);
+        double phi =  (2.0 * deltaVerticalDiff) / (CHASSIS_LENGTH);
         double hypotenuse;
+
 
 
         // When phi is small, the full formula is numerically unstable.
@@ -283,7 +328,7 @@ public class Localizer extends Thread {
         }
 
         double horizontalDelta = deltaHorizontalArcLength - (phi * ODO_XY_DISTANCE);
-        double verticalDelta = hypotenuse * cos(phi/2.0)  + deltaVerticalDiff - (phi * CHASSIS_LENGTH / 2.0);
+        double verticalDelta = hypotenuse * cos(phi/2.0)  + deltaVerticalDiff - (phi *ODO_YX_DISTANCE);
 
 
         // calculate velocities
@@ -326,26 +371,30 @@ public class Localizer extends Thread {
         currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         RobotPositionStateUpdater.RobotPositionState currentState = getCurrentState();
 
-        double innerArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical));
-        // encoder orientation is the same, which means they generate opposite rotation signals
-        double outerArcLength =  -encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));
-        double horizontalArcLength = -encoderTicksToInches(data1.getMotorCurrentPosition(horizontal));
+        int leftVerticalTics = data1.getMotorCurrentPosition(leftVertical);
+        int rightVerticalTics = data1.getMotorCurrentPosition(rightVertical);
+        int horizontalTics = data1.getMotorCurrentPosition(horizontal);
 
-        double leftVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(leftVertical));
-        double rightVerticalVelocity = -encoderTicksToInches(data1.getMotorVelocity(rightVertical));
-        double horizontalVelocity = -encoderTicksToInches(data1.getMotorVelocity(horizontal));
+        double innerArcLength = encoderTicksToInches(leftVerticalTics);
+        // encoder orientation is the same, which means they generate opposite rotation signals
+        double outerArcLength =  -encoderTicksToInches(rightVerticalTics);
+        double horizontalArcLength = -encoderTicksToInches(horizontalTics);
+
+//        double leftVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(leftVertical));
+//        double rightVerticalVelocity = -encoderTicksToInches(data1.getMotorVelocity(rightVertical));
+//        double horizontalVelocity = -encoderTicksToInches(data1.getMotorVelocity(horizontal));
 
         // calculate positions
         double deltaInnerArcLength = innerArcLength - previousInnerArcLength;
         double deltaOuterArcLength = outerArcLength - previousOuterArcLength;
         double deltaHorizontalArcLength = horizontalArcLength - previousHorizontalArcLength;
 
+        double leftVerticalVelocity =deltaInnerArcLength / 0.02;
+        double rightVerticalVelocity = deltaOuterArcLength / 0.02;
+        double horizontalVelocity = deltaHorizontalArcLength/ 0.02;
+
         double arcLength = (deltaInnerArcLength + deltaOuterArcLength) / 2.0;
         double deltaVerticalDiff = (deltaInnerArcLength - deltaOuterArcLength) / 2.0;
-
-//        AbstractOpMode.currentOpMode().telemetry.addData("deltaVerticalDiff:", deltaVerticalDiff);
-//        AbstractOpMode.currentOpMode().telemetry.addData("arclength:", arcLength);
-//        AbstractOpMode.currentOpMode().telemetry.update();
 
 
         // CHASSIS_LENGTH is the diamater of the circle.
@@ -353,17 +402,20 @@ public class Localizer extends Thread {
         double phi =  (2.0 * deltaVerticalDiff) / (CHASSIS_LENGTH);
         double hypotenuse;
 
+        double rotation = previousOdoMat.getValue(2,0);
+
+        //loggingString += currentState.getPosition().getX() + " , " + currentState.getPosition().getY() + " , " + currentState.getRotation() + "\n";
         // When phi is small, the full formula is numerically unstable.
         // for small phi, sin(phi) = phi and cos(phi) = 1
         // thus small phi, hypotense = arcLength
-        if(abs(phi) < 0.0001){
+        if(abs(phi) < 0.1){ //0.001
             hypotenuse = arcLength;
         }else{
-            hypotenuse = (arcLength * sin(phi)) / (phi * cos(phi / 2.0));
+            hypotenuse = (arcLength * sin(rotation + phi)) / (phi * cos(rotation + phi / 2.0));
         }
 
-        double horizontalDelta = deltaHorizontalArcLength - (phi * ODO_XY_DISTANCE);
-        double verticalDelta = hypotenuse * cos(phi/2.0)  + deltaVerticalDiff - (phi * (CHASSIS_LENGTH)/ 2.0);
+        double horizontalDelta = deltaHorizontalArcLength  + hypotenuse * sin(rotation +phi); // - (phi * ODO_XY_DISTANCE) X
+        double verticalDelta = hypotenuse * cos(rotation + phi) - phi * ODO_YX_DISTANCE; //y
 
 
         // calculate velocities
@@ -374,6 +426,12 @@ public class Localizer extends Thread {
         double omega = (leftVerticalVelocity - rightVerticalVelocity)/CHASSIS_LENGTH;
         double deltaVy = (leftVerticalVelocity + rightVerticalVelocity)/2.0;
         double deltaVx = horizontalVelocity;
+
+        if(odoState == OdoState.RAISED){
+            TAO = 0;
+        }else{
+            TAO = 1;
+        }
 
         //scaling the deltas to make the Odometry its own independent measurement
         horizontalDelta *= TAO;
@@ -450,12 +508,14 @@ public class Localizer extends Thread {
                 {odoEstimate.getValue(4,0)},
                 {odoEstimate.getValue(5,0)},
         };
-        previousOdoMat = new Matrix(previousOdoArray);
+            previousOdoMat = new Matrix(previousOdoArray);
 
         slamraEstimate.multiply(1.0-TAO);
         Matrix complementaryStateEstimtate = odoEstimate.add(slamraEstimate); //measured state, Z
 
         double kalmanGain = previousEstimateUncertainty / (previousEstimateUncertainty + MEASUREMENT_VARIANCE);
+
+        kalmanGain = 1;
 
         double currentEstimateUncertainty = (1 - kalmanGain) * previousEstimateUncertainty;
 
@@ -480,12 +540,23 @@ public class Localizer extends Thread {
 
         state.updateState(dx, dy, dphi, dvx, dvy, domega);
 
-        //loggingString += state.toString() + "\n";
+        loggingString += iterator + "," + verticalDelta + "\n";
+        secondaryLoggingString += iterator + "," + phi + "\n";
+        tertiaryLoggingString += iterator+ "," + hypotenuse + "\n";
+        fourthLoggingString += iterator + "," + rotation + "\n";
+//        fifthLoggingString += iterator + "," + domega + "\n";
+//        sixthLoggingString += iterator+ "," + dvy + "\n";
         startingTime = System.currentTimeMillis();
         previousInnerArcLength = innerArcLength;
         previousOuterArcLength = outerArcLength;
         previousHorizontalArcLength = horizontalArcLength;
         previousEstimateUncertainty = currentEstimateUncertainty;
+        iterator++;
+    }
+
+
+    public void manualPositionWrite(RobotPositionStateUpdater.RobotPositionState newState){
+        state.updateState(newState.getPosition().getX(), newState.getPosition().getY(), newState.getRotation(), newState.getVelocity().getX(), newState.getVelocity().getY(), newState.getAngularVelocity());
     }
 
     private double linearSlideEncoderTicksToInches(int motorCurrentPosition) {
@@ -502,10 +573,10 @@ public class Localizer extends Thread {
     }
 
     public static double encoderTicksToInches(int ticks) {
-        return WHEEL_RADIUS * 2 * PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return WHEEL_DIAMETER * PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
     public static int inchesToEncoderTicks(double inches){
-        return (int)((TICKS_PER_REV / (WHEEL_RADIUS * 2 * PI * GEAR_RATIO)) * inches);
+        return (int)((TICKS_PER_REV / (WHEEL_DIAMETER  * PI * GEAR_RATIO)) * inches);
     }
 
     public double getLeftVerticalOdometerPosition(){
@@ -524,12 +595,32 @@ public class Localizer extends Thread {
         return horizontal.getVelocity();
     }
 
-    public int getRightVerticalOdometerPosition(){
-        return rightVertical.getCurrentPosition();
+    public double getRightVerticalOdometerPosition(){
+        return -encoderTicksToInches(rightVertical.getCurrentPosition());
     }
 
-    public int getHorizontalOdometerPosition(){
-        return horizontal.getCurrentPosition();
+    public double getHorizontalOdometerPosition(){
+        return -encoderTicksToInches(horizontal.getCurrentPosition());
+    }
+
+    public void writeLoggerToFile(){
+        try {
+            PrintStream ps = new PrintStream(loggingFile);
+            PrintStream pstwo = new PrintStream(secondaryLoggingFile);
+            PrintStream psThree = new PrintStream(tertiaryloggingFile);
+            PrintStream psfour = new PrintStream(fourthLoggingFile);
+            PrintStream psfive = new PrintStream(fifthLoggingFile);
+            PrintStream psSix = new PrintStream(sixthLoggingFile);
+            ps.println(loggingString);
+            pstwo.println(secondaryLoggingString);
+            psThree.println(tertiaryLoggingString);
+            psfour.println(fourthLoggingString);
+            psfive.println(fifthLoggingString);
+            psSix.println(sixthLoggingString);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 }
 

@@ -40,26 +40,22 @@ public class OdometryDiagnostic extends AbstractOpMode {
     protected void onStart() {
         localizer.start();
         while(opModeIsActive()){
-            telemetry.addData("horizontal", localizer.getHorizontalOdometerPosition());
-            telemetry.addData("rightVertical", localizer.getRightVerticalOdometerPosition());
-            telemetry.addData("leftVertical", localizer.getLeftVerticalOdometerPosition());
-            telemetry.addData("lvVelocity", localizer.getLeftVerticalOdometerVelocity());
-            telemetry.addData("rvVelocity", localizer.getRightVerticalOdometerVelocity());
-            telemetry.addData("hVelocity", localizer.getHorizontalOdometerVelocity());
+//            telemetry.addData("Position", localizer.getCurrentState().getPosition());
+//            telemetry.addData("Rotation", localizer.getCurrentState().getRotation());
 
             //movement.followCurve(allPoints, 0);
 
             //telemetry.addData("CurrentIndex", movement.getCurrentRobotIndex());
-//            telemetry.addData("MovementX", MovementVars.movementX);
-//            telemetry.addData("MovementY", MovementVars.movementY);
-//            telemetry.addData("MovementTurn", MovementVars.movementTurn);
-//            telemetry.addData("followMe", movement.getFollowMe());
-            telemetry.update();
+//            telemetry.update();
         }
     }
 
     @Override
     protected void onStop() {
+        localizer.loggingString += localizer.getCurrentState().toString();
+        localizer.writeLoggerToFile();
+        localizer.stopThread();
+
 
     }
 }

@@ -22,6 +22,8 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     WestCoastDriveTrain drive;
     ArmSystem arm;
+    EndgameSystems system;
+    Localizer localizer;
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
@@ -30,26 +32,33 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     private static final double INTAKE_POWER = 1.0;
     private static final double SPRINT_LINEAR_MODIFIER = 1.0;
-    private static final double NORMAL_LINEAR_MODIFIER = 1.0;
+    private static final double NORMAL_LINEAR_MODIFIER = 0.8;
     private static final double SPRINT_ROTATIONAL_MODIFIER = 1.0;
     private static final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
     private boolean isSprint;
     private long scoredSampleTime;
+
     private ScoredButtonState state;
     private PulleyState pulleyState;
+    private LinkageState linkageState;
 
 
     @Override
     protected void onInitialize() {
         arm = new ArmSystem(hardwareMap, true);
         drive = new WestCoastDriveTrain(hardwareMap);
+        system = new EndgameSystems(hardwareMap, true); //TODO make a copy of tele op
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 10);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
+
+        localizer.liftOdo();
         //Initialize IMU parameters
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
+        linkageState = linkageState.RAISED;
 
         driveThread = new Thread(){
             public void run(){
@@ -65,18 +74,41 @@ public class OfficialTeleOpScript extends AbstractOpMode {
                 }
             }
         };
-//        driverTwoThread = new Thread(){
-//            public void run(){
-//                while(opModeIsActive()){
-//                    driverTwoUpdate();
-//                }
-//            }
-//        };
+        driverTwoThread = new Thread(){
+            public void run(){
+                while(opModeIsActive()){
+                    driverTwoUpdate();
+                }
+            }
+        };
 
     }
 
     private void driverTwoUpdate() {
-
+        if(gamepad2.dpad_up){
+            system.setCapstonePower(0.4);
+        }else if(gamepad2.dpad_down){
+            system.setCapstonePower(-0.4);
+        }else if(gamepad2.a){
+            system.raiseCapstone();
+        }else if(gamepad2.x){
+            system.scoreCapstone();
+        }else if(gamepad2.right_trigger > 0.3){
+            while(gamepad2.right_trigger > 0.3) {
+                system.runCarousel(1);
+            }
+        }else if(gamepad2.left_trigger > 0.3){
+            while(gamepad2.left_trigger > 0.3){
+                system.runCarousel(-1);
+            }
+        }else if(gamepad2.y){
+            system.scoreDuck();
+        }else if(gamepad2.left_stick_button){
+            system.extendCapstoneMech();
+        } else{
+            system.setCapstonePower(0);
+            system.runCarousel(0);
+        }
 
     }
 
@@ -86,12 +118,17 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             startTime = AbstractOpMode.currentOpMode().time;
             while(gamepad1.right_trigger > 0.3) {
                 double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
-                arm.intake(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.3);
+                if(elapsedTime < 0.5 && linkageState == linkageState.RAISED){
+                    arm.lowerLinkage();
+                    linkageState = LinkageState.LOWERED;
+                }else{
+                    arm.intake(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.3, false);
+                }
                 telemetry.addData("right trigger", gamepad1.right_trigger);
                 telemetry.update();
             }
         }else if(gamepad1.left_trigger > 0.3){
-            arm.intakeDumb(-0.3);
+            arm.intakeDumb(-0.9);
         }else if(gamepad1.x){
             long currentSampleTime = System.currentTimeMillis();
             if(currentSampleTime - scoredSampleTime > 1000) {
@@ -111,18 +148,23 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             if(pulleyState == PulleyState.RETRACTED) {
                 arm.raise(Constants.TOP_POSITION);
                 pulleyState = PulleyState.EXTENDED;
+                linkageState = LinkageState.RAISED;
             }
         } else if(gamepad1.b) {
             arm.preScore();
+            linkageState = LinkageState.RAISED;
         } else if (gamepad1.dpad_up) {
-            arm.adjustUp();
-        } else if (gamepad1.dpad_down) {
-            arm.adjustDown();
-        } else if(gamepad2.x){
-            arm.scoreDuck();
-        } else{
-            arm.intakeDumb(0);
+                arm.setWinchPower(0.5);
 
+        } else if (gamepad1.dpad_down) {
+            arm.setWinchPower(-0.5);
+        } else if(gamepad1.y){
+            arm.raise(Constants.MEDIUM_POSITION);
+            pulleyState = PulleyState.EXTENDED;
+            linkageState = linkageState.RAISED;
+        }else{
+            arm.intakeDumb(0);
+            arm.setWinchPower(0);
         }
     }
 
@@ -131,7 +173,11 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     //TODO change this if necessary
     private void driveUpdate() {
-      drive.setPower(gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
+        if(gamepad1.right_bumper) {
+            drive.setPower(gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
+        }else{
+            drive.setPower(NORMAL_LINEAR_MODIFIER *gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
+        }
 
     }
 
@@ -143,11 +189,15 @@ public class OfficialTeleOpScript extends AbstractOpMode {
         EXTENDED, RETRACTED
     }
 
+    private enum LinkageState{
+        RAISED, LOWERED
+    }
+
     @Override
     protected void onStart() {
         driveThread.start();
         armThread.start();
-        //driverTwoThread.start();
+        driverTwoThread.start();
         while(opModeIsActive()){
         }
     }
@@ -155,6 +205,8 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     @Override
     protected void onStop() {
         driveThread.interrupt();
+        driverTwoThread.interrupt();
         armThread.interrupt();
+        localizer.stopThread();
     }
 }

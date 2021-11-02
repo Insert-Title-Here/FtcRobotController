@@ -3,6 +3,7 @@ package teamcode.common;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.units.qual.A;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.util.concurrent.AbstractExecutorService;
@@ -12,12 +13,12 @@ public class WestCoastDriveTrain {
     private ExpansionHubMotor fl, fr, bl, br;
     Localizer localizer;
 
-    private final double P_LINEAR = 0.0007;
+    private final double P_LINEAR = 0.00035;
     private final double I_LINEAR = 0;
     private final double D_LINEAR = 0;
 
 
-    private final double P_ROTATIONAL = 0.02;
+    private final double P_ROTATIONAL = 0.0002;
     private final double I_ROTATIONAL = 0;
     private final double D_ROTATIONAL = 0;
 
@@ -27,6 +28,9 @@ public class WestCoastDriveTrain {
     private double previousOmegaError;
 
     private final double WHEEL_RADIUS = 0; //TODO measure
+    private double previousRotation = 0;
+
+    private boolean isMoving;
 
 
 
@@ -36,6 +40,7 @@ public class WestCoastDriveTrain {
         bl = hardwareMap.get(ExpansionHubMotor.class, "BackLeftDrive");
         br = hardwareMap.get(ExpansionHubMotor.class, "BackRightDrive");
         correctMotors();
+        isMoving = false;
 
     }
 
@@ -47,6 +52,7 @@ public class WestCoastDriveTrain {
         this.localizer = localizer;
         previousVelocity = 0;
         previousOmega = 0;
+        isMoving = false;
         correctMotors();
 
     }
@@ -65,9 +71,84 @@ public class WestCoastDriveTrain {
 
     }
 
-    public void moveToPosition(Vector2D desiredPosition, double desiredVelocity, double desiredOmega){
+//    public void moveToPosition(Vector2D desiredPosition, double desiredVelocity, double desiredOmega){
+//
+//
+//        RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
+//
+//        Vector2D desiredPositionPointer = new Vector2D(desiredPosition.getX() - currentState.getPosition().getX() , desiredPosition.getY() - currentState.getPosition().getY());
+//        Vector2D newDesiredPosition = desiredPosition.add(new Vector2D(5.0 * Math.cos(desiredPositionPointer.getDirection()), 5.0 * Math.sin(desiredPositionPointer.getDirection())));
+//
+//        previousError =  0;
+//        previousVelocity = 0;
+//        double steadyStateError = 0;
+//        //moveToRotation( newDesiredPosition.getDirection(), desiredOmega);
+//
+//        long previousTimeMillis = System.currentTimeMillis();
+//        double rotationError = 0;
+//
+//        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive() && Math.abs(rotationError) < 0.05)){
+//            long currentCycleTimeMillis = System.currentTimeMillis() - previousTimeMillis;
+//            double currentCycleTimeSeconds = currentCycleTimeMillis / 1000.0;
+//            previousTimeMillis = System.currentTimeMillis();
+//            currentState = localizer.getCurrentState();
+//            Vector2D positionError = desiredPosition.subtract(currentState.getPosition());
+//            double errorAngle = positionError.getDirection();
+//            Vector2D idealVelocity = Vector2D.fromAngleMagnitude(errorAngle, desiredVelocity);
+//
+//            double recordedVelocity = currentState.getVelocity().magnitude();
+//
+//            double recordedRotation = currentState.getRotation();
+//            double recordedOmega = currentState.getAngularVelocity();
+//            double omegaError = desiredOmega - recordedOmega;
+//            rotationError =  desiredPosition.getDirection() - recordedRotation;
+//
+//            double error = idealVelocity.magnitude() - recordedVelocity;
+//            steadyStateError += (error * currentCycleTimeSeconds);
+//            double deltaError = (error - previousError);
+//
+//            double output = error * P_LINEAR;
+//            double rotationalOutput = (omegaError * P_ROTATIONAL) * rotationError;
+//// + deltaError * D_LINEAR + steadyStateError * I_LINEAR
+//
+//
+//            double passedValue = output + previousVelocity;
+//            double passedOmega = rotationalOutput + previousRotation;
+//
+//            if(passedValue > 1.0){
+//                passedValue = 1.0;
+//                desiredVelocity = currentState.getVelocity().magnitude();
+//                desiredOmega = currentState.getAngularVelocity();
+//            }else if(passedValue < -1.0){
+//                passedValue = -1.0;
+//                desiredVelocity = currentState.getVelocity().magnitude();
+//                desiredOmega = currentState.getAngularVelocity();
+//            }
+//
+//
+//
+//            previousVelocity = straightMovement(passedValue);
+//            previousError = error;
+//
+//
+//
+//        }
+//        brake();
+//    }
 
+    public boolean getIsMoving(){
+        return isMoving;
+    }
+    /**
+     *
+     * @param desiredPosition new position of the robot in inches
+     * @param desiredVelocity speed the robot should go to in inches/sec
+     * @param desiredOmega speed of the robots rotation in motor power TODO rewrite the rotational component to use a PID curve or some kind of control loop
+     */
 
+    public synchronized void moveToPosition(Vector2D desiredPosition, double desiredVelocity, double desiredOmega){
+
+        isMoving = true;
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
 
         Vector2D desiredPositionPointer = new Vector2D(desiredPosition.getX() - currentState.getPosition().getX() , desiredPosition.getY() - currentState.getPosition().getY());
@@ -76,7 +157,7 @@ public class WestCoastDriveTrain {
         previousError =  0;
         previousVelocity = 0;
         double steadyStateError = 0;
-        //moveToRotation( newDesiredPosition.getDirection(), desiredOmega);
+       //rotateDistance(desiredOmega, newDesiredPosition.getDirection());
 
         long previousTimeMillis = System.currentTimeMillis();
 
@@ -103,25 +184,25 @@ public class WestCoastDriveTrain {
             double passedValue = output + previousVelocity;
 
             if(passedValue > 1.0){
+                desiredVelocity = currentState.getVelocity().magnitude();
                 passedValue = 1.0;
             }else if(passedValue < -1.0){
+                desiredVelocity = currentState.getVelocity().magnitude();
                 passedValue = -1.0;
             }
+
+            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
+            AbstractOpMode.currentOpMode().telemetry.update();
 
 
             previousVelocity = straightMovement(passedValue);
             previousError = error;
 
-
-            AbstractOpMode.currentOpMode().telemetry.addData("passedVelocity", passedValue);
-            AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
-            //AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
-            AbstractOpMode.currentOpMode().telemetry.addData("", currentState);
-            AbstractOpMode.currentOpMode().telemetry.addData("error", (Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude())));
-            AbstractOpMode.currentOpMode().telemetry.update();
         }
+        isMoving = false;
         brake();
     }
+
 
     private void brake() {
         fl.setPower(0);
@@ -149,6 +230,7 @@ public class WestCoastDriveTrain {
 
 
     public void setPower(double linear, double rotation){
+
         rotation = -rotation;
 
 
@@ -157,9 +239,16 @@ public class WestCoastDriveTrain {
         bl.setPower(linear + rotation);
         br.setPower(-linear + rotation);
 
+        previousRotation = rotation;
+        previousVelocity = linear;
+
     }
 
-//TODO reread this and the linear one
+    /**
+     *
+     * @param desiredRotation desired angle of the chassis  after the movement
+     * @param desiredOmega rotational velocity, in motor power,
+     */
     public void moveToRotation(double desiredRotation, double desiredOmega) {
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
         double currentRotation = currentState.getRotation();
@@ -201,6 +290,22 @@ public class WestCoastDriveTrain {
         return -omega;
     }
 
+    public synchronized void rotateDistance(double power, double radians){
+        isMoving = true;
+        RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
+
+        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive()){
+            state = localizer.getCurrentState();
+            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
+            AbstractOpMode.currentOpMode().telemetry.update();
+            rotate(power);
+        }
+        isMoving = false;
+        brake();
+
+
+    }
+
     public void setPower(double flPower, double frPower, double blPower, double brPower){
         fl.setPower(flPower);
         fr.setPower(frPower);
@@ -215,6 +320,7 @@ public class WestCoastDriveTrain {
         bl.setVelocity(blVelocity);
         br.setVelocity(brVelocity);
     }
+
 
 
 

@@ -44,7 +44,7 @@ public class RobotPositionStateUpdater {
         }
 
         public String loggingToString(){
-            return position.getX() + "," + position.getY() +"," + velocity.getX() + velocity.getY() + "," + rotation + "," + angularVelocity;
+            return position.getX() + "," + position.getY() + rotation + ",";
         }
 
     }
