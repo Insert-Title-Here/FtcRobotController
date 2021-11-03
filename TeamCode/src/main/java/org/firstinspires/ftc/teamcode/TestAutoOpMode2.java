@@ -57,6 +57,7 @@ public class TestAutoOpMode2 extends LinearOpMode {
     Thread driveThread;
     DriveTrain drive;
 
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");

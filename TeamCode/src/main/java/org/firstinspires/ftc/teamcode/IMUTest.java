@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -26,7 +28,18 @@ import java.util.Locale;
 public class IMUTest extends LinearOpMode {
     // The IMU sensor object
     BNO055IMU imu;
-    DriveTrain drive = new DriveTrain(hardwareMap);
+    DcMotor extender;
+    Servo grabber;
+
+
+    double servoPosition = 0.3;
+
+
+    boolean isExtended = false;
+    boolean isGrabbing = true;
+    boolean servoMoving = false;
+    boolean previousYState;
+
 
     // State used for updating telemetry
     Orientation angles;
@@ -38,6 +51,14 @@ public class IMUTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        DriveTrain drive = new DriveTrain(hardwareMap);
+        extender = hardwareMap.get(DcMotor.class, "ExtensionArm");
+        extender.setDirection(DcMotor.Direction.FORWARD);
+        extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        grabber = hardwareMap.get(Servo.class, "Grabber");
+
+
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -62,12 +83,20 @@ public class IMUTest extends LinearOpMode {
         // Wait until we're told to go
         waitForStart();
 
+        grabber.setPosition(0);
+        extendArm(3610);
+        drive.goToPosition(-616, false);
+        grab(0.3);
+
+
+
+
+
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         // Loop and update the dashboard
         while (opModeIsActive()) {
-            drive.goToPosition(435, false);
             telemetry.update();
         }
     }
@@ -146,5 +175,47 @@ public class IMUTest extends LinearOpMode {
     String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
+
+    public void extendArm(int armPosition) {
+
+        extender.setTargetPosition(armPosition);
+
+        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        extender.setPower(1);
+
+        while (extender.isBusy()) {
+
+        }
+
+        extender.setPower(0);
+
+        extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+
+    public synchronized void grab(double position){
+        double targetPosition;
+        servoMoving = true;
+
+        previousYState = gamepad1.y;
+
+        if(isGrabbing) {
+            targetPosition = 0;
+        }else{
+            targetPosition = position;
+        }
+
+        servoPosition = targetPosition;
+        grabber.setPosition(servoPosition);
+
+        while(previousYState == gamepad1.y){
+
+        }
+        isGrabbing = !isGrabbing;
+
+    }
+
 
 }

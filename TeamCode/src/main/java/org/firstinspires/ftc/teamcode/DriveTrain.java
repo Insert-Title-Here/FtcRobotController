@@ -109,7 +109,7 @@ public class DriveTrain {
             }
         }
 */
-        setPower(0, 0.3);
+        setPower(0.3, 0);
         while (lf.isBusy()) {
 
         }
