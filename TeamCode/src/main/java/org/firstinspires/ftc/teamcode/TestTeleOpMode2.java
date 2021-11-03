@@ -65,10 +65,19 @@ public class TestTeleOpMode2 extends LinearOpMode {
     DcMotor extender;
     Servo grabber;
 
+
+    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final int    CYCLE_MS    =   50;     // period of each cycle
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;     // Minimum rotational position
+    double servoPosition = 0.3;
+
     Thread armThread;
+    Thread carouselThread;
 
     boolean isExtended = false;
-    boolean isGrabbing = false;
+    boolean isGrabbing = true;
+    boolean servoMoving = false;
     @Override
     public void runOpMode() {
         DriveTrain drive = new DriveTrain(hardwareMap);
@@ -80,8 +89,23 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         extender = hardwareMap.get(DcMotor.class, "ExtensionArm");
         extender.setDirection(DcMotor.Direction.FORWARD);
+        extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
 
         grabber = hardwareMap.get(Servo.class, "Grabber");
+
+        grabber.setPosition(servoPosition);
+
+        carouselThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    carouselUpdate();
+                }
+            }
+        };
 
         armThread = new Thread(){
             @Override
@@ -95,14 +119,16 @@ public class TestTeleOpMode2 extends LinearOpMode {
         waitForStart();
         runtime.reset();
         armThread.start();
+        carouselThread.start();
         //extendArm(200);
-        grabber.setPosition(0.5);
+        grabber.setPosition(servoPosition);
+        extendArm(300);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
             if (gamepad1.right_bumper) {
-                drive.setPower(gamepad1.left_stick_y, gamepad1.right_stick_x);
+                drive.setPower(gamepad1.left_stick_y, gamepad1.right_stick_x * .6);
             } else {
                 drive.setPower(gamepad1.left_stick_y / 2, gamepad1.right_stick_x / 2);
             }
@@ -112,12 +138,14 @@ public class TestTeleOpMode2 extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Extender Tics", "Tics: " + extender.getCurrentPosition());
+            telemetry.addData("Servo Position", servoPosition);
+            telemetry.addData("Servo Position Actual", grabber.getPosition());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }
 
-    private void armUpdate() {
+    private void carouselUpdate(){
         if (gamepad1.left_trigger > 0.1) {
             carousel.setPower(gamepad1.left_trigger);
         } else if (gamepad1.right_trigger > 0.1) {
@@ -129,32 +157,72 @@ public class TestTeleOpMode2 extends LinearOpMode {
         if (gamepad1.a) {
             spinCarousel(4000);
         }
+    }
+
+    private void armUpdate() {
+
+
+        if(gamepad1.dpad_up) {
+            extender.setPower(0.5);
+        } else if(gamepad1.dpad_down) {
+            extender.setPower(-0.3);
+        } else {
+            extender.setPower(0);
+        }
+
+
 
         // ~6.28 inches per rotation, need to extend 28 inches, Don't Overshoot!!!,
         // 4.45 rotations, ~2220.4 tics/rotation
         if (gamepad1.b && !isExtended) {
             isExtended = true;
-            extendArm(2000);
+            extendArm(8900);
         }
 
         if (gamepad1.x && isExtended) {
             isExtended = false;
-            extendArm(-2000);
+            extendArm(300);
         }
 
         if (gamepad1.left_bumper) {
-            extendArm(-200);
+            extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-        if (gamepad1.y) {
-            if(isGrabbing){
-                grabber.setPosition(1);
-                isGrabbing = false;
 
-            }else{
-                grabber.setPosition(0.5);
-                isGrabbing = true;
-            }
+        if (gamepad1.y) {
+            grab(0.3);
         }
+
+        if (gamepad1.dpad_left){
+            grab(0.1);
+        }
+
+
+
+    }
+
+
+    boolean previousYState;
+    public synchronized void grab(double position){
+        double targetPosition;
+        servoMoving = true;
+
+        previousYState = gamepad1.y;
+
+        if(isGrabbing) {
+            targetPosition = 0;
+        }else{
+            targetPosition = position;
+        }
+
+        servoPosition = targetPosition;
+        grabber.setPosition(servoPosition);
+
+        while(previousYState == gamepad1.y){
+
+        }
+        isGrabbing = !isGrabbing;
+
     }
 
     public void spinCarousel(int tics) {
@@ -169,12 +237,12 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         double power;
 
-        carousel.setPower(0.3);
+        carousel.setPower(0.5);
 
         while (carousel.isBusy()) {
             power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
-            if (power < 0.3) {
-                carousel.setPower(0.3);
+            if (power < 0.5) {
+                carousel.setPower(0.5);
             } else if (power > 1){
                 carousel.setPower(1);
             } else {
@@ -188,10 +256,9 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
     }
 
-    public void extendArm(int tics) {
-        extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void extendArm(int armPosition) {
 
-        extender.setTargetPosition(tics);
+        extender.setTargetPosition(armPosition);
 
         extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 

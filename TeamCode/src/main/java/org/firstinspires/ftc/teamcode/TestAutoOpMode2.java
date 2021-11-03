@@ -47,19 +47,31 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="TestAutoOpMode", group="Linear Opmode")
+@Autonomous(name="TestAutoOpMode2", group="Linear Opmode")
 //@Disabled
 public class TestAutoOpMode2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
+    Thread driveThread;
+    DriveTrain drive;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        DriveTrain drive = new DriveTrain(hardwareMap);
+        drive = new DriveTrain(hardwareMap);
+
+        driveThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    driveUpdate();
+                }
+            }
+        };
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -68,18 +80,26 @@ public class TestAutoOpMode2 extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        driveThread.start();
+
+        drive.goToPosition(2000, drive.ROTATION);
+
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            drive.goToPosition(2000, drive.LINEAR);
-
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower)
-            telemetry.addData("Left Tics", "Tics: " + drive.lf.getCurrentPosition());
-            telemetry.addData("Right Tics", "Tics: " + drive.rf.getCurrentPosition());
-            telemetry.addData("Power", "Power: " + drive.power);
-            telemetry.update();
+
         }
+    }
+    public void driveUpdate() {
+        //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower)
+
+        telemetry.addData("Left Tics", "Tics: " + drive.lf.getCurrentPosition());
+        telemetry.addData("Right Tics", "Tics: " + drive.rf.getCurrentPosition());
+        telemetry.addData("Power", "Power: " + drive.power);
+        telemetry.update();
+
+
     }
 }

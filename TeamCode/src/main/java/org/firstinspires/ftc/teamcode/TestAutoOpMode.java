@@ -82,7 +82,7 @@ public class TestAutoOpMode extends LinearOpMode {
             int leftTics = drive.lf.getCurrentPosition();
             int rightTics = drive.rf.getCurrentPosition();
 
-            // 435 tics is about 1 foot
+            // 434.7 tics is about 1 foot
             // 537.7 tics per revolution
             // If the robot has travelled farther than a foot, stop it
             power = 1.0 - (1.0 / (targetTics - leftTics));
