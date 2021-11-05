@@ -7,7 +7,6 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
-import teamcode.common.Point;
 import teamcode.common.PurePursuit.PurePursuitMovement;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;

@@ -22,7 +22,7 @@ public class ChassisWidthCalibration extends AbstractOpMode {
     @Override
     protected void onStart() {
         localizer.start();
-        drive.rotateDistance(0.3,Math.toRadians(100));
+        drive.rotateDistance(0.5,Math.toRadians(180));
 
         while(opModeIsActive()){
             telemetry.addData("state", localizer.getCurrentState());

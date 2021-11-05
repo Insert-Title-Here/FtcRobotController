@@ -35,7 +35,7 @@ public class VISLAMTest extends AbstractOpMode {
     protected void onStart() {
         //slamra.start();
         localizer.start();
-        drive.moveToPosition(new Vector2D(0,24),12, 0);
+        //drive.moveToPosition(new Vector2D(0,24),12, 0);
 //        drive.straightMovement(0.5);
         while(opModeIsActive()){
             telemetry.addData("", localizer.getCurrentState());

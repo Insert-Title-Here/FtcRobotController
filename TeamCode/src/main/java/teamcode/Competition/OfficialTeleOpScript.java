@@ -89,7 +89,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             system.setCapstonePower(0.4);
         }else if(gamepad2.dpad_down){
             system.setCapstonePower(-0.4);
-        }else if(gamepad2.a){
+        }else if(gamepad2.b){
             system.raiseCapstone();
         }else if(gamepad2.x){
             system.scoreCapstone();
@@ -105,10 +105,13 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             system.scoreDuck();
         }else if(gamepad2.left_stick_button){
             system.extendCapstoneMech();
-        } else{
+        } else {
             system.setCapstonePower(0);
             system.runCarousel(0);
         }
+
+        telemetry.addData("stage", arm.getStage());
+        telemetry.update();
 
     }
 
@@ -118,21 +121,21 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             startTime = AbstractOpMode.currentOpMode().time;
             while(gamepad1.right_trigger > 0.3) {
                 double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
-                if(elapsedTime < 0.5 && linkageState == linkageState.RAISED){
+                if(elapsedTime < 0.5 || linkageState == linkageState.RAISED){
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 }else{
                     arm.intake(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.3, false);
                 }
-                telemetry.addData("right trigger", gamepad1.right_trigger);
-                telemetry.update();
+
             }
         }else if(gamepad1.left_trigger > 0.3){
+            //add something to move the linkage outta the way
             arm.intakeDumb(-0.9);
         }else if(gamepad1.x){
             long currentSampleTime = System.currentTimeMillis();
             if(currentSampleTime - scoredSampleTime > 1000) {
-                if(pulleyState == PulleyState.EXTENDED) {
+                if(pulleyState != PulleyState.RETRACTED) {
                     if (state == ScoredButtonState.RETRACTING) {
                         state = ScoredButtonState.SCORED;
                         arm.score();
@@ -144,12 +147,6 @@ public class OfficialTeleOpScript extends AbstractOpMode {
                 }
                 scoredSampleTime = System.currentTimeMillis();
             }
-        }else if(gamepad1.a) {
-            if(pulleyState == PulleyState.RETRACTED) {
-                arm.raise(Constants.TOP_POSITION);
-                pulleyState = PulleyState.EXTENDED;
-                linkageState = LinkageState.RAISED;
-            }
         } else if(gamepad1.b) {
             arm.preScore();
             linkageState = LinkageState.RAISED;
@@ -158,10 +155,18 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
-        } else if(gamepad1.y){
-            arm.raise(Constants.MEDIUM_POSITION);
-            pulleyState = PulleyState.EXTENDED;
-            linkageState = linkageState.RAISED;
+        } else if(gamepad1.a) {
+            if (pulleyState == PulleyState.RETRACTED) {
+                arm.raise(Constants.TOP_POSITION);
+                pulleyState = PulleyState.HIGH_GOAL;
+                linkageState = LinkageState.RAISED;
+            }
+        }else if(gamepad1.y){
+            if(pulleyState == PulleyState.RETRACTED) {
+                arm.raise(Constants.MEDIUM_POSITION);
+                pulleyState = PulleyState.MID_GOAL;
+                linkageState = linkageState.RAISED;
+            }
         }else{
             arm.intakeDumb(0);
             arm.setWinchPower(0);
@@ -186,7 +191,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     }
 
     private enum PulleyState{
-        EXTENDED, RETRACTED
+        HIGH_GOAL, MID_GOAL, RETRACTED
     }
 
     private enum LinkageState{

@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Localizer;
-import teamcode.common.Point;
 import teamcode.common.Vector2D;
 
 

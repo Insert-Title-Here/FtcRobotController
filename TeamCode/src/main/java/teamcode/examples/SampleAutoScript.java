@@ -24,7 +24,6 @@ import teamcode.common.Constants;
 import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.PurePursuit.MovementVars;
-import teamcode.common.Point;
 import teamcode.common.PurePursuit.CurvePoint;
 import teamcode.common.PurePursuit.PurePursuitMovement;
 import teamcode.common.Vector2D;

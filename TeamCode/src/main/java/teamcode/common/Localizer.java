@@ -13,6 +13,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.spartronics4915.lib.T265Camera;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.DecompositionSolver;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.checkerframework.checker.units.qual.Angle;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
@@ -21,8 +28,15 @@ import org.openftc.revextensions2.RevBulkData;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import teamcode.common.PositionStuff.Point;
+import teamcode.common.PositionStuff.Pose;
+import teamcode.common.PurePursuit.MathFunctions;
 
 import static java.lang.Math.*;
 
@@ -35,17 +49,17 @@ public class Localizer extends Thread {
     private static final double TICKS_PER_REV = 8192;
     private static final double WHEEL_DIAMETER = 1.378; //1.181 for 60 mm, 1.417 for 72mm
     private static final double GEAR_RATIO = 1;
-    private static final double CHASSIS_LENGTH = 6.478;
+    private static final double CHASSIS_LENGTH = 7.078;
     private static final double ODO_XY_DISTANCE = 4.05; //x value
-    private static final double ODO_YX_DISTANCE = 1; //Y value
+    private static final double ODO_YX_DISTANCE = 3.5; //Y value
     private static final double WINCH_RADIUS = 1;
 
 
     //debugging constants, not used very much
 
-    File loggingFile = AppUtil.getInstance().getSettingsFile("Variance.txt");
-    File secondaryLoggingFile = AppUtil.getInstance().getSettingsFile("Phi.txt");
-    File tertiaryloggingFile = AppUtil.getInstance().getSettingsFile("Hypotenuse.txt");
+    File loggingFile = AppUtil.getInstance().getSettingsFile("Position.txt");
+    File secondaryLoggingFile = AppUtil.getInstance().getSettingsFile("XSLAM.txt");
+    File tertiaryloggingFile = AppUtil.getInstance().getSettingsFile("YSLAM.txt");
     File fourthLoggingFile = AppUtil.getInstance().getSettingsFile("Rotation.txt");
     File fifthLoggingFile = AppUtil.getInstance().getSettingsFile("vomega.txt");
     File sixthLoggingFile = AppUtil.getInstance().getSettingsFile("vy.txt");
@@ -68,7 +82,7 @@ public class Localizer extends Thread {
     private final ExpansionHubMotor leftVertical, rightVertical, horizontal; //general odometry encoders, universal for each year
     private final ExpansionHubEx hub1;
     private RevBulkData data1, data2;
-    private final BNO055IMU imu;
+    private BNO055IMU imu;
     private double previousOuterArcLength = 0;
     private double previousInnerArcLength = 0;
     private double previousHorizontalArcLength = 0;
@@ -76,12 +90,12 @@ public class Localizer extends Thread {
 
     //Kalman filter parameters, the ones declared up here must also be tuned for EVERY ROBOT
 
-    private static final double INCHES_TO_METERS = 0.0254;
-    Transform2d cameraToRobot = new Transform2d(new Translation2d(0, 9 * INCHES_TO_METERS), new Rotation2d());
+    private static final double INCHES_TO_METERS = 0.0254; //-8.628937
+        Transform2d cameraToRobot = new Transform2d(new Translation2d(-7.965 * INCHES_TO_METERS,  0 * INCHES_TO_METERS), new Rotation2d());
     private static T265Camera slamra;
     T265Camera.CameraUpdate currentSlamraPos;
     private Pose2d slamraStartingPose;
-    private static double TAO = 1.0; //0.9 optimal
+    private static double TAO = 0; //0.9 optimal
     private static final double MEASUREMENT_VARIANCE = 0.01; // 0.01 + 0.02? account more for odo variance
     private double previousEstimateUncertainty;
     Matrix previousOdoMat;
@@ -152,6 +166,7 @@ public class Localizer extends Thread {
     public Localizer(HardwareMap hardwareMap, Vector2D position, double globalRads, double previousEstimateUncertainty){
 
         if(slamra == null) {
+            Debug.log("here");
             slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         }
@@ -191,7 +206,7 @@ public class Localizer extends Thread {
                 {0}
         };
         previousOdoMat = new Matrix(previousOdoArray);
-        slamra.start();
+
         //lowerOdo();
         resetEncoders();
         iterator = 1;
@@ -212,6 +227,7 @@ public class Localizer extends Thread {
         state.resetUpdateTime();
         startingTime = System.currentTimeMillis();
         if(slamra != null) {
+            slamra.start();
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
             slamra.setPose(slamraStartingPose);
 
@@ -221,6 +237,7 @@ public class Localizer extends Thread {
             long millis = System.currentTimeMillis();
             //update();
             updateKalman();
+            //matUpdate();
             long runtime = System.currentTimeMillis() - millis;
 
             if (runtime > runInterval) {
@@ -415,7 +432,7 @@ public class Localizer extends Thread {
         }
 
         double horizontalDelta = deltaHorizontalArcLength  + hypotenuse * sin(rotation +phi); // - (phi * ODO_XY_DISTANCE) X
-        double verticalDelta = hypotenuse * cos(rotation + phi) - phi * ODO_YX_DISTANCE; //y
+        double verticalDelta = hypotenuse * cos(rotation + phi) - (phi * ODO_YX_DISTANCE); //y
 
 
         // calculate velocities
@@ -427,11 +444,11 @@ public class Localizer extends Thread {
         double deltaVy = (leftVerticalVelocity + rightVerticalVelocity)/2.0;
         double deltaVx = horizontalVelocity;
 
-        if(odoState == OdoState.RAISED){
-            TAO = 0;
-        }else{
-            TAO = 1;
-        }
+//        if(odoState == OdoState.RAISED){
+//            TAO = 0;
+//        }else{
+//            TAO = 1;
+//        }
 
         //scaling the deltas to make the Odometry its own independent measurement
         horizontalDelta *= TAO;
@@ -447,7 +464,7 @@ public class Localizer extends Thread {
         double[][] vislamMat = {
                 {-slamraEstimatePose.getY() / INCHES_TO_METERS},
                 {slamraEstimatePose.getX() / INCHES_TO_METERS},
-                {slamraEstimatePose.getRotation().getRadians()},
+                {-slamraEstimatePose.getRotation().getRadians()},
                 {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
                 {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
                 {currentSlamraPos.velocity.omegaRadiansPerSecond}
@@ -540,10 +557,10 @@ public class Localizer extends Thread {
 
         state.updateState(dx, dy, dphi, dvx, dvy, domega);
 
-        loggingString += iterator + "," + verticalDelta + "\n";
-        secondaryLoggingString += iterator + "," + phi + "\n";
-        tertiaryLoggingString += iterator+ "," + hypotenuse + "\n";
-        fourthLoggingString += iterator + "," + rotation + "\n";
+        loggingString += state.getCurrentState().getPosition().loggerToString()+ "\n";
+        secondaryLoggingString += iterator + "," +  state.getCurrentState().getPosition().getX() + "\n";
+        tertiaryLoggingString += iterator+ "," +  state.getCurrentState().getPosition().getY() + "\n";
+//        fourthLoggingString += iterator + "," + rotation + "\n";
 //        fifthLoggingString += iterator + "," + domega + "\n";
 //        sixthLoggingString += iterator+ "," + dvy + "\n";
         startingTime = System.currentTimeMillis();
@@ -554,6 +571,149 @@ public class Localizer extends Thread {
         iterator++;
     }
 
+    DecompositionSolver solver;
+
+    ArrayList<Vector2D> wheelPoses;
+
+
+
+
+    public Localizer(Pose start, HardwareMap hardwareMap){
+        hub1 = hardwareMap.get(ExpansionHubEx.class,"Control Hub");
+        loggingString = "";
+        secondaryLoggingString = "";
+        //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
+        // initialize hardware
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
+        rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);
+        horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
+        Array2DRowRealMatrix inverseMatrix = new Array2DRowRealMatrix(3, 3);
+        wheelPoses = new ArrayList<>();
+        wheelPoses.add(new Vector2D(-4.01885,-6.371937)); //LV
+        wheelPoses.add(new Vector2D(4.18685,-6.336937)); //RV
+        wheelPoses.add(new Vector2D(0.10685,4.5222)); //H
+        for (int i = 0; i < 2; i++) {
+            Vector2D orientationVector = wheelPoses.get(i).headingVec();
+            Vector2D positionVector = wheelPoses.get(i);
+            inverseMatrix.setEntry(i, 0, orientationVector.getX());
+            inverseMatrix.setEntry(i, 1, orientationVector.getY());
+            inverseMatrix.setEntry(i, 2, positionVector.getX() * orientationVector.getY() - positionVector.getY() * orientationVector.getX());
+        }
+
+        solver = new LUDecomposition(inverseMatrix).getSolver();
+        odoEstimate = start.clone();
+        poseVelocity = new Pose(0,0,0);
+        iterator = 1;
+
+    }
+
+
+
+
+
+    double[] lastWheelPositions;
+    private Pose odoEstimate;
+    private Pose poseVelocity;
+
+    private synchronized void matUpdate() {
+        data1 = hub1.getBulkInputData();
+
+        double[] wheelPositions = new double[]{encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical)),
+                encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical)),
+                encoderTicksToInches(data1.getMotorCurrentPosition(horizontal))};
+        double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], wheelPositions[2] - lastWheelPositions[2]};
+             Pose robotPoseDelta = calculatePoseDelta(wheelDeltas);
+             odoEstimate = relativeOdometryUpdate(robotPoseDelta);
+        double[] wheelVelocities = new double[]{wheelDeltas [0]/ 0.02, wheelDeltas[1] / 0.02, wheelDeltas[2] / 0.02};
+
+        if (wheelVelocities != null) {
+            poseVelocity = calculatePoseDelta(wheelVelocities);
+        }
+
+        lastWheelPositions = new double[]{wheelPositions[0], wheelPositions[1], wheelPositions[2]};
+        iterator++;
+        }
+
+    private static final double EPSILON = 1e-6;
+
+    private Pose relativeOdometryUpdate(Pose robotPoseDelta) {
+        RobotPositionStateUpdater.RobotPositionState currentState = state.getCurrentState();
+        double dtheta = robotPoseDelta.heading;
+        double sineTerm, cosTerm;
+
+        if (approxEquals(dtheta, 0)) {
+            sineTerm = 1.0 - dtheta * dtheta / 6.0;
+            cosTerm = dtheta / 2.0;
+        } else {
+            sineTerm = Math.sin(dtheta) / dtheta;
+            cosTerm = (1 - Math.cos(dtheta)) / dtheta;
+        }
+
+        Point fieldPositionDelta = new Point(
+                sineTerm * robotPoseDelta.x - cosTerm * robotPoseDelta.y,
+                cosTerm * robotPoseDelta.x + sineTerm * robotPoseDelta.y
+        );
+
+        Pose fieldPoseDelta = new Pose(fieldPositionDelta.rotated(currentState.getRotation()), robotPoseDelta.heading);
+
+        Pose fieldPose = new Pose(currentState.getPosition().getX(),currentState.getPosition().getY(), currentState.getRotation());
+
+        return fieldPose.add(fieldPoseDelta);
+    }
+
+    public static boolean approxEquals(double d1, double d2) {
+        if (Double.isInfinite(d1)) {
+            // Infinity - infinity is NaN, so we need a special case
+            return d1 == d2;
+        } else {
+            return Math.abs(d1 - d2) < EPSILON;
+        }
+    }
+
+    private Pose calculatePoseDelta(double[] wheelDeltas) {
+        RealMatrix m = MatrixUtils.createRealMatrix(new double[][]{wheelDeltas});
+        RealMatrix rawPoseDelta = solver.solve(m.transpose());
+        return new Pose(
+                rawPoseDelta.getEntry(0, 0),
+                rawPoseDelta.getEntry(1, 0),
+                rawPoseDelta.getEntry(2, 0));
+
+    }
+
+
+    public Pose getOdoEstimate(){
+        return odoEstimate;
+    }
+
+    public Pose getPoseVelocity(){
+        return poseVelocity;
+    }
+
+    public int getIterator(){
+        return iterator;
+    }
+
+
+
+
+
+    /*
+     Array2DRowRealMatrix inverseMatrix = new Array2DRowRealMatrix(3, 3);
+        ArrayList<Vector3D> wheelPoses = new ArrayList<Vector3D>();
+        Vector3D LV_POSE = new Vector3D(0,0, 0); //x, y, angle from center
+        Vector3D RV_POSE = new Vector3D(0,0, Math.toRadians(180));
+        Vector3D H_POSE = new Vector3D(0,0, Math.toRadians(90));
+        wheelPoses.add(LV_POSE);
+        wheelPoses.add(RV_POSE);
+        wheelPoses.add(H_POSE);
+
+        for(Vector3D wheel: wheelPoses){
+            double wheelXOffset = Math.cos(wheel.getZ());
+            double wheelYOffset = Math.sin(wheel.getZ());
+
+        }
+     */
 
     public void manualPositionWrite(RobotPositionStateUpdater.RobotPositionState newState){
         state.updateState(newState.getPosition().getX(), newState.getPosition().getY(), newState.getRotation(), newState.getVelocity().getX(), newState.getVelocity().getY(), newState.getAngularVelocity());

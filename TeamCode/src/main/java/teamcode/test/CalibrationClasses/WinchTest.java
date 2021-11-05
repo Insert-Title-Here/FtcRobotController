@@ -12,7 +12,7 @@ import teamcode.common.Vector2D;
 @TeleOp(name="Winch")
 public class WinchTest extends AbstractOpMode {
     DcMotor winchMotor, winchEncoder;
-    //Localizer localizer;
+
 
     @Override
     protected void onInitialize() {
@@ -25,7 +25,6 @@ public class WinchTest extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        //localizer.start();
         while(opModeIsActive()) {
             while (gamepad1.left_trigger > 0.3) {
                 winchMotor.setPower(0.5);

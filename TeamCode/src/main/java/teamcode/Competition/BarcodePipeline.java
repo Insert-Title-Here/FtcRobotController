@@ -1,6 +1,7 @@
 package teamcode.Competition;
 
 
+import org.apache.commons.math3.analysis.function.Abs;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -8,6 +9,8 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import teamcode.common.AbstractOpMode;
 
 public class BarcodePipeline extends OpenCvPipeline {
 
@@ -18,6 +21,12 @@ public class BarcodePipeline extends OpenCvPipeline {
         CENTER,
         RIGHT
     }
+
+    public enum Side{
+
+        RED, BLUE;
+    }
+
 
     // define col constants
     static final Scalar BLUE = new Scalar(0, 0, 255);
@@ -59,8 +68,8 @@ public class BarcodePipeline extends OpenCvPipeline {
     int avg1, avg2, avg3;
 
     // create pos var, with vol tag due to the var changing at runtime
-    volatile BarcodePosition position = BarcodePosition.CENTER;
-
+    volatile BarcodePosition position = BarcodePosition.LEFT;
+    volatile Side side = Side.BLUE;
 
 
     // converts rgb frame to ycrcb, extracts cb channel
@@ -87,9 +96,9 @@ public class BarcodePipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         inputToB(input);
 
-        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
-        region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
-        region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
+        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB)); //left region
+        region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB)); //center region
+        region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB)); //right region
 
         avg1 = (int) Core.mean(region1_Cb).val[0];
         avg2 = (int) Core.mean(region2_Cb).val[0];
@@ -119,9 +128,18 @@ public class BarcodePipeline extends OpenCvPipeline {
                 2
         );
 
-        int min = Math.min(Math.min(avg1, avg2), avg3);
+        int min;
+        if (side == Side.BLUE){
+            min = Math.min(avg1, avg2);
+        }else{
+            min = Math.min(avg2, avg3);
+        }
 
-        if (min == avg1) {
+        if(Math.abs(avg1 - avg2) < 15 && side == Side.BLUE){
+                position = BarcodePosition.LEFT;
+        } else if(Math.abs(avg2 - avg3) < 15 && side == Side.RED){
+                position = BarcodePosition.RIGHT;
+        } else if (min == avg1) {
 
             Imgproc.rectangle(
                     input,
@@ -131,8 +149,8 @@ public class BarcodePipeline extends OpenCvPipeline {
                     2
             );
 
-            position = BarcodePosition.LEFT;
-        } else if (min == avg2) {
+            position = BarcodePosition.CENTER;
+        }else if (min == avg2) {
 
             Imgproc.rectangle(
                     input,
@@ -141,25 +159,46 @@ public class BarcodePipeline extends OpenCvPipeline {
                     GREEN,
                     2
             );
-
-            position = BarcodePosition.CENTER;
-        } else if (min == avg3) {
-
-            Imgproc.rectangle(
-                    input,
-                    region3_pointA,
-                    region3_pointB,
-                    GREEN,
-                    2
-            );
-
-            position = BarcodePosition.RIGHT;
+            if(side == Side.BLUE) {
+                position = BarcodePosition.RIGHT;
+            }else{
+                position = BarcodePosition.LEFT;
+            }
+//        } else if (min == avg3) {
+//
+//            Imgproc.rectangle(
+//                    input,
+//                    region3_pointA,
+//                    region3_pointB,
+//                    GREEN,
+//                    2
+//            );
+//
+//            position = BarcodePosition.RIGHT;
+        }else if(min == avg3){
+            if(side == Side.RED){
+                position = BarcodePosition.CENTER;
+            }
         }
+
+        AbstractOpMode.currentOpMode().telemetry.addData("avg1", avg1);
+        AbstractOpMode.currentOpMode().telemetry.addData("avg2", avg2);
+        AbstractOpMode.currentOpMode().telemetry.addData("avg3", avg3);
+        AbstractOpMode.currentOpMode().telemetry.addData("position", position);
+        AbstractOpMode.currentOpMode().telemetry.update();
 
         return input;
     }
 
     public BarcodePosition getPos() {
         return position;
+    }
+
+    public void setSide(Side side){
+        this.side = side;
+    }
+
+    public Side getSide(){
+        return side;
     }
 }

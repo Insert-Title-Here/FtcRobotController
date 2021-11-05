@@ -1,6 +1,6 @@
 package teamcode.common.PurePursuit;
 
-import teamcode.common.Point;
+import teamcode.common.PositionStuff.Point;
 
 public class Line {
     Point p1;
@@ -16,7 +16,6 @@ public class Line {
     public Line(Point p1, Point p2){
         this.p1 = p1;
         this.p2 = p2;
-        slope = p2.slope(p1);
 
     }
 

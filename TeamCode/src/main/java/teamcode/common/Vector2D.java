@@ -110,4 +110,12 @@ public final class Vector2D implements Cloneable {
         return newVec;
     }
 
+    public Vector2D headingVec() {
+        return new Vector2D(Math.cos(getDirection()), Math.sin(getDirection()));
+    }
+
+    public String loggerToString() {
+    return x + "," + y;
+
+    }
 }

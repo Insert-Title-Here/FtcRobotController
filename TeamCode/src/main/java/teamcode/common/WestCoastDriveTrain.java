@@ -146,7 +146,7 @@ public class WestCoastDriveTrain {
      * @param desiredOmega speed of the robots rotation in motor power TODO rewrite the rotational component to use a PID curve or some kind of control loop
      */
 
-    public synchronized void moveToPosition(Vector2D desiredPosition, double desiredVelocity, double desiredOmega){
+    public synchronized void moveToPosition(Vector2D desiredPosition, double desiredVelocity, double desiredOmega, boolean isSingleDirectional){
 
         isMoving = true;
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
@@ -159,6 +159,10 @@ public class WestCoastDriveTrain {
         double steadyStateError = 0;
        //rotateDistance(desiredOmega, newDesiredPosition.getDirection());
 
+        boolean isDesiredGreaterX = desiredPosition.getX() > currentState.getPosition().getX();
+        boolean isDesiredGreaterY = desiredPosition.getY() > currentState.getPosition().getY();
+
+
         long previousTimeMillis = System.currentTimeMillis();
 
         while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive())){
@@ -168,7 +172,7 @@ public class WestCoastDriveTrain {
             currentState = localizer.getCurrentState();
             Vector2D positionError = desiredPosition.subtract(currentState.getPosition());
             double errorAngle = positionError.getDirection();
-            Vector2D idealVelocity = Vector2D.fromAngleMagnitude(errorAngle, desiredVelocity);
+            Vector2D idealVelocity = Vector2D.fromAngleMagnitude(currentState.getRotation(), desiredVelocity);
 
             double recordedVelocity = currentState.getVelocity().magnitude();
 
@@ -179,10 +183,10 @@ public class WestCoastDriveTrain {
 
             double output = error * P_LINEAR;
 // + deltaError * D_LINEAR + steadyStateError * I_LINEAR
-
+            double sign = getSign(desiredVelocity);
+            output *= sign;
 
             double passedValue = output + previousVelocity;
-
             if(passedValue > 1.0){
                 desiredVelocity = currentState.getVelocity().magnitude();
                 passedValue = 1.0;
@@ -191,12 +195,30 @@ public class WestCoastDriveTrain {
                 passedValue = -1.0;
             }
 
-            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
-            AbstractOpMode.currentOpMode().telemetry.update();
+
+
+
+
+//            if(passedValue < 0 && desiredVelocity > 0){
+//                desiredVelocity *= -1;
+//            }
+//            AbstractOpMode.currentOpMode().telemetry.addData("passedValue", passedValue);
+//            AbstractOpMode.currentOpMode().telemetry.addData("output", output);
+//            AbstractOpMode.currentOpMode().telemetry.update();
+//
 
 
             previousVelocity = straightMovement(passedValue);
             previousError = error;
+            if(isDesiredGreaterX && desiredPosition.getX() < currentState.getPosition().getX() && !isSingleDirectional){
+                break;
+            }else if(!isDesiredGreaterX && desiredPosition.getX() > currentState.getPosition().getX() && !isSingleDirectional){
+                break;
+            }else if(isDesiredGreaterY && desiredPosition.getY() < currentState.getPosition().getY() && !isSingleDirectional){
+                break;
+            }else if(!isDesiredGreaterY && desiredPosition.getY() > currentState.getPosition().getY() && !isSingleDirectional){
+                break;
+            }
 
         }
         isMoving = false;
@@ -204,7 +226,7 @@ public class WestCoastDriveTrain {
     }
 
 
-    private void brake() {
+    public void brake() {
         fl.setPower(0);
         fr.setPower(0);
         bl.setPower(0);
@@ -227,6 +249,10 @@ public class WestCoastDriveTrain {
             return 1;
         }
     }
+
+
+
+
 
 
     public void setPower(double linear, double rotation){
@@ -273,7 +299,8 @@ public class WestCoastDriveTrain {
             double deltaOmegaError = (omegaError - previousOmegaError) / currentCycleTimeSeconds;
             steadyStateError += omegaError * currentCycleTimeSeconds;
 
-            double passedOmega = previousOmega + omegaError * P_ROTATIONAL + steadyStateError * I_ROTATIONAL + deltaOmegaError * D_ROTATIONAL;
+            double passedOmega = previousOmega + omegaError * P_ROTATIONAL;
+            // + steadyStateError * I_ROTATIONAL + deltaOmegaError * D_ROTATIONAL
 
             if(passedOmega > 1.0){
                 passedOmega = 1.0;
@@ -294,13 +321,14 @@ public class WestCoastDriveTrain {
         isMoving = true;
         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
 
+
+
         while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive()){
             state = localizer.getCurrentState();
-            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
-            AbstractOpMode.currentOpMode().telemetry.update();
+//            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
+//            AbstractOpMode.currentOpMode().telemetry.update();
             rotate(power);
         }
-        isMoving = false;
         brake();
 
 
@@ -319,6 +347,11 @@ public class WestCoastDriveTrain {
         fr.setVelocity(frVelocity);
         bl.setVelocity(blVelocity);
         br.setVelocity(brVelocity);
+    }
+
+    public double[] getMotorPowers(){
+        return new double[]{fl.getPower(), fr.getPower(), bl.getPower(), br.getPower()};
+
     }
 
 

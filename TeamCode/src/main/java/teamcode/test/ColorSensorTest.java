@@ -20,13 +20,13 @@ public class ColorSensorTest extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        sensor.setGain(160);
+        sensor.setGain(640);
         while(opModeIsActive()){
             NormalizedRGBA colors = sensor.getNormalizedColors();
             double red = colors.red;
             double green = colors.green;
             double blue = colors.blue;
-            if(red > 0.9 && green > 0.9){
+            if(green > 0.9){
                 if(blue > 0.9){
                     element = DetectedElement.BALL;
                 }else{
@@ -36,6 +36,9 @@ public class ColorSensorTest extends AbstractOpMode {
                 element = DetectedElement.NONE;
             }
             telemetry.addData("element", element);
+            telemetry.addData("R", red);
+            telemetry.addData("G", green);
+            telemetry.addData("B", blue);
             telemetry.update();
         }
     }

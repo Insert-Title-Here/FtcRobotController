@@ -18,8 +18,8 @@ public class Constants {
 
     //Game Constants
     public static final double TOP_POSITION = 15500;
-    public static final double MEDIUM_POSITION = 8800; //store these values as ticks, and just go with that, nothing fancy
-    public static final double BOTTOM_POSITION = 0;
+    public static final double MEDIUM_POSITION = 10000; //store these values as ticks, and just go with that, nothing fancy
+    public static final double BOTTOM_POSITION = 8800;
 
 
 

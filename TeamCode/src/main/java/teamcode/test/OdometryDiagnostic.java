@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
-import teamcode.common.Point;
 import teamcode.common.PurePursuit.CurvePoint;
 import teamcode.common.PurePursuit.MovementVars;
 import teamcode.common.PurePursuit.PurePursuitMovement;

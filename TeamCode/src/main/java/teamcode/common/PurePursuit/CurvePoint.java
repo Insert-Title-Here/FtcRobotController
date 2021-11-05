@@ -1,6 +1,5 @@
 package teamcode.common.PurePursuit;
 
-import teamcode.common.Point;
 
 //point wrapper class
 public class CurvePoint {
@@ -41,21 +40,6 @@ public class CurvePoint {
 
 
 
-
-    //Curve point parameters are going to be zero, need this to cast tho
-    public CurvePoint(Point thisPoint){
-        x = thisPoint.x;
-        y = thisPoint.y;
-    }
-
-    public Point toPoint(){
-        return new Point(this.x, this.y);
-    }
-
-    public void setPoint(Point point) {
-        x = point.x;
-        y = point.y;
-    }
 
     public String toString(){
         return "(" + this.x + "," + this.y + ")";

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import teamcode.common.Debug;
 import teamcode.common.Localizer;
-import teamcode.common.Point;
 import teamcode.common.PurePursuit.CurvePoint;
 import teamcode.common.PurePursuit.Line;
 import teamcode.common.PurePursuit.MathFunctions;

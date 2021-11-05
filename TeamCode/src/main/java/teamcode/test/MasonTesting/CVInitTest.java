@@ -37,6 +37,7 @@ public class CVInitTest extends AbstractOpMode {
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
         camera.setPipeline(brp);
+        brp.setSide(BarcodePipeline.Side.BLUE);
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -75,7 +76,11 @@ public class CVInitTest extends AbstractOpMode {
     protected void onStart() {
 
         // Keep the op mode running, to keep the system from coming to a halt
-        while (opModeIsActive()) { }
+
+        while (opModeIsActive()) {
+            //telemetry.addData("position", brp.getPos());
+            //telemetry.update();
+        }
     }
 
     @Override
