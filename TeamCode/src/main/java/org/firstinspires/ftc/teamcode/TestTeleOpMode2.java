@@ -145,11 +145,12 @@ public class TestTeleOpMode2 extends LinearOpMode {
         }
     }
 
-    private void carouselUpdate(){
-        if (gamepad1.left_trigger > 0.1) {
-            carousel.setPower(gamepad1.left_trigger);
-        } else if (gamepad1.right_trigger > 0.1) {
-            carousel.setPower(-gamepad1.right_trigger);
+    private void carouselUpdate() {
+
+        if(gamepad1.dpad_right) {
+            carousel.setPower(0.7);
+        } else if(gamepad1.dpad_left) {
+            carousel.setPower(0.7);
         } else {
             carousel.setPower(0);
         }
@@ -157,10 +158,17 @@ public class TestTeleOpMode2 extends LinearOpMode {
         if (gamepad1.a) {
             spinCarousel(4000);
         }
+
     }
 
     private void armUpdate() {
-
+        if (gamepad1.left_trigger > 0.1 && isExtended) {
+            isExtended = false;
+            extendArm(300);
+        } else if (gamepad1.right_trigger > 0.1 && !isExtended) {
+            isExtended = true;
+            extendArm(8900);
+        }
 
         if(gamepad1.dpad_up) {
             extender.setPower(0.5);
