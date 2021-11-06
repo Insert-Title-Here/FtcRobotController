@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
@@ -78,28 +78,149 @@ public class IMUTest extends LinearOpMode {
         imu.initialize(parameters);
 
         // Set up our telemetry dashboard
-        composeTelemetry();
+        //composeTelemetry();
+        grabber.setPosition(0);
 
         // Wait until we're told to go
         waitForStart();
 
-        grabber.setPosition(0);
-        extendArm(3610);
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
+
+        telemetry.addData("status", new Func<String>() {
+            @Override public String value() {
+                return imu.getSystemStatus().toShortString();
+            }
+        });
+        telemetry.addData("calib", new Func<String>() {
+            @Override public String value() {
+                        return imu.getCalibrationStatus().toString();
+            }
+        });
+
+        telemetry.addData("heading", new Func<String>() {
+            @Override public String value() {
+                return formatAngle(angles.angleUnit, angles.firstAngle);
+            }
+        });
+        telemetry.addData("roll", new Func<String>() {
+            @Override public String value() {
+                return formatAngle(angles.angleUnit, angles.secondAngle);
+            }
+        });
+        telemetry.addData("pitch", new Func<String>() {
+            @Override public String value() {
+                return formatAngle(angles.angleUnit, angles.thirdAngle);
+            }
+        });
+        telemetry.addData("grvty", new Func<String>() {
+            @Override public String value() {
+                return gravity.toString();
+            }
+        });
+        telemetry.addData("mag", new Func<String>() {
+            @Override public String value() {
+                return String.format(Locale.getDefault(), "%.3f",
+                        Math.sqrt(gravity.xAccel*gravity.xAccel
+                                + gravity.yAccel*gravity.yAccel
+                                + gravity.zAccel*gravity.zAccel));
+            }
+        });
+        telemetry.addData("pause", "this is just a pause value");
+
+
+
+
+
+
+
+        //Middle Goal
+        /*
+        extendArm(3450);
         drive.goToPosition(-616, false);
-        grab(0.3);
+        grabber.setPosition(0.3);
+
+         */
+
+
+        /*Top Goal
+        extendArm(6295);
+        drive.goToPosition(-550, false);
+        grabber.setPosition(0.3);
+
+         */
+
+        //Bottom Goal
+        extendArm(1370);
+        drive.goToPosition(-740, false);
+        extendArm(1300);
+        grabber.setPosition(0.3);
+        drive.goToPosition(-40, false);
+        sleep(1000);
+        drive.goToPosition(200, false);
+
+
+        drive.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.lf.setTargetPosition(500);
+        drive.lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        drive.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.rf.setTargetPosition(-500);
+        drive.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        drive.lf.setPower(0.2);
+        drive.rf.setPower(0.2);
+
+        while(drive.lf.isBusy() && drive.rf.isBusy()){
+
+        }
+
+        drive.brake();
+        sleep(1000);
+
+
+
+        /*drive.lf.setPower(0.4);
+        drive.rf.setPower(-0.4);
+        sleep(1000);
+        drive.lf.setPower(0);
+        drive.rf.setPower(0);
+
+         */
+
+        drive.goToPosition(-2000, false);
+
+
+
 
 
 
 
 
         // Start the logging of measured acceleration
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
 
         // Loop and update the dashboard
+        /*
         while (opModeIsActive()) {
+            telemetry.addData("status", new Func<String>() {
+                @Override public String value(){
+                    return " " + rotateDegrees();
+                }
+            });
             telemetry.update();
         }
+
+         */
+
     }
+
+    /*
+    private Orientation rotateDegrees(){
+        return imu.getAngularOrientation();
+    }
+
+     */
 
     //----------------------------------------------------------------------------------------------
     // Telemetry Configuration
