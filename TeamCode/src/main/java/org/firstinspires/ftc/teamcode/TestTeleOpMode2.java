@@ -122,7 +122,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
         carouselThread.start();
         //extendArm(200);
         grabber.setPosition(servoPosition);
-        extendArm(300);
+        //extendArm(300);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
