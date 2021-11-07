@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
@@ -23,9 +23,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
 
-@Autonomous(name = "IMU Test", group = "Linear Opmode")
+@Autonomous(name = "Freight Auto (blue)", group = "Linear Opmode")
 
-public class IMUTest extends LinearOpMode {
+public class FreightScoreAutoBlue extends LinearOpMode {
     // The IMU sensor object
     BNO055IMU imu;
     DcMotor extender;
@@ -39,6 +39,8 @@ public class IMUTest extends LinearOpMode {
     boolean isGrabbing = true;
     boolean servoMoving = false;
     boolean previousYState;
+    Thread armThread;
+
 
 
     // State used for updating telemetry
@@ -57,6 +59,14 @@ public class IMUTest extends LinearOpMode {
         extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         grabber = hardwareMap.get(Servo.class, "Grabber");
+
+        armThread = new Thread(){
+            @Override
+            public void run(){
+                extendArm(0);
+            }
+        };
+
 
 
 
@@ -78,28 +88,157 @@ public class IMUTest extends LinearOpMode {
         imu.initialize(parameters);
 
         // Set up our telemetry dashboard
-        composeTelemetry();
+        //composeTelemetry();
+        grabber.setPosition(0);
 
         // Wait until we're told to go
         waitForStart();
+        /*
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-        grabber.setPosition(0);
-        extendArm(3610);
+
+        telemetry.addData("status", new Func<String>() {
+            @Override public String value() {
+                return imu.getSystemStatus().toShortString();
+            }
+        });
+        telemetry.addData("calib", new Func<String>() {
+            @Override public String value() {
+                        return imu.getCalibrationStatus().toString();
+            }
+        });
+
+        telemetry.addData("heading", new Func<String>() {
+            @Override public String value() {
+                return formatAngle(angles.angleUnit, angles.firstAngle);
+            }
+        });
+        telemetry.addData("roll", new Func<String>() {
+            @Override public String value() {
+                return formatAngle(angles.angleUnit, angles.secondAngle);
+            }
+        });
+        telemetry.addData("pitch", new Func<String>() {
+            @Override public String value() {
+                return formatAngle(angles.angleUnit, angles.thirdAngle);
+            }
+        });
+        telemetry.addData("grvty", new Func<String>() {
+            @Override public String value() {
+                return gravity.toString();
+            }
+        });
+        telemetry.addData("mag", new Func<String>() {
+            @Override public String value() {
+                return String.format(Locale.getDefault(), "%.3f",
+                        Math.sqrt(gravity.xAccel*gravity.xAccel
+                                + gravity.yAccel*gravity.yAccel
+                                + gravity.zAccel*gravity.zAccel));
+            }
+        });
+        telemetry.addData("pause", "this is just a pause value");
+
+         */
+
+
+
+
+
+
+
+        //Middle Goal
+        /*
+        extendArm(3450);
         drive.goToPosition(-616, false);
-        grab(0.3);
+        grabber.setPosition(0.3);
+
+         */
+
+
+        //Top Goal
+        extendArm(7100);
+        drive.goToPosition(-450, false);
+        grabber.setPosition(0.3);
+        extendArm(8900);
+
+
+
+        /*
+        //Bottom Goal
+        extendArm(1370);
+        drive.goToPosition(-740, false);
+        extendArm(1300);
+        grabber.setPosition(0.3);
+        drive.goToPosition(-40, false);
+        sleep(1000);
+        drive.goToPosition(200, false);
+
+         */
+
+
+        drive.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.lf.setTargetPosition(500);
+        drive.lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        drive.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.rf.setTargetPosition(-500);
+        drive.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        drive.lf.setPower(0.2);
+        drive.rf.setPower(0.2);
+
+        while(drive.lf.isBusy() && drive.rf.isBusy()){
+
+        }
+
+        drive.brake();
+        sleep(2000);
+
+
+
+        /*drive.lf.setPower(0.4);
+        drive.rf.setPower(-0.4);
+        sleep(1000);
+        drive.lf.setPower(0);
+        drive.rf.setPower(0);
+
+         */
+
+        armThread.start();
+        drive.goToPosition(-2000, false);
+        sleep(4000);
+
+
+
 
 
 
 
 
         // Start the logging of measured acceleration
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
 
         // Loop and update the dashboard
+        /*
         while (opModeIsActive()) {
+            telemetry.addData("status", new Func<String>() {
+                @Override public String value(){
+                    return " " + rotateDegrees();
+                }
+            });
             telemetry.update();
         }
+
+         */
+
     }
+
+    /*
+    private Orientation rotateDegrees(){
+        return imu.getAngularOrientation();
+    }
+
+     */
 
     //----------------------------------------------------------------------------------------------
     // Telemetry Configuration
@@ -183,7 +322,7 @@ public class IMUTest extends LinearOpMode {
 
         extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        extender.setPower(1);
+        extender.setPower(0.5);
 
         while (extender.isBusy()) {
 

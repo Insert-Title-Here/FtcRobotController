@@ -89,7 +89,7 @@ public class DriveTrain {
     }
 
     public void goToPosition (int tics, boolean rotate) {
-        for(DcMotor motor : motors) {
+        for(DcMotor motor: motors){
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setTargetPosition(tics);
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -109,7 +109,7 @@ public class DriveTrain {
             }
         }
 */
-        setPower(0.3, 0);
+        setPower(0.8, 0);
         while (lf.isBusy()) {
 
         }
