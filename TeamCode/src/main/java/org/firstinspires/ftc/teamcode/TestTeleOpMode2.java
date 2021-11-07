@@ -55,7 +55,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Test TeleOp Mode 2", group="Linear Opmode")
+@TeleOp(name="Real TeleOp Drive", group="Linear Opmode")
 //@Disabled
 public class TestTeleOpMode2 extends LinearOpMode {
 
@@ -201,9 +201,6 @@ public class TestTeleOpMode2 extends LinearOpMode {
             grab(0.3);
         }
 
-        if (gamepad1.dpad_left){
-            grab(0.1);
-        }
 
 
 
@@ -270,7 +267,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        extender.setPower(1);
+        extender.setPower(0.5);
 
         while (extender.isBusy()) {
 

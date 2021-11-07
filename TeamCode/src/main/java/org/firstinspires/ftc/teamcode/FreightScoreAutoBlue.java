@@ -23,9 +23,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
 
-@Autonomous(name = "IMU Test", group = "Linear Opmode")
+@Autonomous(name = "Freight Auto (blue)", group = "Linear Opmode")
 
-public class IMUTest extends LinearOpMode {
+public class FreightScoreAutoBlue extends LinearOpMode {
     // The IMU sensor object
     BNO055IMU imu;
     DcMotor extender;
@@ -39,6 +39,8 @@ public class IMUTest extends LinearOpMode {
     boolean isGrabbing = true;
     boolean servoMoving = false;
     boolean previousYState;
+    Thread armThread;
+
 
 
     // State used for updating telemetry
@@ -57,6 +59,14 @@ public class IMUTest extends LinearOpMode {
         extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         grabber = hardwareMap.get(Servo.class, "Grabber");
+
+        armThread = new Thread(){
+            @Override
+            public void run(){
+                extendArm(0);
+            }
+        };
+
 
 
 
@@ -83,7 +93,7 @@ public class IMUTest extends LinearOpMode {
 
         // Wait until we're told to go
         waitForStart();
-
+        /*
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
 
@@ -128,6 +138,8 @@ public class IMUTest extends LinearOpMode {
         });
         telemetry.addData("pause", "this is just a pause value");
 
+         */
+
 
 
 
@@ -143,13 +155,15 @@ public class IMUTest extends LinearOpMode {
          */
 
 
-        /*Top Goal
-        extendArm(6295);
-        drive.goToPosition(-550, false);
+        //Top Goal
+        extendArm(7100);
+        drive.goToPosition(-450, false);
         grabber.setPosition(0.3);
+        extendArm(8900);
 
-         */
 
+
+        /*
         //Bottom Goal
         extendArm(1370);
         drive.goToPosition(-740, false);
@@ -158,6 +172,8 @@ public class IMUTest extends LinearOpMode {
         drive.goToPosition(-40, false);
         sleep(1000);
         drive.goToPosition(200, false);
+
+         */
 
 
         drive.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -176,7 +192,7 @@ public class IMUTest extends LinearOpMode {
         }
 
         drive.brake();
-        sleep(1000);
+        sleep(2000);
 
 
 
@@ -188,7 +204,9 @@ public class IMUTest extends LinearOpMode {
 
          */
 
+        armThread.start();
         drive.goToPosition(-2000, false);
+        sleep(4000);
 
 
 
@@ -304,7 +322,7 @@ public class IMUTest extends LinearOpMode {
 
         extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        extender.setPower(1);
+        extender.setPower(0.5);
 
         while (extender.isBusy()) {
 
