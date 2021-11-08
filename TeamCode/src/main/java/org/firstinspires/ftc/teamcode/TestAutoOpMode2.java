@@ -33,6 +33,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -56,6 +62,16 @@ public class TestAutoOpMode2 extends LinearOpMode {
 
     Thread driveThread;
     DriveTrain drive;
+    
+    WebcamName wc;
+    OpenCvCamera camera;
+
+    BarcodePipeline.BarcodePosition capstonePos;
+
+
+    // global obj
+    static final BarcodePipeline brp = new BarcodePipeline();
+
 
     @Override
     public void runOpMode() {
@@ -77,18 +93,58 @@ public class TestAutoOpMode2 extends LinearOpMode {
         // Reverse the motor that runs backwards when connected directly to the battery
 
         // Wait for the game to start (driver presses PLAY)
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        wc = hardwareMap.get(WebcamName.class, "Webcam");
+
+        // W/ or W/ out live preview
+        camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+        // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
+
+        camera.setPipeline(brp);
+
+        // Open an asynchronous connection to the device
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+            // Start opening the camera and stream it
+            @Override
+            public void onOpened() {
+
+                /*
+                // create a rgb2gray mat pipeline
+                class GrayPipeline extends OpenCvPipeline {
+                    Mat gray = new Mat();
+                    @Override
+                    public Mat processFrame(Mat input) {
+                        // mat src, mat dst, int code, convert rgb img to gray
+                        Imgproc.cvtColor(input, gray, Imgproc.COLOR_RGB2GRAY);
+                        return gray;
+                    }
+                } */
+
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            // Method will be called if the camera cannot be opened
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+            }
+        });
+
         waitForStart();
         runtime.reset();
 
         driveThread.start();
 
-        drive.goToPosition(2000, drive.ROTATION);
+        //drive.goToPosition(2000, drive.ROTATION);
 
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
             // Show the elapsed game time and wheel power.
+            capstonePos = brp.getPos();
 
         }
     }

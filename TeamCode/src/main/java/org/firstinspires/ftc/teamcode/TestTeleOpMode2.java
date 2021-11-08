@@ -55,7 +55,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Test TeleOp Mode 2", group="Linear Opmode")
+@TeleOp(name="Real TeleOp Drive", group="Linear Opmode")
 //@Disabled
 public class TestTeleOpMode2 extends LinearOpMode {
 
@@ -122,7 +122,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
         carouselThread.start();
         //extendArm(200);
         grabber.setPosition(servoPosition);
-        extendArm(300);
+        //extendArm(300);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -145,11 +145,12 @@ public class TestTeleOpMode2 extends LinearOpMode {
         }
     }
 
-    private void carouselUpdate(){
-        if (gamepad1.left_trigger > 0.1) {
-            carousel.setPower(gamepad1.left_trigger);
-        } else if (gamepad1.right_trigger > 0.1) {
-            carousel.setPower(-gamepad1.right_trigger);
+    private void carouselUpdate() {
+
+        if(gamepad1.dpad_right) {
+            carousel.setPower(0.7);
+        } else if(gamepad1.dpad_left) {
+            carousel.setPower(0.7);
         } else {
             carousel.setPower(0);
         }
@@ -157,10 +158,17 @@ public class TestTeleOpMode2 extends LinearOpMode {
         if (gamepad1.a) {
             spinCarousel(4000);
         }
+
     }
 
     private void armUpdate() {
-
+        if (gamepad1.left_trigger > 0.1 && isExtended) {
+            isExtended = false;
+            extendArm(300);
+        } else if (gamepad1.right_trigger > 0.1 && !isExtended) {
+            isExtended = true;
+            extendArm(8900);
+        }
 
         if(gamepad1.dpad_up) {
             extender.setPower(0.5);
@@ -193,9 +201,6 @@ public class TestTeleOpMode2 extends LinearOpMode {
             grab(0.3);
         }
 
-        if (gamepad1.dpad_left){
-            grab(0.1);
-        }
 
 
 
@@ -262,7 +267,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        extender.setPower(1);
+        extender.setPower(0.5);
 
         while (extender.isBusy()) {
 
