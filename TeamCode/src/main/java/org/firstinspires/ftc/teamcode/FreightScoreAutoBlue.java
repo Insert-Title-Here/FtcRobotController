@@ -157,7 +157,7 @@ public class FreightScoreAutoBlue extends LinearOpMode {
 
         //Top Goal
         extendArm(7100);
-        drive.goToPosition(-450, false);
+        drive.goToPosition(-450, false, 0.3);
         grabber.setPosition(0.3);
         extendArm(8900);
 
@@ -205,7 +205,7 @@ public class FreightScoreAutoBlue extends LinearOpMode {
          */
 
         armThread.start();
-        drive.goToPosition(-2000, false);
+        drive.goToPosition(-2000, false, 0.8);
         sleep(4000);
 
 

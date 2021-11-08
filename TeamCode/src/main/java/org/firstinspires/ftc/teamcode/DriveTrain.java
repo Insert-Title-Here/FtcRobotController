@@ -88,7 +88,7 @@ public class DriveTrain {
         //rb.setPower(linear + rotational);
     }
 
-    public void goToPosition (int tics, boolean rotate) {
+    public void goToPosition (int tics, boolean rotate, double power) {
         for(DcMotor motor: motors){
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setTargetPosition(tics);
@@ -109,7 +109,7 @@ public class DriveTrain {
             }
         }
 */
-        setPower(0.8, 0);
+        setPower(power, 0);
         while (lf.isBusy()) {
 
         }

@@ -63,6 +63,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor carousel;
     DcMotor extender;
+    DcMotor magneticArm;
     Servo grabber;
 
 
@@ -72,10 +73,12 @@ public class TestTeleOpMode2 extends LinearOpMode {
     static final double MIN_POS     =  0.0;     // Minimum rotational position
     double servoPosition = 0.3;
 
-    Thread armThread;
+    Thread extendingArmThread;
     Thread carouselThread;
+    Thread magneticArmThread;
 
-    boolean isExtended = false;
+    boolean extenderIsExtended = false;
+    boolean magneticIsExtended = false;
     boolean isGrabbing = true;
     boolean servoMoving = false;
     @Override
@@ -107,18 +110,28 @@ public class TestTeleOpMode2 extends LinearOpMode {
             }
         };
 
-        armThread = new Thread(){
+        magneticArmThread = new Thread() {
             @Override
             public void run(){
                 while(opModeIsActive()){
-                    armUpdate();
+                    magneticArmUpdate();
+                }
+            }
+
+        };
+
+        extendingArmThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    extendingArmUpdate();
                 }
             }
         };
         //Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        armThread.start();
+        extendingArmThread.start();
         carouselThread.start();
         //extendArm(200);
         grabber.setPosition(servoPosition);
@@ -161,12 +174,25 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
     }
 
-    private void armUpdate() {
-        if (gamepad1.left_trigger > 0.1 && isExtended) {
-            isExtended = false;
+    private void magneticArmUpdate(){
+        if (gamepad1.b && !magneticIsExtended) {
+            magneticIsExtended = true;
+            magneticExtend(5000);
+        }
+
+        if (gamepad1.x && magneticIsExtended) {
+            magneticIsExtended = false;
+            magneticExtend(0);
+        }
+
+    }
+
+    private void extendingArmUpdate() {
+        if (gamepad1.left_trigger > 0.1 && extenderIsExtended) {
+            extenderIsExtended = false;
             extendArm(300);
-        } else if (gamepad1.right_trigger > 0.1 && !isExtended) {
-            isExtended = true;
+        } else if (gamepad1.right_trigger > 0.1 && !extenderIsExtended) {
+            extenderIsExtended = true;
             extendArm(8900);
         }
 
@@ -182,7 +208,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         // ~6.28 inches per rotation, need to extend 28 inches, Don't Overshoot!!!,
         // 4.45 rotations, ~2220.4 tics/rotation
-        if (gamepad1.b && !isExtended) {
+        /*if (gamepad1.b && !isExtended) {
             isExtended = true;
             extendArm(8900);
         }
@@ -191,6 +217,8 @@ public class TestTeleOpMode2 extends LinearOpMode {
             isExtended = false;
             extendArm(300);
         }
+
+         */
 
         if (gamepad1.left_bumper) {
             extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -276,6 +304,24 @@ public class TestTeleOpMode2 extends LinearOpMode {
         extender.setPower(0);
 
         extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void magneticExtend(int armPosition){
+        magneticArm.setTargetPosition(armPosition);
+
+        magneticArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        magneticArm.setPower(0.5);
+
+        while(magneticArm.isBusy()){
+
+        }
+
+        magneticArm.setPower(0);
+
+        magneticArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
     }
 
 }
