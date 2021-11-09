@@ -140,7 +140,7 @@
 
          //Top Goal
          extendArm(6295);
-         drive.goToPosition(-550, false);
+         drive.goToPosition(-550, false, 0.3);
          grabber.setPosition(0.3);
 
 
@@ -185,7 +185,7 @@
 
           */
 
-         drive.goToPosition(-2000, false);
+         drive.goToPosition(-2000, false,0.8);
 
 
 
