@@ -12,9 +12,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import teamcode.Competition.BarcodePipeline;
+import teamcode.Competition.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 
-@TeleOp(name = "AutoCalibrate")
+@TeleOp(name = "Webcam Calibration")
 public class CVInitTest extends AbstractOpMode {
 
     // Get webcam and create an OpenCvCamera
@@ -22,7 +23,7 @@ public class CVInitTest extends AbstractOpMode {
     OpenCvCamera camera;
 
     // global obj
-    static final BarcodePipeline brp = new BarcodePipeline();
+    static final BarcodePipeline3 brp = new BarcodePipeline3();
 
     @Override
     protected void onInitialize() {
@@ -37,7 +38,6 @@ public class CVInitTest extends AbstractOpMode {
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
         camera.setPipeline(brp);
-        brp.setSide(BarcodePipeline.Side.BLUE);
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

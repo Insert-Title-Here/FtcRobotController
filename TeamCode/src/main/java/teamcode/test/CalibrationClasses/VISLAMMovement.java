@@ -15,7 +15,7 @@ public class VISLAMMovement extends AbstractOpMode {
 
     static T265Camera slamra;
     final double INCHES_TO_METERS = 0.0254;
-    Transform2d transformToRobot = new Transform2d(new Translation2d(9 * INCHES_TO_METERS,-0 * INCHES_TO_METERS), new Rotation2d());
+    Transform2d transformToRobot = new Transform2d(new Translation2d(0 * INCHES_TO_METERS,-0 * INCHES_TO_METERS), new Rotation2d());
     double encoderMeasureCovariance = 1.0;
     Pose2d startingPose = new Pose2d(0,0, new Rotation2d());
 
@@ -34,9 +34,6 @@ public class VISLAMMovement extends AbstractOpMode {
         slamra.start();
         while(opModeIsActive()){
             T265Camera.CameraUpdate slamraUpdate = slamra.getLastReceivedCameraUpdate();
-            telemetry.addData("x:", slamraUpdate.pose.getX() * INCHES_TO_METERS);
-            telemetry.addData("y:", slamraUpdate.pose.getY() * INCHES_TO_METERS);
-            telemetry.update();
             driveTrain.setPower(0, 0.5* gamepad1.left_stick_x);
         }
     }

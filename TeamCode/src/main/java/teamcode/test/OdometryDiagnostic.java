@@ -18,6 +18,7 @@ import teamcode.common.PurePursuit.PurePursuitMovement;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
+@Disabled
 @TeleOp(name="OdoPushTest")
 public class OdometryDiagnostic extends AbstractOpMode {
 

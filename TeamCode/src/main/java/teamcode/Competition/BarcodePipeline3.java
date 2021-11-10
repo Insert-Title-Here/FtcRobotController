@@ -1,6 +1,7 @@
 package teamcode.Competition;
 
 
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -11,8 +12,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import teamcode.common.AbstractOpMode;
 
-public class BarcodePipeline extends OpenCvPipeline {
-
+public class BarcodePipeline3 extends OpenCvPipeline {
+    //variant of the barcode pipeline which assumes 3 targets are in sight
     // define position enums
     public enum BarcodePosition
     {
@@ -60,7 +61,7 @@ public class BarcodePipeline extends OpenCvPipeline {
 
     // Create vars
     Mat region1_Cb, region2_Cb, region3_Cb;
-//    Mat YCrCb = new Mat();
+    //    Mat YCrCb = new Mat();
 //    Mat Cb = new Mat();
     Mat RGB = new Mat();
     Mat B = new Mat();
@@ -128,17 +129,10 @@ public class BarcodePipeline extends OpenCvPipeline {
         );
 
         int min;
-        if (side == Side.BLUE){
-            min = Math.min(avg1, avg2);
-        }else{
-            min = Math.min(avg2, avg3);
-        }
+        min = Math.min(Math.min(avg1, avg2), avg3);
 
-        if(Math.abs(avg1 - avg2) < 15 && side == Side.BLUE){
-                position = BarcodePosition.LEFT;
-        } else if(Math.abs(avg2 - avg3) < 15 && side == Side.RED){
-                position = BarcodePosition.RIGHT;
-        } else if (min == avg1) {
+
+        if (min == avg1) {
 
             Imgproc.rectangle(
                     input,
@@ -148,7 +142,7 @@ public class BarcodePipeline extends OpenCvPipeline {
                     2
             );
 
-            position = BarcodePosition.CENTER;
+            position = BarcodePosition.LEFT;
         }else if (min == avg2) {
 
             Imgproc.rectangle(
@@ -158,26 +152,18 @@ public class BarcodePipeline extends OpenCvPipeline {
                     GREEN,
                     2
             );
-            if(side == Side.BLUE) {
-                position = BarcodePosition.RIGHT;
-            }else{
-                position = BarcodePosition.LEFT;
-            }
-//        } else if (min == avg3) {
-//
-//            Imgproc.rectangle(
-//                    input,
-//                    region3_pointA,
-//                    region3_pointB,
-//                    GREEN,
-//                    2
-//            );
-//
-//            position = BarcodePosition.RIGHT;
-        }else if(min == avg3){
-            if(side == Side.RED){
-                position = BarcodePosition.CENTER;
-            }
+            position = BarcodePosition.CENTER;
+        } else if (min == avg3) {
+
+            Imgproc.rectangle(
+                    input,
+                    region3_pointA,
+                    region3_pointB,
+                    GREEN,
+                    2
+            );
+
+            position = BarcodePosition.RIGHT;
         }
 
         AbstractOpMode.currentOpMode().telemetry.addData("avg1", avg1);
@@ -185,7 +171,6 @@ public class BarcodePipeline extends OpenCvPipeline {
         AbstractOpMode.currentOpMode().telemetry.addData("avg3", avg3);
         AbstractOpMode.currentOpMode().telemetry.addData("position", position);
         AbstractOpMode.currentOpMode().telemetry.update();
-
         return input;
     }
 
@@ -201,3 +186,4 @@ public class BarcodePipeline extends OpenCvPipeline {
         return side;
     }
 }
+

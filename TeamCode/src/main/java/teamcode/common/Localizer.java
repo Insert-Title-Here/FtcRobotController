@@ -217,6 +217,7 @@ public class Localizer extends Thread {
 
     public void stopThread() {
         if(slamra != null) {
+            Debug.log("end");
             slamra.stop();
         }
         this.stop.set(true);

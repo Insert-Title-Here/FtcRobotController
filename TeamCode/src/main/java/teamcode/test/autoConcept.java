@@ -1,12 +1,14 @@
 package teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Utils;
 
+@Disabled
 @Autonomous(name="startShoot")
 public class autoConcept extends AbstractOpMode {
 

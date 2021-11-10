@@ -1,11 +1,13 @@
 package teamcode.test.MasonTesting;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @TeleOp(name= "Hello World and Telemetry Test")
 public class HelloWorld extends AbstractOpMode {
 

@@ -1,6 +1,7 @@
 package teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Localizer;
@@ -8,6 +9,7 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Vector2D;
 
 
+@Disabled
 @Autonomous(name="Mat")
 public class MatLocalizertest extends AbstractOpMode {
     Localizer localizer;

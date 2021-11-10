@@ -1,6 +1,5 @@
 package teamcode.Competition;
 
-import com.intel.realsense.librealsense.Pipeline;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -9,32 +8,29 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import teamcode.Competition.BarcodePipeline;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
-import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
-@Autonomous(name="BlueAutoFreight")
-public class BlueAuto extends AbstractOpMode {
-
+@Autonomous(name="CarouselBlue")
+public class BlueAutoCarousel extends AbstractOpMode {
     WestCoastDriveTrain driveTrain;
     ArmSystem arm;
     EndgameSystems system; //carousel
     Localizer localizer;
 
     OpenCvWebcam webcam;
-    BarcodePipeline.BarcodePosition position;
+    BarcodePipeline3.BarcodePosition position;
 
     @Override
     protected void onInitialize() {
         localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
         driveTrain = new WestCoastDriveTrain(hardwareMap, localizer);
-        arm = new ArmSystem(hardwareMap, false);
         system = new EndgameSystems(hardwareMap, true);
+        arm = new ArmSystem(hardwareMap, false);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
@@ -43,10 +39,8 @@ public class BlueAuto extends AbstractOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
-        BarcodePipeline pipeline = new BarcodePipeline();
+        BarcodePipeline3 pipeline = new BarcodePipeline3();
         webcam.setPipeline(pipeline);
-        pipeline.setSide(BarcodePipeline.Side.BLUE);
-        localizer.liftOdo();
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -62,8 +56,8 @@ public class BlueAuto extends AbstractOpMode {
         });
         while(!opModeIsActive()){
             position = pipeline.getPos();
-            telemetry.addData("", position);
-            telemetry.update();
+            //telemetry.addData("", position);
+            //telemetry.update();
         }
     }
 
@@ -74,40 +68,44 @@ public class BlueAuto extends AbstractOpMode {
         localizer.start();
         driveTrain.moveToPosition(new Vector2D(0, 6), 12, 0.5, true);
         // Utils.sleep(2000);
-        driveTrain.rotateDistance(-0.5, Math.toRadians(-120));
+        driveTrain.rotateDistance(0.5, Math.toRadians(75));
+
+        driveTrain.moveToPosition(new Vector2D(19,6), 12, 0.1, false);
+        system.scoreDuckAuto();
+        driveTrain.moveToPosition(new Vector2D(0, 6), -12, 0.5, false);
+        driveTrain.rotateDistance( 0.5, Math.toRadians(135));
 
 
-        if (position == BarcodePipeline.BarcodePosition.LEFT) {
-            if(position == BarcodePipeline.BarcodePosition.LEFT){
-                arm.raise(Constants.BOTTOM_POSITION - 2000);
+        if (position == BarcodePipeline3.BarcodePosition.LEFT) {
+            if(position == BarcodePipeline3.BarcodePosition.LEFT){
+                arm.raise(Constants.BOTTOM_POSITION - 1000);
             }
-            driveTrain.moveToPosition(new Vector2D(8, 18), -12, 0.5, false);
-            driveTrain.rotateDistance(-0.4, Math.toRadians(-155));
+            driveTrain.moveToPosition(new Vector2D(-12.8, 20.8), -12, 0.5, false);
+            driveTrain.rotateDistance(0.4, Math.toRadians(155));
 
         } else{
             //Debug.log("here");
-            if (position == BarcodePipeline.BarcodePosition.RIGHT) {
+            if (position == BarcodePipeline3.BarcodePosition.RIGHT) {
                 arm.raise(Constants.TOP_POSITION);
-            } else if(position == BarcodePipeline.BarcodePosition.CENTER){
+            } else if(position == BarcodePipeline3.BarcodePosition.CENTER){
                 arm.raise(Constants.MEDIUM_POSITION);
             }
-            driveTrain.moveToPosition(new Vector2D(9, 19.7), -12, 0.5, false);
-            driveTrain.rotateDistance(-0.4, Math.toRadians(-155));
+            driveTrain.moveToPosition(new Vector2D(-14.2, 22.2), -12, 0.5, false);
+            //driveTrain.rotateDistance(-0.4, Math.toRadians(130));
 
         }
 
         arm.score();
-        Utils.sleep(500);
-        Vector2D constructedVector = new Vector2D(7, 13.0);
-//        telemetry.addData("vec", constructedVector)w;
+        //arm.raise(arm.getLinearSlidePosition() + 1000);
+        Utils.sleep(1000);
+        Vector2D constructedVector = new Vector2D(-8, 14);
+//        telemetry.addData("vec", constructedVector);
 //        telemetry.update();
         driveTrain.moveToPosition(constructedVector, 12, 0.5, false);
         arm.retract();
-        driveTrain.rotateDistance(0.4, Math.toRadians(-105));
-        driveTrain.moveToPosition(new Vector2D(-34, 27), 24, 0.5, false);
+        driveTrain.rotateDistance(-0.4, Math.toRadians(90));
+        driveTrain.moveToPosition(new Vector2D(31,19), 12, 0.1, false);
 
-
-        //driveTrain.moveToPosition(new Vector2D(-14,6), 12, 0.1);
 
 
         while(opModeIsActive());

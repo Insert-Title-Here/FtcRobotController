@@ -11,6 +11,7 @@ import teamcode.common.Localizer;
 import teamcode.common.Vector2D;
 
 
+@Disabled
 @Autonomous(name="roll")
 public class OdoRoll extends AbstractOpMode {
 

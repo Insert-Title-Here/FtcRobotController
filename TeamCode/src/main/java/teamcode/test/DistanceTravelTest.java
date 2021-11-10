@@ -1,6 +1,7 @@
 package teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import teamcode.common.AbstractOpMode;
@@ -11,6 +12,7 @@ import teamcode.common.WestCoastDriveTrain;
 
 import org.apache.*;
 
+@Disabled
 @Autonomous(name="Distance")
 public class DistanceTravelTest extends AbstractOpMode {
 

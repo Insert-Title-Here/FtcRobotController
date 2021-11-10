@@ -17,8 +17,8 @@ import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
 
-@TeleOp(name="tele op")
-public class OfficialTeleOpScript extends AbstractOpMode {
+@TeleOp(name="tele op RED")
+public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
     WestCoastDriveTrain drive;
     ArmSystem arm;
@@ -47,7 +47,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
     protected void onInitialize() {
         arm = new ArmSystem(hardwareMap, true);
         drive = new WestCoastDriveTrain(hardwareMap);
-        system = new EndgameSystems(hardwareMap, true); //TODO make a copy of tele op
+        system = new EndgameSystems(hardwareMap, false); //TODO make a copy of tele op
         localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 10);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -131,10 +131,10 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             }
         }else if(gamepad1.left_trigger > 0.3){
             //add something to move the linkage outta the way
-            arm.intakeDumb(-0.9);
+            arm.intakeDumb(-0.6);
         }else if(gamepad1.x){
             long currentSampleTime = System.currentTimeMillis();
-            if(currentSampleTime - scoredSampleTime > 1000) {
+            if(currentSampleTime - scoredSampleTime > 200) {
                 if(pulleyState != PulleyState.RETRACTED) {
                     if (state == ScoredButtonState.RETRACTING) {
                         state = ScoredButtonState.SCORED;
@@ -151,7 +151,7 @@ public class OfficialTeleOpScript extends AbstractOpMode {
             arm.preScore();
             linkageState = LinkageState.RAISED;
         } else if (gamepad1.dpad_up) {
-                arm.setWinchPower(0.5);
+            arm.setWinchPower(0.5);
 
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
@@ -178,8 +178,8 @@ public class OfficialTeleOpScript extends AbstractOpMode {
 
     //TODO change this if necessary
     private void driveUpdate() {
-        if(gamepad1.right_bumper) {
-            drive.setPower(gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
+        if(gamepad1.right_stick_button) {
+            drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, SPRINT_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
         }else{
             drive.setPower(NORMAL_LINEAR_MODIFIER *gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
         }
@@ -215,3 +215,4 @@ public class OfficialTeleOpScript extends AbstractOpMode {
         localizer.stopThread();
     }
 }
+

@@ -217,6 +217,10 @@ public class ArmSystem {
 
     }
 
+    public int getLinearSlidePosition(){
+        return winchEncoder.getCurrentPosition();
+    }
+
     public Stage getStage(){
         return stage;
     }

@@ -1,6 +1,7 @@
 package teamcode.test;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.common.AbstractOpMode;
@@ -8,6 +9,7 @@ import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Vector2D;
 
+@Disabled
 @TeleOp(name="OdoTest")
 public class OdoTeleOpTest extends AbstractOpMode {
 

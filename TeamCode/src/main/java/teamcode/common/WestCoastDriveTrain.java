@@ -205,18 +205,26 @@ public class WestCoastDriveTrain {
 //            AbstractOpMode.currentOpMode().telemetry.addData("passedValue", passedValue);
 //            AbstractOpMode.currentOpMode().telemetry.addData("output", output);
 //            AbstractOpMode.currentOpMode().telemetry.update();
+
+            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.getPosition().toString());
+            AbstractOpMode.currentOpMode().telemetry.update();
+
 //
 
 
             previousVelocity = straightMovement(passedValue);
             previousError = error;
             if(isDesiredGreaterX && desiredPosition.getX() < currentState.getPosition().getX() && !isSingleDirectional){
+                //Debug.log("Here1");
                 break;
             }else if(!isDesiredGreaterX && desiredPosition.getX() > currentState.getPosition().getX() && !isSingleDirectional){
+                //Debug.log("Here2");
                 break;
             }else if(isDesiredGreaterY && desiredPosition.getY() < currentState.getPosition().getY() && !isSingleDirectional){
+                //Debug.log("Here3");
                 break;
             }else if(!isDesiredGreaterY && desiredPosition.getY() > currentState.getPosition().getY() && !isSingleDirectional){
+                //Debug.log("Here4");
                 break;
             }
 

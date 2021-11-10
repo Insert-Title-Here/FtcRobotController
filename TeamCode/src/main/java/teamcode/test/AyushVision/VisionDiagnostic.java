@@ -1,5 +1,6 @@
 package teamcode.test.AyushVision;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -16,6 +17,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @TeleOp(name="VisionBasic")
 public class VisionDiagnostic extends AbstractOpMode {
     OpenCvWebcam webcam;

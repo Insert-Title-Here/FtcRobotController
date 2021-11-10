@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Utils;
 
+@Disabled
 @TeleOp(name="MotorTest")
 public class MotorTest extends AbstractOpMode {
     DcMotor motor1, motor2;

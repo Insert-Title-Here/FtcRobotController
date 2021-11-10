@@ -89,23 +89,24 @@ public class EndgameSystems {
 
     public void scoreDuck() {
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        int pose;
+        int pose = 40000;
+        double direction;
         if(isBlue){
-            pose = (40000);
+            direction = 1;
         }else {
-            pose = (int)(40000 * (4.0/3.0));
+            direction = -1;
         }
         carouselEncoder.setTargetPosition(pose);
         carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while(carouselEncoder.getCurrentPosition() < carouselEncoder.getTargetPosition() && AbstractOpMode.currentOpMode().opModeIsActive()){
             if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.25){
                 if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.4){
-                    carousel.setPower(1);
+                    carousel.setPower(1 * direction);
                 }else{
-                    carousel.setPower(0.75);
+                    carousel.setPower(0.75 * direction);
                 }
             }else{
-                carousel.setPower(0.5);
+                carousel.setPower(0.5 * direction);
             }
 
         }
@@ -117,4 +118,21 @@ public class EndgameSystems {
     }
 
 
+    public void scoreDuckAuto() {
+        carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        int pose = 40000;
+        double direction;
+        if(isBlue){
+            direction = 1;
+        }else {
+            direction = -1;
+        }
+        carouselEncoder.setTargetPosition(pose);
+        carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(carouselEncoder.getCurrentPosition() < carouselEncoder.getTargetPosition() && AbstractOpMode.currentOpMode().opModeIsActive()){
+            carousel.setPower(.2 * direction);
+        }
+        carousel.setPower(0);
+        carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 }
