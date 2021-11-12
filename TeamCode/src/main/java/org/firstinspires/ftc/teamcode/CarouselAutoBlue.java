@@ -101,7 +101,7 @@ public class CarouselAutoBlue extends LinearOpMode {
 
 
         //Driving into park
-        drive.goToPosition(630, false);
+        drive.goToPosition(630, false, 0.3);
 
 
 
