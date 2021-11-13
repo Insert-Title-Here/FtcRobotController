@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.checkerframework.checker.units.qual.A;
+
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Utils;
 
@@ -37,7 +39,13 @@ public class EndgameSystems {
     }
 
     public void runCarousel(double power) {
-        carousel.setPower(power);
+        double direction;
+        if(isBlue){
+            direction = 1;
+        }else {
+            direction = -1;
+        }
+        carousel.setPower(power * direction);
     }
 
 
@@ -96,9 +104,14 @@ public class EndgameSystems {
         }else {
             direction = -1;
         }
+        pose *= direction;
         carouselEncoder.setTargetPosition(pose);
+
         carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(carouselEncoder.getCurrentPosition() < carouselEncoder.getTargetPosition() && AbstractOpMode.currentOpMode().opModeIsActive()){
+        while(Math.abs(carouselEncoder.getCurrentPosition()) < Math.abs(carouselEncoder.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive()){
+            AbstractOpMode.currentOpMode().telemetry.addData("target", pose);
+            AbstractOpMode.currentOpMode().telemetry.addData("current", carouselEncoder.getCurrentPosition());
+            AbstractOpMode.currentOpMode().telemetry.update();
             if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.25){
                 if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.4){
                     carousel.setPower(1 * direction);
@@ -110,6 +123,8 @@ public class EndgameSystems {
             }
 
         }
+
+        carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carousel.setPower(0);
     }
 
@@ -127,6 +142,7 @@ public class EndgameSystems {
         }else {
             direction = -1;
         }
+        pose *= direction;
         carouselEncoder.setTargetPosition(pose);
         carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while(carouselEncoder.getCurrentPosition() < carouselEncoder.getTargetPosition() && AbstractOpMode.currentOpMode().opModeIsActive()){

@@ -146,7 +146,7 @@ public class ArmSystem {
     }
 
     public void retract(){
-        moveSlide(-SLIDE_POWER, 500);
+        moveSlide(-SLIDE_POWER, 100);
         house.setPosition(INTAKE_POSITION);
         stage = Stage.IDLE;
 
@@ -216,6 +216,8 @@ public class ArmSystem {
         moveSlide(-SLIDE_POWER, BOTTOM_POSITION);
 
     }
+
+
 
     public int getLinearSlidePosition(){
         return winchEncoder.getCurrentPosition();

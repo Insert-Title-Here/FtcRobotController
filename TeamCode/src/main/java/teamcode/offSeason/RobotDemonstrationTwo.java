@@ -1,6 +1,7 @@
 package teamcode.offSeason;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import teamcode.common.Utils;
 
 import static java.lang.Math.PI;
 
+@Disabled
 @TeleOp(name="Robot Demo 2")
 public class RobotDemonstrationTwo extends LinearOpMode {
 

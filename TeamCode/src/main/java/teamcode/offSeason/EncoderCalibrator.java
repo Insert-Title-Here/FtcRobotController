@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Debug;
 
+@Disabled
 @TeleOp(name="Encoder Calibrator")
 public class EncoderCalibrator extends AbstractOpMode {
 

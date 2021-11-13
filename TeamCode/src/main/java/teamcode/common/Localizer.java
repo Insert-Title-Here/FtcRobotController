@@ -601,6 +601,7 @@ public class Localizer extends Thread {
             inverseMatrix.setEntry(i, 1, orientationVector.getY());
             inverseMatrix.setEntry(i, 2, positionVector.getX() * orientationVector.getY() - positionVector.getY() * orientationVector.getX());
         }
+        inverseMatrix.setEntry(2, 2, 1.0);
 
         solver = new LUDecomposition(inverseMatrix).getSolver();
         odoEstimate = start.clone();

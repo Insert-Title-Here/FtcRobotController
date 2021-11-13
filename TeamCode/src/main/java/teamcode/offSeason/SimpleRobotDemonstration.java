@@ -1,11 +1,13 @@
 package teamcode.offSeason;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import teamcode.common.Utils;
 
+@Disabled
 @TeleOp(name="Robot Demo 1")
 public class SimpleRobotDemonstration extends LinearOpMode {
     DcMotor motor;

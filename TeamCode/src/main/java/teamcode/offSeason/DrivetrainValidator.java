@@ -1,11 +1,13 @@
 package teamcode.offSeason;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Utils;
 import teamcode.common.WestCoastDriveTrain;
 
+@Disabled
 @Autonomous(name="DriveValidator")
 public class DrivetrainValidator extends AbstractOpMode {
 

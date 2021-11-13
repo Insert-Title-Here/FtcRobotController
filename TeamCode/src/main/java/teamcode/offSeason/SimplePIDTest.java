@@ -2,6 +2,7 @@ package teamcode.offSeason;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -18,6 +19,7 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
+@Disabled
 @Autonomous(name="PID test")
 public class SimplePIDTest extends AbstractOpMode {
 

@@ -72,7 +72,7 @@ public class BlueAuto extends AbstractOpMode {
         webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
-        driveTrain.moveToPosition(new Vector2D(0, 6), 12, 0.5, true);
+        driveTrain.moveToPosition(new Vector2D(1, 6), 6, 0.5, false);
         // Utils.sleep(2000);
         driveTrain.rotateDistance(-0.5, Math.toRadians(-120));
 
@@ -81,7 +81,7 @@ public class BlueAuto extends AbstractOpMode {
             if(position == BarcodePipeline.BarcodePosition.LEFT){
                 arm.raise(Constants.BOTTOM_POSITION - 2000);
             }
-            driveTrain.moveToPosition(new Vector2D(8, 18), -12, 0.5, false);
+            driveTrain.moveToPosition(new Vector2D(9, 17), -12, 0.5, false);
             driveTrain.rotateDistance(-0.4, Math.toRadians(-155));
 
         } else{
