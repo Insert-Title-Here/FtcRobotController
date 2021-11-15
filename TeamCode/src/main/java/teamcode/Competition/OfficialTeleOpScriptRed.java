@@ -23,7 +23,6 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
     WestCoastDriveTrain drive;
     ArmSystem arm;
     EndgameSystems system;
-    Localizer localizer;
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
@@ -32,7 +31,7 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
     private static final double INTAKE_POWER = 1.0;
     private static final double SPRINT_LINEAR_MODIFIER = 1.0;
-    private static final double NORMAL_LINEAR_MODIFIER = 0.8;
+    private static final double NORMAL_LINEAR_MODIFIER = 1.0;
     private static final double SPRINT_ROTATIONAL_MODIFIER = 1.0;
     private static final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
     private boolean isSprint;
@@ -48,13 +47,11 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
         arm = new ArmSystem(hardwareMap, true);
         drive = new WestCoastDriveTrain(hardwareMap);
         system = new EndgameSystems(hardwareMap, false); //TODO make a copy of tele op
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 10);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         isCarousel = false;
 
-        localizer.liftOdo();
         //Initialize IMU parameters
 
         state = ScoredButtonState.RETRACTING;
@@ -150,13 +147,13 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
             arm.setWinchPower(-0.5);
         } else if(gamepad1.a) {
             if (pulleyState == PulleyState.RETRACTED) {
-                arm.raise(Constants.TOP_POSITION);
+                arm.raise(Constants.TOP_POSITION + 600);
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
             }
         }else if(gamepad1.y){
             if(pulleyState == PulleyState.RETRACTED) {
-                arm.raise(Constants.MEDIUM_POSITION );
+                arm.raise(Constants.MEDIUM_POSITION + 600);
                 pulleyState = PulleyState.MID_GOAL;
                 linkageState = linkageState.RAISED;
             }
@@ -209,7 +206,6 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
         driveThread.interrupt();
         driverTwoThread.interrupt();
         armThread.interrupt();
-        localizer.stopThread();
     }
 }
 

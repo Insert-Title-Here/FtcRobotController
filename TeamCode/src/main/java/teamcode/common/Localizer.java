@@ -575,7 +575,9 @@ public class Localizer extends Thread {
     DecompositionSolver solver;
 
     ArrayList<Vector2D> wheelPoses;
-
+    double[] lastWheelPositions;
+    private Pose odoEstimate;
+    private Pose poseVelocity;
 
 
 
@@ -589,11 +591,15 @@ public class Localizer extends Thread {
         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
         rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);
         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
+
         Array2DRowRealMatrix inverseMatrix = new Array2DRowRealMatrix(3, 3);
+        lastWheelPositions = new double[]{0,0,0};
+
         wheelPoses = new ArrayList<>();
         wheelPoses.add(new Vector2D(-4.01885,-6.371937)); //LV
         wheelPoses.add(new Vector2D(4.18685,-6.336937)); //RV
         wheelPoses.add(new Vector2D(0.10685,4.5222)); //H
+
         for (int i = 0; i < 2; i++) {
             Vector2D orientationVector = wheelPoses.get(i).headingVec();
             Vector2D positionVector = wheelPoses.get(i);
@@ -601,7 +607,6 @@ public class Localizer extends Thread {
             inverseMatrix.setEntry(i, 1, orientationVector.getY());
             inverseMatrix.setEntry(i, 2, positionVector.getX() * orientationVector.getY() - positionVector.getY() * orientationVector.getX());
         }
-        inverseMatrix.setEntry(2, 2, 1.0);
 
         solver = new LUDecomposition(inverseMatrix).getSolver();
         odoEstimate = start.clone();
@@ -614,9 +619,7 @@ public class Localizer extends Thread {
 
 
 
-    double[] lastWheelPositions;
-    private Pose odoEstimate;
-    private Pose poseVelocity;
+
 
     private synchronized void matUpdate() {
         data1 = hub1.getBulkInputData();
