@@ -72,6 +72,11 @@ public class BlueAuto extends AbstractOpMode {
         webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
+
+        if(position == BarcodePipeline.BarcodePosition.LEFT){
+            position = BarcodePipeline.BarcodePosition.RIGHT;
+        }
+        Utils.sleep(500);
         driveTrain.moveToPosition(new Vector2D(1, 6), 6, 0.5, false);
         // Utils.sleep(2000);
         driveTrain.rotateDistance(-0.5, Math.toRadians(-120));

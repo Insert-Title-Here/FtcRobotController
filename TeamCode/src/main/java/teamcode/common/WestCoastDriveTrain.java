@@ -13,7 +13,7 @@ public class WestCoastDriveTrain {
     private ExpansionHubMotor fl, fr, bl, br;
     Localizer localizer;
 
-    private final double P_LINEAR = 0.00035;
+    private final double P_LINEAR = 0.00015;
     private final double I_LINEAR = 0;
     private final double D_LINEAR = 0;
 

@@ -23,7 +23,6 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
     WestCoastDriveTrain drive;
     ArmSystem arm;
     EndgameSystems system;
-    Localizer localizer;
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
@@ -32,7 +31,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
 
     private static final double INTAKE_POWER = 1.0;
     private static final double SPRINT_LINEAR_MODIFIER = 1.0;
-    private static final double NORMAL_LINEAR_MODIFIER = 0.8;
+    private static final double NORMAL_LINEAR_MODIFIER = 1.0;
     private static final double SPRINT_ROTATIONAL_MODIFIER = 1.0;
     private static final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
     private boolean isSprint;
@@ -49,13 +48,11 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
         arm = new ArmSystem(hardwareMap, true);
         drive = new WestCoastDriveTrain(hardwareMap);
         system = new EndgameSystems(hardwareMap, true); //TODO make a copy of tele op
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0, 10);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         isCarousel = false;
 
-        localizer.liftOdo();
         //Initialize IMU parameters
 
         state = ScoredButtonState.RETRACTING;
@@ -208,6 +205,6 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
         driveThread.interrupt();
         driverTwoThread.interrupt();
         armThread.interrupt();
-        localizer.stopThread();
+
     }
 }

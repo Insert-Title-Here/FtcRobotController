@@ -76,6 +76,11 @@ public class RedAuto extends AbstractOpMode {
         webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
+
+        if(position == BarcodePipeline.BarcodePosition.LEFT){
+            position = BarcodePipeline.BarcodePosition.RIGHT;
+        }
+        Utils.sleep(1500);
         driveTrain.moveToPosition(new Vector2D(-1, 6), 6, 0.5, false);
         // Utils.sleep(2000);
         driveTrain.rotateDistance(0.5, Math.toRadians(120));
@@ -110,7 +115,7 @@ public class RedAuto extends AbstractOpMode {
 //        telemetry.update();
         driveTrain.moveToPosition(constructedVector, 12, 0.5, false);
         arm.retract();
-        driveTrain.rotateDistance(-0.4, Math.toRadians(105));
+        driveTrain.rotateDistance(-0.4, Math.toRadians(90));
         driveTrain.moveToPosition(new Vector2D(34, 27), 24, 0.5, false);
 
 
