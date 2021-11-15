@@ -22,7 +22,6 @@ public class BarcodePipeline extends OpenCvPipeline {
     }
 
     public enum Side{
-
         RED, BLUE;
     }
 
@@ -63,6 +62,7 @@ public class BarcodePipeline extends OpenCvPipeline {
 //    Mat YCrCb = new Mat();
 //    Mat Cb = new Mat();
     Mat RGB = new Mat();
+
     Mat B = new Mat();
     int avg1, avg2, avg3;
 

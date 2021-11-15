@@ -16,7 +16,7 @@ import teamcode.Competition.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 
 @TeleOp(name = "Webcam Calibration")
-public class CVInitTest extends AbstractOpMode {
+public class CvAutoPosition extends AbstractOpMode {
 
     // Get webcam and create an OpenCvCamera
     WebcamName wc;
@@ -41,6 +41,7 @@ public class CVInitTest extends AbstractOpMode {
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
 
             // Start opening the camera and stream it
             @Override
