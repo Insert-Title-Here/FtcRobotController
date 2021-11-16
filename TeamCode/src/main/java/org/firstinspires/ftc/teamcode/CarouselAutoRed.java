@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "Carousel Auto (red)", group = "Linear Opmode")
 
 public class CarouselAutoRed extends LinearOpMode {
     DcMotor carousel;
+    Servo grabber;
 
 
     @Override
@@ -16,6 +18,9 @@ public class CarouselAutoRed extends LinearOpMode {
 
         carousel = hardwareMap.get(DcMotor.class, "Carousel");
         carousel.setDirection(DcMotor.Direction.REVERSE);
+
+        grabber = hardwareMap.get(Servo.class, "Grabber");
+        grabber.setPosition(0);
 
         waitForStart();
 
@@ -97,6 +102,7 @@ public class CarouselAutoRed extends LinearOpMode {
 
         //Driving into park
         drive.goToPosition(630, false, 0.3);
+        sleep(1000);
 
 
 

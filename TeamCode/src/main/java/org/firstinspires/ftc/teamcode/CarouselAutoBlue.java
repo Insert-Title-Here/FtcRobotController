@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
@@ -11,6 +12,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.lin
 
 public class CarouselAutoBlue extends LinearOpMode {
     DcMotor carousel;
+    Servo grabber;
 
 
     @Override
@@ -20,7 +22,8 @@ public class CarouselAutoBlue extends LinearOpMode {
         carousel = hardwareMap.get(DcMotor.class, "Carousel");
         carousel.setDirection(DcMotor.Direction.REVERSE);
 
-
+        grabber = hardwareMap.get(Servo.class, "Grabber");
+        grabber.setPosition(0);
 
         waitForStart();
 
@@ -102,6 +105,7 @@ public class CarouselAutoBlue extends LinearOpMode {
 
         //Driving into park
         drive.goToPosition(630, false, 0.3);
+        sleep(1000);
 
 
 

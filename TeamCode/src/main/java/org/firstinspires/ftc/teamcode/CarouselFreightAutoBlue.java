@@ -17,23 +17,26 @@
 
  import java.util.Locale;
 
- @Autonomous(name = "Freight Auto (red)", group = "Linear Opmode")
+ @Autonomous(name = "Carousel + Freight Auto (blue)", group = "Linear Opmode")
  @Disabled
 
- public class FreightScoreAutoRed extends LinearOpMode {
+ public class CarouselFreightAutoBlue extends LinearOpMode {
      // The IMU sensor object
      BNO055IMU imu;
      DcMotor extender;
+     DcMotor carousel;
      Servo grabber;
 
 
-     double servoPosition = 0.3;
+     double servoPosition = 0.5;
 
 
      boolean isExtended = false;
      boolean isGrabbing = true;
      boolean servoMoving = false;
      boolean previousYState;
+     Thread armThread;
+
 
 
      // State used for updating telemetry
@@ -52,6 +55,17 @@
          extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
          extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
          grabber = hardwareMap.get(Servo.class, "Grabber");
+
+         carousel = hardwareMap.get(DcMotor.class, "Carousel");
+         carousel.setDirection(DcMotor.Direction.REVERSE);
+
+         armThread = new Thread(){
+             @Override
+             public void run(){
+                 extendArm(0);
+             }
+         };
+
 
 
 
@@ -125,6 +139,32 @@
 
           */
 
+         extendArm(500);
+         drive.goToPosition(-200, false, 0.3);
+         sleep(1000);
+
+         rotateToPosition(drive, 430);
+
+         sleep(1000);
+
+         drive.goToPosition(550, false, 0.3);
+
+         sleep(1000);
+
+         rotateToPosition(drive, -50);
+         //sleep(2000);
+
+         spinCarousel(4000);
+
+         drive.goToPosition(-200, false, 0.3);
+         rotateToPosition(drive, -200);
+         drive.goToPosition(-500, false, 0.3);
+         extendArm(7100);
+         drive.goToPosition(-300, false, 0.3);
+         grabber.setPosition(0.5);
+         sleep(4000);
+
+
 
 
 
@@ -141,10 +181,10 @@
 
 
          //Top Goal
-         extendArm(6295);
-         drive.goToPosition(-550, false, 0.3);
-         grabber.setPosition(0.3);
-         extendArm(8900);
+         //extendArm(7100);
+         //drive.goToPosition(-450, false, 0.3);
+         //grabber.setPosition(0.3);
+
 
 
          /*
@@ -160,25 +200,6 @@
           */
 
 
-         drive.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         drive.lf.setTargetPosition(-500);
-         drive.lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-         drive.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         drive.rf.setTargetPosition(500);
-         drive.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-         drive.lf.setPower(0.2);
-         drive.rf.setPower(0.2);
-
-         while(drive.lf.isBusy() && drive.rf.isBusy()){
-
-         }
-
-         drive.brake();
-         extendArm(500);
-         sleep(2000);
-
 
 
          /*drive.lf.setPower(0.4);
@@ -188,9 +209,6 @@
          drive.rf.setPower(0);
 
           */
-
-         drive.goToPosition(-2000, false,0.8);
-         sleep(4000);
 
 
 
@@ -306,7 +324,7 @@
 
          extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-         extender.setPower(1);
+         extender.setPower(0.5);
 
          while (extender.isBusy()) {
 
@@ -337,6 +355,45 @@
 
          }
          isGrabbing = !isGrabbing;
+
+     }
+
+     public void rotateToPosition(DriveTrain drive, int tics) {
+         drive.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         drive.lf.setTargetPosition(tics);
+         drive.lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+         drive.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         drive.rf.setTargetPosition(-tics);
+         drive.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+         drive.lf.setPower(0.2);
+         drive.rf.setPower(0.2);
+
+         while(drive.lf.isBusy() && drive.rf.isBusy()){
+
+         }
+
+         drive.brake();
+     }
+
+     public void spinCarousel(int tics) {
+
+
+         carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         carousel.setTargetPosition(tics);
+
+
+         carousel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+         double power;
+
+         carousel.setPower(0.2);
+
+         while (carousel.isBusy()) {
+
+         }
 
      }
 

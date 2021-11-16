@@ -8,7 +8,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp(name = "AutoCalibrate")
-public class CVInitTest extends TestTeleOpMode2 {
+public class CVInitTest extends OfficialTeleOpBlue {
 
     // Get webcam and create an OpenCvCamera
     WebcamName wc;

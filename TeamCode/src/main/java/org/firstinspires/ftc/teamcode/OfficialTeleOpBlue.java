@@ -55,9 +55,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Real TeleOp Drive", group="Linear Opmode")
+@TeleOp(name="TeleOp Blue", group="Linear Opmode")
 //@Disabled
-public class TestTeleOpMode2 extends LinearOpMode {
+public class OfficialTeleOpBlue extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -71,7 +71,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
     static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
-    double servoPosition = 0.3;
+    double servoPosition = 0;
 
     Thread extendingArmThread;
     Thread carouselThread;
@@ -141,9 +141,13 @@ public class TestTeleOpMode2 extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.right_bumper) {
-                drive.setPower(gamepad1.left_stick_y, gamepad1.right_stick_x * .6);
+                drive.setPower(gamepad1.left_stick_y, gamepad1.right_stick_x * .8);
             } else {
                 drive.setPower(gamepad1.left_stick_y / 2, gamepad1.right_stick_x / 2);
+            }
+
+            if(carousel.isBusy()) {
+                drive.setPower(0.1, 0);
             }
 
 
@@ -161,7 +165,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
     private void carouselUpdate() {
 
         if(gamepad1.dpad_right) {
-            carousel.setPower(0.7);
+            carousel.setPower(-0.7);
         } else if(gamepad1.dpad_left) {
             carousel.setPower(0.7);
         } else {
@@ -172,9 +176,14 @@ public class TestTeleOpMode2 extends LinearOpMode {
             spinCarousel(4000);
         }
 
+        if (gamepad1.y) {
+            grab(0.5);
+        }
+
     }
 
     private void magneticArmUpdate(){
+        /*
         if (gamepad1.b && !magneticIsExtended) {
             magneticIsExtended = true;
             magneticExtend(5000);
@@ -184,6 +193,8 @@ public class TestTeleOpMode2 extends LinearOpMode {
             magneticIsExtended = false;
             magneticExtend(0);
         }
+
+         */
 
     }
 
@@ -202,6 +213,10 @@ public class TestTeleOpMode2 extends LinearOpMode {
             extender.setPower(-0.3);
         } else {
             extender.setPower(0);
+        }
+
+        if(gamepad1.b) {
+            extendArm(6295);
         }
 
 
@@ -224,13 +239,6 @@ public class TestTeleOpMode2 extends LinearOpMode {
             extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-
-        if (gamepad1.y) {
-            grab(0.3);
-        }
-
-
-
 
     }
 
@@ -272,6 +280,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         carousel.setPower(0.5);
 
+
         while (carousel.isBusy()) {
             power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
             if (power < 0.5) {
@@ -295,7 +304,11 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        extender.setPower(0.5);
+        if(!extenderIsExtended) {
+            extender.setPower(0.75);
+        } else {
+            extender.setPower(1);
+        }
 
         while (extender.isBusy()) {
 

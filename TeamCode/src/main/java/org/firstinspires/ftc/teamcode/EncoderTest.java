@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @Autonomous(name="EncoderTest", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class EncoderTest extends LinearOpMode {
 
     // Declare OpMode members.
