@@ -141,6 +141,10 @@ public class OfficialTeleOpRed extends LinearOpMode {
                 drive.setPower(gamepad1.left_stick_y / 2, gamepad1.right_stick_x / 2);
             }
 
+            if(carousel.isBusy()) {
+                drive.setPower(0.1, 0);
+            }
+
 
 
             // Show the elapsed game time and wheel power.
