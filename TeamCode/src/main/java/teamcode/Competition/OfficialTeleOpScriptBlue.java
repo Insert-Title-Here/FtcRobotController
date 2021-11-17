@@ -55,6 +55,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
         isCarousel = false;
 
         localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
+        localizer.liftOdo();
 
         //Initialize IMU parameters
 
