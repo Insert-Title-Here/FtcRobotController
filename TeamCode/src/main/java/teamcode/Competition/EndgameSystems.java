@@ -56,13 +56,7 @@ public class EndgameSystems {
 
         capstoneMechanism = hardwareMap.servo.get("CapstoneServo");
 
-        if(isBlue){
-            carousel = hardwareMap.crservo.get("Carousel");
-            carouselEncoder = hardwareMap.dcMotor.get("Winch");
-        }else{
-            carousel = hardwareMap.crservo.get("CapstoneServo");
-            carouselEncoder = hardwareMap.dcMotor.get("Capstpne");
-        }
+        carouselEncoder = hardwareMap.dcMotor.get("Winch");
 
 
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

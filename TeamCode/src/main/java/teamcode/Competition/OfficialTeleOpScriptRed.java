@@ -22,7 +22,7 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
     WestCoastDriveTrain drive;
     ArmSystem arm;
-    //EndgameSystems system;
+    EndgameSystems system;
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
@@ -48,7 +48,7 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
     protected void onInitialize() {
         arm = new ArmSystem(hardwareMap, true);
         drive = new WestCoastDriveTrain(hardwareMap);
-//        system = new EndgameSystems(hardwareMap, false); //TODO make a copy of tele op
+        system = new EndgameSystems(hardwareMap, false); //TODO make a copy of tele op
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
@@ -94,17 +94,17 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
     private void driverTwoUpdate() {
         if(gamepad1.left_bumper){
             while(gamepad1.left_bumper) {
-                //system.runCarousel(1);
+                system.runCarousel(1);
             }
         }else if(gamepad1.right_bumper){
             isCarousel = true;
             drive.setPower(-0.1,0);
-            //system.scoreDuck();
+            system.scoreDuck();
             drive.setPower(0,0);
             isCarousel = false;
         }else {
-            //system.setCapstonePower(0);
-            //system.runCarousel(0);
+            system.setCapstonePower(0);
+            system.runCarousel(0);
         }
 
 //        telemetry.addData("stage", arm.getStage());
