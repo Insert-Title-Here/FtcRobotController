@@ -65,8 +65,6 @@ public class TestAutoOpMode extends LinearOpMode {
 
     BNO055IMU imu;
     DcMotor extender;
-    DcMotor lf;
-    DcMotor rf;
     Servo grabber;
 
     double servoPosition = 0.3;
@@ -93,14 +91,6 @@ public class TestAutoOpMode extends LinearOpMode {
         extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
-        lf  = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
-        rf = hardwareMap.get(DcMotor.class, "RightFrontDrive");
-
-        lf.setDirection(DcMotorSimple.Direction.FORWARD);
-        rf.setDirection(DcMotorSimple.Direction.REVERSE); //keep in mind that this also reverses direction of encoders
-
-
-
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -123,13 +113,11 @@ public class TestAutoOpMode extends LinearOpMode {
         extendArm(500);
 
 
-
-        while(imu.getAngularOrientation().firstAngle > -90){
-            lf.setPower(0.8);
-            rf.setPower(-0.8);
+        while(!(imu.getAngularOrientation().firstAngle < -90)){
             telemetry.addData("angle", imu.getAngularOrientation().firstAngle);
             telemetry.update();
-
+            drive.lf.setPower(-0.8);
+            drive.rf.setPower(0.8);
         }
 
         telemetry.addData("Angle", "Degree: " + imu.getAngularOrientation().firstAngle);
