@@ -2,11 +2,15 @@ package teamcode.test.MasonTesting;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class CvDetectionPipeline extends OpenCvPipeline {
 
@@ -24,11 +28,8 @@ class CvDetectionPipeline extends OpenCvPipeline {
             CREGION_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
             CREGION_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
-    Mat HSV = new Mat();
-    Mat cRegion = new Mat();
-    Mat H, S, V;
-    Mat H2, S2, V2;
-    int h, s, v;
+    List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+    Mat heirarchy = new Mat();
 
     // TODO - research docs for following statements, and tweak values in regards to HSV and binary vals
     // convert img to binary
@@ -38,43 +39,23 @@ class CvDetectionPipeline extends OpenCvPipeline {
         Mat binary = new Mat(input.rows(), input.cols(), input.type(), new Scalar(0));
         Imgproc.threshold(hsvMat, binary, 100, 255, Imgproc.THRESH_BINARY_INV);
 
-        return null;
+        return binary;
     }
 
     // find contours
+    public void findImgContours(Mat binaryMat) {
+        Imgproc.findContours(binaryMat, contours, heirarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+    }
 
     @Override
-    public Mat processFrame(Mat input) {
-
-
-        H2 = H.submat(new Rect(cRegion_pointA, cRegion_pointB));
-        S2 = S.submat(new Rect(cRegion_pointA, cRegion_pointB));
-        V2 = V.submat(new Rect(cRegion_pointA, cRegion_pointB));
-
-        h = (int) Core.mean(H2).val[0];
-        s = (int) Core.mean(S2).val[0];
-        v = (int) Core.mean(V2).val[0];
-
-        Imgproc.rectangle(
-                input,
-                cRegion_pointA,
-                cRegion_pointB,
-                BLUE,
-                2
-        );
+    public Mat processFrame(Mat input){
+        srcToHSVBinary(input);
+        findImgContours(input);
 
         return input;
     }
 
-    public int hVal() {
-        return h;
-    }
-
-    public int sVal() {
-        return s;
-    }
-
-    public int vVal() {
-        return v;
+    public String imgToString() {
+        return contours.toString();
     }
 }

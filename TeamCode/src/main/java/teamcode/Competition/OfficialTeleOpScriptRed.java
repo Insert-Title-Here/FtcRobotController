@@ -126,9 +126,17 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
                 }
 
             }
+
+            // flip with a
         }else if(gamepad1.left_trigger > 0.3){
-            //add something to move the linkage outta the way
-            arm.intakeDumb(-0.6);
+//            //add something to move the linkage outta the way
+//            arm.intakeDumb(-0.6);
+
+            if (pulleyState == PulleyState.RETRACTED) {
+                arm.raise(Constants.TOP_POSITION + 600);
+                pulleyState = PulleyState.HIGH_GOAL;
+                linkageState = LinkageState.RAISED;
+            }
         }else if(gamepad1.x){
             long currentSampleTime = System.currentTimeMillis();
             if(currentSampleTime - scoredSampleTime > 200) {
@@ -152,12 +160,17 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
+
+            // flip with left trigger
         } else if(gamepad1.a) {
-            if (pulleyState == PulleyState.RETRACTED) {
-                arm.raise(Constants.TOP_POSITION + 600);
-                pulleyState = PulleyState.HIGH_GOAL;
-                linkageState = LinkageState.RAISED;
-            }
+            //add something to move the linkage outta the way
+            arm.intakeDumb(-0.6);
+
+//            if (pulleyState == PulleyState.RETRACTED) {
+//                arm.raise(Constants.TOP_POSITION + 600);
+//                pulleyState = PulleyState.HIGH_GOAL;
+//                linkageState = LinkageState.RAISED;
+//            }
         }else if(gamepad1.y){
             if(pulleyState == PulleyState.RETRACTED) {
                 arm.raise(Constants.MEDIUM_POSITION + 600);
