@@ -114,6 +114,19 @@ public final class Vector2D implements Cloneable {
         return new Vector2D(Math.cos(getDirection()), Math.sin(getDirection()));
     }
 
+
+    /**
+     * Direction Heading
+     * 0 90
+     * 90 0
+     * 180 -90
+     * 270 -180
+     * @return
+     */
+    public double directionToHeading(){
+        return Math.PI / 2.0 - getDirection();
+    }
+
     public String loggerToString() {
     return x + "," + y;
 

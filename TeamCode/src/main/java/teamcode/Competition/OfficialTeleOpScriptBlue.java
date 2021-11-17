@@ -26,6 +26,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
+    Localizer localizer;
 
 
 
@@ -52,6 +53,8 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
         isCarousel = false;
+
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
 
         //Initialize IMU parameters
 

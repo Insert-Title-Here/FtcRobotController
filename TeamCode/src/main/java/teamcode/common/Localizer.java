@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -53,6 +54,7 @@ public class Localizer extends Thread {
     private static final double ODO_XY_DISTANCE = 4.05; //x value
     private static final double ODO_YX_DISTANCE = 3.5; //Y value
     private static final double WINCH_RADIUS = 1;
+
 
 
     //debugging constants, not used very much
@@ -133,7 +135,6 @@ public class Localizer extends Thread {
         secondaryLoggingString = "";
         //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
         // initialize hardware
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
         rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);
         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
@@ -237,8 +238,8 @@ public class Localizer extends Thread {
         while (!stop.get()) {
             long millis = System.currentTimeMillis();
             //update();
-            updateKalman();
-            //matUpdate();
+            //updateKalman();
+            matUpdate();
             long runtime = System.currentTimeMillis() - millis;
 
             if (runtime > runInterval) {
@@ -274,7 +275,7 @@ public class Localizer extends Thread {
     }
 
     public void liftOdo(){
-        odoWinch.setPosition(0.4);
+        odoWinch.setPosition(1.0);
         secondaryOdoWinch.setPosition(0.25);
         odoState = OdoState.RAISED;
     }
@@ -585,65 +586,113 @@ public class Localizer extends Thread {
         hub1 = hardwareMap.get(ExpansionHubEx.class,"Control Hub");
         loggingString = "";
         secondaryLoggingString = "";
+        state = new RobotPositionStateUpdater();
         //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
         // initialize hardware
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
         rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);
         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+
         Array2DRowRealMatrix inverseMatrix = new Array2DRowRealMatrix(3, 3);
-        lastWheelPositions = new double[]{0,0,0};
+
 
         wheelPoses = new ArrayList<>();
         wheelPoses.add(new Vector2D(-4.01885,-6.371937)); //LV
-        wheelPoses.add(new Vector2D(4.18685,-6.336937)); //RV
         wheelPoses.add(new Vector2D(0.10685,4.5222)); //H
+        //wheelPoses.add(new Vector2D(4.18685,-6.336937)); //RV
+
 
         for (int i = 0; i < 2; i++) {
-            Vector2D orientationVector = wheelPoses.get(i).headingVec();
             Vector2D positionVector = wheelPoses.get(i);
+            double heading = positionVector.directionToHeading();
+            Vector2D orientationVector = new Vector2D(cos(heading), sin(heading));
+
+            double val = positionVector.getX() * orientationVector.getY() - positionVector.getY() * orientationVector.getX();
+
             inverseMatrix.setEntry(i, 0, orientationVector.getX());
             inverseMatrix.setEntry(i, 1, orientationVector.getY());
-            inverseMatrix.setEntry(i, 2, positionVector.getX() * orientationVector.getY() - positionVector.getY() * orientationVector.getX());
+            inverseMatrix.setEntry(i, 2, val);
+//            Debug.log(positionVector.getX() * orientationVector.getY());
+//            Debug.log(positionVector.getY() * orientationVector.getX());
         }
 
+        inverseMatrix.setEntry(2,2,1.0);
+
+
+
         solver = new LUDecomposition(inverseMatrix).getSolver();
+        Debug.log(solver.isNonSingular());
+        lastWheelPositions = new double[]{0,0,0};
         odoEstimate = start.clone();
         poseVelocity = new Pose(0,0,0);
+        previousHeading = 0;
+
+        resetEncoders();
         iterator = 1;
 
+    }
+
+    public double directionToHeading(double direction){
+        return Math.PI / 2.0 - direction;
     }
 
 
 
 
 
-
-
+    double previousHeading;
+    private static final double X_SCALAR = -1;
+    private static final double Y_SCALAR = -1;
     private synchronized void matUpdate() {
         data1 = hub1.getBulkInputData();
+        double heading = (imu.getAngularOrientation().firstAngle);
+        double dHeading = heading - previousHeading;
+
+
 
         double[] wheelPositions = new double[]{encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical)),
-                encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical)),
-                encoderTicksToInches(data1.getMotorCurrentPosition(horizontal))};
-        double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], wheelPositions[2] - lastWheelPositions[2]};
+                encoderTicksToInches(data1.getMotorCurrentPosition(horizontal)),
+                -encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical)),
+                };
+        double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], dHeading};
              Pose robotPoseDelta = calculatePoseDelta(wheelDeltas);
-             odoEstimate = relativeOdometryUpdate(robotPoseDelta);
+            odoEstimate = relativeOdometryUpdate(robotPoseDelta);
         double[] wheelVelocities = new double[]{wheelDeltas [0]/ 0.02, wheelDeltas[1] / 0.02, wheelDeltas[2] / 0.02};
 
         if (wheelVelocities != null) {
             poseVelocity = calculatePoseDelta(wheelVelocities);
         }
 
+        previousHeading = heading;
+
         lastWheelPositions = new double[]{wheelPositions[0], wheelPositions[1], wheelPositions[2]};
         iterator++;
         }
 
+        private double angleWrap(double angle) {
+        double negTauToTau = angle % (Math.PI * 2);
+
+        if (Math.abs(negTauToTau) > Math.PI) {
+            negTauToTau -= Math.copySign(Math.PI * 2, negTauToTau);
+        }
+        return negTauToTau;
+    }
+
     private static final double EPSILON = 1e-6;
 
     private Pose relativeOdometryUpdate(Pose robotPoseDelta) {
-        RobotPositionStateUpdater.RobotPositionState currentState = state.getCurrentState();
         double dtheta = robotPoseDelta.heading;
         double sineTerm, cosTerm;
 
@@ -660,9 +709,12 @@ public class Localizer extends Thread {
                 cosTerm * robotPoseDelta.x + sineTerm * robotPoseDelta.y
         );
 
-        Pose fieldPoseDelta = new Pose(fieldPositionDelta.rotated(currentState.getRotation()), robotPoseDelta.heading);
+        Pose fieldPoseDelta = new Pose(fieldPositionDelta.rotated(odoEstimate.heading), robotPoseDelta.heading);
 
-        Pose fieldPose = new Pose(currentState.getPosition().getX(),currentState.getPosition().getY(), currentState.getRotation());
+        Pose fieldPose = new Pose(odoEstimate.x,odoEstimate.y, odoEstimate.heading);
+
+
+
 
         return fieldPose.add(fieldPoseDelta);
     }
