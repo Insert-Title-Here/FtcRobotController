@@ -99,7 +99,6 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
             drive.setPower(0,0);
             isCarousel = false;
         }else {
-            system.setCapstonePower(0);
             system.runCarousel(0);
         }
 
@@ -145,7 +144,6 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
             linkageState = LinkageState.RAISED;
         } else if (gamepad1.dpad_up) {
                 arm.setWinchPower(0.5);
-
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
         } else if(gamepad1.a) {

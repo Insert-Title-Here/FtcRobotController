@@ -26,17 +26,9 @@ public class EndgameSystems {
      */
 
     private CRServo carousel;
-    private DcMotor capstone, carouselEncoder;
-    private Servo capstoneMechanism;
+    private DcMotor carouselEncoder;
     private boolean isBlue;
 
-    public void extend(){
-        capstoneMechanism.setPosition(1);
-    }
-
-    public void scoreCapstone(){
-        capstoneMechanism.setPosition(0.5);
-    }
 
     public void runCarousel(double power) {
         double direction;
@@ -54,7 +46,6 @@ public class EndgameSystems {
     public EndgameSystems(HardwareMap hardwareMap, boolean isBlue){
         carousel = hardwareMap.crservo.get("Carousel");
 
-        capstoneMechanism = hardwareMap.servo.get("CapstoneServo");
 
         carouselEncoder = hardwareMap.dcMotor.get("Winch");
 
@@ -69,29 +60,7 @@ public class EndgameSystems {
         this.isBlue = isBlue;
 
     }
-    public void extendCapstoneMech(){
-        goToPosition(-210);
-        Utils.sleep(200);
-        extend();
-        Utils.sleep(200);
-        goToPosition(-10);
-    }
 
-    public void raiseCapstone(){
-       goToPosition(-550);
-    }
-
-    public void goToPosition(int position){
-        capstone.setTargetPosition(position);
-        capstone.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(Math.abs(capstone.getCurrentPosition() - capstone.getTargetPosition()) > 10){
-            capstone.setPower(-0.8);
-            AbstractOpMode.currentOpMode().telemetry.addData("pose", capstone.getCurrentPosition());
-            AbstractOpMode.currentOpMode().telemetry.update();
-        }
-        capstone.setPower(0);
-        capstone.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
 
 
 
@@ -126,10 +95,6 @@ public class EndgameSystems {
 
         carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carousel.setPower(0);
-    }
-
-    public void setCapstonePower(double power) {
-        capstone.setPower(-power);
     }
 
 

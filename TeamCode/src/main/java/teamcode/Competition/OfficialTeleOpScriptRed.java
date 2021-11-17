@@ -103,7 +103,6 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
             drive.setPower(0,0);
             isCarousel = false;
         }else {
-            system.setCapstonePower(0);
             system.runCarousel(0);
         }
 
