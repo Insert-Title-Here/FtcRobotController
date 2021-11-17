@@ -72,9 +72,9 @@ public class FreightScoreAutoBlue extends LinearOpMode {
         extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
-        armThread = new Thread(){
+        armThread = new Thread() {
             @Override
-            public void run(){
+            public void run() {
                 extendArm(500);
             }
         };
@@ -118,18 +118,15 @@ public class FreightScoreAutoBlue extends LinearOpMode {
         });
 
 
-
-
-
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
@@ -145,73 +142,21 @@ public class FreightScoreAutoBlue extends LinearOpMode {
         // Wait until we're told to go
         waitForStart();
         capstonePos = brp.getPos();
-        /*
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-
-        telemetry.addData("status", new Func<String>() {
-            @Override public String value() {
-                return imu.getSystemStatus().toShortString();
-            }
-        });
-        telemetry.addData("calib", new Func<String>() {
-            @Override public String value() {
-                        return imu.getCalibrationStatus().toString();
-            }
-        });
-
-        telemetry.addData("heading", new Func<String>() {
-            @Override public String value() {
-                return formatAngle(angles.angleUnit, angles.firstAngle);
-            }
-        });
-        telemetry.addData("roll", new Func<String>() {
-            @Override public String value() {
-                return formatAngle(angles.angleUnit, angles.secondAngle);
-            }
-        });
-        telemetry.addData("pitch", new Func<String>() {
-            @Override public String value() {
-                return formatAngle(angles.angleUnit, angles.thirdAngle);
-            }
-        });
-        telemetry.addData("grvty", new Func<String>() {
-            @Override public String value() {
-                return gravity.toString();
-            }
-        });
-        telemetry.addData("mag", new Func<String>() {
-            @Override public String value() {
-                return String.format(Locale.getDefault(), "%.3f",
-                        Math.sqrt(gravity.xAccel*gravity.xAccel
-                                + gravity.yAccel*gravity.yAccel
-                                + gravity.zAccel*gravity.zAccel));
-            }
-        });
-        telemetry.addData("pause", "this is just a pause value");
-
-         */
-
-
-
-
-
-
-
-        if(capstonePos == BarcodePipelineBlue.BarcodePosition.CENTER) {
+        if (capstonePos == BarcodePipelineBlue.BarcodePosition.CENTER) {
             //Middle Goal
             extendArm(3450);
             drive.goToPosition(-616, false, 0.3);
             grabber.setPosition(0.5);
             drive.goToPosition(316, false, 0.3);
             rotateToPosition(drive, 50);
-        } else if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
+        } else if (capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             //Top Goal
             extendArm(6295);
             drive.goToPosition(-450, false, 0.3);
             grabber.setPosition(0.5);
             drive.goToPosition(150, false, 0.3);
-        } else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT) {
+        } else if (capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT) {
             //Top Goal
             extendArm(6295);
             drive.goToPosition(-450, false, 0.3);
@@ -229,19 +174,6 @@ public class FreightScoreAutoBlue extends LinearOpMode {
 
              */
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         extendArm(1000);
@@ -263,111 +195,6 @@ public class FreightScoreAutoBlue extends LinearOpMode {
         extendArm(0);
         sleep(4000);
 
-
-
-
-
-
-
-
-        // Start the logging of measured acceleration
-
-
-        // Loop and update the dashboard
-        /*
-        while (opModeIsActive()) {
-            telemetry.addData("status", new Func<String>() {
-                @Override public String value(){
-                    return " " + rotateDegrees();
-                }
-            });
-            telemetry.update();
-        }
-
-         */
-
-    }
-
-    /*
-    private Orientation rotateDegrees(){
-        return imu.getAngularOrientation();
-    }
-
-     */
-
-    //----------------------------------------------------------------------------------------------
-    // Telemetry Configuration
-    //----------------------------------------------------------------------------------------------
-
-    void composeTelemetry() {
-
-        // At the beginning of each telemetry update, grab a bunch of data
-        // from the IMU that we will then display in separate lines.
-        telemetry.addAction(new Runnable() { @Override public void run()
-        {
-            // Acquiring the angles is relatively expensive; we don't want
-            // to do that in each of the three items that need that info, as that's
-            // three times the necessary expense.
-            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            gravity  = imu.getGravity();
-        }
-        });
-
-        telemetry.addLine()
-                .addData("status", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getSystemStatus().toShortString();
-                    }
-                })
-                .addData("calib", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getCalibrationStatus().toString();
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("heading", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.firstAngle);
-                    }
-                })
-                .addData("roll", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.secondAngle);
-                    }
-                })
-                .addData("pitch", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.thirdAngle);
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("grvty", new Func<String>() {
-                    @Override public String value() {
-                        return gravity.toString();
-                    }
-                })
-                .addData("mag", new Func<String>() {
-                    @Override public String value() {
-                        return String.format(Locale.getDefault(), "%.3f",
-                                Math.sqrt(gravity.xAccel*gravity.xAccel
-                                        + gravity.yAccel*gravity.yAccel
-                                        + gravity.zAccel*gravity.zAccel));
-                    }
-                });
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // Formatting
-    //----------------------------------------------------------------------------------------------
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees){
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
 
