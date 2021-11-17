@@ -62,9 +62,9 @@ public class EndgameSystems {
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        capstone.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        capstone.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        capstone.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        capstone.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        capstone.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        capstone.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         this.isBlue = isBlue;
 
