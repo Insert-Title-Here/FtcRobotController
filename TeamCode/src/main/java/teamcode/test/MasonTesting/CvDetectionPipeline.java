@@ -30,26 +30,22 @@ class CvDetectionPipeline extends OpenCvPipeline {
     Mat H2, S2, V2;
     int h, s, v;
 
-    void inputToHSV(Mat input) {
-        Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV);
-        Core.extractChannel(HSV, H, 0);
-        Core.extractChannel(HSV, S, 1);
-        Core.extractChannel(HSV, V, 2);
+    // TODO - research docs for following statements, and tweak values in regards to HSV and binary vals
+    // convert img to binary
+    public Mat srcToHSVBinary(Mat input) {
+        Mat hsvMat = new Mat(input.rows(), input.cols(), input.type());
+        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
+        Mat binary = new Mat(input.rows(), input.cols(), input.type(), new Scalar(0));
+        Imgproc.threshold(hsvMat, binary, 100, 255, Imgproc.THRESH_BINARY_INV);
+
+        return null;
     }
 
-    @Override
-    public void init(Mat input) {
-        inputToHSV(input);
-
-        H2 = H.submat(new Rect(cRegion_pointA, cRegion_pointB));
-        S2 = S.submat(new Rect(cRegion_pointA, cRegion_pointB));
-        V2 = V.submat(new Rect(cRegion_pointA, cRegion_pointB));
-
-    }
+    // find contours
 
     @Override
     public Mat processFrame(Mat input) {
-        inputToHSV(input);
+
 
         H2 = H.submat(new Rect(cRegion_pointA, cRegion_pointB));
         S2 = S.submat(new Rect(cRegion_pointA, cRegion_pointB));
