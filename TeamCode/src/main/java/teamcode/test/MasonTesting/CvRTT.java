@@ -77,8 +77,6 @@ public class CvRTT extends AbstractOpMode {
         // Keep the op mode running, to keep the system from coming to a halt
 
         while (opModeIsActive()) {
-            telemetry.addData("str ", dp.imgToString());
-            telemetry.update();
         }
     }
 

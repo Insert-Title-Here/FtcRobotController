@@ -17,9 +17,16 @@ class CvDetectionPipeline extends OpenCvPipeline {
 
     List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
     Mat heirarchy = new Mat();
+    Mat drawingMat = new Mat();
 
     // find contours
     public void findImgContours(Mat frame) {
+
+//        }
+    }
+
+    @Override
+    public Mat processFrame(Mat frame){
         Mat labMat = new Mat(frame.rows(), frame.cols(), frame.type());
         Imgproc.cvtColor(frame, labMat, Imgproc.COLOR_RGB2Lab);
         Mat bMat = new Mat();
@@ -32,17 +39,9 @@ class CvDetectionPipeline extends OpenCvPipeline {
         Imgproc.findContours(binary, contours, heirarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // draw contours
-        Mat draw = Mat.zeros(binary.size(), CvType.CV_8UC1);
-        for (int i = 0; i < contours.size(); i++) {
-            Scalar color = new Scalar(255, 255, 255);
-            Imgproc.drawContours(draw, contours, i, color, 2, Imgproc.LINE_8, heirarchy);
-        }
-    }
+        frame.copyTo(drawingMat);
+        Imgproc.drawContours(drawingMat, contours, -1, new Scalar(255, 255, 255), 1, 8);
 
-    @Override
-    public Mat processFrame(Mat input){
-        findImgContours(input);
-
-        return input;
+        return frame;
     }
 }
