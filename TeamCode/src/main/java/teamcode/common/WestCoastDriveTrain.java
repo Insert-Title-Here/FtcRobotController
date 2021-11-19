@@ -8,6 +8,8 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.util.concurrent.AbstractExecutorService;
 
+import teamcode.common.PositionStuff.Pose;
+
 public class WestCoastDriveTrain {
 
     private ExpansionHubMotor fl, fr, bl, br;
@@ -341,6 +343,31 @@ public class WestCoastDriveTrain {
 
 
     }
+
+    public synchronized void rotateMat(double power, double radians){
+        isMoving = true;
+        Pose current = localizer.getOdoEstimate();
+
+
+        while(Math.abs((current.heading - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive()){
+            current = localizer.getOdoEstimate();
+
+
+//            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
+//            AbstractOpMode.currentOpMode().telemetry.update();
+
+            previousOmega = rotate(power);
+        }
+
+        AbstractOpMode.currentOpMode().telemetry.addData("", current.heading);
+        AbstractOpMode.currentOpMode().telemetry.addData("", radians);
+        AbstractOpMode.currentOpMode().telemetry.addData("", current.heading - radians);
+        AbstractOpMode.currentOpMode().telemetry.update();
+        brake();
+
+
+    }
+
 
     public void setPower(double flPower, double frPower, double blPower, double brPower){
         fl.setPower(flPower);

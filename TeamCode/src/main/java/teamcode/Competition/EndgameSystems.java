@@ -44,36 +44,35 @@ public class EndgameSystems {
 
 
     public EndgameSystems(HardwareMap hardwareMap, boolean isBlue){
-        carousel = hardwareMap.crservo.get("Carousel");
 
+        if(isBlue) {
+            carousel = hardwareMap.crservo.get("Carousel");
+            carouselEncoder = hardwareMap.dcMotor.get("Winch");
+        }else{
+            carousel = hardwareMap.crservo.get("CapstoneServo");
+            carouselEncoder = hardwareMap.dcMotor.get("RightIntake");
+        }
 
-        carouselEncoder = hardwareMap.dcMotor.get("Winch");
 
 
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        capstone.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        capstone.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        capstone.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         this.isBlue = isBlue;
 
     }
+
+    public boolean isCarousel;
 
 
 
 
     public void scoreDuck() {
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        int pose = 40000;
-        double direction;
-        if(isBlue){
-            direction = 1;
-        }else {
-            direction = -1;
-        }
-        pose *= direction;
+        int pose = 20000;
+        isCarousel = true;
+        long currentTime = System.currentTimeMillis();
+
         carouselEncoder.setTargetPosition(pose);
 
         carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -81,14 +80,19 @@ public class EndgameSystems {
             AbstractOpMode.currentOpMode().telemetry.addData("target", pose);
             AbstractOpMode.currentOpMode().telemetry.addData("current", carouselEncoder.getCurrentPosition());
             AbstractOpMode.currentOpMode().telemetry.update();
-            if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.25){
-                if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.4){
-                    carousel.setPower(1 * direction);
-                }else{
-                    carousel.setPower(0.75 * direction);
-                }
-            }else{
-                carousel.setPower(0.5 * direction);
+            carousel.setPower(1);
+//            if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.1){
+//                if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.2){
+//                    carousel.setPower(1 );
+//                }else{
+//                    carousel.setPower(0.75 );
+//                }
+//            }else{
+//                carousel.setPower(0.5 );
+//            }
+
+            if(System.currentTimeMillis() - currentTime > 200){
+                isCarousel = false;
             }
 
         }

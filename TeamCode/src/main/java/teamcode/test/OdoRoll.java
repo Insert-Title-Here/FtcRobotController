@@ -10,32 +10,37 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Localizer;
 import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Vector2D;
+import teamcode.common.WestCoastDriveTrain;
 
 
-@Autonomous(name="roKFWGWNONll")
+@Autonomous(name="roll")
 public class OdoRoll extends AbstractOpMode {
 
     Localizer localizer;
+    WestCoastDriveTrain drive;
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(new Pose(0,0, 0), hardwareMap);
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
+        drive = new WestCoastDriveTrain(hardwareMap, localizer);
     }
 
     @Override
     protected void onStart() {
         localizer.start();
+
+
         while(opModeIsActive()){
 //            telemetry.addData("",localizer.getRightVerticalOdometerPosition());
 //            telemetry.addData("",localizer.getLeftVerticalOdometerPosition());
 //            telemetry.addData("",localizer.getHorizontalOdometerPosition());
-//            telemetry.update();
-            //telemetry.addData("leftVertical: ", localizer.getLeftVerticalOdometerPosition());
-            //telemetry.addData("rightVertical: ", localizer.getRightVerticalOdometerPosition());
-            //telemetry.addData("horizontal: ", localizer.getHorizontalOdometerPosition());
-            telemetry.addData("", localizer.getOdoEstimate().toString());
-            telemetry.addData("", localizer.getPoseVelocity().toString());
+            drive.setPower(0,gamepad1.left_stick_x * 0.5);
+            telemetry.addData("", localizer.getCurrentState());
             telemetry.update();
+            //telemetry.addData("", localizer.getOdoEstimate().toString());
+            //telemetry.addData("", localizer.getPoseVelocity().toString());
+            //telemetry.update();
         }
+        localizer.writeLoggerToFile();
         //ReadWriteFile.writeFile(AppUtil.getInstance().getSettingsFile("KalmanStateReadings.txt"), localizer.loggingString);
     }
 

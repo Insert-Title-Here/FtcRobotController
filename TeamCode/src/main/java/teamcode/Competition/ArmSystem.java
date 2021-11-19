@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.List;
@@ -29,7 +30,9 @@ public class ArmSystem {
     private static final double SCORING_POSITION = 0.62;
 
     private static final double LINKAGE_DOWN = 0.26; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
+    private static final double LINKAGE_HOUSED = 0.6;
     private static final double LINKAGE_SCORE = 0.7;
+
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
     private static final float RED_THRESHOLD = 255;
@@ -39,7 +42,7 @@ public class ArmSystem {
 
     private static final double SLIDE_POWER = 1.0;
 
-    private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder;
+    private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, conveyorMotor;
     private Servo house, linkage;
     private CRServo carousel;
     private NormalizedColorSensor sensor;
@@ -52,6 +55,7 @@ public class ArmSystem {
         rightIntake = hardwareMap.dcMotor.get("RightIntake");
         winchMotor = hardwareMap.dcMotor.get("Winch");
         winchEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
+        conveyorMotor = hardwareMap.dcMotor.get("Conveyor");
 
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
@@ -69,7 +73,7 @@ public class ArmSystem {
         }else{
             house.setPosition(HOUSING_POSITION);
         }
-        linkage.setPosition(LINKAGE_SCORE);
+        linkage.setPosition(LINKAGE_HOUSED);
         stage = Stage.IDLE;
     }
 
@@ -78,6 +82,23 @@ public class ArmSystem {
         rightIntake.setPower(-power);
     }
 
+    public void runConveyor(double power){
+        conveyorMotor.setPower(power);
+    }
+
+    public void runConveyorPos(double power, int position){
+        conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        conveyorMotor.setTargetPosition(-position);
+        conveyorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(Math.abs(conveyorMotor.getCurrentPosition() - conveyorMotor.getTargetPosition()) > 10){
+            AbstractOpMode.currentOpMode().telemetry.addData("", conveyorMotor.getCurrentPosition());
+            AbstractOpMode.currentOpMode().telemetry.addData("", conveyorMotor.getTargetPosition());
+            AbstractOpMode.currentOpMode().telemetry.update();
+
+            conveyorMotor.setPower(-power);
+        }
+        conveyorMotor.setPower(0);
+    }
 
 
     public void intake(double intakePower, boolean isAuto){
@@ -120,7 +141,7 @@ public class ArmSystem {
         intakeDumb(0);
         house.setPosition(HOUSING_POSITION);
         Utils.sleep(250);
-        linkage.setPosition(LINKAGE_SCORE);
+        linkage.setPosition(LINKAGE_HOUSED);
         stage = Stage.HOUSED;
 
 
@@ -133,10 +154,11 @@ public class ArmSystem {
 
 
     public void raise(double position) {
-        if(linkage.getPosition() != LINKAGE_SCORE){
+        if(linkage.getPosition() != LINKAGE_HOUSED){
             preScore();
         }
         moveSlide(SLIDE_POWER, position);
+        linkage.setPosition(LINKAGE_SCORE);
         stage = stage.EXTENDED;
     }
 
@@ -147,9 +169,13 @@ public class ArmSystem {
 
     public void retract(){
         moveSlide(-SLIDE_POWER, 100);
-        house.setPosition(INTAKE_POSITION);
-        stage = Stage.IDLE;
+       idleServos();
+    }
 
+    public void idleServos(){
+        house.setPosition(INTAKE_POSITION);
+        linkage.setPosition(LINKAGE_HOUSED);
+        stage = Stage.IDLE;
     }
 
 
@@ -201,22 +227,6 @@ public class ArmSystem {
     }
 
     //needs to be rewritten if the conveyor is implemented
-    public void scoreAuto(BarcodePipeline.BarcodePosition position){
-        linkage.setPosition(LINKAGE_SCORE);
-        Utils.sleep(200);
-        if(position == BarcodePipeline.BarcodePosition.LEFT){ ;
-        }else if(position == BarcodePipeline.BarcodePosition.CENTER || position == BarcodePipeline.BarcodePosition.LEFT){
-            moveSlide(SLIDE_POWER, MEDIUM_POSITION);
-
-        }else if(position == BarcodePipeline.BarcodePosition.RIGHT){
-            moveSlide(SLIDE_POWER, TOP_POSITION);
-        }
-        house.setPosition(SCORING_POSITION);
-        Utils.sleep(500);
-        moveSlide(-SLIDE_POWER, BOTTOM_POSITION);
-
-    }
-
 
 
     public int getLinearSlidePosition(){
