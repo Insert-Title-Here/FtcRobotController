@@ -26,7 +26,6 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
     Thread driveThread, driverTwoThread;
     Thread armThread;
     BNO055IMU imu;
-
     Localizer localizer;
 
 
@@ -43,6 +42,8 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
     private PulleyState pulleyState;
     private LinkageState linkageState;
 
+    private boolean moveOnCarousel;
+
 
     @Override
     protected void onInitialize() {
@@ -52,12 +53,11 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
-        isCarousel = false;
 
-        localizer = new Localizer(hardwareMap,new Vector2D(0,0), 0, 10);
+        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
         localizer.liftOdo();
 
-
+        moveOnCarousel = true;
 
         //Initialize IMU parameters
 
@@ -89,19 +89,18 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
     }
 
-    boolean isCarousel;
-
     private void driverTwoUpdate() {
         if(gamepad1.left_bumper){
             while(gamepad1.left_bumper) {
-                system.runCarousel(1);
+                system.runCarousel(-1);
             }
         }else if(gamepad1.right_bumper){
-            isCarousel = true;
-            drive.setPower(-0.1,0);
+            if(moveOnCarousel) {
+                moveOnCarousel = false;
+                drive.setPower(-0.3, 0);
+            }
             system.scoreDuck();
-            drive.setPower(0,0);
-            isCarousel = false;
+
         }else {
             system.runCarousel(0);
         }
@@ -125,17 +124,9 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
                 }
 
             }
-
-            // flip with a
-        }else if(gamepad1.left_trigger > 0.3){
-//            //add something to move the linkage outta the way
-//            arm.intakeDumb(-0.6);
-
-            if (pulleyState == PulleyState.RETRACTED) {
-                arm.raise(Constants.TOP_POSITION + 600);
-                pulleyState = PulleyState.HIGH_GOAL;
-                linkageState = LinkageState.RAISED;
-            }
+        }else if(gamepad1.a){
+            //add something to move the linkage outta the way
+            arm.intakeDumb(-0.6);
         }else if(gamepad1.x){
             long currentSampleTime = System.currentTimeMillis();
             if(currentSampleTime - scoredSampleTime > 200) {
@@ -156,26 +147,24 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
             linkageState = LinkageState.RAISED;
         } else if (gamepad1.dpad_up) {
             arm.setWinchPower(0.5);
-
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
-
-            // flip with left trigger
-        } else if(gamepad1.a) {
-            //add something to move the linkage outta the way
-            arm.intakeDumb(-0.6);
-
-//            if (pulleyState == PulleyState.RETRACTED) {
-//                arm.raise(Constants.TOP_POSITION + 600);
-//                pulleyState = PulleyState.HIGH_GOAL;
-//                linkageState = LinkageState.RAISED;
-//            }
-        }else if(gamepad1.y){
-            if(pulleyState == PulleyState.RETRACTED) {
-                arm.raise(Constants.MEDIUM_POSITION + 600);
+        } else if(gamepad1.left_trigger > 0.3) {
+            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
+                arm.raise(Constants.TOP_POSITION + 600);
+                pulleyState = PulleyState.HIGH_GOAL;
+                linkageState = LinkageState.RAISED;
+            }
+        }else if(gamepad1.dpad_right ){
+            if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
+                arm.raise(Constants.MEDIUM_POSITION);
                 pulleyState = PulleyState.MID_GOAL;
                 linkageState = linkageState.RAISED;
             }
+        }else if(gamepad1.y){
+            arm.score();
+            arm.runConveyorPos(1.0, 2000);
+            arm.idleServos();
         }else{
             arm.intakeDumb(0);
             arm.setWinchPower(0);
@@ -187,7 +176,7 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
     //TODO change this if necessary
     private void driveUpdate() {
-        if(!isCarousel) {
+        if(!system.isCarousel) {
             if (gamepad1.right_stick_button) {
                 drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, SPRINT_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
             } else if (gamepad1.left_stick_button) {
@@ -228,4 +217,3 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
     }
 }
-

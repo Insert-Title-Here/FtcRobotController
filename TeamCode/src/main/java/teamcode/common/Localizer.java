@@ -20,6 +20,7 @@ import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.checkerframework.checker.units.qual.A;
 import org.checkerframework.checker.units.qual.Angle;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.openftc.revextensions2.ExpansionHubEx;
@@ -93,7 +94,7 @@ public class Localizer extends Thread {
     //Kalman filter parameters, the ones declared up here must also be tuned for EVERY ROBOT
 
     private static final double INCHES_TO_METERS = 0.0254; //-8.628937
-        Transform2d cameraToRobot = new Transform2d(new Translation2d(-7.965 * INCHES_TO_METERS,  0 * INCHES_TO_METERS), new Rotation2d());
+        Transform2d cameraToRobot = new Transform2d(new Translation2d(0,0), new Rotation2d()); //-7.965 * INCHES_TO_METERS,  0 * INCHES_TO_METERS 0.8, -7.2
     private static T265Camera slamra;
     T265Camera.CameraUpdate currentSlamraPos;
     private Pose2d slamraStartingPose;
@@ -171,7 +172,7 @@ public class Localizer extends Thread {
             slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         }
-        slamraStartingPose = new Pose2d(position.getY() * INCHES_TO_METERS, position.getX() * INCHES_TO_METERS, new Rotation2d(globalRads));
+        slamraStartingPose = new Pose2d(0 * INCHES_TO_METERS, 0 * INCHES_TO_METERS, new Rotation2d(globalRads));
         this.previousEstimateUncertainty = previousEstimateUncertainty; //this should always be a high value otherwise bad things will happen
         minElapsedTime = 0;
         maxElapsedTime = 0;
@@ -232,14 +233,13 @@ public class Localizer extends Thread {
             slamra.start();
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
             slamra.setPose(slamraStartingPose);
-
         }
         // max speed 300 Hz)
         while (!stop.get()) {
             long millis = System.currentTimeMillis();
             //update();
-            //updateKalman();
-            matUpdate();
+            updateKalman();
+            //matUpdate();
             long runtime = System.currentTimeMillis() - millis;
 
             if (runtime > runInterval) {
@@ -462,10 +462,17 @@ public class Localizer extends Thread {
 
 
         //matrix declarations
+        final double robotRadius =7.7;
         Pose2d slamraEstimatePose = currentSlamraPos.pose;
+        double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;
+        double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);
+        double slamRotation = currentSlamraPos.pose.getRotation().getRadians();
+        double trueX = slamx + sin(slamRotation) * robotRadius;
+        double trueY = slamy - (cos(slamRotation) * robotRadius);
+
         double[][] vislamMat = {
-                {-slamraEstimatePose.getY() / INCHES_TO_METERS},
-                {slamraEstimatePose.getX() / INCHES_TO_METERS},
+                {trueX},
+                {trueY},
                 {-slamraEstimatePose.getRotation().getRadians()},
                 {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
                 {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
@@ -609,8 +616,8 @@ public class Localizer extends Thread {
 
 
         wheelPoses = new ArrayList<>();
-        wheelPoses.add(new Vector2D(-4.01885,-6.371937)); //LV
-        wheelPoses.add(new Vector2D(0.10685,4.5222)); //H
+        wheelPoses.add(new Vector2D(-3.91885,-6.471937)); //LV //-4.01885,6.371937
+        wheelPoses.add(new Vector2D(-4.5222, 0.10685)); //H
         //wheelPoses.add(new Vector2D(4.18685,-6.336937)); //RV
 
 
@@ -653,8 +660,8 @@ public class Localizer extends Thread {
 
 
     double previousHeading;
-    private static final double X_SCALAR = -1;
-    private static final double Y_SCALAR = -1;
+    private static final double X_SCALAR = 0.1;
+    private static final double Y_SCALAR = 0.1;
     private synchronized void matUpdate() {
         data1 = hub1.getBulkInputData();
         double heading = (imu.getAngularOrientation().firstAngle);
@@ -668,7 +675,7 @@ public class Localizer extends Thread {
                 };
         double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], dHeading};
              Pose robotPoseDelta = calculatePoseDelta(wheelDeltas);
-            odoEstimate = relativeOdometryUpdate(robotPoseDelta);
+             odoEstimate = relativeOdometryUpdate(robotPoseDelta);
         double[] wheelVelocities = new double[]{wheelDeltas [0]/ 0.02, wheelDeltas[1] / 0.02, wheelDeltas[2] / 0.02};
 
         if (wheelVelocities != null) {
@@ -711,10 +718,9 @@ public class Localizer extends Thread {
 
         Pose fieldPoseDelta = new Pose(fieldPositionDelta.rotated(odoEstimate.heading), robotPoseDelta.heading);
 
-        Pose fieldPose = new Pose(odoEstimate.x,odoEstimate.y, odoEstimate.heading);
 
 
-
+        Pose fieldPose = new Pose(odoEstimate.x ,odoEstimate.y , odoEstimate.heading);
 
         return fieldPose.add(fieldPoseDelta);
     }
