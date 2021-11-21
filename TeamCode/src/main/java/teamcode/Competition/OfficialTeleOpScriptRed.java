@@ -43,6 +43,7 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
     private LinkageState linkageState;
 
     private boolean moveOnCarousel;
+    private boolean isCarousel;
 
 
     @Override
@@ -95,12 +96,7 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
                 system.runCarousel(-1);
             }
         }else if(gamepad1.right_bumper){
-            if(moveOnCarousel) {
-                moveOnCarousel = false;
-                drive.setPower(-0.3, 0);
-            }
             system.scoreDuck();
-
         }else {
             system.runCarousel(0);
         }
@@ -111,6 +107,9 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
     }
 
     private double startTime;
+
+    boolean isLinearSlow = false;
+    boolean previousLeftStickButton = false;
     private void armUpdate() {
         if(gamepad1.right_trigger > 0.3){
             startTime = AbstractOpMode.currentOpMode().time;
@@ -165,10 +164,15 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
             arm.score();
             arm.runConveyorPos(1.0, 2000);
             arm.idleServos();
+        }else if(gamepad1.left_stick_button){
+            if(gamepad1.left_stick_button != previousLeftStickButton) {
+                isLinearSlow = !isLinearSlow;
+            }
         }else{
             arm.intakeDumb(0);
             arm.setWinchPower(0);
         }
+        previousLeftStickButton = gamepad1.left_stick_button;
     }
 
     private static final double ROTATE_DPAD = 0.3;
@@ -176,10 +180,10 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
     //TODO change this if necessary
     private void driveUpdate() {
-        if(!system.isCarousel) {
+        if(!isCarousel) {
             if (gamepad1.right_stick_button) {
                 drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, SPRINT_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
-            } else if (gamepad1.left_stick_button) {
+            } else if (isLinearSlow) {
                 drive.setPower(0.15 * gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
             } else {
                 drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);

@@ -43,6 +43,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
     private LinkageState linkageState;
 
     private boolean moveOnCarousel;
+    private boolean isCarousel;
 
 
     @Override
@@ -95,11 +96,18 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
                 system.runCarousel(1);
             }
         }else if(gamepad1.right_bumper){
+            isCarousel = true;
             if(moveOnCarousel) {
                 moveOnCarousel = false;
                 drive.setPower(-0.1, 0);
+                try {
+                    Thread.currentThread().sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             system.scoreDuck();
+            isCarousel = false;
 
         }else {
             system.runCarousel(0);
@@ -176,7 +184,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
 
     //TODO change this if necessary
     private void driveUpdate() {
-        if(!system.isCarousel) {
+        if(!isCarousel) {
             if (gamepad1.right_stick_button) {
                 drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, SPRINT_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
             } else if (gamepad1.left_stick_button) {

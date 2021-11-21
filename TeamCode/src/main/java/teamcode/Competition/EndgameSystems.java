@@ -10,6 +10,7 @@ import org.checkerframework.checker.units.qual.A;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Utils;
+import teamcode.common.WestCoastDriveTrain;
 
 public class EndgameSystems {
     /**
@@ -62,15 +63,12 @@ public class EndgameSystems {
 
     }
 
-    public boolean isCarousel;
-
 
 
 
     public void scoreDuck() {
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int pose = 20000;
-        isCarousel = true;
         long currentTime = System.currentTimeMillis();
 
         carouselEncoder.setTargetPosition(pose);
@@ -91,9 +89,6 @@ public class EndgameSystems {
 //                carousel.setPower(0.5 );
 //            }
 
-            if(System.currentTimeMillis() - currentTime > 200){
-                isCarousel = false;
-            }
 
         }
 
