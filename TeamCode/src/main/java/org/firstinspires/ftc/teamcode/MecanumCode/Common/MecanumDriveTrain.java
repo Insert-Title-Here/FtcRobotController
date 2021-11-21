@@ -1,13 +1,7 @@
-package org.firstinspires.ftc.teamcode.MecanumCode;
+package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
-import android.sax.StartElementListener;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.robot.Robot;
-
-import java.util.Vector;
 
 public class MecanumDriveTrain {
     private static final double ANGULAR_TOLERANCE = 0.05;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.MecanumCode;
+package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
 /**
  * Represents an immutable 2-dimensional vector.

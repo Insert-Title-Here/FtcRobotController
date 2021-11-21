@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.MecanumCode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -50,14 +51,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Freight Arm Test 2", group="Linear Opmode")
+@TeleOp(name="Freight Arm Test", group="Linear Opmode")
 @Disabled
-public class MekanumTeleOpTest3 extends LinearOpMode {
+public class MekanumTeleOpTest extends LinearOpMode {
 
     DcMotor magneticExtension;
     Servo magnet;
     Servo level;
-    Thread magneticArmThread;
 
     // Declare OpMode members;
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,7 +66,6 @@ public class MekanumTeleOpTest3 extends LinearOpMode {
     boolean dpadUpPressed;
     boolean dpadDownPressed;
     boolean aPressed;
-    boolean magneticIsExtended = false;
 
 
     @Override
@@ -80,24 +79,12 @@ public class MekanumTeleOpTest3 extends LinearOpMode {
         magnet.setPosition(1);
         level.setPosition(levelPosition);
 
-        magneticArmThread = new Thread() {
-            @Override
-            public void run(){
-                while(opModeIsActive()){
-                    magneticArmUpdate();
-                }
-            }
-
-        };
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
-        magneticArmThread.start();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             if(gamepad1.left_trigger > 0.1) {
@@ -108,9 +95,19 @@ public class MekanumTeleOpTest3 extends LinearOpMode {
                 magneticExtension.setPower(0);
             }
 
-            //if(gamepad1.a) {
-                //magneticIsExtended = true;
-            //}
+            if(gamepad1.a) {
+                aPressed = true;
+                if(grabbing) {
+                    magnet.setPosition(0.5);
+                    grabbing = false;
+                } else {
+                    magnet.setPosition(1);
+                    grabbing = true;
+                }
+                while(aPressed == gamepad1.a) {
+
+                }
+            }
 
             if(gamepad1.dpad_up) {
                 dpadUpPressed = true;
@@ -139,17 +136,10 @@ public class MekanumTeleOpTest3 extends LinearOpMode {
             }
 
             if(gamepad1.b) {
-                levelPosition = 0.5;
-                level.setPosition(levelPosition);
-            }
-            if(gamepad1.y) {
-                level.setPosition(1);
+                magneticExtend(-300);
             }
             if(gamepad1.x) {
-                magnet.setPosition(0.5);
-                sleep(1000);
-                magnet.setPosition(1);
-                magneticIsExtended = false;
+                magneticExtend(0);
             }
             // Show the elapsed game time and wheel power.
             telemetry.addData("Arm Tics: ", magneticExtension.getCurrentPosition());
@@ -173,15 +163,5 @@ public class MekanumTeleOpTest3 extends LinearOpMode {
         magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-    }
-    public void magneticArmUpdate(){
-        //if(magneticIsExtended) {
-        //    magneticExtend(-300);
-        //    } else {
-        //    magneticExtend(0);
-
-        if(gamepad1.a) {
-            magneticExtend(-300);
-        }
     }
 }

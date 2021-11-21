@@ -1,4 +1,4 @@
- package org.firstinspires.ftc.teamcode;
+ package org.firstinspires.ftc.teamcode.TankDriveCode.Auto;
 
  import com.qualcomm.hardware.bosch.BNO055IMU;
  import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -7,18 +7,13 @@
  import com.qualcomm.robotcore.hardware.DcMotor;
  import com.qualcomm.robotcore.hardware.Servo;
 
- import org.firstinspires.ftc.robotcore.external.Func;
  import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
  import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
- import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
- import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
- import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+ import org.firstinspires.ftc.teamcode.Common.BarcodePipeline;
  import org.openftc.easyopencv.OpenCvCamera;
  import org.openftc.easyopencv.OpenCvCameraFactory;
  import org.openftc.easyopencv.OpenCvCameraRotation;
-
- import java.util.Locale;
 
  @Autonomous(name = "Freight Auto (red2)", group = "Linear Opmode")
 

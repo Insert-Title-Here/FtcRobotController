@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -74,58 +74,10 @@ public class MagneticArm {
 
         magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
     }
 
-    //This is how I had it set up in my teleop while I was testing. You can do whatever you want with it.
-    /*
-    if(gamepad1.dpad_up) {
-        arm.increaseLevelPosition(0.1);
-        while(gamepad1.dpad_up) {
-        }
+    public void setExtensionPower(double power) {
+        magneticExtension.setPower(power);
     }
-
-    if(gamepad1.dpad_down) {
-        arm.decreaseLevelPosition(0.1);
-        while(gamepad1.dpad_down) {
-
-        }
-    }
-
-    if(gamepad1.a) {
-        // Fully extend arm
-        arm.setArmPosition(-300);
-        while(gamepad1.a) {
-
-        }
-    }
-
-    if(gamepad1.b) {
-        // Lower level to cube height
-        arm.setLevelPosition(0.5);
-    }
-
-    if(gamepad1.y) {
-        // Raise level
-        arm.setLevelPosition(1);
-    }
-
-    if(gamepad1.x) {
-        // Drop cube and retract arm
-        arm.setMagnetPosition(MagneticArm.magnetState.OPEN);
-        sleep(1000);
-        arm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
-        arm.setArmPosition(0);
-    }
-
-    if (gamepad1.left_trigger > 0.1) {
-        arm.magneticExtension.setPower(gamepad1.left_trigger);
-    } else if (gamepad1.right_trigger > 0.1) {
-        arm.magneticExtension.setPower(-gamepad1.right_trigger);
-    } else {
-        arm.magneticExtension.setPower(0);
-    }
-
-     */
 
 }

@@ -27,14 +27,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TankDriveCode.TeleOp;
 
+
+import static java.lang.Math.round;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain;
 
 
 /**
@@ -50,9 +54,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleOp Red", group="Linear Opmode")
+@TeleOp(name="TeleOp Blue", group="Linear Opmode")
 //@Disabled
-public class OfficialTeleOpRed extends LinearOpMode {
+public class OfficialTeleOpBlue extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -136,7 +140,7 @@ public class OfficialTeleOpRed extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.right_bumper) {
-                drive.setPower(gamepad1.left_stick_y, gamepad1.right_stick_x * .6);
+                drive.setPower(gamepad1.left_stick_y, gamepad1.right_stick_x * .8);
             } else {
                 drive.setPower(gamepad1.left_stick_y / 2, gamepad1.right_stick_x / 2);
             }
@@ -160,15 +164,15 @@ public class OfficialTeleOpRed extends LinearOpMode {
     private void carouselUpdate() {
 
         if(gamepad1.dpad_right) {
-            carousel.setPower(0.7);
-        } else if(gamepad1.dpad_left) {
             carousel.setPower(-0.7);
+        } else if(gamepad1.dpad_left) {
+            carousel.setPower(0.7);
         } else {
             carousel.setPower(0);
         }
 
         if (gamepad1.a) {
-            spinCarousel(-4000);
+            spinCarousel(4000);
         }
 
         if (gamepad1.y) {
@@ -274,6 +278,7 @@ public class OfficialTeleOpRed extends LinearOpMode {
         double power;
 
         carousel.setPower(0.5);
+
 
         while (carousel.isBusy()) {
             power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
