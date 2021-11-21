@@ -120,7 +120,7 @@ public class TestAutoOpMode extends LinearOpMode {
             drive.rf.setPower(0.8);
         }
 
-        telemetry.addData("Angle", "Degree: " + imu.getAngularOrientation().firstAngle);
+        telemetry.addData("Angle","Degree: " + imu.getAngularOrientation().firstAngle);
 
         drive.goToPosition(-1500, false, 0.5);
 
