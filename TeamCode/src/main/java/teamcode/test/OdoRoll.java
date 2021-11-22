@@ -20,7 +20,7 @@ public class OdoRoll extends AbstractOpMode {
     WestCoastDriveTrain drive;
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
+        localizer = new Localizer(new Pose(0,0,0), hardwareMap);
         drive = new WestCoastDriveTrain(hardwareMap, localizer);
     }
 
