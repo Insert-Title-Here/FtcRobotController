@@ -81,7 +81,7 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
 
         if(gamepad1.a) {
             // Fully extend arm
-            arm.setArmPosition(-300);
+            arm.setArmPositionSM(-300);
             while(gamepad1.a) {
 
             }
@@ -106,11 +106,11 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
         }
 
         if (gamepad1.left_trigger > 0.1) {
-            arm.setExtensionPower(gamepad1.left_trigger);
+            arm.setExtensionSMPower(gamepad1.left_trigger);
         } else if (gamepad1.right_trigger > 0.1) {
-            arm.setExtensionPower(-gamepad1.right_trigger);
+            arm.setExtensionSMPower(-gamepad1.right_trigger);
         } else {
-            arm.setExtensionPower(0);
+            arm.setExtensionSMPower(0);
         }
     }
 

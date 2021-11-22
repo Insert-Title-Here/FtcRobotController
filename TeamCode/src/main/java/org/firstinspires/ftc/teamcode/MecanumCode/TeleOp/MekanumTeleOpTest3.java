@@ -50,7 +50,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Freight Arm Test 2", group="Linear Opmode")
+@TeleOp(name="Freight Arm Test", group="Linear Opmode")
 @Disabled
 public class MekanumTeleOpTest3 extends LinearOpMode {
 
