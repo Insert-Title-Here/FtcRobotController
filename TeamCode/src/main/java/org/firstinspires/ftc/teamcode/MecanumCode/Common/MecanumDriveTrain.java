@@ -96,11 +96,97 @@ public class MecanumDriveTrain {
 
 
 
+    private double previousVelocity;
+    private double[] previousPositions;
+    private double previousError;
+    public void driveStraight(double desiredVelocity, int tics, MovementType movement){
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        OpModeWrapper currentOpMode = OpModeWrapper.currentOpMode();
+        double startTime = currentOpMode.time;
+
+        previousVelocity = 0;
+        previousPositions = new double[]{0,0,0,0};
+        previousError = 0;
+
+        while(Math.abs(tics - fl.getCurrentPosition()) > 10 || Math.abs(tics - fl.getCurrentPosition()) > 10
+        || Math.abs(tics - fl.getCurrentPosition()) > 10 || Math.abs(tics - fl.getCurrentPosition()) > 10){
+            double currentTime = currentOpMode.time;
+
+            double dt = currentTime - startTime;
+
+            currentOpMode.telemetry.addData("dt", dt);
+
+            double currentVelocity;
+            double[] currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
+            double deltaPositions = computeDeltas(currentPositions);
+
+            if(currentTime - startTime < 0.01){
+                currentVelocity = 0;
+            }else {
+                currentVelocity = deltaPositions /  dt;
+            }
+            currentOpMode.telemetry.addData("velocity",currentVelocity);
+            currentOpMode.telemetry.update();
+            double velocityError = desiredVelocity - currentVelocity;
+            double dError = velocityError - previousError;
+            double output = velocityError * pVelocity + dError * dVelocity;
+            double passedValue = previousVelocity + output;
+            if(passedValue > 1.0){
+                desiredVelocity = currentVelocity;
+                passedValue = 1.0;
+            }else if(passedValue < -1.0){
+                desiredVelocity = currentVelocity;
+                passedValue = -1.0;
+            }
+            previousVelocity = setPowerAuto(passedValue, movement);
+            previousPositions = new double[]{currentPositions[0], currentPositions[1], currentPositions[2], currentPositions[3]};
+            previousError = velocityError;
+
+        }
+        brake();
+
+    }
+
+
+
+    public enum MovementType{
+        STRAIGHT, STRAFE, ROTATE
+    }
+
+    private double computeDeltas(double[] currentPositions){
+        double flDelta = Math.abs(currentPositions[0]) - Math.abs(previousPositions[0]);
+        double frDelta = Math.abs(currentPositions[1]) - Math.abs(previousPositions[1]);
+        double blDelta = Math.abs(currentPositions[2]) - Math.abs(previousPositions[2]);
+        double brDelta = Math.abs(currentPositions[3]) - Math.abs(previousPositions[3]);
+        return (flDelta + frDelta + blDelta + brDelta) / 4.0;
+    }
+
+
+
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
         fl.setPower(flPow);
         fr.setPower(frPow);
         bl.setPower(blPow);
         br.setPower(brPow);
+    }
+
+    private double setPowerAuto(double power, MovementType movement){
+        if(movement == MovementType.STRAIGHT) {
+            setPower(power, power, power, power);
+        }else if(movement == MovementType.STRAFE){
+            setPower(power, -power, -power, power);
+        }else if(movement == MovementType.ROTATE){
+            setPower(power, -power, power, -power);
+        }
+        return power;
     }
 
 
