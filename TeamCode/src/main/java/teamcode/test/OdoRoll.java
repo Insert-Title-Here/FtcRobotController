@@ -34,7 +34,7 @@ public class OdoRoll extends AbstractOpMode {
 //            telemetry.addData("",localizer.getLeftVerticalOdometerPosition());
 //            telemetry.addData("",localizer.getHorizontalOdometerPosition());
             drive.setPower(0,gamepad1.left_stick_x * 0.5);
-            telemetry.addData("", localizer.getCurrentState());
+            telemetry.addData("", localizer.getOdoEstimate());
             telemetry.update();
             //telemetry.addData("", localizer.getOdoEstimate().toString());
             //telemetry.addData("", localizer.getPoseVelocity().toString());

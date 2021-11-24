@@ -30,8 +30,8 @@ public class ArmSystem {
     private static final double SCORING_POSITION = 0.62;
 
     private static final double LINKAGE_DOWN = 0.26; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
-    private static final double LINKAGE_HOUSED = 0.6;
-    private static final double LINKAGE_SCORE = 0.7;
+    private static final double LINKAGE_HOUSED = 0.7;
+    private static final double LINKAGE_SCORE = 0.8;
 
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -87,6 +87,7 @@ public class ArmSystem {
     }
 
     public void runConveyorPos(double power, int position){
+        house.setPosition(SCORING_POSITION);
         conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         conveyorMotor.setTargetPosition(-position);
         conveyorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

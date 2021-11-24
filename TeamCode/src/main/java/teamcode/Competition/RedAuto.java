@@ -77,9 +77,7 @@ public class RedAuto extends AbstractOpMode {
         telemetry.clear();
         localizer.start();
 
-        if(position == BarcodePipeline.BarcodePosition.LEFT){
-            position = BarcodePipeline.BarcodePosition.RIGHT;
-        }
+
         Utils.sleep(1500);
         driveTrain.moveToPosition(new Vector2D(-1, 6), 6, 0.5, false);
         // Utils.sleep(2000);
@@ -87,11 +85,10 @@ public class RedAuto extends AbstractOpMode {
 
 
         if (position == BarcodePipeline.BarcodePosition.LEFT) {
-            if(position == BarcodePipeline.BarcodePosition.LEFT){
-                arm.raise(Constants.BOTTOM_POSITION - 1000);
-            }
+            arm.raise(Constants.BOTTOM_POSITION - 1000);
             driveTrain.moveToPosition(new Vector2D(-9, 17), -12, 0.5, false);
             driveTrain.rotateDistance(0.4, Math.toRadians(155));
+            arm.runConveyorPos(1,2000);
 
         } else{
             //Debug.log("here");
@@ -116,7 +113,8 @@ public class RedAuto extends AbstractOpMode {
         driveTrain.moveToPosition(constructedVector, 12, 0.5, false);
         arm.retract();
         driveTrain.rotateDistance(-0.4, Math.toRadians(90));
-        driveTrain.moveToPosition(new Vector2D(34, 27), 24, 0.5, false);
+        localizer.liftOdo();
+        driveTrain.moveToPosition(new Vector2D(34, 27), 36, 0.5, false);
 
 
         //driveTrain.moveToPosition(new Vector2D(-14,6), 12, 0.1);

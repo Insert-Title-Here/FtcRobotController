@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.spartronics4915.lib.T265Camera;
 
+import org.apache.commons.math3.analysis.function.Abs;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -238,8 +239,8 @@ public class Localizer extends Thread {
         while (!stop.get()) {
             long millis = System.currentTimeMillis();
             //update();
-            updateKalman();
-            //matUpdate();
+           //updateKalman();
+            matUpdate();
             long runtime = System.currentTimeMillis() - millis;
 
             if (runtime > runInterval) {
@@ -582,7 +583,7 @@ public class Localizer extends Thread {
 
     DecompositionSolver solver;
 
-    ArrayList<Vector2D> wheelPoses;
+    ArrayList<Pose> wheelPoses;
     double[] lastWheelPositions;
     private Pose odoEstimate;
     private Pose poseVelocity;
@@ -594,11 +595,21 @@ public class Localizer extends Thread {
         loggingString = "";
         secondaryLoggingString = "";
         state = new RobotPositionStateUpdater();
+        if(slamra == null) {
+            Debug.log("here");
+            slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
+            currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+        }
+        slamraStartingPose = new Pose2d(0 * INCHES_TO_METERS, 0 * INCHES_TO_METERS, new Rotation2d(start.heading));
+
         //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
         // initialize hardware
         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
         rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);
         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
+        odoWinch = hardwareMap.servo.get("OdoWinch");
+        secondaryOdoWinch = hardwareMap.servo.get("SecondaryOdoWinch");
+
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
@@ -616,20 +627,20 @@ public class Localizer extends Thread {
 
 
         wheelPoses = new ArrayList<>();
-        wheelPoses.add(new Vector2D(-3.91885,-6.471937)); //LV //-4.01885,6.371937
-        wheelPoses.add(new Vector2D(-4.5222, 0.10685)); //H
+        wheelPoses.add(new Pose(4.01885,-6.471937, Math.toRadians(180))); //LV // // -3.91885,-6.471937
+        wheelPoses.add(new Pose(4.5222, 0.10685, Math.toRadians(90))); //H //-4.5222, 0.10685
         //wheelPoses.add(new Vector2D(4.18685,-6.336937)); //RV
 
 
         for (int i = 0; i < 2; i++) {
-            Vector2D positionVector = wheelPoses.get(i);
-            double heading = positionVector.directionToHeading();
-            Vector2D orientationVector = new Vector2D(cos(heading), sin(heading));
+            Pose position = wheelPoses.get(i);
+            double x = cos(position.heading);
+            double y = sin(position.heading);
 
-            double val = positionVector.getX() * orientationVector.getY() - positionVector.getY() * orientationVector.getX();
+            double val = position.x * y - position.y * x;
 
-            inverseMatrix.setEntry(i, 0, orientationVector.getX());
-            inverseMatrix.setEntry(i, 1, orientationVector.getY());
+            inverseMatrix.setEntry(i, 0, x);
+            inverseMatrix.setEntry(i, 1, y);
             inverseMatrix.setEntry(i, 2, val);
 //            Debug.log(positionVector.getX() * orientationVector.getY());
 //            Debug.log(positionVector.getY() * orientationVector.getX());
@@ -645,6 +656,8 @@ public class Localizer extends Thread {
         odoEstimate = start.clone();
         poseVelocity = new Pose(0,0,0);
         previousHeading = 0;
+        odoState = OdoState.LOWERED;
+
 
         resetEncoders();
         iterator = 1;
@@ -664,6 +677,7 @@ public class Localizer extends Thread {
     private static final double Y_SCALAR = 0.1;
     private synchronized void matUpdate() {
         data1 = hub1.getBulkInputData();
+        currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         double heading = (imu.getAngularOrientation().firstAngle);
         double dHeading = heading - previousHeading;
 
@@ -682,9 +696,73 @@ public class Localizer extends Thread {
             poseVelocity = calculatePoseDelta(wheelVelocities);
         }
 
+        final double robotRadius =7.7;
+        Pose2d slamraEstimatePose = currentSlamraPos.pose;
+        double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;
+        double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);
+        double slamRotation = currentSlamraPos.pose.getRotation().getRadians();
+        double trueX = slamx + sin(slamRotation) * robotRadius;
+        double trueY = slamy - (cos(slamRotation) * robotRadius);
+
+
+        if(odoState == OdoState.LOWERED){
+            TAO = 0.9;
+        }else{
+            TAO = 0;
+        }
+
+        AbstractOpMode.currentOpMode().telemetry.addData("TAO", TAO);
+        AbstractOpMode.currentOpMode().telemetry.update();
+
+        double[][] vislamMat = {
+                {trueX},
+                {trueY},
+                {-slamraEstimatePose.getRotation().getRadians()},
+                {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
+                {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
+                {currentSlamraPos.velocity.omegaRadiansPerSecond}
+        };
+//        if(abs(vislamMat[3][0]) < 0.2){
+//            vislamMat[3][0] = 0;
+//        }
+//        if(abs(vislamMat[4][0]) < 0.2){
+//            vislamMat[4][0] = 0;
+//        }
+//        if(abs(vislamMat[5][0]) < 0.2){
+//            vislamMat[5][0] = 0;
+//        }
+        Matrix slamraEstimate = new Matrix(vislamMat);
+
+        double[][] odoMat = {
+                {odoEstimate.x},
+                {odoEstimate.y},
+                {odoEstimate.heading},
+                {poseVelocity.x},
+                {poseVelocity.y},
+                {poseVelocity.heading}
+        };
+        Matrix odoMatrix = new Matrix(odoMat);
+
+        odoMatrix.multiply(TAO);
+
+        slamraEstimate.multiply(1.0-TAO);
+        Matrix complementaryStateEstimtate = odoMatrix.add(slamraEstimate); //measured state, Z
+
+        state.updateState(complementaryStateEstimtate.getValue(0,0),
+                complementaryStateEstimtate.getValue(1,0),
+                complementaryStateEstimtate.getValue(2,0),
+                complementaryStateEstimtate.getValue(3,0),
+                complementaryStateEstimtate.getValue(4,0),
+                complementaryStateEstimtate.getValue(5,0));
+
         previousHeading = heading;
 
         lastWheelPositions = new double[]{wheelPositions[0], wheelPositions[1], wheelPositions[2]};
+
+
+        loggingString += odoEstimate.x + "," + odoEstimate.y +  "\n";
+        secondaryLoggingString += iterator + "," +  odoEstimate.x + "\n";
+        tertiaryLoggingString += iterator+ "," +  odoEstimate.y + "\n";
         iterator++;
         }
 
@@ -720,7 +798,7 @@ public class Localizer extends Thread {
 
 
 
-        Pose fieldPose = new Pose(odoEstimate.x ,odoEstimate.y , odoEstimate.heading);
+        Pose fieldPose = new Pose(odoEstimate.x,odoEstimate.y, odoEstimate.heading);
 
         return fieldPose.add(fieldPoseDelta);
     }
