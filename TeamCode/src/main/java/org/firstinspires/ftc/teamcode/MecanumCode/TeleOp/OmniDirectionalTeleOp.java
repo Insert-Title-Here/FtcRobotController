@@ -81,7 +81,7 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
 
         if(gamepad1.a) {
             // Fully extend arm
-            arm.setArmPositionSM(-300);
+            arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
             while(gamepad1.a) {
 
             }
@@ -102,7 +102,7 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
             arm.setMagnetPosition(MagneticArm.magnetState.OPEN);
             sleep(1000);
             arm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
-            arm.setArmPosition(0);
+            arm.setArmPositionSM(0, OmniDirectionalTeleOp.this);
         }
 
         if (gamepad1.left_trigger > 0.1) {
@@ -112,6 +112,10 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
         } else {
             arm.setExtensionSMPower(0);
         }
+        telemetry.addData("Arm Tics", arm.getEncoderTics());
+        telemetry.addData("Level Position: ", arm.getTelemetry()[0]);
+        telemetry.addData("Level Position Actual", arm.getTelemetry()[1]);
+        telemetry.update();
     }
 
     private void driveUpdate() {

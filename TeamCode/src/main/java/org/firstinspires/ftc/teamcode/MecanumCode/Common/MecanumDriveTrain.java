@@ -97,8 +97,8 @@ public class MecanumDriveTrain {
 
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
-        fl.setPower(flPow);
-        fr.setPower(frPow);
+        fl.setPower(-flPow);
+        fr.setPower(-frPow) ;
         bl.setPower(blPow);
         br.setPower(brPow);
     }
