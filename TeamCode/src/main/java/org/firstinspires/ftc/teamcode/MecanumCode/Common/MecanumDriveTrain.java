@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import java.sql.Wrapper;
 
 public class MecanumDriveTrain {
     private static final double ANGULAR_TOLERANCE = 0.05;
@@ -14,7 +17,9 @@ public class MecanumDriveTrain {
 
     private DcMotor fl, fr, bl, br;
 
-
+    private double previousVelocity;
+    private double[] previousPositions;
+    private double previousError;
 
     /**
      * PID Constants
@@ -22,8 +27,6 @@ public class MecanumDriveTrain {
      */
     final double pVelocity = 0.000725; //0.000725
     final double dVelocity  = 0.047; //0.027
-    final double pOmega = 0.1;
-    final double dOmega = 0;
 
     public MecanumDriveTrain(HardwareMap hardwareMap){
         fl = hardwareMap.dcMotor.get("FrontLeftDrive");
@@ -95,11 +98,15 @@ public class MecanumDriveTrain {
     }
 
 
+    /**
+     * a method for driving in the cardinal directions of the 3 dimensional space (x,y,theta)
+     * @param desiredVelocity velocity in tics / sec the robot should attempt to reach
+     * @param tics the distance the robot should travel in tics
+     * @param movement the type of movement the robot should perform, straight, strafe, or rotate
+     */
 
-    private double previousVelocity;
-    private double[] previousPositions;
-    private double previousError;
-    public void driveStraight(double desiredVelocity, int tics, MovementType movement){
+    //TODO write a tics to inches conversion as well as a tics to degrees conversion
+    public void driveAuto(double desiredVelocity, int tics, MovementType movement){
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -116,8 +123,7 @@ public class MecanumDriveTrain {
         previousPositions = new double[]{0,0,0,0};
         previousError = 0;
 
-        while(Math.abs(tics - fl.getCurrentPosition()) > 10 || Math.abs(tics - fl.getCurrentPosition()) > 10
-        || Math.abs(tics - fl.getCurrentPosition()) > 10 || Math.abs(tics - fl.getCurrentPosition()) > 10){
+        while(isFar(tics) && currentOpMode.opModeIsActive()){
             double currentTime = currentOpMode.time;
 
             double dt = currentTime - startTime;
@@ -128,10 +134,10 @@ public class MecanumDriveTrain {
             double[] currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
             double deltaPositions = computeDeltas(currentPositions);
 
-            if(currentTime - startTime < 0.01){
+            if(currentTime - startTime < 0.01){ //TODO not sure this will work the way we want it to, the top may invoke every time causing bad things to happen.
                 currentVelocity = 0;
             }else {
-                currentVelocity = deltaPositions /  dt;
+                currentVelocity = deltaPositions / dt;
             }
             currentOpMode.telemetry.addData("velocity",currentVelocity);
             currentOpMode.telemetry.update();
@@ -153,6 +159,11 @@ public class MecanumDriveTrain {
         }
         brake();
 
+    }
+
+    private boolean isFar(int tics){
+        return Math.abs(tics - fl.getCurrentPosition()) > 10 || Math.abs(tics - fl.getCurrentPosition()) > 10
+                || Math.abs(tics - fl.getCurrentPosition()) > 10 || Math.abs(tics - fl.getCurrentPosition()) > 10;
     }
 
 
