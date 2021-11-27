@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import java.io.FileNotFoundException;
+
 public abstract class OpModeWrapper extends LinearOpMode {
 
     private static OpModeWrapper opMode;
@@ -30,7 +32,7 @@ public abstract class OpModeWrapper extends LinearOpMode {
         }
     }
 
-    protected abstract void onInitialize();
+    protected abstract void onInitialize() throws FileNotFoundException;
 
     protected abstract void onStart();
 

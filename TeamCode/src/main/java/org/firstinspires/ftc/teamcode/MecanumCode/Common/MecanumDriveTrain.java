@@ -4,6 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.sql.Wrapper;
 import java.util.Arrays;
 
@@ -17,6 +22,8 @@ public class MecanumDriveTrain {
      */
 
     public DcMotor fl, fr, bl, br;
+    File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
+    PrintStream toFile = new PrintStream(loggingFile);
 
     private double previousVelocity;
     private double[] previousPositions;
@@ -29,7 +36,7 @@ public class MecanumDriveTrain {
     final double pVelocity = 0.000725; //0.000725
     final double dVelocity  = 0.047; //0.027
 
-    public MecanumDriveTrain(HardwareMap hardwareMap){
+    public MecanumDriveTrain(HardwareMap hardwareMap) throws FileNotFoundException {
         fl = hardwareMap.dcMotor.get("FrontLeftDrive");
         fr = hardwareMap.dcMotor.get("FrontRightDrive");
         bl = hardwareMap.dcMotor.get("BackLeftDrive");
@@ -119,6 +126,8 @@ public class MecanumDriveTrain {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        String log = "";
+
         OpModeWrapper currentOpMode = OpModeWrapper.currentOpMode();
         double startTime = currentOpMode.time;
 
@@ -144,10 +153,15 @@ public class MecanumDriveTrain {
             }
             previousTime = currentTime;
             currentOpMode.telemetry.addData("dt", dt);
+            log += "dt: " + dt + "\n";
             currentOpMode.telemetry.addData("velocity",currentVelocity);
+            log += "velocity: " + currentVelocity + "\n";
             currentOpMode.telemetry.addData("deltaPositions: ",deltaPositions);
+            log += "deltaPositions: " + deltaPositions + "\n";
             currentOpMode.telemetry.addData("Position :", Arrays.toString(currentPositions));
+            log += "Position: " + Arrays.toString(currentPositions) + "\n";
             currentOpMode.telemetry.update();
+
 
             double velocityError = desiredVelocity - currentVelocity;
             double dError = velocityError - previousError;
@@ -169,6 +183,7 @@ public class MecanumDriveTrain {
         }
         brake();
 
+        toFile.print(log);
     }
 
 

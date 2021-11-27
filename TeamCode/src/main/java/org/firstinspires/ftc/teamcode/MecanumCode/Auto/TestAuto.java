@@ -6,13 +6,19 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 
+import java.io.FileNotFoundException;
+
+
 @Autonomous(name="Test Auto")
 public class TestAuto extends OpModeWrapper {
 
     MecanumDriveTrain drive;
 
+
+
+
     @Override
-    protected void onInitialize() {
+    protected void onInitialize() throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
     }
 

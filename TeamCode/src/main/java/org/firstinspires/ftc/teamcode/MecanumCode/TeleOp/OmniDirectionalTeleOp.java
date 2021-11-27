@@ -4,9 +4,12 @@ package org.firstinspires.ftc.teamcode.MecanumCode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
+
+import java.io.FileNotFoundException;
 
 @TeleOp(name="MecanumOpMode")
 public class OmniDirectionalTeleOp extends LinearOpMode {
@@ -14,6 +17,8 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
     MagneticArm arm;
 
     MecanumDriveTrain drive;
+
+    Carousel carousel;
 
     Thread driveThread;
     Thread armThread;
@@ -33,7 +38,13 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         arm = new MagneticArm(hardwareMap);
 
-        drive = new MecanumDriveTrain(hardwareMap);
+        carousel = new Carousel(hardwareMap);
+
+        try {
+            drive = new MecanumDriveTrain(hardwareMap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         driveThread = new Thread(){
             @Override
@@ -69,6 +80,10 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
         /**
          * Kevin go implement this
          */
+
+        if(gamepad1.left_bumper) {
+            carousel.spinCarousel(4000, this);
+        }
 
         if(gamepad1.dpad_up) {
             arm.increaseLevelPosition(0.01);
