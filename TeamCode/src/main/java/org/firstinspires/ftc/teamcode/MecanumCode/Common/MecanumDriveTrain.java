@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.sql.Wrapper;
+import java.util.Arrays;
 
 public class MecanumDriveTrain {
     private static final double ANGULAR_TOLERANCE = 0.05;
@@ -15,7 +16,7 @@ public class MecanumDriveTrain {
     which is the most used DriveTrain in FTC
      */
 
-    private DcMotor fl, fr, bl, br;
+    public DcMotor fl, fr, bl, br;
 
     private double previousVelocity;
     private double[] previousPositions;
@@ -50,6 +51,8 @@ public class MecanumDriveTrain {
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
+
+
 
 
 
@@ -122,13 +125,13 @@ public class MecanumDriveTrain {
         previousVelocity = 0;
         previousPositions = new double[]{0,0,0,0};
         previousError = 0;
+        double previousTime = startTime;
 
         while(isFar(tics) && currentOpMode.opModeIsActive()){
             double currentTime = currentOpMode.time;
 
-            double dt = currentTime - startTime;
+            double dt = currentTime - previousTime;
 
-            currentOpMode.telemetry.addData("dt", dt);
 
             double currentVelocity;
             double[] currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
@@ -139,8 +142,13 @@ public class MecanumDriveTrain {
             }else {
                 currentVelocity = deltaPositions / dt;
             }
+            previousTime = currentTime;
+            currentOpMode.telemetry.addData("dt", dt);
             currentOpMode.telemetry.addData("velocity",currentVelocity);
+            currentOpMode.telemetry.addData("deltaPositions: ",deltaPositions);
+            currentOpMode.telemetry.addData("Position :", Arrays.toString(currentPositions));
             currentOpMode.telemetry.update();
+
             double velocityError = desiredVelocity - currentVelocity;
             double dError = velocityError - previousError;
             double output = velocityError * pVelocity + dError * dVelocity;
@@ -152,6 +160,8 @@ public class MecanumDriveTrain {
                 desiredVelocity = currentVelocity;
                 passedValue = -1.0;
             }
+
+
             previousVelocity = setPowerAuto(passedValue, movement);
             previousPositions = new double[]{currentPositions[0], currentPositions[1], currentPositions[2], currentPositions[3]};
             previousError = velocityError;
@@ -161,9 +171,11 @@ public class MecanumDriveTrain {
 
     }
 
+
+    private double TIC_TOLERANCE = 25;
     private boolean isFar(int tics){
-        return Math.abs(tics - fl.getCurrentPosition()) > 10 || Math.abs(tics - fl.getCurrentPosition()) > 10
-                || Math.abs(tics - fl.getCurrentPosition()) > 10 || Math.abs(tics - fl.getCurrentPosition()) > 10;
+        return Math.abs(tics - fl.getCurrentPosition()) > TIC_TOLERANCE && Math.abs(tics - fr.getCurrentPosition()) > TIC_TOLERANCE
+                && Math.abs(tics - bl.getCurrentPosition()) > TIC_TOLERANCE && Math.abs(tics - br.getCurrentPosition()) > TIC_TOLERANCE;
     }
 
 
@@ -189,7 +201,7 @@ public class MecanumDriveTrain {
         br.setPower(brPow);
     }
 
-    private double setPowerAuto(double power, MovementType movement){
+    public double setPowerAuto(double power, MovementType movement) {
         if(movement == MovementType.STRAIGHT) {
             setPower(power, power, power, power);
         }else if(movement == MovementType.STRAFE){

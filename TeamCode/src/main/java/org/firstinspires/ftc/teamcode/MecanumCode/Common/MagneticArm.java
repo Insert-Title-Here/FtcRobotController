@@ -23,20 +23,21 @@ public class MagneticArm {
     double extensionPower;
 
     public MagneticArm(HardwareMap hardwareMap) {
-        //magneticExtension = hardwareMap.get(DcMotor.class, "MagneticArm");
+        magneticExtension = hardwareMap.get(DcMotor.class, "MagneticArm");
 
         magnet = hardwareMap.get(Servo.class, "Magnet");
         level = hardwareMap.get(Servo.class, "Level");
-        //magneticExtension.setDirection(DcMotor.Direction.FORWARD);
-        //magneticExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        magneticExtensionEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
-        magneticExtensionEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        magneticExtensionSM = hardwareMap.crservo.get("MagExtension");
+        magneticExtension.setDirection(DcMotor.Direction.FORWARD);
+        magneticExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //magneticExtensionEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
+        magneticExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //magneticExtensionSM = hardwareMap.crservo.get("MagExtension");
         magnet.setPosition(1);
 
         levelPosition = 1;
         level.setPosition(levelPosition);
-        magneticExtensionSM.setPower(0);
+        //magneticExtensionSM.setPower(0);
     }
 
     public void increaseLevelPosition(double increment) {
@@ -49,10 +50,10 @@ public class MagneticArm {
     }
 
     public void decreaseLevelPosition(double increment) {
-        if (levelPosition - increment > 0) {
+        if (levelPosition - increment > 0.29) {
             levelPosition -= increment;
         } else {
-            levelPosition = 0;
+            levelPosition = 0.29;
         }
         level.setPosition(levelPosition);
     }
@@ -93,7 +94,7 @@ public class MagneticArm {
 
     public void setMagnetPosition(magnetState position) {
         if(position == magnetState.GRABBING) {
-            magnet.setPosition(0.9);
+            magnet.setPosition(1);
         } else if(position == magnetState.OPEN) {
             magnet.setPosition(0.5);
         }
@@ -116,11 +117,12 @@ public class MagneticArm {
 
     }
 
+    // 0.55 fully retracted, 0.45 fully extended
     public double getLevelPosition() {
-        if(magneticExtensionEncoder.getCurrentPosition() < 0 && magneticExtensionEncoder.getCurrentPosition() > -350 ) {
-            return 0.5 * (magneticExtensionEncoder.getCurrentPosition() / -350.0);
+        if(magneticExtension.getCurrentPosition() < 0 && magneticExtension.getCurrentPosition() > -350 ) {
+            return (magneticExtension.getCurrentPosition() / 3500.0) + 0.55;
         } else {
-            return 1;
+            return 0.45;
         }
     }
 
@@ -129,11 +131,11 @@ public class MagneticArm {
     }
 
     public double[] getTelemetry() {
-        return new double[]{levelPosition, level.getPosition()};
+        return new double[]{levelPosition, level.getPosition(), magnet.getPosition()};
     }
 
     public int getEncoderTics() {
-        return magneticExtensionEncoder.getCurrentPosition();
+        return magneticExtension.getCurrentPosition();
     }
 
 
