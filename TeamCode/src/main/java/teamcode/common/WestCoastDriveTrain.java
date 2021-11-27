@@ -335,8 +335,8 @@ public class WestCoastDriveTrain {
 
         while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive()){
             state = localizer.getCurrentState();
-//            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
-//            AbstractOpMode.currentOpMode().telemetry.update();
+            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
+            AbstractOpMode.currentOpMode().telemetry.update();
             rotate(power);
         }
         brake();

@@ -711,13 +711,10 @@ public class Localizer extends Thread {
             TAO = 0;
         }
 
-        AbstractOpMode.currentOpMode().telemetry.addData("TAO", TAO);
-        AbstractOpMode.currentOpMode().telemetry.update();
-
         double[][] vislamMat = {
                 {trueX},
                 {trueY},
-                {-slamraEstimatePose.getRotation().getRadians()},
+                {angleWrap(slamraEstimatePose.getRotation().getRadians())},
                 {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
                 {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
                 {currentSlamraPos.velocity.omegaRadiansPerSecond}
@@ -767,13 +764,14 @@ public class Localizer extends Thread {
         }
 
         private double angleWrap(double angle) {
-        double negTauToTau = angle % (Math.PI * 2);
-
-        if (Math.abs(negTauToTau) > Math.PI) {
-            negTauToTau -= Math.copySign(Math.PI * 2, negTauToTau);
+            while(angle > PI){
+                angle -= 2 * PI;
+            }
+            while(angle < -PI){
+                angle += 2 * PI;
+            }
+            return angle;
         }
-        return negTauToTau;
-    }
 
     private static final double EPSILON = 1e-6;
 

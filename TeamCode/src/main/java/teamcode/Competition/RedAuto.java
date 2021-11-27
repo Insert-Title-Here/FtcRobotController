@@ -13,6 +13,7 @@ import teamcode.Competition.BarcodePipeline;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Localizer;
+import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
@@ -36,7 +37,7 @@ public class RedAuto extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
+        localizer = new Localizer(new Pose(0,0,0), hardwareMap);
         driveTrain = new WestCoastDriveTrain(hardwareMap, localizer);
         system = new EndgameSystems(hardwareMap, true);
         arm = new ArmSystem(hardwareMap, false);
@@ -48,24 +49,25 @@ public class RedAuto extends AbstractOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
-        BarcodePipeline pipeline = new BarcodePipeline();
-        webcam.setPipeline(pipeline);
-        pipeline.setSide(BarcodePipeline.Side.RED);
-
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addData("Camera Init Error", errorCode);
-                telemetry.update();
-            }
-        });
+//        BarcodePipeline pipeline = new BarcodePipeline();
+//        webcam.setPipeline(pipeline);
+//        pipeline.setSide(BarcodePipeline.Side.RED);
+//
+//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+//            @Override
+//            public void onOpened() {
+//                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
+//            }
+//
+//            @Override
+//            public void onError(int errorCode) {
+//                telemetry.addData("Camera Init Error", errorCode);
+//                telemetry.update();
+//            }
+//        });
+        localizer.lowerOdo();
         while(!opModeIsActive()){
-            position = pipeline.getPos();
+            position = BarcodePipeline.BarcodePosition.LEFT;
             //telemetry.addData("", position);
             //telemetry.update();
         }
@@ -73,21 +75,20 @@ public class RedAuto extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        webcam.stopStreaming();
+        //webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
 
-
         Utils.sleep(1500);
-        driveTrain.moveToPosition(new Vector2D(-1, 6), 6, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-1, 6), 12, 0.5, false);
         // Utils.sleep(2000);
-        driveTrain.rotateDistance(0.5, Math.toRadians(120));
+        driveTrain.rotateDistance(0.5, Math.toRadians(-120));
 
 
         if (position == BarcodePipeline.BarcodePosition.LEFT) {
             arm.raise(Constants.BOTTOM_POSITION - 1000);
-            driveTrain.moveToPosition(new Vector2D(-9, 17), -12, 0.5, false);
-            driveTrain.rotateDistance(0.4, Math.toRadians(155));
+            driveTrain.moveToPosition(new Vector2D(-12, 21), -12, 0.5, false);
+            driveTrain.rotateDistance(0.4, Math.toRadians(-155));
             arm.runConveyorPos(1,2000);
 
         } else{
@@ -98,7 +99,7 @@ public class RedAuto extends AbstractOpMode {
                 arm.raise(Constants.MEDIUM_POSITION - 1000);
             }
             driveTrain.moveToPosition(new Vector2D(-11.5, 19.5), -12, 0.5, false);
-            driveTrain.rotateDistance(0.4, Math.toRadians(155));
+            driveTrain.rotateDistance(0.4, Math.toRadians(-155));
 
         }
 
@@ -112,7 +113,7 @@ public class RedAuto extends AbstractOpMode {
 //        telemetry.update();
         driveTrain.moveToPosition(constructedVector, 12, 0.5, false);
         arm.retract();
-        driveTrain.rotateDistance(-0.4, Math.toRadians(90));
+        driveTrain.rotateDistance(0.4, Math.toRadians(-90));
         localizer.liftOdo();
         driveTrain.moveToPosition(new Vector2D(34, 27), 36, 0.5, false);
 
