@@ -25,9 +25,9 @@ import static teamcode.common.Constants.*;
 public class ArmSystem {
 
     //House Servo values
-    private static final double INTAKE_POSITION = 0.24;
+    private static final double INTAKE_POSITION = 0.0;
     private static final double HOUSING_POSITION = 0.37; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
-    private static final double SCORING_POSITION = 0.62;
+    private static final double SCORING_POSITION = 0.66;
 
     private static final double LINKAGE_DOWN = 0.26; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.7;
