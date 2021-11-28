@@ -22,7 +22,7 @@ public class OdoRoll extends AbstractOpMode {
     protected void onInitialize() {
         localizer = new Localizer(new Pose(0,0,0), hardwareMap);
         drive = new WestCoastDriveTrain(hardwareMap, localizer);
-        localizer.lowerOdo();
+        localizer.liftOdo();
     }
 
     @Override

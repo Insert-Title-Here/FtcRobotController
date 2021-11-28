@@ -35,12 +35,29 @@ public class RedAuto extends AbstractOpMode {
     OpenCvWebcam webcam;
     BarcodePipeline.BarcodePosition position;
 
+    Thread armIntakeThread;
+    private volatile boolean intake;
+
     @Override
     protected void onInitialize() {
         localizer = new Localizer(new Pose(0,0,0), hardwareMap);
         driveTrain = new WestCoastDriveTrain(hardwareMap, localizer);
         system = new EndgameSystems(hardwareMap, true);
         arm = new ArmSystem(hardwareMap, false);
+
+        intake = false;
+        armIntakeThread = new Thread(){
+            @Override
+            public void run(){
+                for(int i = 0; i < 1; i++) {
+                    while (!intake){
+
+                    }
+                    arm.intakeAuto(0.9);
+                    intake = false;
+                }
+            }
+        };
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
@@ -78,6 +95,7 @@ public class RedAuto extends AbstractOpMode {
         //webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
+        armIntakeThread.start();
 
         Utils.sleep(1500);
         driveTrain.moveToPosition(new Vector2D(-1, 6), 12, 0.5, false);
@@ -86,8 +104,8 @@ public class RedAuto extends AbstractOpMode {
 
 
         if (position == BarcodePipeline.BarcodePosition.LEFT) {
-            arm.raise(Constants.BOTTOM_POSITION - 1000);
-            driveTrain.moveToPosition(new Vector2D(-12, 21), -12, 0.5, false);
+            arm.raise(Constants.BOTTOM_POSITION);
+            driveTrain.moveToPosition(new Vector2D(-15, 24), -12, 0.5, false);
             driveTrain.rotateDistance(0.4, Math.toRadians(-155));
             arm.runConveyorPos(1,2000);
 
@@ -108,15 +126,21 @@ public class RedAuto extends AbstractOpMode {
 
         //arm.raise(arm.getLinearSlidePosition() + 1000);
         Utils.sleep(1000);
-        Vector2D constructedVector = new Vector2D(-8, 14);
+        Vector2D constructedVector = new Vector2D(-13, 19);
 //        telemetry.addData("vec", constructedVector);
 //        telemetry.update();
-        driveTrain.moveToPosition(constructedVector, 12, 0.5, false);
+        //driveTrain.moveToPosition(constructedVector, 12, 0.5, false);
         arm.retract();
-        driveTrain.rotateDistance(0.4, Math.toRadians(-90));
+        driveTrain.rotateDistance(-0.4, Math.toRadians(-90));
         localizer.liftOdo();
         driveTrain.moveToPosition(new Vector2D(34, 27), 36, 0.5, false);
+        driveTrain.rotateDistance(0.5,Math.toRadians(-135));
+       intake = true;
+        driveTrain.moveToPosition(new Vector2D(37, 24), 12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(34, 27), -12, 0.5, false);
 
+        driveTrain.rotateDistance(0.5,Math.toRadians(-90));
+        driveTrain.moveToPosition(constructedVector, -36, 0.5, false);
 
         //driveTrain.moveToPosition(new Vector2D(-14,6), 12, 0.1);
 
@@ -153,6 +177,9 @@ public class RedAuto extends AbstractOpMode {
 
 
     }
+
+
+
 
     @Override
     protected void onStop() {

@@ -117,9 +117,6 @@ public class ArmSystem {
             double green = colors.green;
             double blue = colors.blue;
 
-            AbstractOpMode.currentOpMode().telemetry.addData("green", green);
-            AbstractOpMode.currentOpMode().telemetry.addData("blue", blue);
-            AbstractOpMode.currentOpMode().telemetry.update();
             if (green > 0.9) {
                 if (blue > 0.9) {
                     detectedElement = true;
@@ -133,10 +130,40 @@ public class ArmSystem {
             intakeDumb(intakePower);
             stage = Stage.INTAKING;
             if(detectedElement) {
+
                 preScore();
             }
         }
     }
+
+    public void intakeAuto(double intakePower){
+        lowerLinkage();
+        boolean detectedElement = false;
+        while(!detectedElement){
+
+            NormalizedRGBA colors = sensor.getNormalizedColors();
+            double green = colors.green;
+            double blue = colors.blue;
+
+            if (green > 0.9) {
+                if (blue > 0.9) {
+                    detectedElement = true;
+                } else {
+                    detectedElement = true;
+                }
+            } else {
+                detectedElement = false;
+            }
+
+            intakeDumb(intakePower);
+            if(detectedElement) {
+                Utils.sleep(500);
+                preScore();
+            }
+        }
+        intakeDumb(0);
+    }
+
     //will be merged into intake() later
     public void preScore(){
         intakeDumb(0);
