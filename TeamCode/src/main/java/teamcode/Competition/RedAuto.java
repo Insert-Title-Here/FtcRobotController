@@ -50,12 +50,11 @@ public class RedAuto extends AbstractOpMode {
             @Override
             public void run(){
                 for(int i = 0; i < 1; i++) {
-
                     while (!intake){
 
                     }
                     arm.intakeAuto(0.9);
-                    driveTrain.setElementDetected(true);
+                    driveTrain.setEnvironmentalTerminate(true);
                     intake = false;
                 }
             }

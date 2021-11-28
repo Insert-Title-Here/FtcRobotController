@@ -32,7 +32,7 @@ public class WestCoastDriveTrain {
     private final double WHEEL_RADIUS = 0; //TODO measure
     private double previousRotation = 0;
 
-    private volatile boolean elementDetected;
+    private volatile boolean environmentalTerminate;
 
 
 
@@ -43,7 +43,7 @@ public class WestCoastDriveTrain {
         fr = hardwareMap.get(ExpansionHubMotor.class, "FrontRightDrive");
         bl = hardwareMap.get(ExpansionHubMotor.class, "BackLeftDrive");
         br = hardwareMap.get(ExpansionHubMotor.class, "BackRightDrive");
-        elementDetected = false;
+        environmentalTerminate = false;
         correctMotors();
 
 
@@ -57,7 +57,7 @@ public class WestCoastDriveTrain {
         this.localizer = localizer;
         previousVelocity = 0;
         previousOmega = 0;
-        elementDetected = false;
+        environmentalTerminate = false;
         correctMotors();
 
     }
@@ -141,8 +141,8 @@ public class WestCoastDriveTrain {
 //        brake();
 //    }
 
-    public void setElementDetected(boolean val){
-        elementDetected = val;
+    public void setEnvironmentalTerminate(boolean val){
+        environmentalTerminate = val;
     }
 
 
@@ -172,9 +172,9 @@ public class WestCoastDriveTrain {
 
         long previousTimeMillis = System.currentTimeMillis();
 
-        elementDetected = false;
+        environmentalTerminate = false;
 
-        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive()) && !elementDetected){
+        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive()) && !environmentalTerminate){
             long currentCycleTimeMillis = System.currentTimeMillis() - previousTimeMillis;
             double currentCycleTimeSeconds = currentCycleTimeMillis / 1000.0;
             previousTimeMillis = System.currentTimeMillis();
@@ -337,9 +337,9 @@ public class WestCoastDriveTrain {
     public synchronized void rotateDistance(double power, double radians){
         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
 
-        elementDetected = false;
+        environmentalTerminate = false;
 
-        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !elementDetected){
+        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !environmentalTerminate){
             state = localizer.getCurrentState();
             AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
             AbstractOpMode.currentOpMode().telemetry.update();

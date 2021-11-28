@@ -764,7 +764,7 @@ public class Localizer extends Thread {
         }
 
         private double angleWrap(double angle) {
-            while(angle > PI){
+            while(angle >= PI){
                 angle -= 2 * PI;
             }
             while(angle < -PI){
