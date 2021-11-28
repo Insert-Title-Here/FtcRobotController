@@ -33,9 +33,9 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 110);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(150, 110);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 110);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 160);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(135, 160);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 160);
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 80;
 
@@ -87,7 +87,7 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     public void init(Mat frame) {
         inputToB(frame);
 
-        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
+        // region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
         region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
     }
@@ -96,21 +96,21 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         inputToB(input);
 
-        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB)); //left region
+        // region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB)); //left region
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB)); //center region
         region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB)); //right region
 
-        avg1 = (int) Core.mean(region1_Cb).val[0];
+        // avg1 = (int) Core.mean(region1_Cb).val[0];
         avg2 = (int) Core.mean(region2_Cb).val[0];
         avg3 = (int) Core.mean(region3_Cb).val[0];
 
-        Imgproc.rectangle(
-                input,
-                region1_pointA,
-                region1_pointB,
-                BLUE,
-                2
-        );
+//        Imgproc.rectangle(
+//                input,
+//                region1_pointA,
+//                region1_pointB,
+//                BLUE,
+//                2
+//        );
 
         Imgproc.rectangle(
                 input,
@@ -129,20 +129,21 @@ public class BarcodePipeline3 extends OpenCvPipeline {
         );
 
         int min;
-        min = Math.min(Math.min(avg1, avg2), avg3);
+        // min = Math.min(Math.min(avg1, avg2), avg3);
+        min = Math.min(avg2, avg3);
 
 
-        if (min == avg1) {
+        if (min > 120) {
 
-            Imgproc.rectangle(
-                    input,
-                    region1_pointA,
-                    region1_pointB,
-                    GREEN,
-                    2
-            );
+//            Imgproc.rectangle(
+//                    input,
+//                    region1_pointA,
+//                    region1_pointB,
+//                    GREEN,
+//                    2
+//            );
 
-            position = BarcodePosition.LEFT;
+            position = BarcodePosition.RIGHT;
         }else if (min == avg2) {
 
             Imgproc.rectangle(
@@ -152,7 +153,7 @@ public class BarcodePipeline3 extends OpenCvPipeline {
                     GREEN,
                     2
             );
-            position = BarcodePosition.CENTER;
+            position = BarcodePosition.LEFT;
         } else if (min == avg3) {
 
             Imgproc.rectangle(
@@ -163,10 +164,10 @@ public class BarcodePipeline3 extends OpenCvPipeline {
                     2
             );
 
-            position = BarcodePosition.RIGHT;
+            position = BarcodePosition.CENTER;
         }
 
-        AbstractOpMode.currentOpMode().telemetry.addData("avg1", avg1);
+        // AbstractOpMode.currentOpMode().telemetry.addData("avg1", avg1);
         AbstractOpMode.currentOpMode().telemetry.addData("avg2", avg2);
         AbstractOpMode.currentOpMode().telemetry.addData("avg3", avg3);
         AbstractOpMode.currentOpMode().telemetry.addData("position", position);
