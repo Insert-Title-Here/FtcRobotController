@@ -32,7 +32,9 @@ public class WestCoastDriveTrain {
     private final double WHEEL_RADIUS = 0; //TODO measure
     private double previousRotation = 0;
 
-    private boolean isMoving;
+    private volatile boolean elementDetected;
+
+
 
 
 
@@ -41,8 +43,9 @@ public class WestCoastDriveTrain {
         fr = hardwareMap.get(ExpansionHubMotor.class, "FrontRightDrive");
         bl = hardwareMap.get(ExpansionHubMotor.class, "BackLeftDrive");
         br = hardwareMap.get(ExpansionHubMotor.class, "BackRightDrive");
+        elementDetected = false;
         correctMotors();
-        isMoving = false;
+
 
     }
 
@@ -54,7 +57,7 @@ public class WestCoastDriveTrain {
         this.localizer = localizer;
         previousVelocity = 0;
         previousOmega = 0;
-        isMoving = false;
+        elementDetected = false;
         correctMotors();
 
     }
@@ -138,9 +141,11 @@ public class WestCoastDriveTrain {
 //        brake();
 //    }
 
-    public boolean getIsMoving(){
-        return isMoving;
+    public void setElementDetected(boolean val){
+        elementDetected = val;
     }
+
+
     /**
      *
      * @param desiredPosition new position of the robot in inches
@@ -150,7 +155,7 @@ public class WestCoastDriveTrain {
 
     public synchronized void moveToPosition(Vector2D desiredPosition, double desiredVelocity, double desiredOmega, boolean isSingleDirectional){
 
-        isMoving = true;
+
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
 
         Vector2D desiredPositionPointer = new Vector2D(desiredPosition.getX() - currentState.getPosition().getX() , desiredPosition.getY() - currentState.getPosition().getY());
@@ -167,7 +172,9 @@ public class WestCoastDriveTrain {
 
         long previousTimeMillis = System.currentTimeMillis();
 
-        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive())){
+        elementDetected = false;
+
+        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive()) && !elementDetected){
             long currentCycleTimeMillis = System.currentTimeMillis() - previousTimeMillis;
             double currentCycleTimeSeconds = currentCycleTimeMillis / 1000.0;
             previousTimeMillis = System.currentTimeMillis();
@@ -231,7 +238,7 @@ public class WestCoastDriveTrain {
             }
 
         }
-        isMoving = false;
+
         brake();
     }
 
@@ -328,12 +335,11 @@ public class WestCoastDriveTrain {
     }
 
     public synchronized void rotateDistance(double power, double radians){
-        isMoving = true;
         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
 
+        elementDetected = false;
 
-
-        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive()){
+        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !elementDetected){
             state = localizer.getCurrentState();
             AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
             AbstractOpMode.currentOpMode().telemetry.update();
@@ -345,7 +351,6 @@ public class WestCoastDriveTrain {
     }
 
     public synchronized void rotateMat(double power, double radians){
-        isMoving = true;
         Pose current = localizer.getOdoEstimate();
 
 
