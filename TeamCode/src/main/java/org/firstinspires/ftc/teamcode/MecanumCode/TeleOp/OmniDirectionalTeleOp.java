@@ -95,10 +95,6 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
             sleep(10);
         }
 
-        if(gamepad1.left_stick_button){
-            drive.driveAuto(120, 500, MecanumDriveTrain.MovementType.ROTATE);
-        }
-
         if(gamepad1.a) {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
@@ -157,6 +153,13 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
             drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER);
         }else{
             drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER);
+        }
+
+        if(gamepad1.left_stick_button){
+            drive.driveAuto(0.7, -3665, MecanumDriveTrain.MovementType.ROTATE);
+            while(gamepad1.left_stick_button) {
+
+            }
         }
 
 

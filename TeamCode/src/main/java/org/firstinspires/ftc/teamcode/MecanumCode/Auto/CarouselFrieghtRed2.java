@@ -3,24 +3,21 @@ package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Test Auto")
-public class TestAuto extends OpModeWrapper {
+@Autonomous(name="Carousel + Freight Red 2")
+public class CarouselFrieghtRed2 extends OpModeWrapper {
 
     MecanumDriveTrain drive;
+    Carousel carousel;
     // The IMU sensor object
     BNO055IMU imu;
 
@@ -37,6 +34,7 @@ public class TestAuto extends OpModeWrapper {
     @Override
     protected void onInitialize() throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
+        carousel = new Carousel(hardwareMap);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
@@ -65,17 +63,14 @@ public class TestAuto extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft
-        /*
-        drive.driveAuto(0.3, 540, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.5, -590, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 3665, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.7, -3665, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.2, -540, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 590, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 2400, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -300, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 810, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1833, MecanumDriveTrain.MovementType.ROTATE);
 
-         */
 
-        drive.driveAuto(1, 1000, MecanumDriveTrain.MovementType.STRAIGHT);
+
+
         //double angle = imu.getAngularOrientation().firstAngle;
         drive.writeLoggerToFile();
 /*

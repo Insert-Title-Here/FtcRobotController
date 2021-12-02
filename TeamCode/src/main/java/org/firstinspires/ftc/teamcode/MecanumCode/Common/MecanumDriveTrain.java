@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
@@ -23,7 +26,7 @@ public class MecanumDriveTrain {
 
     public DcMotor fl, fr, bl, br;
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
-    PrintStream toFile = new PrintStream(loggingFile);
+    String loggingString;
 
     private double previousVelocity;
     private double[] previousPositions;
@@ -35,6 +38,7 @@ public class MecanumDriveTrain {
      */
     final double pVelocity = 0.000725; //0.000725
     final double dVelocity  = 0.047; //0.027
+    PIDCoefficients PID = new PIDCoefficients(0.002, 0, 0);
 
     public MecanumDriveTrain(HardwareMap hardwareMap) throws FileNotFoundException {
         fl = hardwareMap.dcMotor.get("FrontLeftDrive");
@@ -126,41 +130,102 @@ public class MecanumDriveTrain {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        String log = "";
 
         OpModeWrapper currentOpMode = OpModeWrapper.currentOpMode();
+        /*
         double startTime = currentOpMode.time;
+        double lastError = 0;
+        previousPositions = new double[]{0,0,0,0};
+        double[] currentPositions = new double[]{0, 0, 0, 0};
+
+        double average = computeAvg(currentPositions);
+        double error = 0;
+        while(average <= tics / 2){
+            currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
+
+            currentOpMode.telemetry.addData("currentPositions: ",currentPositions);
+            currentOpMode.telemetry.addData("error: ",error);
+
+            average = computeAvg(currentPositions);
+            error = average - (6 * tics) / 13;
+            double P = PID.p * error;
+            if(error < 0 && 1 + P <= 0.25){
+                setPowerAuto(0.25, movement);
+            }else if(error < 0 && 1 + P > 0.25){
+                setPowerAuto(1 + P, movement);
+            }else{
+                setPowerAuto(1, movement);
+            }
+
+            lastError = error;
+
+        }
+
+        while(average < tics - 10){
+            currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
+
+            error = computeAvg(currentPositions) - (12 * tics) / 13;
+            currentOpMode.telemetry.addData("currentPositions: ",currentPositions);
+            currentOpMode.telemetry.addData("error: ",error);
+
+
+            if(error > 0){
+                 setPowerAuto(0.1, movement);
+             }else{
+                 double P = Math.abs(PID.p * error);
+                 setPowerAuto(P, movement);
+             }
+
+
+             lastError = error;
+
+        }
+
+         */
+
+        while(isFar(tics) && currentOpMode.opModeIsActive()){
+            setPowerAuto(desiredVelocity, movement);
+        }
+
+        brake();
+
+
+
 
         previousVelocity = 0;
         previousPositions = new double[]{0,0,0,0};
         previousError = 0;
-        double previousTime = startTime;
+        //double previousTime = startTime;
 
         while(isFar(tics) && currentOpMode.opModeIsActive()){
+
             double currentTime = currentOpMode.time;
 
-            double dt = currentTime - previousTime;
+            //double dt = currentTime - previousTime;
 
 
             double currentVelocity;
-            double[] currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
-            double deltaPositions = computeDeltas(currentPositions);
+            //double deltaPositions = computeDeltas(currentPositions);
 
+            /*
             if(currentTime - startTime < 0.01){ //TODO not sure this will work the way we want it to, the top may invoke every time causing bad things to happen.
                 currentVelocity = 0;
             }else {
                 currentVelocity = deltaPositions / dt;
             }
-            previousTime = currentTime;
+
+
+            //previousTime = currentTime;
             currentOpMode.telemetry.addData("dt", dt);
-            log += "dt: " + dt + "\n";
+            loggingString += "dt: " + dt + "\n";
             currentOpMode.telemetry.addData("velocity",currentVelocity);
-            log += "velocity: " + currentVelocity + "\n";
+            loggingString += "velocity: " + currentVelocity + "\n";
             currentOpMode.telemetry.addData("deltaPositions: ",deltaPositions);
-            log += "deltaPositions: " + deltaPositions + "\n";
+            loggingString += "deltaPositions: " + deltaPositions + "\n";
             currentOpMode.telemetry.addData("Position :", Arrays.toString(currentPositions));
-            log += "Position: " + Arrays.toString(currentPositions) + "\n";
+            loggingString += "Position: " + Arrays.toString(currentPositions) + "\n";
             currentOpMode.telemetry.update();
+
 
 
             double velocityError = desiredVelocity - currentVelocity;
@@ -175,15 +240,27 @@ public class MecanumDriveTrain {
                 passedValue = -1.0;
             }
 
+             */
 
-            previousVelocity = setPowerAuto(passedValue, movement);
-            previousPositions = new double[]{currentPositions[0], currentPositions[1], currentPositions[2], currentPositions[3]};
-            previousError = velocityError;
+
+
+
+
+            if(tics > 0) {
+                previousVelocity = setPowerAuto(desiredVelocity, movement);
+            } else {
+                previousVelocity = setPowerAuto(-desiredVelocity, movement);
+            }
+
+            //previousPositions = new double[]{currentPositions[0], currentPositions[1], currentPositions[2], currentPositions[3]};
+            //previousError = velocityError;
+
+
 
         }
-        brake();
 
-        toFile.print(log);
+
+
     }
 
 
@@ -206,6 +283,13 @@ public class MecanumDriveTrain {
         double brDelta = Math.abs(currentPositions[3]) - Math.abs(previousPositions[3]);
         return (flDelta + frDelta + blDelta + brDelta) / 4.0;
     }
+
+    private double computeAvg(double[] currentPositions){
+
+        return (currentPositions[0] + currentPositions[1] + currentPositions[2] + currentPositions[3]) / 4.0;
+    }
+
+
 
 
 
@@ -234,6 +318,16 @@ public class MecanumDriveTrain {
             return -1;
         }else {
             return 1;
+        }
+    }
+
+
+    public void writeLoggerToFile(){
+        try{
+            PrintStream toFile = new PrintStream(loggingFile);
+            toFile.println(loggingString);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
         }
     }
 
