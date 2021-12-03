@@ -35,7 +35,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain;
 
 
 /**
@@ -52,7 +53,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="TestLinearOpMode", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class TestLinearOpMode extends LinearOpMode {
 
 

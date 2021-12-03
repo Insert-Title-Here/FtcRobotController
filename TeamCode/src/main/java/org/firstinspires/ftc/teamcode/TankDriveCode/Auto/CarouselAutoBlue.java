@@ -1,13 +1,15 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TankDriveCode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "Carousel Auto (red)", group = "Linear Opmode")
+@Autonomous(name = "Carousel Auto (blue)", group = "Linear Opmode")
 
-public class CarouselAutoRed extends LinearOpMode {
+public class CarouselAutoBlue extends LinearOpMode {
     DcMotor carousel;
+    Servo grabber;
 
 
     @Override
@@ -17,17 +19,20 @@ public class CarouselAutoRed extends LinearOpMode {
         carousel = hardwareMap.get(DcMotor.class, "Carousel");
         carousel.setDirection(DcMotor.Direction.REVERSE);
 
+        grabber = hardwareMap.get(Servo.class, "Grabber");
+        grabber.setPosition(0);
+
         waitForStart();
 
 
         //First turn to carousel
-        drive.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drive.lf.setTargetPosition(200);
-        drive.lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        drive.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.rf.setTargetPosition(200);
+        drive.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        drive.lf.setPower(0.5);
+        drive.rf.setPower(0.5);
 
-        while(drive.lf.isBusy()){
+        while(drive.rf.isBusy()){
 
         }
 
@@ -37,7 +42,7 @@ public class CarouselAutoRed extends LinearOpMode {
 
 
         //Carousel spin
-        spinCarousel(-4000);
+        spinCarousel(4000);
 
 
         /*sleep(1000);
@@ -63,13 +68,13 @@ public class CarouselAutoRed extends LinearOpMode {
 
         //Backing up away from carousel
         //double startTime = linearOpMode.time;
-        drive.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drive.lf.setTargetPosition(-200);
-        drive.lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        drive.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.rf.setTargetPosition(-200);
+        drive.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        drive.lf.setPower(0.5);
+        drive.rf.setPower(0.5);
 
-        while(drive.lf.isBusy()){
+        while(drive.rf.isBusy()){
 
         }
 
@@ -78,15 +83,15 @@ public class CarouselAutoRed extends LinearOpMode {
         sleep(1000);
 
         //Turning towards parking
-        drive.rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drive.rf.setTargetPosition(250);
-        drive.rf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        drive.lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        drive.lf.setTargetPosition(250);
+        drive.lf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        drive.rf.setPower(0.5);
+        drive.lf.setPower(0.5);
 
 
 
-        while(drive.rf.isBusy()){
+        while(drive.lf.isBusy()){
 
         }
 
@@ -97,6 +102,7 @@ public class CarouselAutoRed extends LinearOpMode {
 
         //Driving into park
         drive.goToPosition(630, false, 0.3);
+        sleep(1000);
 
 
 
@@ -107,6 +113,8 @@ public class CarouselAutoRed extends LinearOpMode {
 
 
     }
+
+
 
     public void spinCarousel(int tics) {
 

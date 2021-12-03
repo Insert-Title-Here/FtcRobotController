@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.TankDriveCode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @Autonomous(name="EncoderTest", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class EncoderTest extends LinearOpMode {
 
     // Declare OpMode members.

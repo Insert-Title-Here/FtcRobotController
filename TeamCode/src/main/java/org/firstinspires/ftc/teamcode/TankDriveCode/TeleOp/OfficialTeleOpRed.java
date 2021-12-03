@@ -27,19 +27,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TankDriveCode.TeleOp;
 
 
-import static java.lang.Math.round;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain;
 
 
 /**
@@ -55,9 +52,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Real TeleOp Drive", group="Linear Opmode")
+@TeleOp(name="TeleOp Red", group="Linear Opmode")
 //@Disabled
-public class TestTeleOpMode2 extends LinearOpMode {
+public class OfficialTeleOpRed extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -71,7 +68,7 @@ public class TestTeleOpMode2 extends LinearOpMode {
     static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
-    double servoPosition = 0.3;
+    double servoPosition = 0;
 
     Thread extendingArmThread;
     Thread carouselThread;
@@ -146,6 +143,10 @@ public class TestTeleOpMode2 extends LinearOpMode {
                 drive.setPower(gamepad1.left_stick_y / 2, gamepad1.right_stick_x / 2);
             }
 
+            if(carousel.isBusy()) {
+                drive.setPower(0.1, 0);
+            }
+
 
 
             // Show the elapsed game time and wheel power.
@@ -163,18 +164,23 @@ public class TestTeleOpMode2 extends LinearOpMode {
         if(gamepad1.dpad_right) {
             carousel.setPower(0.7);
         } else if(gamepad1.dpad_left) {
-            carousel.setPower(0.7);
+            carousel.setPower(-0.7);
         } else {
             carousel.setPower(0);
         }
 
         if (gamepad1.a) {
-            spinCarousel(4000);
+            spinCarousel(-4000);
+        }
+
+        if (gamepad1.y) {
+            grab(0.5);
         }
 
     }
 
     private void magneticArmUpdate(){
+        /*
         if (gamepad1.b && !magneticIsExtended) {
             magneticIsExtended = true;
             magneticExtend(5000);
@@ -184,6 +190,8 @@ public class TestTeleOpMode2 extends LinearOpMode {
             magneticIsExtended = false;
             magneticExtend(0);
         }
+
+         */
 
     }
 
@@ -202,6 +210,10 @@ public class TestTeleOpMode2 extends LinearOpMode {
             extender.setPower(-0.3);
         } else {
             extender.setPower(0);
+        }
+
+        if(gamepad1.b) {
+            extendArm(6295);
         }
 
 
@@ -224,13 +236,6 @@ public class TestTeleOpMode2 extends LinearOpMode {
             extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-
-        if (gamepad1.y) {
-            grab(0.3);
-        }
-
-
-
 
     }
 
@@ -295,7 +300,11 @@ public class TestTeleOpMode2 extends LinearOpMode {
 
         extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        extender.setPower(0.5);
+        if(!extenderIsExtended) {
+            extender.setPower(0.75);
+        } else {
+            extender.setPower(1);
+        }
 
         while (extender.isBusy()) {
 

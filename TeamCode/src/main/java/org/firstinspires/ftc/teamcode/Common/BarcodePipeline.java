@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Common;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -22,11 +22,11 @@ public class BarcodePipeline extends OpenCvPipeline{
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 110);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(150, 110);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 110);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 210);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(110, 210);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(190, 200);
     static final int REGION_WIDTH = 40;
-    static final int REGION_HEIGHT = 80;
+    static final int REGION_HEIGHT = 20;
 
     // define top left and bottom right region points
     Point region1_pointA = new Point(

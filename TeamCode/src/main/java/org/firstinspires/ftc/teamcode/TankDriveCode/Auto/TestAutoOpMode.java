@@ -27,15 +27,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TankDriveCode.Auto;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 /**
@@ -55,12 +58,79 @@ import com.qualcomm.robotcore.util.Range;
 //@Disabled
 public class TestAutoOpMode extends LinearOpMode {
 
+    BNO055IMU imu;
+    DcMotor extender;
+    Servo grabber;
+
+    double servoPosition = 0.3;
+
+    boolean isExtended = false;
+    boolean isGrabbing = true;
+    boolean servoMoving = false;
+    boolean previousYState;
+    Thread armThread;
+
+    Orientation angles;
+    Acceleration gravity;
+
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
+
+        DriveTrain drive = new DriveTrain(hardwareMap);
+        extender = hardwareMap.get(DcMotor.class, "ExtensionArm");
+        extender.setDirection(DcMotor.Direction.FORWARD);
+        extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        grabber = hardwareMap.get(Servo.class, "Grabber");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+
+        waitForStart();
+
+
+        drive.goToPosition(-200, false, 0.3);
+        extendArm(500);
+
+
+        while(!(imu.getAngularOrientation().firstAngle < -90)){
+            telemetry.addData("angle", imu.getAngularOrientation().firstAngle);
+            telemetry.update();
+            drive.lf.setPower(-0.8);
+            drive.rf.setPower(0.8);
+        }
+
+        telemetry.addData("Angle","Degree: " + imu.getAngularOrientation().firstAngle);
+
+        drive.goToPosition(-1500, false, 0.5);
+
+        /*
+        while(opModeIsActive()) {
+
+            telemetry.addData("Angle", "Something: " + imu.getAngularOrientation().firstAngle);
+            telemetry.addData("Encoder", drive.lf.getCurrentPosition());
+
+
+            telemetry.update();
+        }
+
+         */
+        /*telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         DriveTrain drive = new DriveTrain(hardwareMap);
@@ -100,6 +170,26 @@ public class TestAutoOpMode extends LinearOpMode {
             telemetry.addData("Right Tics", "Tics: " + rightTics);
             telemetry.addData("Power", "Power: " + power);
             telemetry.update();
-        }
+
+         */
+
     }
+
+    public void extendArm(int armPosition) {
+
+        extender.setTargetPosition(armPosition);
+
+        extender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        extender.setPower(0.5);
+
+        while (extender.isBusy()) {
+
+        }
+
+        extender.setPower(0);
+
+        extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
 }
