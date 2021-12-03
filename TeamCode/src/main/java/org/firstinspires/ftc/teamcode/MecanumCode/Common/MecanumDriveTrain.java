@@ -243,9 +243,6 @@ public class MecanumDriveTrain {
              */
 
 
-
-
-
             if(tics > 0) {
                 previousVelocity = setPowerAuto(desiredVelocity, movement);
             } else {
