@@ -1,4 +1,4 @@
-package teamcode.Competition;
+package teamcode.Competition.Subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;

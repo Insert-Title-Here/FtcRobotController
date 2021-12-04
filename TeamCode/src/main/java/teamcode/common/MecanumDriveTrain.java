@@ -230,14 +230,15 @@ public class MecanumDriveTrain {
         double direction = velocity.getDirection();
 
 
+
         double power = velocity.magnitude();
 
-        double angle = direction ;
+        double angle = direction + (Math.PI / 4.0);
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        setPower((power * sin - turnValue),(power * cos + turnValue),
-                (power * cos - turnValue), (power * sin + turnValue));
+        setPower((power * sin - turnValue),(power * cos - turnValue),
+                (power * cos + turnValue), (power * sin + turnValue));
     }
 
     /*
@@ -270,9 +271,9 @@ public class MecanumDriveTrain {
     }
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
-        fl.setPower(-flPow);
+        fl.setPower(flPow);
         fr.setPower(frPow);
-        bl.setPower(-blPow);
+        bl.setPower(blPow);
         br.setPower(brPow);
     }
 

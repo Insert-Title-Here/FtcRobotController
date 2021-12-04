@@ -1,5 +1,4 @@
-package teamcode.Competition;
-
+package teamcode.Competition.Autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -9,6 +8,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import teamcode.Competition.Subsystems.ArmSystem;
+import teamcode.Competition.Subsystems.EndgameSystems;
+import teamcode.Competition.Pipeline.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Localizer;
@@ -16,8 +18,8 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
-@Autonomous(name="CarouselRed")
-public class RedAutoCarousel extends AbstractOpMode {
+@Autonomous(name="CarouselBlue")
+public class BlueAutoCarousel extends AbstractOpMode {
     WestCoastDriveTrain driveTrain;
     ArmSystem arm;
     EndgameSystems system; //carousel

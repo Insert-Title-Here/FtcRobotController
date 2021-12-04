@@ -33,6 +33,7 @@ public class WestCoastDriveTrain {
     private double previousRotation = 0;
 
     private volatile boolean environmentalTerminate;
+    private volatile boolean eStop;
 
 
 
@@ -58,6 +59,7 @@ public class WestCoastDriveTrain {
         previousVelocity = 0;
         previousOmega = 0;
         environmentalTerminate = false;
+        eStop = false;
         correctMotors();
 
     }
@@ -145,6 +147,10 @@ public class WestCoastDriveTrain {
         environmentalTerminate = val;
     }
 
+    public void seteStop(boolean val){
+        eStop = val;
+    }
+
 
     /**
      *
@@ -174,7 +180,7 @@ public class WestCoastDriveTrain {
 
         environmentalTerminate = false;
 
-        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive()) && !environmentalTerminate){
+        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0 && AbstractOpMode.currentOpMode().opModeIsActive()) && !environmentalTerminate && !eStop){
             long currentCycleTimeMillis = System.currentTimeMillis() - previousTimeMillis;
             double currentCycleTimeSeconds = currentCycleTimeMillis / 1000.0;
             previousTimeMillis = System.currentTimeMillis();

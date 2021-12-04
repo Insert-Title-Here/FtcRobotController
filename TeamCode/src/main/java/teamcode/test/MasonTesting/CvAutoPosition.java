@@ -11,8 +11,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import teamcode.Competition.BarcodePipeline;
-import teamcode.Competition.BarcodePipeline3;
+import teamcode.Competition.Pipeline.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 
 @TeleOp(name = "Webcam Calibration")

@@ -2,7 +2,7 @@ package teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import teamcode.Competition.ArmSystem;
+import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Localizer;
 import teamcode.common.PositionStuff.Pose;

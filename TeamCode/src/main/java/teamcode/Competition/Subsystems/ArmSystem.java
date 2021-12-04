@@ -1,4 +1,4 @@
-package teamcode.Competition;
+package teamcode.Competition.Subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -41,6 +41,7 @@ public class ArmSystem {
     private static final int WHITE_THRESHOLD = 0255255255;
 
     private static final double SLIDE_POWER = 1.0;
+    private static final long TIMEOUT_MILLIS = 5000;
 
     private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, conveyorMotor;
     private Servo house, linkage;
@@ -136,11 +137,13 @@ public class ArmSystem {
         }
     }
 
-    public void intakeAuto(double intakePower){
+    public boolean intakeAuto(double intakePower){
         lowerLinkage();
+        Utils.sleep(400);
         boolean detectedElement = false;
+        long start = System.currentTimeMillis();
         while(!detectedElement){
-
+            long current = System.currentTimeMillis();
             NormalizedRGBA colors = sensor.getNormalizedColors();
             double green = colors.green;
             double blue = colors.blue;
@@ -157,11 +160,18 @@ public class ArmSystem {
 
             intakeDumb(intakePower);
             if(detectedElement) {
+                intakeDumb(-0.9);
                 Utils.sleep(500);
                 preScore();
+                intakeDumb(0);
+                return true;
+            }else if(current - start > TIMEOUT_MILLIS){
+                intakeDumb(0);
+                return false;
             }
         }
-        intakeDumb(0);
+        return false;
+
     }
 
     //will be merged into intake() later

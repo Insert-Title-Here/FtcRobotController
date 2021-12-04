@@ -1,24 +1,19 @@
-package teamcode.Competition;
+package teamcode.Competition.TeleOp;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
+import teamcode.Competition.Subsystems.ArmSystem;
+import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
-import teamcode.common.Debug;
 import teamcode.common.Localizer;
-import teamcode.common.MecanumDriveTrain;
-import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
 
-@TeleOp(name="tele op BLUE")
-public class OfficialTeleOpScriptBlue extends AbstractOpMode {
+@TeleOp(name="tele op RED")
+public class OfficialTeleOpScriptRed extends AbstractOpMode {
 
     WestCoastDriveTrain drive;
     ArmSystem arm;
@@ -50,7 +45,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
     protected void onInitialize() {
         arm = new ArmSystem(hardwareMap, true);
         drive = new WestCoastDriveTrain(hardwareMap);
-        system = new EndgameSystems(hardwareMap, true); //TODO make a copy of tele op
+        system = new EndgameSystems(hardwareMap, false); //TODO make a copy of tele op
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         isSprint = true;
@@ -93,22 +88,10 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
     private void driverTwoUpdate() {
         if(gamepad1.left_bumper){
             while(gamepad1.left_bumper) {
-                system.runCarousel(1);
+                system.runCarousel(-1);
             }
         }else if(gamepad1.right_bumper){
-            isCarousel = true;
-            if(moveOnCarousel) {
-                moveOnCarousel = false;
-                drive.setPower(-0.1, 0);
-                try {
-                    Thread.currentThread().sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
             system.scoreDuck();
-            isCarousel = false;
-
         }else {
             system.runCarousel(0);
         }
@@ -119,6 +102,9 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
     }
 
     private double startTime;
+
+    boolean isLinearSlow = false;
+    boolean previousLeftStickButton = false;
     private void armUpdate() {
         if(gamepad1.right_trigger > 0.3){
             startTime = AbstractOpMode.currentOpMode().time;
@@ -128,6 +114,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 }else{
+                    // changed addition from 0.3 to 0.5
                     arm.intake(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5, false);
                 }
 
@@ -154,7 +141,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
             arm.preScore();
             linkageState = LinkageState.RAISED;
         } else if (gamepad1.dpad_up) {
-                arm.setWinchPower(0.5);
+            arm.setWinchPower(0.5);
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
         } else if(gamepad1.left_trigger > 0.3) {
@@ -173,10 +160,15 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
             arm.score();
             arm.runConveyorPos(1.0, 2000);
             arm.idleServos();
+        }else if(gamepad1.left_stick_button){
+            if(gamepad1.left_stick_button != previousLeftStickButton) {
+                isLinearSlow = !isLinearSlow;
+            }
         }else{
             arm.intakeDumb(0);
             arm.setWinchPower(0);
         }
+        previousLeftStickButton = gamepad1.left_stick_button;
     }
 
     private static final double ROTATE_DPAD = 0.3;
@@ -187,7 +179,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
         if(!isCarousel) {
             if (gamepad1.right_stick_button) {
                 drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, SPRINT_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
-            } else if (gamepad1.left_stick_button) {
+            } else if (isLinearSlow) {
                 drive.setPower(0.15 * gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);
             } else {
                 drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);

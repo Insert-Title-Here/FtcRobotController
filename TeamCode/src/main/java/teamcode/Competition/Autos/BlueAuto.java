@@ -1,6 +1,5 @@
-package teamcode.Competition;
+package teamcode.Competition.Autos;
 
-import com.intel.realsense.librealsense.Pipeline;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -9,10 +8,11 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import teamcode.Competition.BarcodePipeline;
+import teamcode.Competition.Subsystems.ArmSystem;
+import teamcode.Competition.Subsystems.EndgameSystems;
+import teamcode.Competition.Pipeline.BarcodePipeline;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
-import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
