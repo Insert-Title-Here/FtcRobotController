@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.MecanumCode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
@@ -20,8 +21,11 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
 
     Carousel carousel;
 
+    CapstoneArm capArm;
+
     Thread driveThread;
     Thread armThread;
+    Thread inputThread;
 
 
     /**
@@ -37,7 +41,7 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         arm = new MagneticArm(hardwareMap);
-
+        capArm = new CapstoneArm(hardwareMap);
         carousel = new Carousel(hardwareMap);
 
         try {
@@ -61,6 +65,15 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
             public void run(){
                 while(opModeIsActive()){
                     armUpdate();
+                }
+            }
+        };
+
+        inputThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    inputUpdate();
                 }
             }
         };
@@ -163,5 +176,23 @@ public class OmniDirectionalTeleOp extends LinearOpMode {
         }
 
 
+    }
+
+    private void inputUpdate() {
+        //listen for controller input
+        //open/close servo
+        if (gamepad1.a) {
+            capArm.goToPosition(0);
+        }
+        if (gamepad1.b) {
+            capArm.goToPosition(500);
+        }
+        //extend/retract arm
+        /*if (gamepad1.x) {
+            arm.setArmPosition(0);
+        }
+        if (gamepad1.y) {
+            arm.setArmPosition(500);
+        } */
     }
 }

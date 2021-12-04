@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Carousel {
+public class Carousel2 {
 
     DcMotor carousel;
 
-    public DriveTrain(HardwareMap hardwareMap) {
+    public Carousel2(HardwareMap hardwareMap) {
         carousel  = hardwareMap.get(DcMotor.class, "Carousel");
         carousel.setDirection(DcMotorSimple.Direction.FORWARD);
     }
@@ -38,7 +40,7 @@ public class Carousel {
 
     public void SpinCarouselTime(int millis) {
         carousel.setPower(1);
-        Thread.sleep(millis);
+        //sleep(millis);
         carousel.setPower(0);
     }
 }
