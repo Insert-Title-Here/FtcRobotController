@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
+
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.List;
