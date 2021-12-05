@@ -9,13 +9,16 @@ public class CapstoneArm {
     DcMotor capExtension;
     Servo grabber;
 
+    boolean isGrabbing = true;
+
     public CapstoneArm(HardwareMap hardwareMap) {
         capExtension = hardwareMap.get(DcMotor.class, "CapExtension");
         capExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         capExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        capExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         grabber = hardwareMap.get(Servo.class, "CapstoneGrabber");
-        grabber.setPosition(0);
+        grabber.setPosition(1);
 
     }
 
@@ -36,6 +39,20 @@ public class CapstoneArm {
 
     public void setGrabberPosition(double position) {
         grabber.setPosition(position);
+    }
+
+    public void toggleGrab() {
+        if(isGrabbing) {
+            setGrabberPosition(0.8);
+            isGrabbing = false;
+        } else {
+            setGrabberPosition(1);
+            isGrabbing = true;
+        }
+    }
+
+    public double[] getTelemetry() {
+        return new double[] {capExtension.getCurrentPosition(), grabber.getPosition()};
     }
 
 }

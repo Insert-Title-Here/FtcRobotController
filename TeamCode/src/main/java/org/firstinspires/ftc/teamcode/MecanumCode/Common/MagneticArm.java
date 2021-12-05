@@ -33,7 +33,7 @@ public class MagneticArm {
         magneticExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //magneticExtensionSM = hardwareMap.crservo.get("MagExtension");
-        magnet.setPosition(1);
+        magnet.setPosition(0.97);
 
         levelPosition = 1;
         level.setPosition(levelPosition);
@@ -94,7 +94,7 @@ public class MagneticArm {
 
     public void setMagnetPosition(magnetState position) {
         if(position == magnetState.GRABBING) {
-            magnet.setPosition(1);
+            magnet.setPosition(0.97);
         } else if(position == magnetState.OPEN) {
             magnet.setPosition(0.5);
         }
@@ -105,7 +105,7 @@ public class MagneticArm {
 
         magneticExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        magneticExtension.setPower(0.5);
+        magneticExtension.setPower(0.75);
 
         while (magneticExtension.isBusy()) {
 
