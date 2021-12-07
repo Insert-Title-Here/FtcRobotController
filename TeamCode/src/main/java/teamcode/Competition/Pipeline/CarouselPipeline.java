@@ -29,8 +29,8 @@ public class CarouselPipeline extends OpenCvPipeline {
 
     // get anchor points for each region
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 160);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(105, 160);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(250, 160);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(65, 160);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(210, 160);
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 40;
 
@@ -82,7 +82,7 @@ public class CarouselPipeline extends OpenCvPipeline {
     public void init(Mat frame) {
         inputToB(frame);
 
-        // region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
+        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
         region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
     }
@@ -124,14 +124,18 @@ public class CarouselPipeline extends OpenCvPipeline {
         );
 
         int min;
+        double side1;
+        double side2;
         //min = Math.min(Math.min(avg1, avg2), avg3);
-        if(side == Side.RED){
-            min = Math.min(avg1, avg2);
-        }else{
-            min = Math.min(avg2, avg3);
-        }
 
-        if (min == avg1) {
+        min = Math.min(avg2, avg3);
+        side1 = avg2;
+        side2 = avg3;
+
+
+        if(Math.abs(side1 - side2) < 15){
+            position = BarcodePosition.LEFT;
+        }else if (min == side1) {
 
             Imgproc.rectangle(
                     input,
@@ -140,8 +144,12 @@ public class CarouselPipeline extends OpenCvPipeline {
                     GREEN,
                     2
             );
-            position = BarcodePosition.RIGHT;
-        } else if (min == avg2) {
+            if (side == Side.BLUE) {
+                position = BarcodePosition.RIGHT;
+            } else {
+                position = BarcodePosition.CENTER;
+            }
+        } else if (min == side2) {
 
             Imgproc.rectangle(
                     input,
@@ -150,13 +158,14 @@ public class CarouselPipeline extends OpenCvPipeline {
                     GREEN,
                     2
             );
-
-            position = BarcodePosition.CENTER;
-        }else{
-            position = BarcodePosition.LEFT;
+            if(side == Side.BLUE){
+                position = BarcodePosition.CENTER;
+            }else {
+                position = BarcodePosition.RIGHT;
+            }
         }
 
-        // AbstractOpMode.currentOpMode().telemetry.addData("avg1", avg1);
+        AbstractOpMode.currentOpMode().telemetry.addData("avg1", avg1);
         AbstractOpMode.currentOpMode().telemetry.addData("avg2", avg2);
         AbstractOpMode.currentOpMode().telemetry.addData("avg3", avg3);
         AbstractOpMode.currentOpMode().telemetry.addData("position", position);

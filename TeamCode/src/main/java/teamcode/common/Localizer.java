@@ -648,7 +648,7 @@ public class Localizer extends Thread {
 
         inverseMatrix.setEntry(2,2,1.0);
 
-
+        freezeUpdate = false;
 
         solver = new LUDecomposition(inverseMatrix).getSolver();
         Debug.log(solver.isNonSingular());
@@ -664,6 +664,19 @@ public class Localizer extends Thread {
 
     }
 
+    volatile boolean freezeUpdate;
+    public void manualZero(){
+        freezeUpdate = true;
+        while(currentSlamraPos.confidence != T265Camera.PoseConfidence.High){
+            currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+            slamra.setPose(new Pose2d(0,0,new Rotation2d(0)));
+        }
+        leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        freezeUpdate = false;
+    }
+
     public double directionToHeading(double direction){
         return Math.PI / 2.0 - direction;
     }
@@ -676,49 +689,49 @@ public class Localizer extends Thread {
     private static final double X_SCALAR = 0.1;
     private static final double Y_SCALAR = 0.1;
     private synchronized void matUpdate() {
-        data1 = hub1.getBulkInputData();
-        currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-        double heading = (imu.getAngularOrientation().firstAngle);
-        double dHeading = heading - previousHeading;
+        if(!freezeUpdate) {
+            data1 = hub1.getBulkInputData();
+            currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+            double heading = (imu.getAngularOrientation().firstAngle);
+            double dHeading = heading - previousHeading;
 
 
+            double[] wheelPositions = new double[]{encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical)),
+                    encoderTicksToInches(data1.getMotorCurrentPosition(horizontal)),
+                    -encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical)),
+            };
+            double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], dHeading};
+            Pose robotPoseDelta = calculatePoseDelta(wheelDeltas);
+            odoEstimate = relativeOdometryUpdate(robotPoseDelta);
+            double[] wheelVelocities = new double[]{wheelDeltas[0] / 0.02, wheelDeltas[1] / 0.02, wheelDeltas[2] / 0.02};
 
-        double[] wheelPositions = new double[]{encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical)),
-                encoderTicksToInches(data1.getMotorCurrentPosition(horizontal)),
-                -encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical)),
-                };
-        double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], dHeading};
-             Pose robotPoseDelta = calculatePoseDelta(wheelDeltas);
-             odoEstimate = relativeOdometryUpdate(robotPoseDelta);
-        double[] wheelVelocities = new double[]{wheelDeltas [0]/ 0.02, wheelDeltas[1] / 0.02, wheelDeltas[2] / 0.02};
+            if (wheelVelocities != null) {
+                poseVelocity = calculatePoseDelta(wheelVelocities);
+            }
 
-        if (wheelVelocities != null) {
-            poseVelocity = calculatePoseDelta(wheelVelocities);
-        }
-
-        final double robotRadius =7.7;
-        Pose2d slamraEstimatePose = currentSlamraPos.pose;
-        double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;
-        double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);
-        double slamRotation = currentSlamraPos.pose.getRotation().getRadians();
-        double trueX = slamx + sin(slamRotation) * robotRadius;
-        double trueY = slamy - (cos(slamRotation) * robotRadius);
+            final double robotRadius = 7.7;
+            Pose2d slamraEstimatePose = currentSlamraPos.pose;
+            double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;
+            double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);
+            double slamRotation = currentSlamraPos.pose.getRotation().getRadians();
+            double trueX = slamx + sin(slamRotation) * robotRadius;
+            double trueY = slamy - (cos(slamRotation) * robotRadius);
 
 
-        if(odoState == OdoState.LOWERED){
-            TAO = 0.9;
-        }else{
-            TAO = 0;
-        }
+            if (odoState == OdoState.LOWERED) {
+                TAO = 0.9;
+            } else {
+                TAO = 0;
+            }
 
-        double[][] vislamMat = {
-                {trueX},
-                {trueY},
-                {angleWrap(slamraEstimatePose.getRotation().getRadians())},
-                {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
-                {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
-                {currentSlamraPos.velocity.omegaRadiansPerSecond}
-        };
+            double[][] vislamMat = {
+                    {trueX},
+                    {trueY},
+                    {angleWrap(slamraEstimatePose.getRotation().getRadians())},
+                    {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
+                    {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
+                    {currentSlamraPos.velocity.omegaRadiansPerSecond}
+            };
 //        if(abs(vislamMat[3][0]) < 0.2){
 //            vislamMat[3][0] = 0;
 //        }
@@ -728,39 +741,40 @@ public class Localizer extends Thread {
 //        if(abs(vislamMat[5][0]) < 0.2){
 //            vislamMat[5][0] = 0;
 //        }
-        Matrix slamraEstimate = new Matrix(vislamMat);
+            Matrix slamraEstimate = new Matrix(vislamMat);
 
-        double[][] odoMat = {
-                {odoEstimate.x},
-                {odoEstimate.y},
-                {odoEstimate.heading},
-                {poseVelocity.x},
-                {poseVelocity.y},
-                {poseVelocity.heading}
-        };
-        Matrix odoMatrix = new Matrix(odoMat);
+            double[][] odoMat = {
+                    {odoEstimate.x},
+                    {odoEstimate.y},
+                    {odoEstimate.heading},
+                    {poseVelocity.x},
+                    {poseVelocity.y},
+                    {poseVelocity.heading}
+            };
+            Matrix odoMatrix = new Matrix(odoMat);
 
-        odoMatrix.multiply(TAO);
+            odoMatrix.multiply(TAO);
 
-        slamraEstimate.multiply(1.0-TAO);
-        Matrix complementaryStateEstimtate = odoMatrix.add(slamraEstimate); //measured state, Z
+            slamraEstimate.multiply(1.0 - TAO);
+            Matrix complementaryStateEstimtate = odoMatrix.add(slamraEstimate); //measured state, Z
 
-        state.updateState(complementaryStateEstimtate.getValue(0,0),
-                complementaryStateEstimtate.getValue(1,0),
-                complementaryStateEstimtate.getValue(2,0),
-                complementaryStateEstimtate.getValue(3,0),
-                complementaryStateEstimtate.getValue(4,0),
-                complementaryStateEstimtate.getValue(5,0));
+            state.updateState(complementaryStateEstimtate.getValue(0, 0),
+                    complementaryStateEstimtate.getValue(1, 0),
+                    complementaryStateEstimtate.getValue(2, 0),
+                    complementaryStateEstimtate.getValue(3, 0),
+                    complementaryStateEstimtate.getValue(4, 0),
+                    complementaryStateEstimtate.getValue(5, 0));
 
-        previousHeading = heading;
+            previousHeading = heading;
 
-        lastWheelPositions = new double[]{wheelPositions[0], wheelPositions[1], wheelPositions[2]};
+            lastWheelPositions = new double[]{wheelPositions[0], wheelPositions[1], wheelPositions[2]};
 
 
-        loggingString += odoEstimate.x + "," + odoEstimate.y +  "\n";
-        secondaryLoggingString += iterator + "," +  odoEstimate.x + "\n";
-        tertiaryLoggingString += iterator+ "," +  odoEstimate.y + "\n";
-        iterator++;
+//            loggingString += odoEstimate.x + "," + odoEstimate.y + "\n";
+//            secondaryLoggingString += iterator + "," + odoEstimate.x + "\n";
+//            tertiaryLoggingString += iterator + "," + odoEstimate.y + "\n";
+//            iterator++;
+            }
         }
 
         private double angleWrap(double angle) {

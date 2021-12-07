@@ -115,7 +115,7 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
                     linkageState = LinkageState.LOWERED;
                 }else{
                     // changed addition from 0.3 to 0.5
-                    arm.intake(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5, false);
+                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5);
                 }
 
             }

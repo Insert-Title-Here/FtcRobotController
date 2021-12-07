@@ -78,7 +78,7 @@ public class EndgameSystems {
             AbstractOpMode.currentOpMode().telemetry.addData("target", pose);
             AbstractOpMode.currentOpMode().telemetry.addData("current", carouselEncoder.getCurrentPosition());
             AbstractOpMode.currentOpMode().telemetry.update();
-            carousel.setPower(1);
+            carousel.setPower(0.8);
 //            if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.1){
 //                if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.2){
 //                    carousel.setPower(1 );

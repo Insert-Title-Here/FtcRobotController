@@ -1,7 +1,7 @@
 // TEST SCRIPT FOR OPENCV BY MASON
 // link for reference: https://github.com/OpenFTC/EasyOpenCV/blob/master/doc/user_docs/camera_initialization_overview.md
 
-package teamcode.test.MasonTesting;
+package teamcode.Competition.Pipeline;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,7 +11,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import teamcode.Competition.Pipeline.BarcodePipeline;
 import teamcode.Competition.Pipeline.BarcodePipeline3;
+import teamcode.Competition.Pipeline.CarouselPipeline;
 import teamcode.common.AbstractOpMode;
 
 @TeleOp(name = "Webcam Calibration")
@@ -35,8 +37,9 @@ public class CvAutoPosition extends AbstractOpMode {
         // W/ or W/ out live preview
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
-
+brp.setSide(BarcodePipeline3.Side.BLUE);
         camera.setPipeline(brp);
+
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

@@ -8,12 +8,14 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import teamcode.Competition.Pipeline.BarcodePipeline3;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.Competition.Pipeline.BarcodePipeline;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Localizer;
+import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
@@ -27,14 +29,16 @@ public class BlueAuto extends AbstractOpMode {
     Localizer localizer;
 
     OpenCvWebcam webcam;
-    BarcodePipeline.BarcodePosition position;
+    BarcodePipeline3.BarcodePosition position;
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);
+        localizer = new Localizer(new Pose(0,0,0), hardwareMap);
         driveTrain = new WestCoastDriveTrain(hardwareMap, localizer);
         arm = new ArmSystem(hardwareMap, false);
         system = new EndgameSystems(hardwareMap, true);
+
+        localizer.lowerOdo();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
@@ -43,10 +47,9 @@ public class BlueAuto extends AbstractOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
-        BarcodePipeline pipeline = new BarcodePipeline();
+        BarcodePipeline3 pipeline = new BarcodePipeline3();
         webcam.setPipeline(pipeline);
-        pipeline.setSide(BarcodePipeline.Side.BLUE);
-        localizer.liftOdo();
+        pipeline.setSide(BarcodePipeline3.Side.BLUE);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -72,49 +75,35 @@ public class BlueAuto extends AbstractOpMode {
         webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
-
-        if(position == BarcodePipeline.BarcodePosition.LEFT){
-            position = BarcodePipeline.BarcodePosition.RIGHT;
-        }
-        Utils.sleep(500);
-        driveTrain.moveToPosition(new Vector2D(1, 6), 6, 0.5, false);
+        Utils.sleep(1500);
+        driveTrain.moveToPosition(new Vector2D(-1, 6), 12, 0.5, false);
         // Utils.sleep(2000);
-        driveTrain.rotateDistance(-0.5, Math.toRadians(-120));
+        driveTrain.rotateDistance(-0.5, Math.toRadians(120));
 
-
-        if (position == BarcodePipeline.BarcodePosition.LEFT) {
-            if(position == BarcodePipeline.BarcodePosition.LEFT){
-                arm.raise(Constants.BOTTOM_POSITION - 2000);
-            }
-            driveTrain.moveToPosition(new Vector2D(9, 17), -12, 0.5, false);
-            driveTrain.rotateDistance(-0.4, Math.toRadians(-155));
-
-        } else{
-            //Debug.log("here");
-            if (position == BarcodePipeline.BarcodePosition.RIGHT) {
-                arm.raise(Constants.TOP_POSITION);
-            } else if(position == BarcodePipeline.BarcodePosition.CENTER){
-                arm.raise(Constants.MEDIUM_POSITION);
-            }
-            driveTrain.moveToPosition(new Vector2D(9, 19.7), -12, 0.5, false);
-            driveTrain.rotateDistance(-0.4, Math.toRadians(-155));
-
+        if (position == BarcodePipeline3.BarcodePosition.LEFT) {
+            arm.raise(Constants.TOP_POSITION);
+        } else if(position == BarcodePipeline3.BarcodePosition.CENTER){
+            arm.raise(Constants.MEDIUM_POSITION);
         }
-
+        driveTrain.moveToPosition(new Vector2D(-17, 24), -12, 0.5, false);
+        driveTrain.rotateDistance(-0.4, Math.toRadians(170));
+        if (position == BarcodePipeline3.BarcodePosition.RIGHT) {
+            arm.raise(Constants.BOTTOM_POSITION);
+            arm.runConveyorPos(1, 1000);
+        }
         arm.score();
-        Utils.sleep(500);
-        Vector2D constructedVector = new Vector2D(7, 13.0);
-//        telemetry.addData("vec", constructedVector)w;
+        //driveTrain.rotateDistance( 0.4, Math.toRadians(155));
+
+        //arm.raise(arm.getLinearSlidePosition() + 1000);
+        Utils.sleep(1000);
+        Vector2D constructedVector = new Vector2D(-13, 19);
+//        telemetry.addData("vec", constructedVector);
 //        telemetry.update();
-        driveTrain.moveToPosition(constructedVector, 12, 0.5, false);
+        //driveTrain.moveToPosition(constructedVector, 12, 0.5, false);
+        driveTrain.rotateDistance(0.4, Math.toRadians(105));
         arm.retract();
-        driveTrain.rotateDistance(0.4, Math.toRadians(-105));
-        driveTrain.moveToPosition(new Vector2D(-34, 27), 24, 0.5, false);
-
-
-        //driveTrain.moveToPosition(new Vector2D(-14,6), 12, 0.1);
-
-
+        localizer.liftOdo();
+        driveTrain.moveToPosition(new Vector2D(-34, -27), 36, 0.5, false);
         while(opModeIsActive());
 
 

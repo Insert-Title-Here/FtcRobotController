@@ -16,6 +16,7 @@ import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.Competition.Pipeline.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
+import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
@@ -75,21 +76,35 @@ public class BlueAutoCarousel extends AbstractOpMode {
         telemetry.clear();
         localizer.start();
 
-        // bottom
-        position = CarouselPipeline.BarcodePosition.RIGHT;
-        if (position == CarouselPipeline.BarcodePosition.RIGHT) {
-            driveTrain.moveToPosition(new Vector2D(-4, 1), 12, 0.5, false);
-            driveTrain.rotateDistance(-0.5, Math.toRadians(25));
-            driveTrain.moveToPosition(new Vector2D(-16, -3), 12, 0.5, false);
-            driveTrain.rotateDistance(0.5, Math.toRadians(-120));
-            driveTrain.moveToPosition(new Vector2D(-15, 1), -12, 0.5, false);
-            Utils.sleep(1000);
-            arm.raise(Constants.BOTTOM_POSITION);
-            Utils.sleep(1000);
-            arm.runConveyorPos(1, 2000);
-            arm.score();
-            arm.retract();
+        driveTrain.moveToPosition(new Vector2D(6, 1), 12, 0.5, false);
+        driveTrain.rotateDistance(0.5, Math.toRadians(-120));
+
+        if (position == CarouselPipeline.BarcodePosition.LEFT) {
+            Debug.log("top");
+            arm.raise(Constants.TOP_POSITION );
+        } else if(position == CarouselPipeline.BarcodePosition.CENTER){
+            Debug.log("mid");
+            arm.raise(Constants.MEDIUM_POSITION);
         }
+        driveTrain.moveToPosition(new Vector2D(-17, -24), -12, 0.5, false);
+        driveTrain.rotateDistance(0.4, Math.toRadians(-155));
+        if (position == CarouselPipeline.BarcodePosition.RIGHT) {
+            Debug.log("low");
+            arm.raise(Constants.BOTTOM_POSITION - 1000);
+            arm.runConveyorPos(1, 2000);
+        }
+        arm.score();
+        Utils.sleep(500) ;
+        driveTrain.rotateDistance(-0.4, Math.toRadians(-105));
+        driveTrain.moveToPosition(new Vector2D(-0, 10), 12, 0.5, false);
+        arm.retract();
+
+
+        // Utils.sleep(2000);
+
+
+
+        while(opModeIsActive());
 
         while(opModeIsActive());
 

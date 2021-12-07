@@ -15,6 +15,7 @@ import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.Competition.Pipeline.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
+import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
@@ -48,6 +49,7 @@ public class RedAutoCarousel extends AbstractOpMode {
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
         CarouselPipeline pipeline = new CarouselPipeline();
+        pipeline.setSide(CarouselPipeline.Side.RED);
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -74,25 +76,28 @@ public class RedAutoCarousel extends AbstractOpMode {
         webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
-        position = CarouselPipeline.BarcodePosition.CENTER;
         driveTrain.moveToPosition(new Vector2D(6, 1), 12, 0.5, false);
         driveTrain.rotateDistance(-0.5, Math.toRadians(120));
 
         if (position == CarouselPipeline.BarcodePosition.RIGHT) {
-            arm.raise(Constants.TOP_POSITION);
+            Debug.log("top");
+            arm.raise(Constants.TOP_POSITION );
         } else if(position == CarouselPipeline.BarcodePosition.CENTER){
+            Debug.log("mid");
             arm.raise(Constants.MEDIUM_POSITION);
         }
-        driveTrain.moveToPosition(new Vector2D(-17, 24), -12, 0.5, false);
-        driveTrain.rotateDistance(-0.4, Math.toRadians(155));
+        driveTrain.moveToPosition(new Vector2D(-19, 24), -12, 0.5, false);
+        driveTrain.rotateDistance(-0.4, Math.toRadians(-155));
         if (position == CarouselPipeline.BarcodePosition.LEFT) {
-            arm.raise(Constants.BOTTOM_POSITION);
+           Debug.log("low");
+            arm.raise(Constants.BOTTOM_POSITION - 1000);
             arm.runConveyorPos(1, 2000);
         }
         arm.score();
-        arm.retract();
+        Utils.sleep(500) ;
         driveTrain.rotateDistance(0.4, Math.toRadians(105));
         driveTrain.moveToPosition(new Vector2D(-0, -10), 12, 0.5, false);
+        arm.retract();
 
 
         // Utils.sleep(2000);
