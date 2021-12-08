@@ -82,7 +82,16 @@ public class MecanumDriveTrain {
 
     }
 
+
+    /**
+     * DO NOT CALL THIS W/O ALL THE RIGHT CONSTRUCTORS
+     * @param desiredVelocity
+     * @param desiredRotate
+     */
     public void seekCubes(double desiredVelocity, double desiredRotate){
+        if(pipeline == null || localizer == null){
+            return;
+        }
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
         Vector2D robotPosition;
         seekCubesRotate(desiredRotate);
@@ -186,6 +195,9 @@ public class MecanumDriveTrain {
 
 
     public void strafeDistanceSensor(double desiredVelocity){
+        if(localizer == null){
+            return;
+        }
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
 
         double previousError = 0;
@@ -272,7 +284,9 @@ public class MecanumDriveTrain {
 
     public void moveToPosition(Vector2D desiredPosition, double desiredVelocity){
 
-
+        if(localizer == null){
+            return;
+        }
         RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
         Vector2D desiredPositionPointer = new Vector2D(desiredPosition.getX() - currentState.getPosition().getX() , desiredPosition.getY() - currentState.getPosition().getY());
         Vector2D newDesiredPosition = desiredPosition.add(new Vector2D(5.0 * Math.cos(desiredPositionPointer.getDirection()), 5.0 * Math.sin(desiredPositionPointer.getDirection())));
@@ -385,6 +399,9 @@ public class MecanumDriveTrain {
     double previousOmega;
     double pRotation;
     public void moveToRotation(double desiredRotation, double omega){
+        if(localizer == null){
+            return;
+        }
         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
         previousOmega = 0;
         while(Math.abs(desiredRotation - state.getRotation()) > 0.05){

@@ -151,6 +151,7 @@ public class Localizer extends Thread {
         resetEncoders();
 
         odoState = OdoState.LOWERED;
+        type = constructorType.DEPRECATED;
 
     }
 
@@ -214,6 +215,7 @@ public class Localizer extends Thread {
         resetEncoders();
         iterator = 1;
         odoState = OdoState.LOWERED;
+        type = constructorType.KALMAN;
     }
 
 
@@ -238,9 +240,13 @@ public class Localizer extends Thread {
         // max speed 300 Hz)
         while (!stop.get()) {
             long millis = System.currentTimeMillis();
-            //update();
-           //updateKalman();
-            matUpdate();
+            if(type == constructorType.DEPRECATED) {
+                update();
+            }else if(type == constructorType.KALMAN) {
+                updateKalman();
+            }else if(type == constructorType.MAT) {
+                matUpdate();
+            }
             long runtime = System.currentTimeMillis() - millis;
 
             if (runtime > runInterval) {
@@ -290,6 +296,12 @@ public class Localizer extends Thread {
     private enum OdoState{
         RAISED, LOWERED
     }
+
+    private enum constructorType{
+        DEPRECATED, KALMAN, MAT
+    }
+
+    constructorType type;
 
     //zeroing the odo
     public void resetOdometersTravelling(){
@@ -622,6 +634,8 @@ public class Localizer extends Thread {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        type = constructorType.MAT;
 
 
         Array2DRowRealMatrix inverseMatrix = new Array2DRowRealMatrix(3, 3);
