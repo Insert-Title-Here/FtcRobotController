@@ -31,10 +31,10 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
      * calibrate all these values kevin
      */
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.3;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.3;
+    private final double NORMAL_LINEAR_MODIFIER = 0.4;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
     private final double SPRINT_LINEAR_MODIFIER = 1;
-    private final double SPRINT_ROTATIONAL_MODIFIER = 0.5;
+    private final double SPRINT_ROTATIONAL_MODIFIER = 0.6;
 
 
     @Override
@@ -95,7 +95,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
          */
 
         if(gamepad1.left_bumper) {
-            carousel.spinCarousel(-4000, this);
+            carousel.spinCarousel(-4000, this, Carousel.CarouselMode.TELEOP);
         }
 
         if(gamepad1.dpad_up) {
@@ -172,9 +172,9 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
         if(driveSwapped) {
             if (gamepad1.right_bumper) { // replace this with a button for sprint
-                drive.setPower(new Vector2D(-gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), -gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(-gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, -gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             } else {
-                drive.setPower(new Vector2D(-gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(-gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, -gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
         } else {
             if (gamepad1.right_bumper) { // replace this with a button for sprint
