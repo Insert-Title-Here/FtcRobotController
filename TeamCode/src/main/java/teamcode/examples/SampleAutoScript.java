@@ -126,7 +126,7 @@ public class SampleAutoScript extends AbstractOpMode {
                 localizer.start();
                 //this command moves 2 feet forward at a rate of 12 inches per second, this is optimized using
                 //a proportional integral derivative (PID) control loop which isnt necessary but will greatly minimize slippage
-                drivetrain.moveToPosition(new Vector2D(0,24), 12, 0, 0.5);
+               // drivetrain.moveToPosition(new Vector2D(0,24), 12, 0, 0.5);
                 //you will essentially keep running things like this until you no longer have points to run to
             }
         }.start();

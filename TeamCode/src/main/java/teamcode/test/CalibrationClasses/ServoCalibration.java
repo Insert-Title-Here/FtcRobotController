@@ -1,11 +1,13 @@
 package teamcode.test.CalibrationClasses;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Utils;
 
+@Disabled
 @TeleOp(name="Servo")
 public class ServoCalibration extends AbstractOpMode {
 

@@ -1,4 +1,4 @@
-package teamcode.test;
+package teamcode.test.Miscellanious;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;

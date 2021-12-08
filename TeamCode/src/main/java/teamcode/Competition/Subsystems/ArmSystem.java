@@ -9,18 +9,9 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-import org.checkerframework.checker.units.qual.A;
-
-import java.util.List;
-
 import teamcode.common.AbstractOpMode;
-import teamcode.common.Constants;
-import teamcode.common.Localizer;
 import teamcode.common.RobotPositionStateUpdater;
 import teamcode.common.Utils;
-import teamcode.test.ColorSensorTest;
-
-import static teamcode.common.Constants.*;
 
 public class ArmSystem {
 

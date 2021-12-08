@@ -2,6 +2,7 @@ package teamcode.test.CalibrationClasses;
 
 import android.graphics.drawable.VectorDrawable;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.common.AbstractOpMode;
@@ -15,6 +16,7 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
+@Disabled
 @TeleOp(name="Localizer Test")
 public class LocalizerTest extends AbstractOpMode {
 

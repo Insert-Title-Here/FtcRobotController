@@ -3,11 +3,13 @@ package teamcode.test.CalibrationClasses;
 import android.drm.DrmStore;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Utils;
 
+@Disabled
 @Autonomous(name="OdoWinch")
 public class OdoWinchTest extends AbstractOpMode {
 

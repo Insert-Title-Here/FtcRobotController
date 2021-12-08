@@ -1,6 +1,7 @@
-package teamcode.test;
+package teamcode.test.Miscellanious;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
@@ -10,6 +11,7 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
+@Disabled
 @Autonomous(name="freightPickUp")
 public class FreightPickUpAuto extends AbstractOpMode {
     Localizer localizer;

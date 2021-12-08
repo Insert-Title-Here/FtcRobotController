@@ -1,12 +1,14 @@
 package teamcode.test.CalibrationClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Localizer;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
+@Disabled
 @Autonomous(name="Chassis")
 public class ChassisWidthCalibration extends AbstractOpMode {
     WestCoastDriveTrain drive;

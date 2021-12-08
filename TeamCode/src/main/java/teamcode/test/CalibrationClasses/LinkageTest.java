@@ -1,5 +1,6 @@
 package teamcode.test.CalibrationClasses;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @TeleOp(name="Carousel")
 public class LinkageTest extends AbstractOpMode {
 

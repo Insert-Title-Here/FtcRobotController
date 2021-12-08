@@ -1,10 +1,12 @@
 package teamcode.test.CalibrationClasses;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @TeleOp(name="Intake")
 public class IntakeTest extends AbstractOpMode {
     DcMotor intakeMotorLeft, intakeMotorRight;
