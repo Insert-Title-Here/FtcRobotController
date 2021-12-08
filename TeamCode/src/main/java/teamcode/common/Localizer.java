@@ -669,11 +669,16 @@ public class Localizer extends Thread {
         freezeUpdate = true;
         while(currentSlamraPos.confidence != T265Camera.PoseConfidence.High){
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+            AbstractOpMode.currentOpMode().telemetry.addData("con", currentSlamraPos.confidence);
+            AbstractOpMode.currentOpMode().telemetry.update();
             slamra.setPose(new Pose2d(0,0,new Rotation2d(0)));
         }
         leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lastWheelPositions = new double[]{0,0,0};
+        previousHeading = 0;
+
         freezeUpdate = false;
     }
 

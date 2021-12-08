@@ -4,8 +4,11 @@ import android.sax.StartElementListener;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.robot.Robot;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Vector;
 
@@ -23,6 +26,8 @@ public class MecanumDriveTrain {
     Vector2D previousVelocity;
     Vector2D previousError;
     double previousOmegaError;
+
+    DistanceSensor distance;
 
 
     /**
@@ -48,10 +53,71 @@ public class MecanumDriveTrain {
         fr = hardwareMap.dcMotor.get("FrontRightDrive");
         bl = hardwareMap.dcMotor.get("BackLeftDrive");
         br = hardwareMap.dcMotor.get("BackRightDrive");
+        distance = hardwareMap.get(DistanceSensor.class, "Distance");
         this.localizer = localizer;
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
+
+    }
+
+    public void strafeDistanceSensor(double desiredVelocity){
+        RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();
+
+        double previousError = 0;
+        double previousVelocity = 0;
+        Vector2D steadyStateError = new Vector2D(0,0);
+        previousOmegaError = 0;
+
+        //todo calibrate the tolerance of it.
+        while(distance.getDistance(DistanceUnit.INCH) > 0.5 && AbstractOpMode.currentOpMode().opModeIsActive()){
+
+            currentState = localizer.getCurrentState();
+
+            //angleOfTravel += 0; // (Math.PI / 4.0)mecanum need this because all the math is shifted by pi/4
+
+            Vector2D recordedVelocity = currentState.getVelocity();
+            double recordedVelocityMag = recordedVelocity.magnitude();
+            //recordedVelocity.rotate(-Math.PI / 4.0);
+
+            double error = desiredVelocity - recordedVelocityMag;
+            //Vector2D crossTrackError = new Vector2D(xError, yError);
+            //steadyStateError.add(error);
+            double deltaError = error - previousError;
+            error = error * pVelocity;
+            deltaError = deltaError * dVelocity;
+            error += deltaError;
+
+
+//            double sign = 1.0;
+//            if(error.getX() < 0 || error.getY() < 0){
+//                sign = -1.0;
+//            }
+            //error.add(previousVelocity);
+
+            //found and fixed stupid math error
+            double passedVal = previousVelocity + error;
+
+
+            if(passedVal > 1){
+                passedVal = 1;
+                desiredVelocity = currentState.getVelocity().magnitude();
+            }
+            if(passedVal < -1){
+                passedVal = -1;
+                desiredVelocity = currentState.getVelocity().magnitude();
+            }
+
+            //Vector2D passedVector = new Vector2D(passedX, passedY);
+            previousVelocity = setStrafe(passedVal);
+
+            // previousVelocity.multiply(sign);
+            previousError = error;
+
+        }
+        brake();
+
+
 
     }
 
@@ -277,6 +343,14 @@ public class MecanumDriveTrain {
         br.setPower(brPow);
     }
 
+    public double setStrafe(double val){
+        fl.setPower(val);
+        fr.setPower(-val);
+        bl.setPower(-val);
+        br.setPower(val);
+        return val;
+    }
+
     private boolean isNear(double globalRads, double angle, boolean isBig) {
         if (isBig) {
             return Math.abs(globalRads - angle) < (2 * ANGULAR_TOLERANCE);
@@ -296,6 +370,8 @@ public class MecanumDriveTrain {
             return 1;
         }
     }
+
+
 
 
 
