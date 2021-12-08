@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
@@ -18,6 +19,7 @@ public class CarouselParkRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
+    CapstoneArm capArm;
     // The IMU sensor object
     BNO055IMU imu;
 
@@ -35,6 +37,7 @@ public class CarouselParkRed extends OpModeWrapper {
     protected void onInitialize() throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
         carousel = new Carousel(hardwareMap);
+        capArm = new CapstoneArm(hardwareMap);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
@@ -49,6 +52,8 @@ public class CarouselParkRed extends OpModeWrapper {
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        capArm.setGrabberPosition(0.8);
 
 
     }
