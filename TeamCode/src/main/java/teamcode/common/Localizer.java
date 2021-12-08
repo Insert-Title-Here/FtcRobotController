@@ -589,7 +589,7 @@ public class Localizer extends Thread {
     private Pose poseVelocity;
 
 
-
+    private Logger logger;
     public Localizer(Pose start, HardwareMap hardwareMap){
         hub1 = hardwareMap.get(ExpansionHubEx.class,"Control Hub");
         loggingString = "";
@@ -609,6 +609,7 @@ public class Localizer extends Thread {
         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
         odoWinch = hardwareMap.servo.get("OdoWinch");
         secondaryOdoWinch = hardwareMap.servo.get("SecondaryOdoWinch");
+        this.logger = logger;
 
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -678,7 +679,9 @@ public class Localizer extends Thread {
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lastWheelPositions = new double[]{0,0,0};
         previousHeading = 0;
-
+        odoEstimate = new Pose(0,0,0);
+        state.updateState(0,0,0,0,0,0);
+        //todo if we use gyro then I need to save that value and start offsetting angle by that
         freezeUpdate = false;
     }
 
