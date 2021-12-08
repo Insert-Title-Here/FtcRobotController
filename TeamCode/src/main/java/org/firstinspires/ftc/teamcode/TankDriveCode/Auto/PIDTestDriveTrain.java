@@ -1,25 +1,19 @@
-package org.firstinspires.ftc.teamcode.MecanumCode.Common;
+package org.firstinspires.ftc.teamcode.TankDriveCode.Auto;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.sql.Wrapper;
 import java.util.Arrays;
 
-/**
- * Configuration:
- *
- */
-public class MecanumDriveTrain {
+public class PIDTestDriveTrain {
     private static final double ANGULAR_TOLERANCE = 0.05;
     final double COUNTS_PER_INCH = 920.111004;
 
@@ -28,12 +22,10 @@ public class MecanumDriveTrain {
     which is the most used DriveTrain in FTC
      */
 
-    public DcMotor fl, fr, bl, br;
-
-    private String loggingString;
-
+    DcMotor fl;
+    DcMotor fr;
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
-
+    String loggingString;
 
     private double previousVelocity;
     private double[] previousPositions;
@@ -47,11 +39,10 @@ public class MecanumDriveTrain {
     final double dVelocity  = 0.047; //0.027
     PIDCoefficients PID = new PIDCoefficients(0.002, 0, 0);
 
-    public MecanumDriveTrain(HardwareMap hardwareMap) throws FileNotFoundException {
-        fl = hardwareMap.dcMotor.get("FrontLeftDrive");
-        fr = hardwareMap.dcMotor.get("FrontRightDrive");
-        bl = hardwareMap.dcMotor.get("BackLeftDrive");
-        br = hardwareMap.dcMotor.get("BackRightDrive");
+    public PIDTestDriveTrain(HardwareMap hardwareMap) throws FileNotFoundException {
+        fl  = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
+        fr = hardwareMap.get(DcMotor.class, "RightFrontDrive");
+
         correctMotors();
 
     }
@@ -61,12 +52,12 @@ public class MecanumDriveTrain {
     private void correctMotors() {
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -80,9 +71,9 @@ public class MecanumDriveTrain {
 
     public String getMotorPower(){
         return "fl: " + fl.getPower() + "\n" +
-                "fr: " + fr.getPower() + "\n" +
-                "bl: " + bl.getPower() + "\n" +
-                "br: " + br.getPower();
+                "fr: " + fr.getPower() + "\n";
+                //"bl: " + bl.getPower() + "\n" +
+                //"br: " + br.getPower();
     }
 
 
@@ -90,20 +81,20 @@ public class MecanumDriveTrain {
     private void brake() {
         fl.setPower(0);
         fr.setPower(0);
-        bl.setPower(0);
-        br.setPower(0);
+        //bl.setPower(0);
+        //br.setPower(0);
     }
 
 
     public DcMotor[] getMotors(){
-        return new DcMotor[]{fl,fr,bl,br};
+        return new DcMotor[]{fl,fr/*,bl,br*/};
     }
 
 
     /*
     gets the robot driving in a specified direction
      */
-    public void setPower(Vector2D velocity, double turnValue, boolean isSwapped){
+    public void setPower(Vector2D velocity, double turnValue){
         turnValue = -turnValue;
         double direction = velocity.getDirection();
 
@@ -114,13 +105,8 @@ public class MecanumDriveTrain {
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        if(!isSwapped) {
-            setPower((power * sin - turnValue), (power * cos + turnValue),
-                    (power * cos - turnValue), (power * sin + turnValue));
-        } else {
-            setPower(-(power * sin - turnValue), -(power * cos + turnValue),
-                    -(power * cos - turnValue), -(power * sin + turnValue));
-        }
+        setPower((power * sin - turnValue),(power * cos + turnValue)/*,
+                (power * cos - turnValue), (power * sin + turnValue)*/);
     }
 
 
@@ -135,12 +121,12 @@ public class MecanumDriveTrain {
     public void driveAuto(double desiredVelocity, int tics, MovementType movement){
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         OpModeWrapper currentOpMode = OpModeWrapper.currentOpMode();
@@ -153,14 +139,15 @@ public class MecanumDriveTrain {
 
         double average = computeAvg(currentPositions);
         double error = 0;
-        while(average <= tics / 2){
-            currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
+        while(Math.abs(average) <= Math.abs(tics / 2)){
+            currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition()/*, bl.getCurrentPosition(), br.getCurrentPosition()*/};
+            System.out.println("hi");
 
-            currentOpMode.telemetry.addData("currentPositions: ", currentPositions);
+            currentOpMode.telemetry.addData("currentPositions: ", Arrays.toString(currentPositions));
             currentOpMode.telemetry.addData("error: ", error);
 
             average = computeAvg(currentPositions);
-            error = average - (6 * tics) / 13;
+            error = average - ((6 * tics) / 13.0);
             double P = PID.p * error;
 
             while(P * 10 < 1){
@@ -174,6 +161,7 @@ public class MecanumDriveTrain {
                 velocity = 1;
             }
 
+
             if(tics < 0){
                 setPowerAuto(-velocity, movement);
             }else{
@@ -181,29 +169,38 @@ public class MecanumDriveTrain {
             }
 
 
-            lastError = error;
 
         }
 
-        while(average < tics - 10){
-            currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
 
-            error = computeAvg(currentPositions) - (12 * tics) / 13;
-            currentOpMode.telemetry.addData("currentPositions: ", currentPositions);
+        while(Math.abs(average) < Math.abs(tics - 10) && Math.abs(average) > Math.abs(tics / 2)){
+            currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition()/*, bl.getCurrentPosition(), br.getCurrentPosition()*/};
+
+            average = computeAvg(currentPositions);
+            error = ((12 * tics) / 13.0) - average;
+            currentOpMode.telemetry.addData("currentPositions: ", Arrays.toString(currentPositions));
             currentOpMode.telemetry.addData("error: ", error);
 
+            double P = PID.p * error;
 
-            if(error > 0){
-                 setPowerAuto(0.1, movement);
+            while(P * 10 < 1){
+                P *= 10;
+            }
+
+
+            if(error < 0.25 ){
+                velocity = 0.25;
              }else{
-                 double P = Math.abs(PID.p * error);
-                 setPowerAuto(P, movement);
+                 velocity = P;
              }
 
+            setPowerAuto(velocity, movement);
 
-             lastError = error;
+
+
 
         }
+
 
 
 
@@ -269,6 +266,9 @@ public class MecanumDriveTrain {
 
 
 
+
+
+
             if(tics > 0) {
                 previousVelocity = setPowerAuto(desiredVelocity, movement);
             } else {
@@ -280,6 +280,8 @@ public class MecanumDriveTrain {
 
 
 
+
+
         }
 
          */
@@ -287,42 +289,14 @@ public class MecanumDriveTrain {
 
 
 
-        }
-
-    public double setPowerAuto(double power, MovementType movement) {
-        if(movement == MovementType.STRAIGHT) {
-            setPower(power, power, power, power);
-        }else if(movement == MovementType.STRAFE){
-            setPower(power, -power, -power, power);
-        }else if(movement == MovementType.ROTATE){
-            setPower(power, -power, power, -power);
-        }
-        return power;
-    }
-
-    public void setPower(double flPow, double frPow, double blPow, double brPow) {
-        fl.setPower(-flPow);
-        fr.setPower(-frPow) ;
-        bl.setPower(blPow);
-        br.setPower(brPow);
 
     }
-
-
-
-    private double computeAvg(double[] currentPositions) {
-        return (currentPositions[0] + currentPositions[1] + currentPositions[2] + currentPositions[3]) / 4.0;
-
-    }
-
-
-
 
 
     private double TIC_TOLERANCE = 25;
     private boolean isFar(int tics){
         return Math.abs(tics - fl.getCurrentPosition()) > TIC_TOLERANCE && Math.abs(tics - fr.getCurrentPosition()) > TIC_TOLERANCE
-                && Math.abs(tics - bl.getCurrentPosition()) > TIC_TOLERANCE && Math.abs(tics - br.getCurrentPosition()) > TIC_TOLERANCE;
+                /*&& Math.abs(tics - bl.getCurrentPosition()) > TIC_TOLERANCE && Math.abs(tics - br.getCurrentPosition()) > TIC_TOLERANCE*/;
     }
 
 
@@ -330,8 +304,6 @@ public class MecanumDriveTrain {
     public enum MovementType{
         STRAIGHT, STRAFE, ROTATE
     }
-
-    /*
 
     private double computeDeltas(double[] currentPositions){
         double flDelta = Math.abs(currentPositions[0]) - Math.abs(previousPositions[0]);
@@ -341,30 +313,32 @@ public class MecanumDriveTrain {
         return (flDelta + frDelta + blDelta + brDelta) / 4.0;
     }
 
-     */
+    private double computeAvg(double[] currentPositions){
 
-
-
-
-
-
-/*
-    public void setPower(double flPow, double frPow, double blPow, double brPow) {
-        fl.setPower(-flPow);
-        fr.setPower(-frPow) ;
-        bl.setPower(blPow);
-        br.setPower(brPow);
-
+        return (Math.abs(currentPositions[0]) + Math.abs(currentPositions[1]) /*currentPositions[2] + currentPositions[3]*/) / 2.0;
     }
 
- */
 
 
 
-        //public double setPowerAuto(double power, MovementType movement) {
 
-    //}
+    public void setPower(double flPow, double frPow/*, double blPow, double brPow*/) {
+        fl.setPower(-flPow);
+        fr.setPower(-frPow) ;
+        //bl.setPower(blPow);
+        //br.setPower(brPow);
+    }
 
+    public double setPowerAuto(double power, MovementType movement) {
+        if(movement == MovementType.STRAIGHT) {
+            setPower(power, power/*, power, power*/);
+        }else if(movement == MovementType.STRAFE){
+            setPower(power, -power/*, -power, power*/);
+        }else if(movement == MovementType.ROTATE){
+            setPower(power, -power/*, power, -power*/);
+        }
+        return power;
+    }
 
 
 
@@ -379,7 +353,6 @@ public class MecanumDriveTrain {
 
     public void writeLoggerToFile(){
         try{
-
             PrintStream toFile = new PrintStream(loggingFile);
             toFile.println(loggingString);
         }catch(FileNotFoundException e){
