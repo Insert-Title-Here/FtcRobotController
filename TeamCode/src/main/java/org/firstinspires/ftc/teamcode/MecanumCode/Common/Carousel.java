@@ -6,6 +6,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Carousel {
 
+    public enum CarouselMode {
+        AUTO,
+        TELEOP
+    }
+
     DcMotor carousel;
 
     public Carousel(HardwareMap hardwareMap) {
@@ -16,7 +21,7 @@ public class Carousel {
 
     }
 
-    public void spinCarousel(int tics, LinearOpMode currentOpMode) {
+    public void spinCarousel(int tics, LinearOpMode currentOpMode, CarouselMode mode) {
 
         carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -26,17 +31,22 @@ public class Carousel {
 
         double power;
 
-        carousel.setPower(0.5);
+        if(mode == CarouselMode.AUTO) {
+            setPower(0.3);
+            while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
 
-
-        while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
-            power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
-            if (power < 0.5) {
-                carousel.setPower(0.5);
-            } else if (power > 1){
-                carousel.setPower(1);
-            } else {
-                carousel.setPower(power);
+            }
+        } else {
+            carousel.setPower(0.5);
+            while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
+                power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
+                if (power < 0.5) {
+                    carousel.setPower(0.5);
+                } else if (power > 1){
+                    carousel.setPower(1);
+                } else {
+                    carousel.setPower(power);
+                }
             }
         }
 

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
@@ -13,11 +14,12 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Park Left Red")
+@Autonomous(name="Straight Park Auto")
 public class ParkLeftRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
+    CapstoneArm capArm;
     // The IMU sensor object
     BNO055IMU imu;
 
@@ -35,6 +37,7 @@ public class ParkLeftRed extends OpModeWrapper {
     protected void onInitialize() throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
         carousel = new Carousel(hardwareMap);
+        capArm = new CapstoneArm(hardwareMap);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
@@ -63,9 +66,8 @@ public class ParkLeftRed extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft
-        drive.driveAuto(0.3, 2400, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -300, MecanumDriveTrain.MovementType.STRAFE);
-
+        drive.driveAuto(0.3, 1080, MecanumDriveTrain.MovementType.STRAIGHT);
+        capArm.toggleGrab();
 
 
 

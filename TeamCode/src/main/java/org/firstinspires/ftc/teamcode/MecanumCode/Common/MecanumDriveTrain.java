@@ -192,6 +192,10 @@ public class MecanumDriveTrain {
 
          */
 
+        if(tics < 0) {
+            desiredVelocity *= -1;
+        }
+
         while(isFar(tics) && currentOpMode.opModeIsActive()){
             setPowerAuto(desiredVelocity, movement);
         }

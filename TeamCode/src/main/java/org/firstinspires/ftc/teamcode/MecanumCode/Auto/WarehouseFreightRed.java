@@ -3,24 +3,25 @@ package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Test Auto")
-public class TestAuto extends OpModeWrapper {
+@Autonomous(name="Warehouse + Freight Red")
+public class WarehouseFreightRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
+    Carousel carousel;
+    CapstoneArm capArm;
+    MagneticArm magArm;
     // The IMU sensor object
     BNO055IMU imu;
 
@@ -37,6 +38,9 @@ public class TestAuto extends OpModeWrapper {
     @Override
     protected void onInitialize() throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
+        carousel = new Carousel(hardwareMap);
+        capArm = new CapstoneArm(hardwareMap);
+        magArm = new MagneticArm(hardwareMap);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
@@ -64,18 +68,18 @@ public class TestAuto extends OpModeWrapper {
          */
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
-        // Strafe: 590 tics/ft
+        // Strafe: 590 tics/ft - = Left, + = Right
+        drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1650, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+        //capArm.goToPosition(300);
+        capArm.toggleGrab();
+        sleep(3000);
+        drive.driveAuto(0.3, 720, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -950, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        drive.driveAuto(0.3, 540, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.5, -590, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 3665, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.7, -3665, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.2, -540, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 590, MecanumDriveTrain.MovementType.STRAFE);
 
-
-
-        //drive.driveAuto(1, 1000, MecanumDriveTrain.MovementType.STRAIGHT);
         //double angle = imu.getAngularOrientation().firstAngle;
         drive.writeLoggerToFile();
 /*

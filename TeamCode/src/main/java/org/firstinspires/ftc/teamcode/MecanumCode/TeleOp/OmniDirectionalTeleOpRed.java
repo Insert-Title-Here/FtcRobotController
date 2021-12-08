@@ -95,7 +95,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
          */
 
         if(gamepad1.left_bumper) {
-            carousel.spinCarousel(4000, this);
+            carousel.spinCarousel(4000, this, Carousel.CarouselMode.TELEOP);
         }
 
         if(gamepad1.dpad_up) {

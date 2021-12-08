@@ -9,7 +9,7 @@ public class CapstoneArm {
     DcMotor capExtension;
     Servo grabber;
 
-    boolean isGrabbing = true;
+    boolean isGrabbing = false;
 
     public CapstoneArm(HardwareMap hardwareMap) {
         capExtension = hardwareMap.get(DcMotor.class, "CapExtension");
@@ -18,7 +18,7 @@ public class CapstoneArm {
         capExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         grabber = hardwareMap.get(Servo.class, "CapstoneGrabber");
-        grabber.setPosition(1);
+        grabber.setPosition(0.8);
 
     }
 
