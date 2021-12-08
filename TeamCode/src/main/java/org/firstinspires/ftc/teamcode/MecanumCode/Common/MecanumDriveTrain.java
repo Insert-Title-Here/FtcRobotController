@@ -15,6 +15,10 @@ import java.io.PrintStream;
 import java.sql.Wrapper;
 import java.util.Arrays;
 
+/**
+ * Configuration:
+ *
+ */
 public class MecanumDriveTrain {
     private static final double ANGULAR_TOLERANCE = 0.05;
     final double COUNTS_PER_INCH = 920.111004;
@@ -96,7 +100,7 @@ public class MecanumDriveTrain {
     /*
     gets the robot driving in a specified direction
      */
-    public void setPower(Vector2D velocity, double turnValue){
+    public void setPower(Vector2D velocity, double turnValue, boolean isSwapped){
         turnValue = -turnValue;
         double direction = velocity.getDirection();
 
@@ -107,8 +111,13 @@ public class MecanumDriveTrain {
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        setPower((power * sin - turnValue),(power * cos + turnValue),
-                (power * cos - turnValue), (power * sin + turnValue));
+        if(!isSwapped) {
+            setPower((power * sin - turnValue), (power * cos + turnValue),
+                    (power * cos - turnValue), (power * sin + turnValue));
+        } else {
+            setPower(-(power * sin - turnValue), -(power * cos + turnValue),
+                    -(power * cos - turnValue), -(power * sin + turnValue));
+        }
     }
 
 
