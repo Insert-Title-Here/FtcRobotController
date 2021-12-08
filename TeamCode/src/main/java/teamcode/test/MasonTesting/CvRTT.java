@@ -11,9 +11,11 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.ArrayList;
+
 import teamcode.common.AbstractOpMode;
 
-@TeleOp(name = "CV Real Time Tracking")
+@TeleOp(name = "RT-Object Detection")
 public class CvRTT extends AbstractOpMode {
 
     // Get webcam and create an OpenCvCamera
@@ -44,21 +46,6 @@ public class CvRTT extends AbstractOpMode {
             @Override
             public void onOpened() {
 
-                /*
-                // create a rgb2gray mat pipeline
-                class GrayPipeline extends OpenCvPipeline {
-
-
-                    Mat gray = new Mat();
-
-                    @Override
-                    public Mat processFrame(Mat input) {
-                        // mat src, mat dst, int code, convert rgb img to gray
-                        Imgproc.cvtColor(input, gray, Imgproc.COLOR_RGB2GRAY);
-                        return gray;
-                    }
-                } */
-
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -76,6 +63,12 @@ public class CvRTT extends AbstractOpMode {
         // Keep the op mode running, to keep the system from coming to a halt
 
         while (opModeIsActive()) {
+            ArrayList<Double> xList = dp.xPointList();
+            ArrayList<Double> yList = dp.yPointList();
+            for (int i = 0; i < xList.size(); i++) {
+                telemetry.addLine(xList.get(i) + ", " + yList.get(i));
+            }
+            telemetry.update();
         }
     }
 

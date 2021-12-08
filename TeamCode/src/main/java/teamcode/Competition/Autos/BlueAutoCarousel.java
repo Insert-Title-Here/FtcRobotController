@@ -107,8 +107,6 @@ public class BlueAutoCarousel extends AbstractOpMode {
         while(opModeIsActive());
 
         while(opModeIsActive());
-
-
     }
 
     @Override
