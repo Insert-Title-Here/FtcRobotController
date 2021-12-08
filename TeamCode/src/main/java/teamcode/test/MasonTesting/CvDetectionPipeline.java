@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-class CvDetectionPipeline extends OpenCvPipeline {
+public class CvDetectionPipeline extends OpenCvPipeline {
 
     ArrayList<Double> xPList = new ArrayList<>();
     ArrayList<Double> yPList = new ArrayList<>();
@@ -38,7 +38,7 @@ class CvDetectionPipeline extends OpenCvPipeline {
     final double cameraAngle = 68;
 
     @Override
-    public Mat processFrame(Mat frame){
+    public synchronized Mat processFrame(Mat frame){
         // mat vars
         Mat hsv = new Mat();
         Mat blurred = new Mat();
@@ -47,7 +47,8 @@ class CvDetectionPipeline extends OpenCvPipeline {
         ArrayList<MatOfPoint> contours = new ArrayList<>();
 
         // change src mat to be frame param
-        Mat src = frame;
+        Mat src = new Mat();
+        frame.copyTo(src);
 
         // apply blur, change color, get range
         Imgproc.GaussianBlur(src, blurred, new Size(7, 7), 0);
@@ -74,6 +75,8 @@ class CvDetectionPipeline extends OpenCvPipeline {
 //        }
 
         // get x and y vals + x and y cords
+        xPList.clear();
+        yPList.clear();
         for (int i = 0; i < contours.size(); i++) {
             ArrayList<Point> pointList = new ArrayList<>();
             Converters.Mat_to_vector_Point(contours.get(i), pointList);
@@ -119,7 +122,7 @@ class CvDetectionPipeline extends OpenCvPipeline {
             int srcHeight = src.height();
 
             // get distance
-            double distance = distanceFinder(focalLength, 50.8, objWidth);
+            double distance = distanceFinder(50.8, objWidth);
 
             // flip around x/y coordinates due to how the robot uses vector movement
             double yPos = xCord; double xAmt = 0;
@@ -128,14 +131,12 @@ class CvDetectionPipeline extends OpenCvPipeline {
             xPList.add(xAmt);
             yPList.add(yPos);
         }
-
         Imgproc.line(src, new Point(src.width() / 2, src.height()), new Point(src.width() / 2, 0), new Scalar(255, 255, 255));
         Imgproc.drawContours(src, contours, -1, new Scalar(255, 255, 255), 2, Imgproc.LINE_8);
-
         return src;
     }
 
-    public double distanceFinder(int focalLength, double realWidth, double pixelWidth) {
+    public double distanceFinder(double realWidth, double pixelWidth) {
         return (realWidth * focalLength) / pixelWidth;
     }
 

@@ -21,6 +21,7 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
+import teamcode.test.MasonTesting.CvDetectionPipeline;
 
 @Autonomous(name="CarouselRed")
 public class RedAutoCarousel extends AbstractOpMode {
@@ -31,6 +32,7 @@ public class RedAutoCarousel extends AbstractOpMode {
 
     OpenCvWebcam webcam;
     CarouselPipeline.BarcodePosition position;
+    CvDetectionPipeline detector;
 
     @Override
     protected void onInitialize() {
@@ -49,6 +51,7 @@ public class RedAutoCarousel extends AbstractOpMode {
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
         CarouselPipeline pipeline = new CarouselPipeline();
+        detector = new CvDetectionPipeline();
         pipeline.setSide(CarouselPipeline.Side.RED);
         webcam.setPipeline(pipeline);
 

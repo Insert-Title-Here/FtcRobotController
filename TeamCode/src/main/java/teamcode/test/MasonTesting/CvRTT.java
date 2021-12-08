@@ -22,6 +22,7 @@ public class CvRTT extends AbstractOpMode {
     WebcamName wc;
     OpenCvCamera camera;
 
+
     // global obj
     static final CvDetectionPipeline dp = new CvDetectionPipeline();
 
@@ -66,7 +67,7 @@ public class CvRTT extends AbstractOpMode {
             ArrayList<Double> xList = dp.xPointList();
             ArrayList<Double> yList = dp.yPointList();
             for (int i = 0; i < xList.size(); i++) {
-                telemetry.addLine(xList.get(i) + ", " + yList.get(i));
+                telemetry.addData("", xList.get(i) + ", " + yList.get(i));
             }
             telemetry.update();
         }
@@ -74,6 +75,6 @@ public class CvRTT extends AbstractOpMode {
 
     @Override
     protected void onStop() {
-
+        camera.stopStreaming();
     }
 }
