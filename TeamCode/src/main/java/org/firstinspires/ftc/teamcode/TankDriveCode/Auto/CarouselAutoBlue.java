@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain;
+
 @Autonomous(name = "Carousel Auto (blue)", group = "Linear Opmode")
 
 public class CarouselAutoBlue extends LinearOpMode {

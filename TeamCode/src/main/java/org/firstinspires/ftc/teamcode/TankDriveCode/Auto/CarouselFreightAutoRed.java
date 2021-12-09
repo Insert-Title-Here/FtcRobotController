@@ -3,7 +3,6 @@
  import com.qualcomm.hardware.bosch.BNO055IMU;
  import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
  import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
- import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  import com.qualcomm.robotcore.hardware.DcMotor;
  import com.qualcomm.robotcore.hardware.Servo;
@@ -14,13 +13,14 @@
  import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
  import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+ import org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain;
 
  import java.util.Locale;
 
- @Autonomous(name = "Carousel + Freight Auto (blue)", group = "Linear Opmode")
+ @Autonomous(name = "Carousel + Freight Auto (red)", group = "Linear Opmode")
  //@Disabled
 
- public class CarouselFreightAutoBlue extends LinearOpMode {
+ public class CarouselFreightAutoRed extends LinearOpMode {
      // The IMU sensor object
      BNO055IMU imu;
      DcMotor extender;
@@ -49,7 +49,7 @@
 
      @Override
      public void runOpMode() {
-         DriveTrain drive = new DriveTrain(hardwareMap);
+         org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain drive = new org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain(hardwareMap);
          extender = hardwareMap.get(DcMotor.class, "ExtensionArm");
          extender.setDirection(DcMotor.Direction.FORWARD);
          extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -160,9 +160,9 @@
          //rotateToPosition(drive, -50);
 
          drive.withoutEncoders();
-         while(imu.getAngularOrientation().firstAngle < (15 * Math.PI) / 72){
+         while(imu.getAngularOrientation().firstAngle > -(15 * Math.PI) / 72){
              telemetry.addData("Rads: ", imu.getAngularOrientation().firstAngle);
-             drive.rf.setPower(-0.3);
+             drive.lf.setPower(-0.3);
              telemetry.update();
          }
 
@@ -187,15 +187,15 @@
 
          drive.withoutEncoders();
 
-         while(imu.getAngularOrientation().firstAngle < (13 * Math.PI) / 32){
+         while(imu.getAngularOrientation().firstAngle > - (13 * Math.PI) / 32){
              telemetry.addData("Rads: ", imu.getAngularOrientation().firstAngle);
              telemetry.addData("TargetPosition: ", (15 * Math.PI) / 32);
-             drive.rf.setPower(-0.3);
-             drive.lf.setPower(0.3);
+             drive.rf.setPower(0.3);
+             drive.lf.setPower(-0.3);
              telemetry.update();
          }
 
-         drive.goToPosition(500, false, 0.3);
+         drive.goToPosition(590, false, 0.2);
 
 
 

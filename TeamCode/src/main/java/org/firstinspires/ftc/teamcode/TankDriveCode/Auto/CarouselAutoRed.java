@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain;
+
 @Autonomous(name = "Carousel Auto (red)", group = "Linear Opmode")
 
 public class CarouselAutoRed extends LinearOpMode {
@@ -14,7 +16,7 @@ public class CarouselAutoRed extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        DriveTrain drive = new DriveTrain(hardwareMap);
+        org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain drive = new DriveTrain(hardwareMap);
 
         carousel = hardwareMap.get(DcMotor.class, "Carousel");
         carousel.setDirection(DcMotor.Direction.REVERSE);
