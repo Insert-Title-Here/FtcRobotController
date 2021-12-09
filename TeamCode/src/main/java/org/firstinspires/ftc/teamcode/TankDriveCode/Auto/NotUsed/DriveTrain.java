@@ -1,21 +1,17 @@
-package org.firstinspires.ftc.teamcode.TankDriveCode.Auto;
-
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
+package org.firstinspires.ftc.teamcode.TankDriveCode.Auto.NotUsed;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import java.util.List;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
-public class DriveTrain {
+public class DriveTrain{
 
     DcMotor lf;
     DcMotor rf;

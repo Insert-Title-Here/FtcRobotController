@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -12,14 +9,12 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.sql.Wrapper;
-import java.util.Arrays;
 
 /**
  * Configuration:
  *
  */
-public class MecanumDriveTrain {
+public class MecanumDriveTrainCopyPID {
     private static final double ANGULAR_TOLERANCE = 0.05;
     final double COUNTS_PER_INCH = 920.111004;
 
@@ -47,7 +42,7 @@ public class MecanumDriveTrain {
     final double dVelocity  = 0.047; //0.027
     PIDCoefficients PID = new PIDCoefficients(0.002, 0, 0);
 
-    public MecanumDriveTrain(HardwareMap hardwareMap) throws FileNotFoundException {
+    public MecanumDriveTrainCopyPID(HardwareMap hardwareMap) throws FileNotFoundException {
         fl = hardwareMap.dcMotor.get("FrontLeftDrive");
         fr = hardwareMap.dcMotor.get("FrontRightDrive");
         bl = hardwareMap.dcMotor.get("BackLeftDrive");
@@ -208,10 +203,6 @@ public class MecanumDriveTrain {
 
 
         /*
-
-        if(tics < 0) {
-            desiredVelocity *= -1;
-        }
 
         while(isFar(tics) && currentOpMode.opModeIsActive()){
             setPowerAuto(desiredVelocity, movement);
