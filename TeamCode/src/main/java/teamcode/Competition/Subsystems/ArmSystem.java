@@ -21,8 +21,8 @@ public class ArmSystem {
     private static final double SCORING_POSITION = 0.66;
 
     private static final double LINKAGE_DOWN = 0.1; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
-    private static final double LINKAGE_HOUSED = 0.8;
-    private static final double LINKAGE_SCORE = 0.93;
+    private static final double LINKAGE_HOUSED = 0.6;
+    private static final double LINKAGE_SCORE = 0.7;
 
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -31,7 +31,7 @@ public class ArmSystem {
     private static final int YELLOW_THRESHOLD = 02552550;
     private static final int WHITE_THRESHOLD = 0255255255;
 
-    private static final double SLIDE_POWER = -1.0;
+    private static final double SLIDE_POWER = 1.0;
     private static final long TIMEOUT_MILLIS = 5000;
 
     private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, conveyorMotor;

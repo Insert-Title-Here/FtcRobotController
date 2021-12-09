@@ -446,8 +446,8 @@ public class MecanumDriveTrain {
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        setPower((power * sin - turnValue),(power * cos - turnValue),
-                (power * cos + turnValue), (power * sin + turnValue));
+        setPower((power * sin - turnValue),(power * cos + turnValue),
+                (power * cos - turnValue), (power * sin + turnValue));
     }
 
     /*

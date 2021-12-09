@@ -19,6 +19,11 @@ public class MecanumOpMode extends AbstractOpMode {
     @Override
     protected void onStart() {
         while(opModeIsActive()){
+            telemetry.addData("left stick x", gamepad1.left_stick_x);
+            telemetry.addData("left stick y", gamepad1.left_stick_y);
+            telemetry.addData("right stick x ", gamepad1.right_stick_x);
+            telemetry.update();
+
             drive.setPower(new Vector2D(gamepad1.left_stick_x, gamepad1.left_stick_y),  gamepad1.right_stick_x);
         }
     }

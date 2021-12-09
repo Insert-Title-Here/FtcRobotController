@@ -691,6 +691,9 @@ public class Localizer extends Thread {
         leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lastWheelPositions = new double[]{0,0,0};
         previousHeading = 0;
         odoEstimate = new Pose(0,0,0);
