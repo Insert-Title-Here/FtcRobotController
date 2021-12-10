@@ -37,7 +37,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    BarcodePipelineBlue.BarcodePosition capstonePos;
+    MecanumBarcodePipelineRed.BarcodePosition capstonePos;
 
     static final BarcodePipelineBlue brp = new BarcodePipelineBlue();
 
