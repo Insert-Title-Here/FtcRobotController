@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.Common;
+package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -9,7 +8,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class BarcodePipelineBlue extends OpenCvPipeline{
+public class BarcodePipelineRed extends OpenCvPipeline{
     // define position enums
     public enum BarcodePosition
     {
@@ -23,9 +22,9 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(20, 210);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 210);
     static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(110, 210);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(240, 210);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(190, 200);
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 20;
 
@@ -118,11 +117,9 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                 2
         );
 
-        int min = Math.min(avg1, avg2);
+        int min = Math.min(Math.min(avg1, avg2), avg3);
 
-        if(Math.abs(avg1-avg2) < 36){
-            position = BarcodePosition.RIGHT;
-        }else if (min == avg1) {
+        if (min == avg1) {
 
             Imgproc.rectangle(
                     input,
@@ -143,12 +140,18 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                     2
             );
 
-            OpModeWrapper.currentOpMode().telemetry.addData("avg1", avg1);
-            OpModeWrapper.currentOpMode().telemetry.addData("avg2", avg2);
-            OpModeWrapper.currentOpMode().telemetry.update();
-
-
             position = BarcodePosition.CENTER;
+        } else if (min == avg3) {
+
+            Imgproc.rectangle(
+                    input,
+                    region3_pointA,
+                    region3_pointB,
+                    GREEN,
+                    2
+            );
+
+            position = BarcodePosition.RIGHT;
         }
 
         return input;

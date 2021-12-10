@@ -118,19 +118,21 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1550, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -2050, MecanumDriveTrain.MovementType.STRAFE);
 
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
-            drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(300);
+            //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+            //capArm.goToPosition(300);
+            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(1300);
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
             drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(1300);
 
         }else{
-            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(2325);
+            drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
         }
+
         //capArm.goToPosition(300);
         capArm.toggleGrab();
         sleep(3000);
