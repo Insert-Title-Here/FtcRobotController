@@ -85,11 +85,11 @@ public class BlueAuto extends AbstractOpMode {
         } else if(position == BarcodePipeline3.BarcodePosition.CENTER){
             arm.raise(Constants.MEDIUM_POSITION);
         }
-        driveTrain.moveToPosition(new Vector2D(-17, 24), -12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-16.5, 24), -12, 0.5, false);
         driveTrain.rotateDistance(-0.4, Math.toRadians(170));
         if (position == BarcodePipeline3.BarcodePosition.RIGHT) {
             arm.raise(Constants.BOTTOM_POSITION);
-            arm.runConveyorPos(1, 1000);
+            arm.runConveyorPos(1, 1500);
         }
         arm.score();
         //driveTrain.rotateDistance( 0.4, Math.toRadians(155));

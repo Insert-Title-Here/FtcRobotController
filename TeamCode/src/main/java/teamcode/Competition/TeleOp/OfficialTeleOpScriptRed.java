@@ -164,6 +164,8 @@ public class OfficialTeleOpScriptRed extends AbstractOpMode {
             if(gamepad1.left_stick_button != previousLeftStickButton) {
                 isLinearSlow = !isLinearSlow;
             }
+        }else if(gamepad1.dpad_left){
+            arm.resetWinchEncoder();
         }else{
             arm.intakeDumb(0);
             arm.setWinchPower(0);

@@ -32,6 +32,8 @@ public class BlueAutoCarousel extends AbstractOpMode {
 
     OpenCvWebcam webcam;
     CarouselPipeline.BarcodePosition position;
+    private volatile boolean spin, endSpin;
+    Thread carouselThread;
 
     @Override
     protected void onInitialize() {
@@ -63,6 +65,21 @@ public class BlueAutoCarousel extends AbstractOpMode {
                 telemetry.update();
             }
         });
+        spin = false;
+        endSpin = false;
+        carouselThread = new Thread(){
+            @Override
+            public void run(){
+                for(int i = 0; i < 1; i++) {
+                    while (!spin){
+                    }
+                    //system.runCarousel(-0.1);
+                    system.scoreDuckAuto();
+                    endSpin = true;
+                    spin = false;
+                }
+            }
+        };
         while(!opModeIsActive()){
             position = pipeline.getPos();
             //telemetry.addData("", position);
@@ -75,8 +92,9 @@ public class BlueAutoCarousel extends AbstractOpMode {
         webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
+        carouselThread.start();
 
-        driveTrain.moveToPosition(new Vector2D(6, 1), 12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-1, 6), 12, 0.5, false);
         driveTrain.rotateDistance(0.5, Math.toRadians(-120));
 
         if (position == CarouselPipeline.BarcodePosition.LEFT) {
@@ -86,7 +104,7 @@ public class BlueAutoCarousel extends AbstractOpMode {
             Debug.log("mid");
             arm.raise(Constants.MEDIUM_POSITION);
         }
-        driveTrain.moveToPosition(new Vector2D(-17, -24), -12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-16, -23), -12, 0.5, false);
         driveTrain.rotateDistance(0.4, Math.toRadians(-155));
         if (position == CarouselPipeline.BarcodePosition.RIGHT) {
             Debug.log("low");
@@ -95,9 +113,21 @@ public class BlueAutoCarousel extends AbstractOpMode {
         }
         arm.score();
         Utils.sleep(500) ;
+        driveTrain.moveToPosition(new Vector2D(-15, -22), 12, 0.5, false);
+
         driveTrain.rotateDistance(-0.4, Math.toRadians(-105));
-        driveTrain.moveToPosition(new Vector2D(-0, 10), 12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-0, 10), 24, 0.5, false);
         arm.retract();
+        driveTrain.rotateDistance(0.4, Math.toRadians(-120));
+        driveTrain.moveToPosition(new Vector2D(-1, 17), 12, 0.5, false);
+        driveTrain.rotateDistance(-0.4, Math.toRadians(-105));
+
+        spin = true;
+        driveTrain.setPower(-0.12,0);
+        while(!endSpin){
+        }
+        driveTrain.rotateDistance(0.4, Math.toRadians(-120));
+
 
 
         // Utils.sleep(2000);
@@ -106,11 +136,11 @@ public class BlueAutoCarousel extends AbstractOpMode {
 
         while(opModeIsActive());
 
-        while(opModeIsActive());
     }
 
     @Override
     protected void onStop() {
         localizer.stopThread();
+        carouselThread.interrupt();
     }
 }

@@ -28,9 +28,9 @@ public class CarouselPipeline extends OpenCvPipeline {
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 160);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(65, 160);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(210, 160);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 120);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(65, 120);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(210, 120);
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 40;
 
@@ -133,7 +133,7 @@ public class CarouselPipeline extends OpenCvPipeline {
         side2 = avg3;
 
 
-        if(Math.abs(side1 - side2) < 15){
+        if(Math.abs(side1 - side2) < 20){
             position = BarcodePosition.LEFT;
         }else if (min == side1) {
 

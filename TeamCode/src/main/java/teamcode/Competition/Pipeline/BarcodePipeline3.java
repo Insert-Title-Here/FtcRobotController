@@ -142,7 +142,7 @@ public class BarcodePipeline3 extends OpenCvPipeline {
             side2 = avg1;
         }
 
-        if (Math.abs(side1 - side2) < 35) {
+        if (Math.abs(side1 - side2) < 40) { //todo change this and other values at L2
 
 //            Imgproc.rectangle(
 //                    input,

@@ -37,7 +37,7 @@ public class CvAutoPosition extends AbstractOpMode {
         // W/ or W/ out live preview
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
-brp.setSide(BarcodePipeline3.Side.BLUE);
+        brp.setSide(BarcodePipeline3.Side.RED);
         camera.setPipeline(brp);
 
 

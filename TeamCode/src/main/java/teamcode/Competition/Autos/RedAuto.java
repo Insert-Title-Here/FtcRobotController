@@ -71,6 +71,7 @@ public class RedAuto extends AbstractOpMode {
         // W/ or W/ out live preview
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         BarcodePipeline3 pipeline = new BarcodePipeline3();
+        pipeline.setSide(BarcodePipeline3.Side.RED);
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -114,7 +115,8 @@ public class RedAuto extends AbstractOpMode {
         driveTrain.rotateDistance(0.4, Math.toRadians(-170));
         if (position == BarcodePipeline3.BarcodePosition.LEFT) {
             arm.raise(Constants.BOTTOM_POSITION);
-            arm.runConveyorPos(1, 1000);
+            Utils.sleep(250);
+            arm.runConveyorPos(1, 2000);
         }
         arm.score();
         //driveTrain.rotateDistance( 0.4, Math.toRadians(155));

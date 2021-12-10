@@ -168,6 +168,8 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
             arm.score();
             arm.runConveyorPos(1.0, 2000);
             arm.idleServos();
+        }else if(gamepad1.dpad_left){
+            arm.resetWinchEncoder();
         }else{
             arm.intakeDumb(0);
             arm.setWinchPower(0);

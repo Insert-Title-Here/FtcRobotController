@@ -33,12 +33,15 @@ public class RedAutoCarousel extends AbstractOpMode {
     OpenCvWebcam webcam;
     CarouselPipeline.BarcodePosition position;
     CvDetectionPipeline detector;
+    Thread carouselThread;
+    private volatile boolean spin;
+    private volatile boolean endSpin;
 
     @Override
     protected void onInitialize() {
         localizer = new Localizer(new Pose(0,0,0), hardwareMap);
         driveTrain = new WestCoastDriveTrain(hardwareMap, localizer);
-        system = new EndgameSystems(hardwareMap, true);
+        system = new EndgameSystems(hardwareMap, false);
         arm = new ArmSystem(hardwareMap, false);
 
         localizer.lowerOdo();
@@ -67,6 +70,20 @@ public class RedAutoCarousel extends AbstractOpMode {
                 telemetry.update();
             }
         });
+        spin = false;
+        endSpin = false;
+        carouselThread = new Thread(){
+            @Override
+            public void run(){
+                for(int i = 0; i < 1; i++) {
+                    while (!spin){
+                    }
+                    system.scoreDuckAuto();
+                    endSpin = true;
+                    spin = false;
+                }
+            }
+        };
         while(!opModeIsActive()){
             position = pipeline.getPos();
             //telemetry.addData("", position);
@@ -79,7 +96,8 @@ public class RedAutoCarousel extends AbstractOpMode {
         webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
-        driveTrain.moveToPosition(new Vector2D(6, 1), 12, 0.5, false);
+        carouselThread.start();
+        driveTrain.moveToPosition(new Vector2D(-1, 6), 12, 0.5, false);
         driveTrain.rotateDistance(-0.5, Math.toRadians(120));
 
         if (position == CarouselPipeline.BarcodePosition.RIGHT) {
@@ -89,19 +107,30 @@ public class RedAutoCarousel extends AbstractOpMode {
             Debug.log("mid");
             arm.raise(Constants.MEDIUM_POSITION);
         }
-        driveTrain.moveToPosition(new Vector2D(-19, 24), -12, 0.5, false);
-        driveTrain.rotateDistance(-0.4, Math.toRadians(-155));
+        driveTrain.moveToPosition(new Vector2D(-17, 24), -12, 0.5, false);
+        driveTrain.rotateDistance(-0.4, Math.toRadians(155));
+
         if (position == CarouselPipeline.BarcodePosition.LEFT) {
            Debug.log("low");
+            Utils.sleep(250);
             arm.raise(Constants.BOTTOM_POSITION - 1000);
             arm.runConveyorPos(1, 2000);
         }
+
         arm.score();
         Utils.sleep(500) ;
         driveTrain.rotateDistance(0.4, Math.toRadians(105));
-        driveTrain.moveToPosition(new Vector2D(-0, -10), 12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-0, -10), 24, 0.5, false);
         arm.retract();
+        driveTrain.rotateDistance(-0.4, Math.toRadians(120));
+        driveTrain.moveToPosition(new Vector2D(-23.5, -24.5), 24, 0.5, false);
+        driveTrain.rotateDistance(0.4, Math.toRadians(105));
 
+        spin = true;
+        driveTrain.setPower(-0.12,0);
+        while(!endSpin){
+        }
+        driveTrain.rotateDistance(-0.4, Math.toRadians(120));
 
         // Utils.sleep(2000);
 
@@ -115,6 +144,7 @@ public class RedAutoCarousel extends AbstractOpMode {
     @Override
     protected void onStop() {
         localizer.stopThread();
+        carouselThread.interrupt();
     }
 
     /*

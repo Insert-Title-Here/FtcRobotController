@@ -442,7 +442,7 @@ public class MecanumDriveTrain {
 
         double power = velocity.magnitude();
 
-        double angle = direction + (Math.PI / 4.0);
+        double angle = direction + (3 * Math.PI / 4.0);
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
@@ -480,9 +480,9 @@ public class MecanumDriveTrain {
     }
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
-        fl.setPower(flPow);
+        fl.setPower(-flPow);
         fr.setPower(frPow);
-        bl.setPower(blPow);
+        bl.setPower(-blPow);
         br.setPower(brPow);
     }
 

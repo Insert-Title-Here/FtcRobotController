@@ -257,6 +257,11 @@ public class ArmSystem {
 
     }
 
+    public void resetWinchEncoder(){
+        winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
     //needs to be rewritten if the conveyor is implemented
 
 
