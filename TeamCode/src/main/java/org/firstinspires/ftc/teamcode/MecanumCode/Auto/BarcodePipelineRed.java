@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.MecanumCode.Common;
+package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
