@@ -20,8 +20,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Warehouse + Freight Red")
-public class WarehouseFreightRed extends OpModeWrapper {
+@Autonomous(name="Warehouse + Freight Blue")
+public class WarehouseFreightBlue extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
@@ -107,22 +107,12 @@ public class WarehouseFreightRed extends OpModeWrapper {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        /*
-        while(!opModeIsActive()){
-            telemetry.addData("pos", brp.getPos());
-            telemetry.update();
-        }
-
-         */
-
-
-
 
     }
 
     @Override
     protected void onStart() {
-        //capstonePos = brp.getPos();
+        capstonePos = brp.getPos();
 
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
@@ -133,29 +123,20 @@ public class WarehouseFreightRed extends OpModeWrapper {
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1650, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
         //capArm.goToPosition(300);
-
-        /*
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
-            //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-            //capArm.goToPosition(300);
-
-            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(300);
+        }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
+            drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(1300);
 
-        }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
-        */
-        drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
-        capArm.goToPosition(300);
-        /*
         }else{
-            drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-
+            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(2325);
         }
-
-         */
         capArm.toggleGrab();
         sleep(3000);
         drive.driveAuto(0.3, 720, MecanumDriveTrain.MovementType.STRAIGHT);

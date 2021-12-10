@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Common;
 
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -117,9 +118,11 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                 2
         );
 
-        int min = Math.min(Math.min(avg1, avg2), avg3);
+        int min = Math.min(avg1, avg2);
 
-        if (min == avg1) {
+        if(Math.abs(avg1-avg2) < 36){
+            position = BarcodePosition.RIGHT;
+        }else if (min == avg1) {
 
             Imgproc.rectangle(
                     input,
@@ -140,18 +143,12 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                     2
             );
 
+            OpModeWrapper.currentOpMode().telemetry.addData("avg1", avg1);
+            OpModeWrapper.currentOpMode().telemetry.addData("avg2", avg2);
+            OpModeWrapper.currentOpMode().telemetry.update();
+
+
             position = BarcodePosition.CENTER;
-        } else if (min == avg3) {
-
-            Imgproc.rectangle(
-                    input,
-                    region3_pointA,
-                    region3_pointB,
-                    GREEN,
-                    2
-            );
-
-            position = BarcodePosition.RIGHT;
         }
 
         return input;
