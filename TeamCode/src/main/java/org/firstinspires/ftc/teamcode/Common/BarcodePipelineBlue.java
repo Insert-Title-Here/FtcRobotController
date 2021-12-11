@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Common;
 
+import org.firstinspires.ftc.teamcode.MecanumCode.Auto.BarcodePipelineRed;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -21,13 +22,14 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
     // define col constants
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
+    static final int calibratedRange = 90;
+    static int currentMinValue = 0;
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(20, 210);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(110, 210);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(240, 210);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 190);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(280, 190);
     static final int REGION_WIDTH = 40;
-    static final int REGION_HEIGHT = 20;
+    static final int REGION_HEIGHT = 50;
 
     // define top left and bottom right region points
     Point region1_pointA = new Point(
@@ -42,31 +44,17 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
     Point region2_pointB = new Point(
             REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
             REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-    Point region3_pointA = new Point(
-            REGION3_TOPLEFT_ANCHOR_POINT.x,
-            REGION3_TOPLEFT_ANCHOR_POINT.y);
-    Point region3_pointB = new Point(
-            REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-            REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
     // Create vars
-    Mat region1_Cb, region2_Cb, region3_Cb;
+    Mat region1_Cb, region2_Cb;
     //    Mat YCrCb = new Mat();
 //    Mat Cb = new Mat();
     Mat RGB = new Mat();
     Mat B = new Mat();
-    int avg1, avg2, avg3;
+    int avg1, avg2;
 
     // create pos var, with vol tag due to the var changing at runtime
-    volatile BarcodePosition position = BarcodePosition.CENTER;
-
-
-
-    // converts rgb frame to ycrcb, extracts cb channel
-//    void inputToCb(Mat input) {
-//        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-//        Core.extractChannel(YCrCb, Cb, 2);
-//    }
+    volatile BarcodePipelineRed.BarcodePosition position = BarcodePipelineRed.BarcodePosition.CENTER;
 
     void inputToB(Mat input) {
         Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
@@ -79,7 +67,6 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
 
         region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
-        region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
     }
 
     @Override
@@ -88,11 +75,9 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
 
         region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
-        region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
 
         avg1 = (int) Core.mean(region1_Cb).val[0];
         avg2 = (int) Core.mean(region2_Cb).val[0];
-        avg3 = (int) Core.mean(region3_Cb).val[0];
 
         Imgproc.rectangle(
                 input,
@@ -110,20 +95,14 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                 2
         );
 
-        Imgproc.rectangle(
-                input,
-                region3_pointA,
-                region3_pointB,
-                BLUE,
-                2
-        );
+
 
         int min = Math.min(avg1, avg2);
+        currentMinValue = min;
 
-        if(Math.abs(avg1-avg2) < 36){
-            position = BarcodePosition.RIGHT;
-        }else if (min == avg1) {
-
+        if (min >= calibratedRange) {
+            position = BarcodePipelineRed.BarcodePosition.LEFT;
+        } else if (min == avg1) {
             Imgproc.rectangle(
                     input,
                     region1_pointA,
@@ -131,10 +110,8 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                     GREEN,
                     2
             );
-
-            position = BarcodePosition.LEFT;
+            position = BarcodePipelineRed.BarcodePosition.CENTER;
         } else if (min == avg2) {
-
             Imgproc.rectangle(
                     input,
                     region2_pointA,
@@ -142,19 +119,17 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                     GREEN,
                     2
             );
-
-            OpModeWrapper.currentOpMode().telemetry.addData("avg1", avg1);
-            OpModeWrapper.currentOpMode().telemetry.addData("avg2", avg2);
-            OpModeWrapper.currentOpMode().telemetry.update();
-
-
-            position = BarcodePosition.CENTER;
+            position = BarcodePipelineRed.BarcodePosition.RIGHT;
         }
 
         return input;
     }
 
-    public BarcodePosition getPos() {
+    public BarcodePipelineRed.BarcodePosition getPos() {
         return position;
+    }
+
+    public int getCurrentMinValue() {
+        return currentMinValue;
     }
 }

@@ -200,12 +200,12 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             capArm.goToPosition(0);
         }
         if (gamepad2.b) {
-            capArm.goToPosition(2500);
+            capArm.goToPosition(2650);
         }
         if(gamepad2.x) {
             capArm.toggleGrab();
             sleep(500);
         }
-        capArm.setPower(gamepad2.left_stick_y / 2);
+        //capArm.setPower(gamepad2.left_stick_y / 2);
     }
 }

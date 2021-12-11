@@ -20,8 +20,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Carousel + Freight Red Confirmation")
-public class CarouselFrieghtRed extends OpModeWrapper {
+@Autonomous(name="Klaw/Talons Auto (Red)")
+public class KlawTalonsAutoRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
@@ -37,15 +37,14 @@ public class CarouselFrieghtRed extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    BarcodePipeline.BarcodePosition capstonePos;
-    static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
+    BarcodePipelineRed.BarcodePosition capstonePos;
 
     Thread armMovementThread;
     private volatile boolean moveArm;
 
 
     // global obj
-    static final BarcodePipeline bPipeline = new BarcodePipeline(side);
+    static final BarcodePipelineRed brp = new BarcodePipelineRed();
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -61,7 +60,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
-        camera.setPipeline(bPipeline);
+        camera.setPipeline(brp);
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -106,7 +105,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        moveArm = false;
+
         armMovementThread = new Thread(){
             @Override
             public void run(){
@@ -115,10 +114,13 @@ public class CarouselFrieghtRed extends OpModeWrapper {
             }
         };
 
+
         while(!opModeIsActive()){
-            telemetry.addData("pos", bPipeline.getPos());
+            telemetry.addData("pos", brp.getPos());
             telemetry.update();
         }
+
+
 
 
     }
@@ -126,8 +128,8 @@ public class CarouselFrieghtRed extends OpModeWrapper {
     @Override
     protected void onStart() {
         armMovementThread.start();
-        capstonePos = bPipeline.getPos();
-        //sleep(15000);
+        capstonePos = brp.getPos();
+        //sleep(14000);
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.ROTATE);
@@ -137,63 +139,83 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1150, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -1675, MecanumDriveTrain.MovementType.STRAFE);
 
-
-        if (capstonePos == BarcodePipeline.BarcodePosition.RIGHT) {
+        /*
+        if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
             drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(1300);
+            capArm.toggleGrab();
+
+        }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
+            drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(1300);
+            capArm.toggleGrab();
+
+
+        }else{
+
+         */
+
+        if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
+            //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+            //capArm.goToPosition(300);
+            drive.driveAuto(0.3, -565, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(1560);
-            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
-
             capArm.toggleGrab();
-
             sleep(1000);
             capArm.toggleGrab();
 
-        } else if (capstonePos == BarcodePipeline.BarcodePosition.CENTER) {
-            drive.driveAuto(0.3, -540, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        } else if (capstonePos == BarcodePipelineRed.BarcodePosition.LEFT) {
+            drive.driveAuto(0.3, -585, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(730);
-            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
-
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
-
-
 
 
         } else {
-            drive.driveAuto(0.3, -575, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -605, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
-
-            //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
         moveArm = true;
+        //drive.driveAuto(0.3, -605, MecanumDriveTrain.MovementType.STRAIGHT);
+        capArm.toggleGrab();
+        sleep(1000);
+        //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
-            //}
+        //}
 
-            //capArm.goToPosition(300);
-            sleep(1000);
-            drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-            drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAFE);
-            //drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
-            //drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-            //drive.driveAuto(0.1, -110, MecanumDriveTrain.MovementType.STRAIGHT);
+        //capArm.goToPosition(300);
+        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
+        sleep(1000);
+        drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAFE);
+        sleep(1000);
+        drive.driveAuto(0.3, -960, MecanumDriveTrain.MovementType.STRAIGHT);
+        /*
+        drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
+        //drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.1, -110, MecanumDriveTrain.MovementType.STRAIGHT);
 
-            //drive.setPower(-0.07, -0.07, -0.07, -0.07);
-            //carousel.spinCarousel(7000, this, Carousel.CarouselMode.AUTO);
-            //drive.setPower(0, 0, 0, 0);
-            drive.driveAuto(0.3, -960, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.setPower(-0.07, -0.07, -0.07, -0.07);
+        carousel.spinCarousel(7000, this, Carousel.CarouselMode.AUTO);
+        drive.setPower(0, 0, 0, 0);
+        drive.driveAuto(0.3, 920, MecanumDriveTrain.MovementType.STRAIGHT);
+
+         */
 
 
-            //double angle = imu.getAngularOrientation().firstAngle;
-            drive.writeLoggerToFile();
+
+        //double angle = imu.getAngularOrientation().firstAngle;
+        drive.writeLoggerToFile();
 /*
         while(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).firstAngle < Math.PI){
             drive.setPowerAuto(0.3, MecanumDriveTrain.MovementType.ROTATE);
@@ -206,7 +228,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
  */
 
 
-            //moveTest(3000);
+        //moveTest(3000);
         /*
         drive.setPower(0.5, 0, 0, -0.5);
         sleep(1000);
@@ -216,8 +238,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
 
 
          */
-        }
-
+    }
 
     @Override
     protected void onStop() {
@@ -251,8 +272,5 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         drive.setPowerAuto(0, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
-
-
-    }
-     */
+    }*/
 }

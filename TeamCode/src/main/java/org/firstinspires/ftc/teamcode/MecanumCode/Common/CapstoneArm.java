@@ -41,7 +41,7 @@ public class CapstoneArm {
         grabber.setPosition(position);
     }
 
-    public void toggleGrab() {
+    public synchronized void toggleGrab() {
         if(isGrabbing) {
             setGrabberPosition(0.8);
             isGrabbing = false;

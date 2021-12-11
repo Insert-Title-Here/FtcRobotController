@@ -129,7 +129,7 @@ public class MecanumDriveTrain {
      */
 
     //TODO write a tics to inches conversion as well as a tics to degrees conversion
-    public void driveAuto(double desiredVelocity, int tics, MovementType movement){
+    public synchronized void driveAuto(double desiredVelocity, int tics, MovementType movement){
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
