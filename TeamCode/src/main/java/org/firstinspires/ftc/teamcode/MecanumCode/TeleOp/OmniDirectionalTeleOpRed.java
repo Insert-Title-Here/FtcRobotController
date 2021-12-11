@@ -98,15 +98,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             carousel.spinCarousel(4000, this, Carousel.CarouselMode.TELEOP);
         }
 
-        if(gamepad1.dpad_up) {
-            arm.increaseLevelPosition(0.01);
-            sleep(10);
-        }
 
-        if(gamepad1.dpad_down) {
-            arm.decreaseLevelPosition(0.01);
-            sleep(10);
-        }
 
         if(gamepad1.a) {
             // Fully extend arm
@@ -119,13 +111,13 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
 
         if(gamepad1.b) {
             // Lower level to cube height
-            arm.setLevelPosition(0.3);
+            arm.setLevelPosition(0);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
         if(gamepad1.y) {
             // Raise level
-            arm.setLevelPosition(1);
+            arm.setLevelPosition(0.85);
         }
 
         if(gamepad1.x) {
@@ -195,6 +187,15 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     }
 
     private void capArmUpdate() {
+
+        if(gamepad2.dpad_up) {
+            capArm.setPower(0.3);
+        } else if(gamepad2.dpad_down) {
+            capArm.setPower(-0.3);
+        }else {
+            capArm.setPower(0);
+        }
+
 
         if (gamepad2.a) {
             capArm.goToPosition(0);

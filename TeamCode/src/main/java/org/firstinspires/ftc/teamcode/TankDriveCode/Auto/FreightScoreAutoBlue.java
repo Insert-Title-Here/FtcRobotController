@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.teamcode.Common.BarcodePipelineBlue;
+import org.firstinspires.ftc.teamcode.MecanumCode.Auto.BarcodePipelineBlue;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -134,7 +134,6 @@ public class FreightScoreAutoBlue extends LinearOpMode {
 
         // Wait until we're told to go
         waitForStart();
-        capstonePos = brp.getPos();
 
         if (capstonePos == BarcodePipelineBlue.BarcodePosition.CENTER) {
             //Middle Goal

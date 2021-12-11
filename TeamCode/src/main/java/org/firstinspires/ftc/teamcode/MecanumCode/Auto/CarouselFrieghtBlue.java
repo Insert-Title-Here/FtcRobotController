@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.Common.BarcodePipelineBlue;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
@@ -20,7 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Carousel + Freight Blue")
+@Autonomous(name="Freight Blue Confirmation")
 public class CarouselFrieghtBlue extends OpModeWrapper {
 
     MecanumDriveTrain drive;
@@ -37,10 +36,12 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    BarcodePipeline.BarcodePosition capstonePos;
-    static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.BLUE;
+    Thread armMovementThread;
+    private volatile boolean moveArm;
 
-    static final BarcodePipeline bPipeline = new BarcodePipeline(side);
+
+    static final BarcodePipelineBlue bPipeline = new BarcodePipelineBlue();
+    static BarcodePipelineBlue.BarcodePosition capstonePos;
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -51,7 +52,6 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         wc = hardwareMap.get(WebcamName.class, "Webcam");
-
         // W/ or W/ out live preview
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
@@ -101,12 +101,27 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        armMovementThread = new Thread(){
+            @Override
+            public void run(){
+                while(!moveArm);
+                capArm.goToPosition(0);
+            }
+        };
+
+        while(!opModeIsActive()){
+            telemetry.addData("pos", bPipeline.getPos());
+            telemetry.update();
+        }
+
+
 
     }
 
     @Override
     protected void onStart() {
         capstonePos = bPipeline.getPos();
+        armMovementThread.start();
 
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
@@ -118,22 +133,50 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         // Strafe: 590 tics/ft - = Left, + = Right
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1750, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-        if(capstonePos == BarcodePipeline.BarcodePosition.RIGHT) {
-            drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(300);
-        }else if(capstonePos == BarcodePipeline.BarcodePosition.LEFT){
-            drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(1300);
+        //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+        if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
+            drive.driveAuto(0.3, -510, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(1560);
+            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
+
+
+            capArm.toggleGrab();
+
+            sleep(1000);
+            capArm.toggleGrab();
+
+
+        }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.CENTER){
+            drive.driveAuto(0.3, -555, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(730);
+            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
+
+            capArm.toggleGrab();
+
+            sleep(1000);
+            capArm.toggleGrab();
+
 
         }else{
-            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(2325);
+            drive.driveAuto(0.3, -610, MecanumDriveTrain.MovementType.STRAIGHT);
+            //capArm.goToPosition(2325);
+
+            capArm.toggleGrab();
+
+            sleep(1000);
+            capArm.toggleGrab();
+
         }
         //capArm.goToPosition(300);
-        capArm.toggleGrab();
-        sleep(3000);
+        //capArm.toggleGrab();
+        moveArm = true;
+        sleep(1000);
+
+        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -880, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        /*drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.1, -150, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -142,6 +185,8 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         carousel.spinCarousel(4000, this, Carousel.CarouselMode.AUTO);
         drive.driveAuto(0.3, 720, MecanumDriveTrain.MovementType.STRAIGHT);
 
+
+         */
 
 
         //double angle = imu.getAngularOrientation().firstAngle;

@@ -19,8 +19,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Klaw/Talons Auto (Red)")
-public class KlawTalonsAutoRed extends OpModeWrapper {
+@Autonomous(name="Klaw/Talons Auto (Blue)")
+public class KlawTalonsAutoBlue extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
@@ -36,15 +36,12 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
-
     Thread armMovementThread;
     private volatile boolean moveArm;
 
 
-    // global obj
-    BarcodePipelineRed.BarcodePosition capstonePos;
-    static final BarcodePipelineRed bPipeline = new BarcodePipelineRed();
+    static final BarcodePipelineBlue bPipeline = new BarcodePipelineBlue();
+    static BarcodePipelineBlue.BarcodePosition capstonePos;
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -55,7 +52,6 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         wc = hardwareMap.get(WebcamName.class, "Webcam");
-
         // W/ or W/ out live preview
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
@@ -91,7 +87,6 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
             }
         });
 
-
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -105,7 +100,7 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        moveArm = false;
+
         armMovementThread = new Thread(){
             @Override
             public void run(){
@@ -120,13 +115,14 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
         }
 
 
+
     }
 
     @Override
     protected void onStart() {
-        armMovementThread.start();
         capstonePos = bPipeline.getPos();
-        //sleep(15000);
+        armMovementThread.start();
+
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.ROTATE);
@@ -137,59 +133,61 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
         // Strafe: 590 tics/ft - = Left, + = Right
         sleep(15000);
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1150, MecanumDriveTrain.MovementType.STRAFE);
-
-
-        if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
-            //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-            //capArm.goToPosition(300);
-            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1750, MecanumDriveTrain.MovementType.STRAFE);
+        //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+        if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
+            drive.driveAuto(0.3, -510, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(1560);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
+
 
             capArm.toggleGrab();
 
             sleep(1000);
             capArm.toggleGrab();
 
-        } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
-            drive.driveAuto(0.3, -540, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.CENTER){
+            drive.driveAuto(0.3, -555, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(730);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
+
             sleep(1000);
             capArm.toggleGrab();
 
 
+        }else{
+            drive.driveAuto(0.3, -610, MecanumDriveTrain.MovementType.STRAIGHT);
+            //capArm.goToPosition(2325);
 
-
-        } else {
-            drive.driveAuto(0.3, -575, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.toggleGrab();
+
             sleep(1000);
             capArm.toggleGrab();
 
-            //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
         }
-
-        moveArm = true;
-
-
-        //}
-
         //capArm.goToPosition(300);
+        //capArm.toggleGrab();
+        moveArm = true;
         sleep(1000);
-        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAFE);
-        //drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
-        //drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-        //drive.driveAuto(0.1, -110, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        //drive.setPower(-0.07, -0.07, -0.07, -0.07);
-        //carousel.spinCarousel(7000, this, Carousel.CarouselMode.AUTO);
-        //drive.setPower(0, 0, 0, 0);
-        drive.driveAuto(0.3, -960, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -880, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        /*drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.1, -150, MecanumDriveTrain.MovementType.STRAIGHT);
+
+
+        carousel.spinCarousel(4000, this, Carousel.CarouselMode.AUTO);
+        drive.driveAuto(0.3, 720, MecanumDriveTrain.MovementType.STRAIGHT);
+
+
+         */
 
 
         //double angle = imu.getAngularOrientation().firstAngle;
@@ -217,7 +215,6 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
 
          */
     }
-
 
     @Override
     protected void onStop() {
@@ -251,8 +248,5 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
         drive.setPowerAuto(0, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
-
-
-    }
-     */
+    }*/
 }
