@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.Common.BarcodePipelineBlue;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
@@ -20,7 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Carousel + Freight Red Confirmation")
+@Autonomous(name="Freight Red Confirmation")
 public class CarouselFrieghtRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
@@ -37,7 +36,6 @@ public class CarouselFrieghtRed extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    BarcodePipeline.BarcodePosition capstonePos;
     static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
 
     Thread armMovementThread;
@@ -45,7 +43,8 @@ public class CarouselFrieghtRed extends OpModeWrapper {
 
 
     // global obj
-    static final BarcodePipeline bPipeline = new BarcodePipeline(side);
+    BarcodePipelineRed.BarcodePosition capstonePos;
+    static final BarcodePipelineRed bPipeline = new BarcodePipelineRed();
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -140,7 +139,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         drive.driveAuto(0.3, -1150, MecanumDriveTrain.MovementType.STRAFE);
 
 
-        if (capstonePos == BarcodePipeline.BarcodePosition.RIGHT) {
+        if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
             drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -152,7 +151,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
             sleep(1000);
             capArm.toggleGrab();
 
-        } else if (capstonePos == BarcodePipeline.BarcodePosition.CENTER) {
+        } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
             drive.driveAuto(0.3, -540, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(730);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);

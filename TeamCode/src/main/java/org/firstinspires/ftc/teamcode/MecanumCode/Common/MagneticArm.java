@@ -35,13 +35,13 @@ public class MagneticArm {
         //magneticExtensionSM = hardwareMap.crservo.get("MagExtension");
         magnet.setPosition(0.97);
 
-        levelPosition = 0.95;
+        levelPosition = 0.9;
         level.setPosition(levelPosition);
         //magneticExtensionSM.setPower(0);
     }
 
     public void increaseLevelPosition(double increment) {
-        if (levelPosition + increment < 1) {
+        if (levelPosition + increment < 0.9) {
             levelPosition += increment;
         } else {
             levelPosition = 1;
@@ -50,7 +50,7 @@ public class MagneticArm {
     }
 
     public void decreaseLevelPosition(double increment) {
-        if (levelPosition - increment > 0.29) {
+        if (levelPosition - increment > 0.1) {
             levelPosition -= increment;
         } else {
             levelPosition = 0.29;

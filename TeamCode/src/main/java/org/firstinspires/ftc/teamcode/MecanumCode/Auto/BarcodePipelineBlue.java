@@ -1,7 +1,5 @@
-package org.firstinspires.ftc.teamcode.Common;
+package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 
-import org.firstinspires.ftc.teamcode.MecanumCode.Auto.BarcodePipelineRed;
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -54,7 +52,7 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
     int avg1, avg2;
 
     // create pos var, with vol tag due to the var changing at runtime
-    volatile BarcodePipelineRed.BarcodePosition position = BarcodePipelineRed.BarcodePosition.CENTER;
+    volatile BarcodePipelineBlue.BarcodePosition position = BarcodePipelineBlue.BarcodePosition.CENTER;
 
     void inputToB(Mat input) {
         Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
@@ -101,7 +99,7 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
         currentMinValue = min;
 
         if (min >= calibratedRange) {
-            position = BarcodePipelineRed.BarcodePosition.LEFT;
+            position = BarcodePipelineBlue.BarcodePosition.LEFT;
         } else if (min == avg1) {
             Imgproc.rectangle(
                     input,
@@ -110,7 +108,7 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                     GREEN,
                     2
             );
-            position = BarcodePipelineRed.BarcodePosition.CENTER;
+            position = BarcodePipelineBlue.BarcodePosition.CENTER;
         } else if (min == avg2) {
             Imgproc.rectangle(
                     input,
@@ -119,13 +117,13 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                     GREEN,
                     2
             );
-            position = BarcodePipelineRed.BarcodePosition.RIGHT;
+            position = BarcodePipelineBlue.BarcodePosition.RIGHT;
         }
 
         return input;
     }
 
-    public BarcodePipelineRed.BarcodePosition getPos() {
+    public BarcodePipelineBlue.BarcodePosition getPos() {
         return position;
     }
 
