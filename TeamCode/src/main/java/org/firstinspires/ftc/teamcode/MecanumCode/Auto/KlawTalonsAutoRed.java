@@ -20,8 +20,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Klaw/Talons Auto")
-public class KlawTalonsAuto extends OpModeWrapper {
+@Autonomous(name="Klaw/Talons Auto (Red)")
+public class KlawTalonsAutoRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
@@ -37,14 +37,14 @@ public class KlawTalonsAuto extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    MecanumBarcodePipelineRed.BarcodePosition capstonePos;
+    BarcodePipelineRed.BarcodePosition capstonePos;
 
     Thread armMovementThread;
     private volatile boolean moveArm;
 
 
     // global obj
-    static final MecanumBarcodePipelineRed brp = new MecanumBarcodePipelineRed();
+    static final BarcodePipelineRed brp = new BarcodePipelineRed();
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -115,6 +115,14 @@ public class KlawTalonsAuto extends OpModeWrapper {
         };
 
 
+        while(!opModeIsActive()){
+            telemetry.addData("pos", brp.getPos());
+            telemetry.update();
+        }
+
+
+
+
     }
 
     @Override
@@ -151,21 +159,28 @@ public class KlawTalonsAuto extends OpModeWrapper {
 
          */
 
-        if (capstonePos == MecanumBarcodePipelineRed.BarcodePosition.RIGHT) {
+        if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
             drive.driveAuto(0.3, -565, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(1473);
+            capArm.goToPosition(1560);
+            capArm.toggleGrab();
+            sleep(1000);
             capArm.toggleGrab();
 
-        } else if (capstonePos == MecanumBarcodePipelineRed.BarcodePosition.LEFT) {
+
+        } else if (capstonePos == BarcodePipelineRed.BarcodePosition.LEFT) {
             drive.driveAuto(0.3, -585, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(730);
+            capArm.toggleGrab();
+            sleep(1000);
             capArm.toggleGrab();
 
 
         } else {
             drive.driveAuto(0.3, -605, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.toggleGrab();
+            sleep(1000);
             capArm.toggleGrab();
             drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
         }
@@ -182,9 +197,9 @@ public class KlawTalonsAuto extends OpModeWrapper {
         //capArm.goToPosition(300);
         drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
         sleep(1000);
-        drive.driveAuto(0.3, 2720, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAFE);
         sleep(1000);
-        drive.driveAuto(0.3, -700, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -960, MecanumDriveTrain.MovementType.STRAIGHT);
         /*
         drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
         //drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
