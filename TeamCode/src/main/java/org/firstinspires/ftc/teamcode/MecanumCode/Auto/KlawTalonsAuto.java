@@ -20,8 +20,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Carousel + Freight Blue")
-public class CarouselFrieghtBlue extends OpModeWrapper {
+@Autonomous(name="Klaw/Talons Auto")
+public class KlawTalonsAuto extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
@@ -37,15 +37,14 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    BarcodePipelineBlue.BarcodePosition capstonePos;
+    MecanumBarcodePipelineRed.BarcodePosition capstonePos;
 
-    static final BarcodePipelineBlue brp = new BarcodePipelineBlue();
-
-
-
+    Thread armMovementThread;
+    private volatile boolean moveArm;
 
 
-
+    // global obj
+    static final MecanumBarcodePipelineRed brp = new MecanumBarcodePipelineRed();
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -92,6 +91,7 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
             }
         });
 
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -106,13 +106,22 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        armMovementThread = new Thread(){
+            @Override
+            public void run(){
+                while(!moveArm);
+                capArm.goToPosition(0);
+            }
+        };
+
 
     }
 
     @Override
     protected void onStart() {
+        armMovementThread.start();
         capstonePos = brp.getPos();
-
+        //sleep(14000);
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.ROTATE);
@@ -122,30 +131,71 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1750, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1675, MecanumDriveTrain.MovementType.STRAFE);
+
+        /*
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
-            drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(300);
+            //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+            //capArm.goToPosition(300);
+            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(1300);
+            capArm.toggleGrab();
+
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
             drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(1300);
+            capArm.toggleGrab();
+
 
         }else{
-            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(2325);
+
+         */
+
+        if (capstonePos == MecanumBarcodePipelineRed.BarcodePosition.RIGHT) {
+            //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+            //capArm.goToPosition(300);
+            drive.driveAuto(0.3, -565, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(1473);
+            capArm.toggleGrab();
+
+        } else if (capstonePos == MecanumBarcodePipelineRed.BarcodePosition.LEFT) {
+            drive.driveAuto(0.3, -585, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(730);
+            capArm.toggleGrab();
+
+
+        } else {
+            drive.driveAuto(0.3, -605, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.toggleGrab();
+            drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
         }
-        //capArm.goToPosition(300);
+
+        moveArm = true;
+        //drive.driveAuto(0.3, -605, MecanumDriveTrain.MovementType.STRAIGHT);
         capArm.toggleGrab();
-        sleep(3000);
-        drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
+        sleep(1000);
+        //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
+
+
+        //}
+
+        //capArm.goToPosition(300);
+        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
+        sleep(1000);
+        drive.driveAuto(0.3, 2720, MecanumDriveTrain.MovementType.STRAFE);
+        sleep(1000);
+        drive.driveAuto(0.3, -700, MecanumDriveTrain.MovementType.STRAIGHT);
+        /*
         drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.1, -150, MecanumDriveTrain.MovementType.STRAIGHT);
+        //drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.1, -110, MecanumDriveTrain.MovementType.STRAIGHT);
 
+        drive.setPower(-0.07, -0.07, -0.07, -0.07);
+        carousel.spinCarousel(7000, this, Carousel.CarouselMode.AUTO);
+        drive.setPower(0, 0, 0, 0);
+        drive.driveAuto(0.3, 920, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        carousel.spinCarousel(4000, this, Carousel.CarouselMode.AUTO);
-        drive.driveAuto(0.3, 720, MecanumDriveTrain.MovementType.STRAIGHT);
+         */
 
 
 
