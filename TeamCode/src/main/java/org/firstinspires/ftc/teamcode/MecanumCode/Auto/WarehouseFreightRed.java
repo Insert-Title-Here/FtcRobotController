@@ -42,11 +42,6 @@ public class WarehouseFreightRed extends OpModeWrapper {
     static final BarcodePipelineBlue brp = new BarcodePipelineBlue();
 
 
-
-
-
-
-
     @Override
     protected void onInitialize() throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);

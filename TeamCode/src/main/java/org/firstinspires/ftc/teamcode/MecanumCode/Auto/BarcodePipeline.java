@@ -8,14 +8,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class BarcodePipelineRed extends OpenCvPipeline{
-    // define position enums
-    public enum BarcodePosition
-    {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
+public class BarcodePipeline extends OpenCvPipeline{
 
     // define col constants
     static final Scalar BLUE = new Scalar(0, 0, 255);
@@ -23,11 +16,60 @@ public class BarcodePipelineRed extends OpenCvPipeline{
     static final int calibratedRange = 90;
     static int currentMinValue = 0;
 
-    // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 190);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(280, 190);
+    // region sizes
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 50;
+
+    // anchor points
+    static Point REGION1_TOPLEFT_ANCHOR_POINT;
+    static Point REGION2_TOPLEFT_ANCHOR_POINT;
+
+    static Point REGION1_pointA;
+    static Point REGION1_pointB;
+    static Point REGION2_pointA;
+    static Point REGION2_pointB;
+
+    // define position enums
+    public enum BarcodePosition
+    {
+        LEFT,
+        CENTER,
+        RIGHT;
+    }
+
+    // size enums
+    public enum AutoSide
+    {
+        RED,
+        BLUE
+    }
+
+    public BarcodePipeline(BarcodePipeline.AutoSide side) {
+        if (AutoSide.RED.equals(side)) {
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 190);
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(280, 190);
+        } else {
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 190);
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(160, 190);
+        }
+
+        REGION1_pointA = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x,
+                REGION1_TOPLEFT_ANCHOR_POINT.y
+        );
+        REGION1_pointB = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT
+        );
+        REGION2_pointA = new Point(
+                REGION2_TOPLEFT_ANCHOR_POINT.x,
+                REGION2_TOPLEFT_ANCHOR_POINT.y
+        );
+        REGION2_pointB = new Point(
+                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT
+        );
+    }
 
     // define top left and bottom right region points
     Point region1_pointA = new Point(
@@ -44,10 +86,8 @@ public class BarcodePipelineRed extends OpenCvPipeline{
             REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
     // Create vars
-    Mat region1_Cb, region2_Cb;
-    //    Mat YCrCb = new Mat();
-//    Mat Cb = new Mat();
-    Mat RGB = new Mat();
+    Mat region1_B, region2_B;
+//    Mat RGB = new Mat();
     Mat B = new Mat();
     int avg1, avg2;
 
@@ -55,27 +95,27 @@ public class BarcodePipelineRed extends OpenCvPipeline{
     volatile BarcodePosition position = BarcodePosition.CENTER;
 
     void inputToB(Mat input) {
-        Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
-        Core.extractChannel(RGB, B, 0);
+        //Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
+        Core.extractChannel(input, B, 2);
     }
 
     @Override
     public void init(Mat frame) {
         inputToB(frame);
 
-        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
-        region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
+        region1_B = B.submat(new Rect(region1_pointA, region1_pointB));
+        region2_B = B.submat(new Rect(region2_pointA, region2_pointB));
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        inputToB(input);
+//        inputToB(input);
 
-        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
-        region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
+        region1_B = B.submat(new Rect(region1_pointA, region1_pointB));
+        region2_B = B.submat(new Rect(region2_pointA, region2_pointB));
 
-        avg1 = (int) Core.mean(region1_Cb).val[0];
-        avg2 = (int) Core.mean(region2_Cb).val[0];
+        avg1 = (int) Core.mean(region1_B).val[0];
+        avg2 = (int) Core.mean(region2_B).val[0];
 
         Imgproc.rectangle(
                 input,
@@ -125,9 +165,5 @@ public class BarcodePipelineRed extends OpenCvPipeline{
 
     public BarcodePosition getPos() {
         return position;
-    }
-
-    public int getCurrentMinValue() {
-        return currentMinValue;
     }
 }

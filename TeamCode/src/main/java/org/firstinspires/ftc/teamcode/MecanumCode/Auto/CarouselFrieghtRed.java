@@ -37,14 +37,15 @@ public class CarouselFrieghtRed extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    BarcodePipelineRed.BarcodePosition capstonePos;
+    BarcodePipeline.BarcodePosition capstonePos;
+    static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
 
     Thread armMovementThread;
     private volatile boolean moveArm;
 
 
     // global obj
-    static final BarcodePipelineRed brp = new BarcodePipelineRed();
+    static final BarcodePipeline bPipeline = new BarcodePipeline(side);
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -60,7 +61,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
-        camera.setPipeline(brp);
+        camera.setPipeline(bPipeline);
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -115,7 +116,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         };
 
         while(!opModeIsActive()){
-            telemetry.addData("pos", brp.getPos());
+            telemetry.addData("pos", bPipeline.getPos());
             telemetry.update();
         }
 
@@ -125,7 +126,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
     @Override
     protected void onStart() {
         armMovementThread.start();
-        capstonePos = brp.getPos();
+        capstonePos = bPipeline.getPos();
         //sleep(15000);
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
@@ -139,7 +140,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         drive.driveAuto(0.3, -1150, MecanumDriveTrain.MovementType.STRAFE);
 
 
-        if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
+        if (capstonePos == BarcodePipeline.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
             drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -149,7 +150,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
             sleep(1000);
             capArm.toggleGrab();
 
-        } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
+        } else if (capstonePos == BarcodePipeline.BarcodePosition.CENTER) {
             drive.driveAuto(0.3, -540, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(730);
             capArm.toggleGrab();

@@ -37,15 +37,10 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    BarcodePipelineBlue.BarcodePosition capstonePos;
+    BarcodePipeline.BarcodePosition capstonePos;
+    static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.BLUE;
 
-    static final BarcodePipelineBlue brp = new BarcodePipelineBlue();
-
-
-
-
-
-
+    static final BarcodePipeline bPipeline = new BarcodePipeline(side);
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -61,7 +56,7 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
-        camera.setPipeline(brp);
+        camera.setPipeline(bPipeline);
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -111,7 +106,7 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
 
     @Override
     protected void onStart() {
-        capstonePos = brp.getPos();
+        capstonePos = bPipeline.getPos();
 
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
@@ -124,10 +119,10 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1750, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-        if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
+        if(capstonePos == BarcodePipeline.BarcodePosition.RIGHT) {
             drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(300);
-        }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
+        }else if(capstonePos == BarcodePipeline.BarcodePosition.LEFT){
             drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(1300);
 

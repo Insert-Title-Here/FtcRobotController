@@ -15,7 +15,11 @@ public class WebcamCalibration extends OpModeWrapper {
 
     WebcamName webcam;
     OpenCvCamera camera;
-    static final BarcodePipelineRed bcPipeline = new BarcodePipelineRed();
+
+    // CHANGE TO RED OR BLUE DEPENDING ON THE SIDE BEING CALIBRATED/TESTED
+    static BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
+
+    static final BarcodePipeline bcPipeline = new BarcodePipeline(side);
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -44,7 +48,6 @@ public class WebcamCalibration extends OpModeWrapper {
             telemetry.addData("left: ", bcPipeline.avg1);
             telemetry.addData("middle: ", bcPipeline.avg2);
             telemetry.addData("pos:", bcPipeline.getPos());
-            telemetry.addData("min:", bcPipeline.getCurrentMinValue());
             telemetry.update();
         }
     }
