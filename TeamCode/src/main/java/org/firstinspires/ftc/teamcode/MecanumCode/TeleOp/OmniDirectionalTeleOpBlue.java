@@ -99,13 +99,40 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         }
 
         if(gamepad1.dpad_up) {
-            arm.increaseLevelPosition(0.01);
-            sleep(10);
+            //arm.increaseLevelPosition(0.01);
+            //sleep(10);
+            arm.setExtensionPower(0.3);
+
+
+        }else{
+            arm.setExtensionPower(0);
         }
 
         if(gamepad1.dpad_down) {
-            arm.decreaseLevelPosition(0.01);
-            sleep(10);
+            //arm.decreaseLevelPosition(0.01);
+            //sleep(10);
+            arm.setExtensionPower(0.3);
+
+        }else{
+            arm.setExtensionPower(0);
+        }
+
+        if(gamepad1.dpad_left) {
+            //arm.decreaseLevelPosition(0.01);
+            //sleep(10);
+            carousel.setPower(-0.3);
+
+        }else{
+            carousel.setPower(0);
+        }
+
+        if(gamepad1.dpad_right) {
+            //arm.decreaseLevelPosition(0.01);
+            //sleep(10);
+            carousel.setPower(-0.3);
+
+        }else{
+            carousel.setPower(0);
         }
 
         if(gamepad1.a) {
@@ -138,14 +165,28 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
         if (gamepad1.left_trigger > 0.1) {
             //arm.setExtensionSMPower(gamepad1.left_trigger);
-            arm.setExtensionPower(gamepad1.left_trigger);
-        } else if (gamepad1.right_trigger > 0.1) {
+            //arm.setExtensionPower(gamepad1.left_trigger);
+
+            capArm.toggleGrab();
+            capArm.goToPosition(75);
+            capArm.toggleGrab();
+
+
+        }
+
+        if (gamepad1.right_trigger > 0.1) {
+
             //arm.setExtensionSMPower(-gamepad1.right_trigger);
-            arm.setExtensionPower(-gamepad1.right_trigger);
-        } else {
+            //arm.setExtensionPower(-gamepad1.right_trigger);
+            capArm.goToPosition(2500);
+
+        }
+        /*else {
             //arm.setExtensionSMPower(0);
             arm.setExtensionPower(0);
         }
+
+         */
         telemetry.addData("Arm Tics", arm.getEncoderTics());
         telemetry.addData("Level Position: ", arm.getTelemetry()[0]);
         telemetry.addData("Level Position Actual", arm.getTelemetry()[1]);
