@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.io.FileNotFoundException;
 
@@ -27,7 +28,7 @@ public class WebcamCalibration extends OpModeWrapper {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -42,8 +43,8 @@ public class WebcamCalibration extends OpModeWrapper {
         while (opModeIsActive()) {
             telemetry.addData("left: ", bcPipeline.avg1);
             telemetry.addData("middle: ", bcPipeline.avg2);
-            telemetry.addData("right: ", bcPipeline.avg3);
             telemetry.addData("pos:", bcPipeline.getPos());
+            telemetry.addData("min:", bcPipeline.getCurrentMinValue());
             telemetry.update();
         }
     }
