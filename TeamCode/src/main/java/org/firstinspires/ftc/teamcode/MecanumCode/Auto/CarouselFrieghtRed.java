@@ -114,6 +114,11 @@ public class CarouselFrieghtRed extends OpModeWrapper {
             }
         };
 
+        while(!opModeIsActive()){
+            telemetry.addData("pos", brp.getPos());
+            telemetry.update();
+        }
+
 
     }
 
@@ -137,16 +142,20 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
-            drive.driveAuto(0.3, -535, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(1473);
+            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(1560);
             capArm.toggleGrab();
+
             sleep(1000);
+            capArm.toggleGrab();
 
         } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
-            drive.driveAuto(0.3, -555, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -540, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(730);
             capArm.toggleGrab();
             sleep(1000);
+            capArm.toggleGrab();
+
 
 
 
@@ -154,6 +163,8 @@ public class CarouselFrieghtRed extends OpModeWrapper {
             drive.driveAuto(0.3, -575, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.toggleGrab();
             sleep(1000);
+            capArm.toggleGrab();
+
             //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
@@ -173,7 +184,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
             //drive.setPower(-0.07, -0.07, -0.07, -0.07);
             //carousel.spinCarousel(7000, this, Carousel.CarouselMode.AUTO);
             //drive.setPower(0, 0, 0, 0);
-            drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -960, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
             //double angle = imu.getAngularOrientation().firstAngle;

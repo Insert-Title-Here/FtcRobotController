@@ -35,7 +35,7 @@ public class MagneticArm {
         //magneticExtensionSM = hardwareMap.crservo.get("MagExtension");
         magnet.setPosition(0.97);
 
-        levelPosition = 1;
+        levelPosition = 0.95;
         level.setPosition(levelPosition);
         //magneticExtensionSM.setPower(0);
     }
