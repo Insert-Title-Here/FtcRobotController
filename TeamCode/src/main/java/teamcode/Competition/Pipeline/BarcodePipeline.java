@@ -13,6 +13,18 @@ import teamcode.common.AbstractOpMode;
 
 public class BarcodePipeline extends OpenCvPipeline {
 
+    // define col constants
+    static final Scalar BLUE = new Scalar(0, 0, 255);
+    static final Scalar GREEN = new Scalar(0, 255, 0);
+    static final int calibratedRange = 16;
+
+    // get anchor points for each region
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 160);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(150, 160);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 160);
+    static final int REGION_WIDTH = 40;
+    static final int REGION_HEIGHT = 80;
+
     // define position enums
     public enum BarcodePosition
     {
@@ -26,16 +38,9 @@ public class BarcodePipeline extends OpenCvPipeline {
     }
 
 
-    // define col constants
-    static final Scalar BLUE = new Scalar(0, 0, 255);
-    static final Scalar GREEN = new Scalar(0, 255, 0);
 
-    // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 160);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(150, 160);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 160);
-    static final int REGION_WIDTH = 40;
-    static final int REGION_HEIGHT = 80;
+
+
 
     // define top left and bottom right region points
     Point region1_pointA = new Point(

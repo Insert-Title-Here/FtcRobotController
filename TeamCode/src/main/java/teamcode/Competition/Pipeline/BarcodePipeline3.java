@@ -36,6 +36,8 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 140);
     static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(135, 140);
     static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 140);
+
+
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 40;
 
@@ -71,13 +73,6 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     volatile BarcodePosition position = BarcodePosition.RIGHT;
     volatile Side side = Side.BLUE;
 
-
-    // converts rgb frame to ycrcb, extracts cb channel
-//    void inputToCb(Mat input) {
-//        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-//        Core.extractChannel(YCrCb, Cb, 2);
-//    }
-
     void inputToB(Mat input) {
         Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
         Core.extractChannel(RGB, B, 0);
@@ -87,9 +82,9 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     public void init(Mat frame) {
         inputToB(frame);
 
-        // region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
+        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
-        region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
+        //region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
     }
 
     @Override
@@ -104,13 +99,13 @@ public class BarcodePipeline3 extends OpenCvPipeline {
         avg2 = (int) Core.mean(region2_Cb).val[0];
         avg3 = (int) Core.mean(region3_Cb).val[0];
 
-//        Imgproc.rectangle(
-//                input,
-//                region1_pointA,
-//                region1_pointB,
-//                BLUE,
-//                2
-//        );
+        Imgproc.rectangle(
+              input,
+                region1_pointA,
+                region1_pointB,
+                BLUE,
+                2
+        );
 
         Imgproc.rectangle(
                 input,
@@ -138,11 +133,11 @@ public class BarcodePipeline3 extends OpenCvPipeline {
             side2 = avg3;
         }else{
             min = Math.min(avg1, avg2);
-            side1 = avg2;
-            side2 = avg1;
+            side1 = avg1;
+            side2 = avg2;
         }
 
-        if (Math.abs(side1 - side2) < 40) { //todo change this and other values at L2
+        if (Math.abs(side1 - side2) < 15) { //todo change this and other values at L2
 
 //            Imgproc.rectangle(
 //                    input,

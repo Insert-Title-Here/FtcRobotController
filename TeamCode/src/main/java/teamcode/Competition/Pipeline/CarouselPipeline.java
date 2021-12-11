@@ -29,8 +29,8 @@ public class CarouselPipeline extends OpenCvPipeline {
 
     // get anchor points for each region
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 120);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(65, 120);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(210, 120);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(0, 120);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(170, 120);
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 40;
 
