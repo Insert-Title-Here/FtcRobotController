@@ -166,14 +166,14 @@ public class CarouselFrieghtRed extends OpModeWrapper {
             sleep(1000);
             drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
             drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAFE);
-            drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
+            //drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
             //drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-            drive.driveAuto(0.1, -110, MecanumDriveTrain.MovementType.STRAIGHT);
+            //drive.driveAuto(0.1, -110, MecanumDriveTrain.MovementType.STRAIGHT);
 
-            drive.setPower(-0.07, -0.07, -0.07, -0.07);
-            carousel.spinCarousel(7000, this, Carousel.CarouselMode.AUTO);
-            drive.setPower(0, 0, 0, 0);
-            drive.driveAuto(0.3, 920, MecanumDriveTrain.MovementType.STRAIGHT);
+            //drive.setPower(-0.07, -0.07, -0.07, -0.07);
+            //carousel.spinCarousel(7000, this, Carousel.CarouselMode.AUTO);
+            //drive.setPower(0, 0, 0, 0);
+            drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
             //double angle = imu.getAngularOrientation().firstAngle;
