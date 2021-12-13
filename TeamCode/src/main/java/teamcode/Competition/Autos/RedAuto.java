@@ -111,7 +111,7 @@ public class RedAuto extends AbstractOpMode {
         } else if(position == BarcodePipeline3.BarcodePosition.CENTER){
             arm.raise(Constants.MEDIUM_POSITION);
         }
-        driveTrain.moveToPosition(new Vector2D(-15, 24), -12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-14.5, 23.5), -12, 0.5, false);
         driveTrain.rotateDistance(0.4, Math.toRadians(-170));
         if (position == BarcodePipeline3.BarcodePosition.LEFT) {
             arm.raise(Constants.BOTTOM_POSITION);
@@ -130,7 +130,7 @@ public class RedAuto extends AbstractOpMode {
         arm.retract();
         driveTrain.rotateDistance(-0.4, Math.toRadians(-105));
         localizer.liftOdo();
-        driveTrain.moveToPosition(new Vector2D(34, -27), 36, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(36, -29), 36, 0.5, false);
 //        driveTrain.rotateDistance(0.5,Math.toRadians(-120));
 //       intake = true;
 //        driveTrain.moveToPosition(new Vector2D(37, -30), 12, 0.5, false);

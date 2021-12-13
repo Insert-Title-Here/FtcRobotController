@@ -33,9 +33,9 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 140);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(135, 140);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 140);
+    static Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 140);
+    static Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(135, 140);
+    static Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 140);
 
 
     static final int REGION_WIDTH = 40;
@@ -91,7 +91,37 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         inputToB(input);
 
-         region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB)); //left region
+        if(side == Side.BLUE){
+            Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 140);
+            Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(135, 140);
+            Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 140);
+
+        }else {
+            Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 180);
+            Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(155, 180);
+            Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 200);
+        }
+        Point region1_pointA = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x,
+                REGION1_TOPLEFT_ANCHOR_POINT.y);
+        Point region1_pointB = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+        Point region2_pointA = new Point(
+                REGION2_TOPLEFT_ANCHOR_POINT.x,
+                REGION2_TOPLEFT_ANCHOR_POINT.y);
+        Point region2_pointB = new Point(
+                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+        Point region3_pointA = new Point(
+                REGION3_TOPLEFT_ANCHOR_POINT.x,
+                REGION3_TOPLEFT_ANCHOR_POINT.y);
+        Point region3_pointB = new Point(
+                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
+
+        region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB)); //left region
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB)); //center region
         region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB)); //right region
 

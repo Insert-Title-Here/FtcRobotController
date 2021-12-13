@@ -85,7 +85,7 @@ public class BlueAuto extends AbstractOpMode {
         } else if(position == BarcodePipeline3.BarcodePosition.CENTER){
             arm.raise(Constants.MEDIUM_POSITION);
         }
-        driveTrain.moveToPosition(new Vector2D(-16.5, 24), -12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-16, 23.5), -12, 0.5, false);
         driveTrain.rotateDistance(-0.4, Math.toRadians(170));
         if (position == BarcodePipeline3.BarcodePosition.RIGHT) {
             arm.raise(Constants.BOTTOM_POSITION);
@@ -103,7 +103,7 @@ public class BlueAuto extends AbstractOpMode {
         driveTrain.rotateDistance(0.4, Math.toRadians(105));
         arm.retract();
         localizer.liftOdo();
-        driveTrain.moveToPosition(new Vector2D(-34, -27), 36, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-36, -29), 36, 0.5, false);
         while(opModeIsActive());
 
 

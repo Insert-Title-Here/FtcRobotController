@@ -107,7 +107,7 @@ public class RedAutoCarousel extends AbstractOpMode {
             Debug.log("mid");
             arm.raise(Constants.MEDIUM_POSITION);
         }
-        driveTrain.moveToPosition(new Vector2D(-17, 24), -12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-16.5, 23.5), -12, 0.5, false);
         driveTrain.rotateDistance(-0.4, Math.toRadians(155));
 
         if (position == CarouselPipeline.BarcodePosition.LEFT) {

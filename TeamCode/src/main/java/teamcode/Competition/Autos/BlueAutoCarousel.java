@@ -104,7 +104,7 @@ public class BlueAutoCarousel extends AbstractOpMode {
             Debug.log("mid");
             arm.raise(Constants.MEDIUM_POSITION);
         }
-        driveTrain.moveToPosition(new Vector2D(-16, -23), -12, 0.5, false);
+        driveTrain.moveToPosition(new Vector2D(-15.5, -22.5), -12, 0.5, false);
         driveTrain.rotateDistance(0.4, Math.toRadians(-155));
         if (position == CarouselPipeline.BarcodePosition.RIGHT) {
             Debug.log("low");
