@@ -22,7 +22,6 @@ public class CvRTT extends AbstractOpMode {
     WebcamName wc;
     OpenCvCamera camera;
 
-
     // global obj
     static final CvDetectionPipeline dp = new CvDetectionPipeline();
 

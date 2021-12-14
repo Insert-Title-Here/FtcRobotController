@@ -149,9 +149,10 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
             arm.preScore();
             linkageState = LinkageState.RAISED;
         } else if (gamepad1.dpad_up) {
-                arm.setWinchPower(0.5);
+            // set to full
+                arm.setWinchPower(1);
         } else if (gamepad1.dpad_down) {
-            arm.setWinchPower(-0.5);
+            arm.setWinchPower(-1);
         } else if(gamepad1.left_trigger > 0.3) {
             if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 arm.raise(Constants.TOP_POSITION + 600);
