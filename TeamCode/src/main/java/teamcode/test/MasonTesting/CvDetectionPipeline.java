@@ -38,6 +38,11 @@ public class CvDetectionPipeline extends OpenCvPipeline {
     final double cameraAngle = 68;
 
     @Override
+    public void init(Mat frame) {
+        // i hope this works lol
+    }
+
+    @Override
     public synchronized Mat processFrame(Mat frame){
         // mat vars
         Mat hsv = new Mat();
