@@ -117,7 +117,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
 
         if(gamepad1.y) {
             // Raise level
-            arm.setLevelPosition(0.85);
+            arm.setLevelPosition(1);
         }
 
         if(gamepad1.x) {

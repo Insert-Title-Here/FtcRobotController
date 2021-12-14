@@ -181,7 +181,7 @@ public class KlawTalonsAutoRed extends OpModeWrapper {
         //capArm.goToPosition(300);
         sleep(1000);
         drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 2600, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
         //drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.driveAuto(0.1, -110, MecanumDriveTrain.MovementType.STRAIGHT);
