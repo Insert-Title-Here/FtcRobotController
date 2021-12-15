@@ -248,8 +248,8 @@ public class ArmSystem {
     public void moveSlide(double power, double position){
         AbstractOpMode.currentOpMode().telemetry.clear();
         while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {
-//            AbstractOpMode.currentOpMode().telemetry.addData("position", winchEncoder.getCurrentPosition());
-//            AbstractOpMode.currentOpMode().telemetry.update();
+            AbstractOpMode.currentOpMode().telemetry.addData("position", winchEncoder.getCurrentPosition());
+            AbstractOpMode.currentOpMode().telemetry.update();
             winchMotor.setPower(power);
 
         }
