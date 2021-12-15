@@ -155,7 +155,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
             arm.setWinchPower(-1);
         } else if(gamepad1.left_trigger > 0.3) {
             if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
-                arm.raise(Constants.TOP_POSITION + 600);
+                arm.raise(Constants.TOP_POSITION);
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
             }
@@ -175,6 +175,8 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
             arm.intakeDumb(0);
             arm.setWinchPower(0);
         }
+        telemetry.addData("slide pos", arm.getLinearSlidePosition());
+        telemetry.update();
     }
 
     private static final double ROTATE_DPAD = 0.3;
