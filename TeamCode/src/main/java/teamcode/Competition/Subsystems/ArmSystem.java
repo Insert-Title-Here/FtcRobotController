@@ -46,7 +46,7 @@ public class ArmSystem {
         leftIntake = hardwareMap.dcMotor.get("LeftIntake");
         rightIntake = hardwareMap.dcMotor.get("RightIntake");
         winchMotor = hardwareMap.dcMotor.get("Winch");
-        winchEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
+        winchEncoder = hardwareMap.dcMotor.get("Winch"); //TANK FrontLeftDrive MECANUM Winch
         conveyorMotor = hardwareMap.dcMotor.get("Conveyor");
 
         house = hardwareMap.servo.get("House");
@@ -57,6 +57,7 @@ public class ArmSystem {
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
         sensor.setGain(280); //325 is tested value but i think I trust this one more
 
+        winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carousel.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -199,7 +200,7 @@ public class ArmSystem {
     }
 
     public void retract(){
-        moveSlide(-0.5, 100);
+        moveSlide(-1, -100);
        idleServos();
     }
 
@@ -251,11 +252,12 @@ public class ArmSystem {
             AbstractOpMode.currentOpMode().telemetry.addData("position", winchEncoder.getCurrentPosition());
             AbstractOpMode.currentOpMode().telemetry.update();
             winchMotor.setPower(power);
-
         }
         winchMotor.setPower(0);
 
     }
+
+    //fix the winch shooting off into space
 
     public void resetWinchEncoder(){
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

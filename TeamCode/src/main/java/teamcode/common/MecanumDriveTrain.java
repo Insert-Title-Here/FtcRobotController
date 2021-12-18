@@ -32,9 +32,9 @@ public class MecanumDriveTrain {
     Vector2D previousError;
     double previousOmegaError;
 
-    DistanceSensor distance;
+    DistanceSensor distanceLeft, distanceRight;
 
-    Logger logger;
+    private boolean environmentalTerminate, eStop;
 
 
     /**
@@ -43,6 +43,9 @@ public class MecanumDriveTrain {
      */
     final double pVelocity = 0.000725; //0.000725
     final double dVelocity  = 0.047; //0.027
+
+    //todo for optimizing is to tune the PID aggresively due to high accel
+    //todo is necessary to retune due to the rework of voltage to velocity
 
     public MecanumDriveTrain(HardwareMap hardwareMap){
         fl = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontLeftDrive");
@@ -58,7 +61,8 @@ public class MecanumDriveTrain {
         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
         bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
         br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
-        distance = hardwareMap.get(DistanceSensor.class, "Distance");
+        distanceLeft = hardwareMap.get(DistanceSensor.class, "DistanceLeft");
+        distanceRight = hardwareMap.get(DistanceSensor.class, "DistanceRight");
         this.localizer = localizer;
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
@@ -73,7 +77,8 @@ public class MecanumDriveTrain {
         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
         bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
         br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
-        distance = hardwareMap.get(DistanceSensor.class, "Distance");
+        distanceLeft = hardwareMap.get(DistanceSensor.class, "DistanceLeft");
+        distanceRight = hardwareMap.get(DistanceSensor.class, "DistanceRight");
         this.pipeline = pipeline;
         this.localizer = localizer;
         previousVelocity = new Vector2D(0,0);
@@ -96,7 +101,8 @@ public class MecanumDriveTrain {
         Vector2D robotPosition;
         seekCubesRotate(desiredRotate);
         Vector2D desiredPosition;
-        while(pipeline.yPointList().get(0) < 5) { //todo ask mason how to ensure I am tracking the same cube every time here
+        environmentalTerminate = false;
+        while(pipeline.yPointList().get(0) < 5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate) { //todo ask mason how to ensure I am tracking the same cube every time here
             //todo idea about above, write a method that traverses the stack by placing it in an arrayList, calculating the smallest deviation from the originally stored value and assuming that is the target,
             //this would dynamically adapt to the closest cube in the frame may cause some oscillation especially during the rotational phase.
             currentState = localizer.getCurrentState();
@@ -173,7 +179,8 @@ public class MecanumDriveTrain {
     private void seekCubesRotate(double desiredOmega) {
         double xPartitionDeviation = pipeline.xPointList().get(0);
         previousOmega = 0;
-        while(xPartitionDeviation > 5){
+        environmentalTerminate = false;
+        while(xPartitionDeviation > 5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
             xPartitionDeviation = pipeline.xPointList().get(0);
             double recordedOmega = localizer.getCurrentState().getAngularVelocity();
             double omegaError = desiredOmega - recordedOmega;
@@ -194,7 +201,7 @@ public class MecanumDriveTrain {
 
 
 
-    public void strafeDistanceSensor(double desiredVelocity){
+    public void strafeDistanceSensor(double desiredVelocity, boolean isRed){
         if(localizer == null){
             return;
         }
@@ -204,9 +211,11 @@ public class MecanumDriveTrain {
         double previousVelocity = 0;
         Vector2D steadyStateError = new Vector2D(0,0);
         previousOmegaError = 0;
+        environmentalTerminate = false;
 
         //todo calibrate the tolerance of it.
-        while(distance.getDistance(DistanceUnit.INCH) > 0.5 && AbstractOpMode.currentOpMode().opModeIsActive()){
+        while(distanceLeft.getDistance(DistanceUnit.INCH) > 0.5 && distanceLeft.getDistance(DistanceUnit.INCH) > 0.5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+
 
             currentState = localizer.getCurrentState();
 
@@ -245,7 +254,7 @@ public class MecanumDriveTrain {
             }
 
             //Vector2D passedVector = new Vector2D(passedX, passedY);
-            previousVelocity = setStrafe(passedVal);
+            previousVelocity = setStrafe(passedVal, isRed);
 
             // previousVelocity.multiply(sign);
             previousError = error;
@@ -294,9 +303,9 @@ public class MecanumDriveTrain {
         previousError = new Vector2D(0,0);
         Vector2D steadyStateError = new Vector2D(0,0);
         previousOmegaError = 0;
+        environmentalTerminate = false;
 
-
-        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && AbstractOpMode.currentOpMode().opModeIsActive()){
+        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
 
             currentState = localizer.getCurrentState();
             Vector2D positionError = desiredPosition.subtract(currentState.getPosition());
@@ -404,7 +413,8 @@ public class MecanumDriveTrain {
         }
         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
         previousOmega = 0;
-        while(Math.abs(desiredRotation - state.getRotation()) > 0.05){
+        environmentalTerminate = false;
+        while(Math.abs(desiredRotation - state.getRotation()) > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
             state = localizer.getCurrentState();
             double recordedOmega = state.getAngularVelocity();
             double omegaError = omega - recordedOmega;
@@ -486,11 +496,12 @@ public class MecanumDriveTrain {
         br.setPower(brPow);
     }
 
-    public double setStrafe(double val){
-        fl.setPower(val);
-        fr.setPower(-val);
-        bl.setPower(-val);
-        br.setPower(val);
+    public double setStrafe(double val, boolean isRed){
+        if(isRed){
+            setMotorVelocity(-val, val, val, -val);
+        }else {
+            setMotorVelocity(val, -val, -val, val);
+        }
         return val;
     }
 
@@ -514,6 +525,13 @@ public class MecanumDriveTrain {
         }
     }
 
+    public void setEnvironmentalTerminate(boolean val){
+        environmentalTerminate = val;
+    }
+
+    public void seteStop(boolean val){
+        eStop = val;
+    }
 
 
 

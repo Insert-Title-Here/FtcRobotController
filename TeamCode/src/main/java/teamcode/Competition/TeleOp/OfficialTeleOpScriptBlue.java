@@ -123,7 +123,7 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 }else{
-                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5);
+                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5); // 0.5 - 0.8 TANK, MECANUM 0.7-1.0
                 }
 
             }
