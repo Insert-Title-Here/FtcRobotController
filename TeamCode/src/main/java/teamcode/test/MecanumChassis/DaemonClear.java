@@ -82,7 +82,7 @@ public class DaemonClear extends AbstractOpMode {
             drive.moveToPosition(new Vector2D(0, 24), VELOCITY); //replace this with seekCubes() if it works
             drive.moveToPosition(new Vector2D(0, 0), -VELOCITY);
             extend = true;
-            drive.moveToPosition(new Vector2D(36, 0), VELOCITY);
+            drive.moveToPosition(new Vector2D(36, 0), VELOCITY); //replace this with a distance sensor command?
             arm.score();
             retract = true;
         }
