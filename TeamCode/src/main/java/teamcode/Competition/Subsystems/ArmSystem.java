@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 import teamcode.common.AbstractOpMode;
+import teamcode.common.Debug;
 import teamcode.common.RobotPositionStateUpdater;
 import teamcode.common.Utils;
 
@@ -195,7 +196,7 @@ public class ArmSystem {
     }
 
     //temporary tele op scoring function w/o color sensor
-    public void score(){
+    public synchronized void score(){
         house.setPosition(SCORING_POSITION);
     }
 
@@ -248,11 +249,18 @@ public class ArmSystem {
 
     public void moveSlide(double power, double position){
         AbstractOpMode.currentOpMode().telemetry.clear();
-        while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {
-            AbstractOpMode.currentOpMode().telemetry.addData("position", winchEncoder.getCurrentPosition());
-            AbstractOpMode.currentOpMode().telemetry.update();
-            winchMotor.setPower(power);
+        if(winchEncoder.getCurrentPosition() - position > 0){
+            Debug.log("extending");
+            while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {
+                winchMotor.setPower(power);
+            }
+        }else{
+            Debug.log("retracting");
+            while (winchEncoder.getCurrentPosition() - position < -100) {
+                winchMotor.setPower(power);
+            }
         }
+
         winchMotor.setPower(0);
 
     }

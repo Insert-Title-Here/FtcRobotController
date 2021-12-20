@@ -1,7 +1,5 @@
 package teamcode.test.MecanumChassis;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
@@ -24,6 +22,7 @@ public class DaemonClear extends AbstractOpMode {
 
     private static final int FREIGHT = 1;
     private static final double VELOCITY = 15;
+    private static final double OMEGA = 0.5;
 
     @Override
     protected void onInitialize() {
@@ -82,14 +81,18 @@ public class DaemonClear extends AbstractOpMode {
             drive.moveToPosition(new Vector2D(0, 24), VELOCITY); //replace this with seekCubes() if it works
             drive.moveToPosition(new Vector2D(0, 0), -VELOCITY);
             extend = true;
-            drive.moveToPosition(new Vector2D(36, 0), VELOCITY); //replace this with a distance sensor command?
+            drive.moveToPosition(new Vector2D(24.5, 0), VELOCITY); //replace this with a distance sensor command?
+            drive.moveToRotation(Math.toRadians(-45), OMEGA);
             arm.score();
+            drive.moveToRotation(Math.toRadians(0), -OMEGA);
             retract = true;
         }
 
         while(opModeIsActive());
     }
 
+
+    
     @Override
     protected void onStop() {
 

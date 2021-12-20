@@ -201,7 +201,7 @@ public class MecanumDriveTrain {
 
 
 
-    public void strafeDistanceSensor(double desiredVelocity, boolean isRed){
+    public synchronized void strafeDistanceSensor(double desiredVelocity, boolean isRed){
         if(localizer == null){
             return;
         }
@@ -407,7 +407,7 @@ public class MecanumDriveTrain {
 
     double previousOmega;
     double pRotation;
-    public void moveToRotation(double desiredRotation, double omega){
+    public synchronized void moveToRotation(double desiredRotation, double omega){
         if(localizer == null){
             return;
         }
@@ -420,7 +420,7 @@ public class MecanumDriveTrain {
             double omegaError = omega - recordedOmega;
             omegaError *= pRotation;
             omega += omegaError;
-            setPowerPurePursuit(new Vector2D(0,0), omega);
+            setVelocity(new Vector2D(0,0), omega);
 //            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
 //            AbstractOpMode.currentOpMode().telemetry.update();
         }
@@ -532,12 +532,4 @@ public class MecanumDriveTrain {
     public void seteStop(boolean val){
         eStop = val;
     }
-
-
-
-
-
-
-
-
 }
