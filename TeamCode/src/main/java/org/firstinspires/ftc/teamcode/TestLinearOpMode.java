@@ -65,8 +65,8 @@ public class TestLinearOpMode extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    static final BarcodePipelineBlue bPipeline = new BarcodePipelineBlue();
-    static BarcodePipelineBlue.BarcodePosition capstonePos;
+    static final TestingBarcodePipeline bPipeline = new TestingBarcodePipeline();
+    static TestingBarcodePipeline.BarcodePosition capstonePos;
 
 
 
@@ -121,6 +121,15 @@ public class TestLinearOpMode extends OpModeWrapper {
     @Override
     protected void onStart() {
         capstonePos = bPipeline.getPos();
+
+        while(opModeIsActive()){
+            telemetry.addData("current max: ", bPipeline.getCurrentMaxValue());
+            telemetry.addData("avg1: ", bPipeline.avg1);
+            telemetry.addData("avg2: ", bPipeline.avg2);
+            telemetry.addData("avg3: ", bPipeline.avg3);
+
+            telemetry.update();
+        }
         //telemetry.addData("Status", "Initialized");
         //telemetry.update();
 

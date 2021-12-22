@@ -16,14 +16,14 @@ public class TestingBarcodePipeline extends OpenCvPipeline {
         RIGHT
     }
 
-    static final Scalar ORANGE = new Scalar(255, 173, 0);
+    static final Scalar RED = new Scalar(255, 0, 0);
     static final Scalar YELLOW = new Scalar(234, 170, 0);
     static final int calibratedRange = 90;
     static int currentMaxValue = 0;
 
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point();
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point();
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point();
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 190);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(140, 190);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(210, 190);
 
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 50;
@@ -58,10 +58,10 @@ public class TestingBarcodePipeline extends OpenCvPipeline {
             REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT
     );
 
-    Mat region1_HSV, region2_HSV, region3_HSV;
+    Mat region1_RGB, region2_RGB, region3_RGB;
 
-    Mat HSV = new Mat();
-    Mat V = new Mat();
+    Mat RGB = new Mat();
+    Mat B = new Mat();
     //Mat workingMatrix = new Mat();
 
     int avg1, avg2, avg3;
@@ -69,8 +69,8 @@ public class TestingBarcodePipeline extends OpenCvPipeline {
     volatile BarcodePosition position = BarcodePosition.CENTER;
 
     void inputToHSV(Mat input){
-        Imgproc.cvtColor(input, HSV, Imgproc.COLOR_RGB2HSV);
-        Core.extractChannel(HSV, V, 2);
+        Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
+        Core.extractChannel(RGB, B, 0);
     }
 
 
@@ -79,9 +79,9 @@ public class TestingBarcodePipeline extends OpenCvPipeline {
     public void init(Mat frame) {
         inputToHSV(frame);
 
-        region1_HSV = V.submat(new Rect(region1_pointA, region1_pointB));
-        region2_HSV = V.submat(new Rect(region2_pointA, region2_pointB));
-        region3_HSV = V.submat(new Rect(region3_pointA, region3_pointB));
+        region1_RGB = B.submat(new Rect(region1_pointA, region1_pointB));
+        region2_RGB = B.submat(new Rect(region2_pointA, region2_pointB));
+        region3_RGB = B.submat(new Rect(region3_pointA, region3_pointB));
 
 
     }
@@ -90,17 +90,17 @@ public class TestingBarcodePipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         inputToHSV(input);
 
-        region1_HSV = V.submat(new Rect(region1_pointA, region1_pointB));
-        region2_HSV = V.submat(new Rect(region2_pointA, region2_pointB));
-        region3_HSV = V.submat(new Rect(region3_pointA, region3_pointB));
+        region1_RGB = B.submat(new Rect(region1_pointA, region1_pointB));
+        region2_RGB = B.submat(new Rect(region2_pointA, region2_pointB));
+        region3_RGB = B.submat(new Rect(region3_pointA, region3_pointB));
 
-        avg1 = (int) Core.mean(region1_HSV).val[0];
-        avg2 = (int) Core.mean(region2_HSV).val[0];
-        avg3 = (int) Core.mean(region3_HSV).val[0];
+        avg1 = (int) Core.mean(region1_RGB).val[0];
+        avg2 = (int) Core.mean(region2_RGB).val[0];
+        avg3 = (int) Core.mean(region3_RGB).val[0];
 
         Imgproc.rectangle(
                 input,
-                region2_pointA,
+                region1_pointA,
                 region1_pointB,
                 YELLOW,
                 2
@@ -125,33 +125,33 @@ public class TestingBarcodePipeline extends OpenCvPipeline {
         //int max = Math.max(Math.max(avg1, avg2), avg3);
         //currentMaxValue = max;
 
-        if(avg1 > calibratedRange){
+        if(avg1 < calibratedRange){
             Imgproc.rectangle(
                     input,
                     region1_pointA,
                     region1_pointB,
-                    ORANGE,
+                    RED,
                     2
             );
             position = BarcodePosition.LEFT;
-        }else if(avg2 > calibratedRange){
+        }else if(avg3 < calibratedRange){
             Imgproc.rectangle(
                     input,
-                    region1_pointA,
-                    region1_pointB,
-                    ORANGE,
-                    2
-            );
-            position = BarcodePosition.CENTER;
-        }else{
-            Imgproc.rectangle(
-                    input,
-                    region1_pointA,
-                    region1_pointB,
-                    ORANGE,
+                    region3_pointA,
+                    region3_pointB,
+                    RED,
                     2
             );
             position = BarcodePosition.RIGHT;
+        }else{
+            Imgproc.rectangle(
+                    input,
+                    region2_pointA,
+                    region2_pointB,
+                    RED,
+                    2
+            );
+            position = BarcodePosition.CENTER;
         }
 
         return input;

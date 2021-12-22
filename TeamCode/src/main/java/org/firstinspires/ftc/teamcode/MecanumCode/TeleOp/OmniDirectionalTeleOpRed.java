@@ -31,10 +31,10 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
      * calibrate all these values kevin
      */
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.3;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.3;
+    private final double NORMAL_LINEAR_MODIFIER = 0.45;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
-    private final double SPRINT_ROTATIONAL_MODIFIER = 0.5;
+    private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
 
 
     @Override
@@ -109,6 +109,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             }
         }
 
+
         if(gamepad1.b) {
             // Lower level to cube height
             arm.setLevelPosition(0);
@@ -155,10 +156,10 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     }
 
     private void driveUpdate() {
-        if(gamepad2.right_bumper) {
+        if(gamepad1.dpad_right) {
             driveSwapped = true;
         }
-        if(gamepad2.left_bumper) {
+        if(gamepad1.dpad_left) {
             driveSwapped = false;
         }
 
@@ -178,32 +179,27 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
 
 
 
-        if (gamepad1.left_stick_button) {
+        /*if (gamepad1.left_stick_button) {
             drive.driveAuto(0.7, -3665, MecanumDriveTrain.MovementType.ROTATE);
             while (gamepad1.left_stick_button) {
 
             }
         }
+
+         */
     }
 
     private void capArmUpdate() {
 
-        if(gamepad2.dpad_up) {
-            capArm.setPower(0.3);
-        } else if(gamepad2.dpad_down) {
-            capArm.setPower(-0.3);
-        }else {
-            capArm.setPower(0);
-        }
-
-
-        if (gamepad2.a) {
+        if(gamepad1.dpad_up) {
+            capArm.goToPosition(2650);
+        } else if(gamepad1.dpad_down) {
             capArm.goToPosition(0);
         }
-        if (gamepad2.b) {
-            capArm.goToPosition(2650);
-        }
-        if(gamepad2.x) {
+
+
+
+        if(gamepad1.start) {
             capArm.toggleGrab();
             sleep(500);
         }
