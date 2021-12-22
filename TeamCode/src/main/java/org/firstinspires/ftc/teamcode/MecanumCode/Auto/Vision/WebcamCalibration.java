@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
+package org.firstinspires.ftc.teamcode.MecanumCode.Auto.Vision;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.MecanumCode.Auto.Vision.BarcodePipelineBlue;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;

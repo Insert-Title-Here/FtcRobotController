@@ -7,8 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.MecanumCode.Auto.Vision.BarcodePipeline;
+import org.firstinspires.ftc.teamcode.MecanumCode.Auto.Vision.BarcodePipelineRed;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Constants;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
@@ -19,8 +22,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Freight Red Confirmation")
-public class CarouselFrieghtRed extends OpModeWrapper {
+@Autonomous(name="CarouselFreight Red Confirmation")
+public class CarouselFreightRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
@@ -135,15 +138,17 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
-        drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1150, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1350, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, -1200, MecanumDriveTrain.MovementType.STRAIGHT);
 
+        sleep(5000);
 
         if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
             drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(1560);
+            capArm.goToPosition(Constants.TOP_GOAL_POS);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
@@ -153,7 +158,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
 
         } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
             drive.driveAuto(0.3, -540, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(730);
+            capArm.goToPosition(Constants.MID_GOAL_POS);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
@@ -165,6 +170,7 @@ public class CarouselFrieghtRed extends OpModeWrapper {
 
         } else {
             drive.driveAuto(0.3, -575, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();

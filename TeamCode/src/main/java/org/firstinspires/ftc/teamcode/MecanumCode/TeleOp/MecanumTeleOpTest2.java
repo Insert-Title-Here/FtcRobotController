@@ -35,7 +35,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -51,13 +50,14 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Freight Arm Test", group="Linear Opmode")
+@TeleOp(name="Freight Arm Test 2", group="Linear Opmode")
 @Disabled
-public class MekanumTeleOpTest extends LinearOpMode {
+public class MecanumTeleOpTest2 extends LinearOpMode {
 
     DcMotor magneticExtension;
     Servo magnet;
     Servo level;
+    Thread magneticArmThread;
 
     // Declare OpMode members;
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,10 +66,12 @@ public class MekanumTeleOpTest extends LinearOpMode {
     boolean dpadUpPressed;
     boolean dpadDownPressed;
     boolean aPressed;
+    boolean magneticIsExtended = false;
 
 
     @Override
     public void runOpMode() {
+
         magneticExtension = hardwareMap.get(DcMotor.class, "MagneticArm");
         magnet = hardwareMap.get(Servo.class, "Magnet");
         level = hardwareMap.get(Servo.class, "Level");
@@ -85,76 +87,76 @@ public class MekanumTeleOpTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+
+        magneticArmThread.start();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if(gamepad1.left_trigger > 0.1) {
+            if (gamepad1.left_trigger > 0.1) {
                 magneticExtension.setPower(gamepad1.left_trigger);
-            } else if(gamepad1.right_trigger > 0.1) {
+            } else if (gamepad1.right_trigger > 0.1) {
                 magneticExtension.setPower(-gamepad1.right_trigger);
             } else {
                 magneticExtension.setPower(0);
             }
 
-            if(gamepad1.a) {
-                aPressed = true;
-                if(grabbing) {
-                    magnet.setPosition(0.5);
-                    grabbing = false;
-                } else {
-                    magnet.setPosition(1);
-                    grabbing = true;
-                }
-                while(aPressed == gamepad1.a) {
+            //if(gamepad1.a) {
+            //magneticIsExtended = true;
+            //}
 
-                }
-            }
-
-            if(gamepad1.dpad_up) {
+            if (gamepad1.dpad_up) {
                 dpadUpPressed = true;
-                if(levelPosition + 0.1 < 1){
+                if (levelPosition + 0.1 < 1) {
                     levelPosition += 0.1;
                 } else {
                     levelPosition = 1;
                 }
                 level.setPosition(levelPosition);
-                while(dpadUpPressed == gamepad1.dpad_up) {
+                while (dpadUpPressed == gamepad1.dpad_up) {
 
                 }
             }
 
-            if(gamepad1.dpad_down) {
+            if (gamepad1.dpad_down) {
                 dpadDownPressed = true;
-                if(levelPosition - 0.1 > 0){
+                if (levelPosition - 0.1 > 0) {
                     levelPosition -= 0.1;
                 } else {
                     levelPosition = 0;
                 }
                 level.setPosition(levelPosition);
-                while(dpadDownPressed == gamepad1.dpad_down) {
+                while (dpadDownPressed == gamepad1.dpad_down) {
 
                 }
             }
 
-            if(gamepad1.b) {
-                magneticExtend(-300);
+            if (gamepad1.b) {
+                levelPosition = 0.5;
+                level.setPosition(levelPosition);
             }
-            if(gamepad1.x) {
-                magneticExtend(0);
+            if (gamepad1.y) {
+                level.setPosition(1);
+            }
+            if (gamepad1.x) {
+                magnet.setPosition(0.5);
+                sleep(1000);
+                magnet.setPosition(1);
+                magneticIsExtended = false;
             }
             // Show the elapsed game time and wheel power.
             telemetry.addData("Arm Tics: ", magneticExtension.getCurrentPosition());
-            telemetry.addData("Level Position: ",levelPosition);
+            telemetry.addData("Level Position: ", levelPosition);
             telemetry.update();
         }
     }
-    public void magneticExtend(int armPosition){
+
+    public void magneticExtend(int armPosition) {
         magneticExtension.setTargetPosition(armPosition);
 
         magneticExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         magneticExtension.setPower(0.5);
 
-        while(magneticExtension.isBusy()){
+        while (magneticExtension.isBusy()) {
 
         }
 

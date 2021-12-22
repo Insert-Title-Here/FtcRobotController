@@ -7,8 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.MecanumCode.Auto.Vision.BarcodePipelineBlue;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Constants;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
@@ -137,7 +139,7 @@ public class KlawTalonsAutoBlue extends OpModeWrapper {
         //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             drive.driveAuto(0.3, -510, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(1560);
+            capArm.goToPosition(Constants.TOP_GOAL_POS);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
@@ -149,7 +151,7 @@ public class KlawTalonsAutoBlue extends OpModeWrapper {
 
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.CENTER){
             drive.driveAuto(0.3, -555, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(730);
+            capArm.goToPosition(Constants.MID_GOAL_POS);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
@@ -160,7 +162,7 @@ public class KlawTalonsAutoBlue extends OpModeWrapper {
 
         }else{
             drive.driveAuto(0.3, -610, MecanumDriveTrain.MovementType.STRAIGHT);
-            //capArm.goToPosition(2325);
+            capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
 
             capArm.toggleGrab();
 
