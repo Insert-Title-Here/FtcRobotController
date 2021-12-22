@@ -18,7 +18,7 @@ public class CapstoneArm {
         capExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         grabber = hardwareMap.get(Servo.class, "CapstoneGrabber");
-        grabber.setPosition(0.8);
+        grabber.setPosition(0.85);
 
     }
 
@@ -43,7 +43,7 @@ public class CapstoneArm {
 
     public synchronized void toggleGrab() {
         if(isGrabbing) {
-            setGrabberPosition(0.8);
+            setGrabberPosition(0.85);
             isGrabbing = false;
         } else {
             setGrabberPosition(1);
