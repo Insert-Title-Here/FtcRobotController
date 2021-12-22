@@ -39,7 +39,7 @@ public class CarouselFreightRed extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
-    static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
+    //static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
 
     Thread armMovementThread;
     private volatile boolean moveArm;
