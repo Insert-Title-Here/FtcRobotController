@@ -25,7 +25,7 @@ public class Tesxt extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        tts.speak("Winch Drift", TextToSpeech.QUEUE_FLUSH, null);
+
         while(opModeIsActive());
     }
 

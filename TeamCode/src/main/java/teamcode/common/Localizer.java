@@ -1,6 +1,5 @@
 package teamcode.common;
 
-import com.acmerobotics.roadrunner.*;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -98,7 +97,7 @@ public class Localizer extends Thread {
         Pose2d cameraToRobot = new Pose2d(0,0,0); //-7.965 * INCHES_TO_METERS,  0 * INCHES_TO_METERS 0.8, -7.2
     private static T265Camera slamra;
     T265Camera.CameraUpdate currentSlamraPos;
-    private Pose2d slamraStartingPose;
+    private Pose2d slamraStartingPose = new Pose2d(0,0,0);
     private static double TAO = 0; //0.9 optimal
     private static final double MEASUREMENT_VARIANCE = 0.01; // 0.01 + 0.02? account more for odo variance
     private double previousEstimateUncertainty;
@@ -230,12 +229,15 @@ public class Localizer extends Thread {
     @Override
     public void run() {
         // make sure we reset our accounting of start times
+        Debug.log("start");
         state.resetUpdateTime();
         startingTime = System.currentTimeMillis();
+        Debug.log("reset");
         if(slamra != null) {
             slamra.start();
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
             slamra.setPose(slamraStartingPose);
+
         }
         // max speed 300 Hz)
         while (!stop.get()) {
@@ -475,7 +477,7 @@ public class Localizer extends Thread {
 
 
         //matrix declarations
-        final double robotRadius =7.7;
+        final double robotRadius = 7.7;
         Pose2d slamraEstimatePose = currentSlamraPos.pose;
         double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;
         double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);
@@ -608,7 +610,6 @@ public class Localizer extends Thread {
         secondaryLoggingString = "";
         state = new RobotPositionStateUpdater();
         if(slamra == null) {
-            Debug.log("here");
             slamra = T265Helper.getCamera(new T265Camera.OdometryInfo(new Pose2d(0,0, 0), 1.0),hardwareMap.appContext);//new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         }
@@ -620,16 +621,16 @@ public class Localizer extends Thread {
         odoWinch = hardwareMap.servo.get("OdoWinch");
         secondaryOdoWinch = hardwareMap.servo.get("SecondaryOdoWinch");
 
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-//        parameters.loggingEnabled      = true;
-//        parameters.loggingTag          = "IMU";
-//        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-//
-//        imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        imu.initialize(parameters);
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
 
         type = constructorType.MAT;
 
@@ -640,11 +641,11 @@ public class Localizer extends Thread {
         wheelPoses = new ArrayList<>();
         wheelPoses.add(new Pose(4.01885,-6.471937, Math.toRadians(180))); //LV // // -3.91885,-6.471937
         wheelPoses.add(new Pose(4.5222, 0.10685, Math.toRadians(90))); //H //-4.5222, 0.10685
-        wheelPoses.add(new Pose(4.18685,-6.336937, Math.toRadians(-180))); //RV
+        //wheelPoses.add(new Pose(4.18685,-6.336937, Math.toRadians(-180))); //RV
 
 
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             Pose position = wheelPoses.get(i);
             double x = cos(position.heading);
             double y = sin(position.heading);
@@ -658,7 +659,7 @@ public class Localizer extends Thread {
 //            Debug.log(positionVector.getY() * orientationVector.getX());
         }
 
-        //inverseMatrix.setEntry(2,2,1.0);
+        inverseMatrix.setEntry(2,2,1.0);
 
         freezeUpdate = false;
 
@@ -667,6 +668,7 @@ public class Localizer extends Thread {
         lastWheelPositions = new double[]{0,0,0};
         odoEstimate = start.clone();
         poseVelocity = new Pose(0,0,0);
+        slamraStartingPose = new Pose2d(0,0,0);
         previousHeading = 0;
         odoState = OdoState.LOWERED;
 
@@ -685,30 +687,29 @@ public class Localizer extends Thread {
      */
     public void manualZero(boolean explicit){
         freezeUpdate = true;
-        while(currentSlamraPos.confidence != T265Camera.PoseConfidence.High){
-            currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-            AbstractOpMode.currentOpMode().telemetry.addData("con", currentSlamraPos.confidence);
-            AbstractOpMode.currentOpMode().telemetry.update();
-            slamra.setPose(new Pose2d(0,0,0));
+        currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+        slamra.setPose(new Pose2d(0,0,0));
+        lastWheelPositions = new double[]{0,0,0};
+        previousHeading = 0;
+        odoEstimate = new Pose(0,0,0);
+        state.updateState(0,0,0,0,0,0);
+        slamra.stop();
+        if(explicit){
+            resumeUpdateCycles();
         }
+        //todo if we use gyro then I need to save that value and start offsetting angle by that
+    }
+
+    public void resumeUpdateCycles(){
+        slamra.start();
         leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lastWheelPositions = new double[]{0,0,0};
-        previousHeading = 0;
-        odoEstimate = new Pose(0,0,0);
-        state.updateState(0,0,0,0,0,0);
-        if(explicit){
-            freezeUpdate = false;
-        }
-        //todo if we use gyro then I need to save that value and start offsetting angle by that
-    }
-
-    public void resumeUpdateCycles(){
         freezeUpdate = false;
+
     }
 
     public double directionToHeading(double direction){
@@ -720,19 +721,21 @@ public class Localizer extends Thread {
 
 
     double previousHeading;
+    double slamErrorX, slamErrorY;
     //TODO implement 3 wheel system BOTH HERE AND IN THE CONSTRUCTOR
     private synchronized void matUpdate() {
-        if(!freezeUpdate) {
+       if(!freezeUpdate) {
             data1 = hub1.getBulkInputData();
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-
-
+            double heading = (imu.getAngularOrientation().firstAngle);
+            double dHeading = heading - previousHeading;
 
             double[] wheelPositions = new double[]{encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical)),
                     encoderTicksToInches(data1.getMotorCurrentPosition(horizontal)),
                     -encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical)),
             };
-            double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], wheelPositions[2] - lastWheelPositions[2]};
+            //double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], wheelPositions[2] - lastWheelPositions[2]};
+            double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], dHeading};
             Pose robotPoseDelta = calculatePoseDelta(wheelDeltas);
             odoEstimate = relativeOdometryUpdate(robotPoseDelta);
             double[] wheelVelocities = new double[]{wheelDeltas[0] / 0.02, wheelDeltas[1] / 0.02, wheelDeltas[2] / 0.02};
@@ -740,6 +743,7 @@ public class Localizer extends Thread {
             if (wheelVelocities != null) {
                 poseVelocity = calculatePoseDelta(wheelVelocities);
             }
+
 
             final double robotRadius = 7.7;
             Pose2d slamraEstimatePose = currentSlamraPos.pose;
@@ -750,15 +754,22 @@ public class Localizer extends Thread {
             double trueY = slamy - (cos(slamRotation) * robotRadius);
 
 
+
             if (odoState == OdoState.LOWERED) {
                 TAO = 0.9;
             } else {
                 TAO = 0;
             }
 
+            if(currentSlamraPos.confidence != T265Camera.PoseConfidence.High){
+                TAO = 1.0;
+                slamErrorX = trueX - odoEstimate.x ;
+                slamErrorY = trueY - odoEstimate.y;
+            }
+
             double[][] vislamMat = {
-                    {trueX},
-                    {trueY},
+                    {trueX - slamErrorX}, //
+                    {trueY - slamErrorY}, //
                     {slamRotation},
                     {currentSlamraPos.velocity.getX()},
                     {currentSlamraPos.velocity.getY()},
@@ -789,7 +800,6 @@ public class Localizer extends Thread {
 
             slamraEstimate.multiply(1.0 - TAO);
             Matrix complementaryStateEstimtate = odoMatrix.add(slamraEstimate); //measured state, Z
-
             state.updateState(complementaryStateEstimtate.getValue(0, 0),
                     complementaryStateEstimtate.getValue(1, 0),
                     complementaryStateEstimtate.getValue(2, 0),
@@ -797,9 +807,11 @@ public class Localizer extends Thread {
                     complementaryStateEstimtate.getValue(4, 0),
                     complementaryStateEstimtate.getValue(5, 0));
 
+            previousHeading = heading;
 
             lastWheelPositions = new double[]{wheelPositions[0], wheelPositions[1], wheelPositions[2]};
-
+            AbstractOpMode.currentOpMode().telemetry.addData("confidence", currentSlamraPos.confidence);
+           AbstractOpMode.currentOpMode().telemetry.update();
 
 //            loggingString += odoEstimate.x + "," + odoEstimate.y + "\n";
 //            secondaryLoggingString += iterator + "," + odoEstimate.x + "\n";

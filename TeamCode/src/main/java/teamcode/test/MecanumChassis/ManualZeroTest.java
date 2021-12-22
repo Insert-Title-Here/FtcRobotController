@@ -28,7 +28,12 @@ public class ManualZeroTest extends AbstractOpMode {
         localizer.start();
         drive.moveToPosition(new Vector2D(-12,5), 12, 0.5, false);
         Utils.sleep(1000);
-        localizer.manualZero();
+        localizer.manualZero(false);
+        telemetry.addData("", localizer.getCurrentState().toString());
+        telemetry.addData("", localizer.getOdoEstimate().toString());
+        telemetry.update();
+        Utils.sleep(1000);
+        localizer.resumeUpdateCycles();
         telemetry.clear();
         while(opModeIsActive()){
             telemetry.addData("", localizer.getCurrentState().toString());

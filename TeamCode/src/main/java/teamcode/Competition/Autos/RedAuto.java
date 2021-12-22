@@ -66,29 +66,29 @@ public class RedAuto extends AbstractOpMode {
         };
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
-
-        // W/ or W/ out live preview
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
-        BarcodePipeline3 pipeline = new BarcodePipeline3();
-        pipeline.setSide(BarcodePipeline3.Side.RED);
-        webcam.setPipeline(pipeline);
-
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addData("Camera Init Error", errorCode);
-                telemetry.update();
-            }
-        });
+//        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
+//
+//        // W/ or W/ out live preview
+//        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+//        BarcodePipeline3 pipeline = new BarcodePipeline3();
+//        pipeline.setSide(BarcodePipeline3.Side.RED);
+//        webcam.setPipeline(pipeline);
+//
+//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+//            @Override
+//            public void onOpened() {
+//                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
+//            }
+//
+//            @Override
+//            public void onError(int errorCode) {
+//                telemetry.addData("Camera Init Error", errorCode);
+//                telemetry.update();
+//            }
+//        });
         localizer.lowerOdo();
         while(!opModeIsActive()){
-            position = pipeline.getPos();
+            position = BarcodePipeline3.BarcodePosition.LEFT;
             //telemetry.addData("", position);
             //telemetry.update();
         }
@@ -96,7 +96,7 @@ public class RedAuto extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        webcam.stopStreaming();
+        //webcam.stopStreaming();
         telemetry.clear();
         localizer.start();
         armIntakeThread.start();

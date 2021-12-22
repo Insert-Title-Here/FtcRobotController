@@ -9,22 +9,19 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Vector2D;
 
 
-@Disabled
+
 @Autonomous(name="Mat")
 public class MatLocalizertest extends AbstractOpMode {
     Localizer localizer;
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(hardwareMap,new Vector2D(0,0),0,10);
+        localizer = new Localizer(new Pose(0,0,0),hardwareMap);
     }
 
     @Override
     protected void onStart() {
         localizer.start();
-        telemetry.addData("pose: ", localizer.getCurrentState().toString());
-        telemetry.addData("iteration", localizer.getIterator());
-        telemetry.update();
         while(opModeIsActive());
     }
 
