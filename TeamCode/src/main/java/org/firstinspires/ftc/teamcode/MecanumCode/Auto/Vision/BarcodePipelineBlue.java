@@ -52,12 +52,13 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
     int avg1, avg2;
 
     // create pos var, with vol tag due to the var changing at runtime
-    volatile BarcodePipelineBlue.BarcodePosition position = BarcodePipelineBlue.BarcodePosition.CENTER;
+    volatile BarcodePosition position = BarcodePosition.CENTER;
 
     void inputToB(Mat input) {
         Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
         Core.extractChannel(RGB, B, 0);
     }
+
 
     @Override
     public void init(Mat frame) {
@@ -99,7 +100,7 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
         currentMinValue = min;
 
         if (min >= calibratedRange) {
-            position = BarcodePipelineBlue.BarcodePosition.LEFT;
+            position = BarcodePosition.LEFT;
         } else if (min == avg1) {
             Imgproc.rectangle(
                     input,
@@ -108,7 +109,7 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                     GREEN,
                     2
             );
-            position = BarcodePipelineBlue.BarcodePosition.CENTER;
+            position = BarcodePosition.CENTER;
         } else if (min == avg2) {
             Imgproc.rectangle(
                     input,
@@ -117,13 +118,13 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
                     GREEN,
                     2
             );
-            position = BarcodePipelineBlue.BarcodePosition.RIGHT;
+            position = BarcodePosition.RIGHT;
         }
 
         return input;
     }
 
-    public BarcodePipelineBlue.BarcodePosition getPos() {
+    public BarcodePosition getPos() {
         return position;
     }
 
