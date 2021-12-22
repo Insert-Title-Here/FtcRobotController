@@ -22,8 +22,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Freight Red Confirmation")
-public class CarouselFrieghtRed extends OpModeWrapper {
+@Autonomous(name="CarouselFreight Red Confirmation")
+public class CarouselFreightRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
@@ -138,9 +138,11 @@ public class CarouselFrieghtRed extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
-        drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1150, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1350, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, -1200, MecanumDriveTrain.MovementType.STRAIGHT);
 
+        sleep(5000);
 
         if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
