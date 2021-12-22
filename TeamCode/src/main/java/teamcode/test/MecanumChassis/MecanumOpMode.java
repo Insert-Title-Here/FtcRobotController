@@ -85,8 +85,7 @@ public class MecanumOpMode extends AbstractOpMode {
                 arm.raise(Constants.TOP_POSITION);
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
-            }
-        }else if(gamepad1.dpad_right ){
+            }        }else if(gamepad1.dpad_right ){
             if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 arm.raise(Constants.MEDIUM_POSITION);
                 pulleyState = PulleyState.MID_GOAL;
