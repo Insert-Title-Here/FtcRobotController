@@ -122,6 +122,8 @@ public class CarouselFreightRed extends OpModeWrapper {
             telemetry.update();
         }
 
+        capArm.setGrabberPosition(0.8);
+
 
     }
 
@@ -140,7 +142,18 @@ public class CarouselFreightRed extends OpModeWrapper {
         // Strafe: 590 tics/ft - = Left, + = Right
         drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1350, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, -1200, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1450, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -250, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.2, -50, MecanumDriveTrain.MovementType.STRAIGHT);
+        //drive.setPower(-0.1, -0.1, -0.1, -0.1);
+        carousel.spinCarousel(5000, this, Carousel.CarouselMode.AUTO);
+        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1400, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, 600, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1400, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -850, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        capArm.setGrabberPosition(0.85);
 
         sleep(5000);
 
@@ -157,7 +170,7 @@ public class CarouselFreightRed extends OpModeWrapper {
             capArm.toggleGrab();
 
         } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
-            drive.driveAuto(0.3, -540, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
@@ -180,47 +193,9 @@ public class CarouselFreightRed extends OpModeWrapper {
 
         moveArm = true;
 
+        drive.driveAuto(0.3, 1350, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAFE);
 
-            //}
-
-            //capArm.goToPosition(300);
-            sleep(1000);
-            drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-            drive.driveAuto(0.3, 2600, MecanumDriveTrain.MovementType.STRAFE);
-            //drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
-            //drive.driveAuto(0.2, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-            //drive.driveAuto(0.1, -110, MecanumDriveTrain.MovementType.STRAIGHT);
-
-            //drive.setPower(-0.07, -0.07, -0.07, -0.07);
-            //carousel.spinCarousel(7000, this, Carousel.CarouselMode.AUTO);
-            //drive.setPower(0, 0, 0, 0);
-            drive.driveAuto(0.3, -960, MecanumDriveTrain.MovementType.STRAIGHT);
-
-
-            //double angle = imu.getAngularOrientation().firstAngle;
-            drive.writeLoggerToFile();
-/*
-        while(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).firstAngle < Math.PI){
-            drive.setPowerAuto(0.3, MecanumDriveTrain.MovementType.ROTATE);
-
-            telemetry.addData("Radians: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS).firstAngle);
-            telemetry.update();
-
-        }
-
- */
-
-
-            //moveTest(3000);
-        /*
-        drive.setPower(0.5, 0, 0, -0.5);
-        sleep(1000);
-        drive.setPower(-0.5, 0, 0, 0.5);
-        sleep(1000);
-        drive.setPower(0,0,0,0);
-
-
-         */
         }
 
 
@@ -229,35 +204,4 @@ public class CarouselFreightRed extends OpModeWrapper {
 
     }
 
-
-    /*private void moveTest(int motorTics){
-
-
-        for(DcMotor motor: drive.getMotors()){
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setTargetPosition(motorTics);
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-
-
-        drive.setPowerAuto(0.5, MecanumDriveTrain.MovementType.STRAIGHT);
-
-        while(drive.fr.getCurrentPosition() < motorTics){
-            telemetry.addData("FL Tics", drive.fl.getCurrentPosition());
-            telemetry.addData("FR Tics", drive.fr.getCurrentPosition());
-            telemetry.addData("BL Tics", drive.bl.getCurrentPosition());
-            telemetry.addData("BR Tics", drive.br.getCurrentPosition());
-            telemetry.update();
-
-        }
-
-
-        drive.setPowerAuto(0, MecanumDriveTrain.MovementType.STRAIGHT);
-
-
-
-
-    }
-     */
 }
