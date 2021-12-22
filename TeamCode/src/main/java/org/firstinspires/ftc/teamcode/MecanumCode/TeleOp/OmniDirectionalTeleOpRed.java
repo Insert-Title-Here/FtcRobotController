@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Constants;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
@@ -85,7 +86,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         driveThread.start();
         armThread.start();
         capArmThread.start();
-        arm.setArmPosition(-100);
+        arm.setArmPosition(Constants.MAGARM_RETRACTED);
         while(opModeIsActive());
     }
 
@@ -103,7 +104,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         if(gamepad1.a) {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
-            arm.setArmPosition(-275);
+            arm.setArmPosition(Constants.MAGARM_EXTENDED);
             while(gamepad1.a) {
 
             }
@@ -111,13 +112,13 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
 
         if(gamepad1.b) {
             // Lower level to cube height
-            arm.setLevelPosition(0);
+            arm.setLevelPosition(Constants.LEVEL_DOWN_POS);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
         if(gamepad1.y) {
             // Raise level
-            arm.setLevelPosition(1);
+            arm.setLevelPosition(Constants.LEVEL_UP_POS);
         }
 
         if(gamepad1.x) {
@@ -201,7 +202,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             capArm.goToPosition(0);
         }
         if (gamepad2.b) {
-            capArm.goToPosition(2650);
+            capArm.goToPosition(Constants.CAPPING_POS);
         }
         if(gamepad2.x) {
             capArm.toggleGrab();

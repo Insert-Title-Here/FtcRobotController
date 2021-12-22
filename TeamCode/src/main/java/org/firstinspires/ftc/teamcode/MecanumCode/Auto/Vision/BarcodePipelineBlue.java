@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
+package org.firstinspires.ftc.teamcode.MecanumCode.Auto.Vision;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -8,7 +8,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class BarcodePipelineRed extends OpenCvPipeline{
+public class BarcodePipelineBlue extends OpenCvPipeline{
     // define position enums
     public enum BarcodePosition
     {
@@ -52,7 +52,7 @@ public class BarcodePipelineRed extends OpenCvPipeline{
     int avg1, avg2;
 
     // create pos var, with vol tag due to the var changing at runtime
-    volatile BarcodePosition position = BarcodePosition.CENTER;
+    volatile BarcodePipelineBlue.BarcodePosition position = BarcodePipelineBlue.BarcodePosition.CENTER;
 
     void inputToB(Mat input) {
         Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
@@ -99,7 +99,7 @@ public class BarcodePipelineRed extends OpenCvPipeline{
         currentMinValue = min;
 
         if (min >= calibratedRange) {
-            position = BarcodePosition.LEFT;
+            position = BarcodePipelineBlue.BarcodePosition.LEFT;
         } else if (min == avg1) {
             Imgproc.rectangle(
                     input,
@@ -108,7 +108,7 @@ public class BarcodePipelineRed extends OpenCvPipeline{
                     GREEN,
                     2
             );
-            position = BarcodePosition.CENTER;
+            position = BarcodePipelineBlue.BarcodePosition.CENTER;
         } else if (min == avg2) {
             Imgproc.rectangle(
                     input,
@@ -117,13 +117,13 @@ public class BarcodePipelineRed extends OpenCvPipeline{
                     GREEN,
                     2
             );
-            position = BarcodePosition.RIGHT;
+            position = BarcodePipelineBlue.BarcodePosition.RIGHT;
         }
 
         return input;
     }
 
-    public BarcodePosition getPos() {
+    public BarcodePipelineBlue.BarcodePosition getPos() {
         return position;
     }
 
