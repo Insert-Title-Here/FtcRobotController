@@ -73,6 +73,10 @@ public class ArmSystem {
 
     }
 
+
+
+
+
     public void runConveyor(double power){
         conveyorMotor.setPower(power);
     }
@@ -260,6 +264,16 @@ public class ArmSystem {
 
     }
 
+    public void moveSlideNew(double power, int position){
+        winchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        winchMotor.setTargetPosition(position);
+        winchMotor.setPower(power);
+        while(Math.abs(winchMotor.getCurrentPosition() - winchMotor.getTargetPosition()) < 100){
+
+        }
+        winchMotor.setPower(0);
+    }
+
     //fix the winch shooting off into space
 
     public void resetWinchEncoder(){
@@ -267,7 +281,6 @@ public class ArmSystem {
         winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    //needs to be rewritten if the conveyor is implemented
 
 
     public int getLinearSlidePosition(){
