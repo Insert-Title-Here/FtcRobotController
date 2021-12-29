@@ -45,7 +45,7 @@ public class ArmSystem {
     public ArmSystem(HardwareMap hardwareMap, boolean isTeleOp){
         intake = hardwareMap.dcMotor.get("Intake");
         winchMotor = hardwareMap.dcMotor.get("Winch");
-        winchEncoder = hardwareMap.dcMotor.get("Winch"); //TANK FrontLeftDrive MECANUM Winch
+        winchEncoder = hardwareMap.dcMotor.get("WinchEncoder"); //TANK FrontLeftDrive MECANUM Winch
         //conveyorMotor = hardwareMap.dcMotor.get("Conveyor");
 
         house = hardwareMap.servo.get("House");
