@@ -35,32 +35,29 @@ public class ArmSystem {
     private static final double SLIDE_POWER = 1.0;
     private static final long TIMEOUT_MILLIS = 5000;
 
-    private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, conveyorMotor;
+    private DcMotor intake, winchMotor, winchEncoder, conveyorMotor;
     private Servo house, linkage;
-    private CRServo carousel, intakeServo;
     private NormalizedColorSensor sensor;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
 
 
     public ArmSystem(HardwareMap hardwareMap, boolean isTeleOp){
-        leftIntake = hardwareMap.dcMotor.get("LeftIntake");
-        rightIntake = hardwareMap.dcMotor.get("RightIntake");
+        intake = hardwareMap.dcMotor.get("Intake");
         winchMotor = hardwareMap.dcMotor.get("Winch");
-        winchEncoder = hardwareMap.dcMotor.get("FrontLeftDrive"); //TANK FrontLeftDrive MECANUM Winch
-        conveyorMotor = hardwareMap.dcMotor.get("Conveyor");
+        winchEncoder = hardwareMap.dcMotor.get("Winch"); //TANK FrontLeftDrive MECANUM Winch
+        //conveyorMotor = hardwareMap.dcMotor.get("Conveyor");
 
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
-        carousel = hardwareMap.get(CRServo.class, "Carousel");
-        intakeServo = hardwareMap.get(CRServo.class, "IntakeServo");
+        //carousel = hardwareMap.get(CRServo.class, "Carousel");
 
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
         sensor.setGain(280); //325 is tested value but i think I trust this one more
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        carousel.setDirection(DcMotorSimple.Direction.REVERSE);
+        //carousel.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if(isTeleOp){
             house.setPosition(INTAKE_POSITION);
@@ -72,9 +69,8 @@ public class ArmSystem {
     }
 
     public void intakeDumb(double power){
-        leftIntake.setPower(power);
-        rightIntake.setPower(-power);
-        intakeServo.setPower(power);
+        intake.setPower(power);
+
     }
 
     public void runConveyor(double power){

@@ -61,8 +61,8 @@ public class MecanumDriveTrain {
         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
         bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
         br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
-        distanceLeft = hardwareMap.get(DistanceSensor.class, "DistanceLeft");
-        distanceRight = hardwareMap.get(DistanceSensor.class, "DistanceRight");
+        //distanceLeft = hardwareMap.get(DistanceSensor.class, "DistanceLeft");
+        //distanceRight = hardwareMap.get(DistanceSensor.class, "DistanceRight");
         this.localizer = localizer;
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
@@ -425,6 +425,22 @@ public class MecanumDriveTrain {
 //            AbstractOpMode.currentOpMode().telemetry.update();
         }
         brake();
+    }
+
+    public synchronized void rotateDistance(double power, double radians){
+        RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
+
+        environmentalTerminate = false;
+
+        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !environmentalTerminate){
+            state = localizer.getCurrentState();
+            AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
+            AbstractOpMode.currentOpMode().telemetry.update();
+            setPower(power, -power, power, -power);
+        }
+        brake();
+
+
     }
 
     private void brake() {
