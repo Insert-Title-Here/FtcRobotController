@@ -104,6 +104,11 @@ public class MecanumOpMode extends AbstractOpMode {
             arm.resetWinchEncoder();
         }else{
             arm.intakeDumb(0);
+            if(pulleyState != PulleyState.RETRACTED){
+                arm.setWinchPower(arm.FEEDFORWARD_V);
+            }else{
+                arm.setWinchPower(0);
+            }
             arm.setWinchPower(0);
         }
 

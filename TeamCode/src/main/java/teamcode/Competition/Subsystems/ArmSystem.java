@@ -269,7 +269,7 @@ public class ArmSystem {
 
     }
 
-    private final double FEEDFORWARD_V = 3.0156;
+    public final double FEEDFORWARD_V = 3.0156;
     public void moveSlideNew(double power, int position){
         winchEncoder.setTargetPosition(position);
         winchEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
