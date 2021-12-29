@@ -57,6 +57,7 @@ public class ArmSystem {
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        winchEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
         //carousel.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if(isTeleOp){
