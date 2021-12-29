@@ -7,6 +7,7 @@ import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.TeleOp.OfficialTeleOpScriptBlue;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
+import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Vector2D;
 
@@ -15,6 +16,7 @@ public class MecanumOpMode extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem arm;
     Thread armThread;
+    Localizer localizer;
 
     private ScoredButtonState state;
     private PulleyState pulleyState;
@@ -30,6 +32,9 @@ public class MecanumOpMode extends AbstractOpMode {
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
         linkageState = linkageState.RAISED;
+
+        localizer = new Localizer(hardwareMap, new Vector2D(0, 0), 0, 10);
+        localizer.liftOdo();
 
         armThread = new Thread(){
             public void run(){

@@ -3,10 +3,14 @@
 
 package teamcode.test.MasonTesting;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
+import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -22,8 +26,11 @@ public class CvRTT extends AbstractOpMode {
     WebcamName wc;
     OpenCvCamera camera;
 
+    Thread focalThread;
+
     // global obj
     static final CvDetectionPipeline dp = new CvDetectionPipeline();
+    static final ColorCalibration colCalibrator = new ColorCalibration();
 
     @Override
     protected void onInitialize() {
@@ -55,25 +62,64 @@ public class CvRTT extends AbstractOpMode {
                 telemetry.addData("Camera Init Error", errorCode);
             }
         });
+
+        focalThread = new Thread() {
+            public void run() {
+                while (opModeIsActive()) {
+                    focalController();
+                }
+            }
+        };
+        previousDpadUpState = false;
+        previousDpadDownState = false;
     }
 
     @Override
     protected void onStart() {
-
         // Keep the op mode running, to keep the system from coming to a halt
-
+        focalThread.start();
+//            try {
+//                Thread.sleep(50);
+//                if (dp.xPointList() != null) {
+//                    for (int i = 0; i < dp.xPointList().size(); i++) {
+//                        telemetry.addData("X: " + i + " ", dp.xPointList().get(i));
+//                    }
+//
+//                }
+//                telemetry.addData("Focal Length: ", dp.focalLength);
+//                telemetry.update();
+////                telemetry.addData("R", colCalibrator.hValue());
+////                telemetry.addData("G", colCalibrator.sValue());
+////                telemetry.addData("B", colCalibrator.vValue());
+////                telemetry.update();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         while (opModeIsActive()) {
-            ArrayList<Double> xList = dp.xPointList();
-            ArrayList<Double> yList = dp.yPointList();
-            for (int i = 0; i < xList.size(); i++) {
-                telemetry.addData("", xList.get(i) + ", " + yList.get(i));
+            if (dp.xPointList() != null || dp.xPointList().size() != 0) {
+                    telemetry.addData("Forward-", dp.xPointList() .toString());
             }
+            telemetry.addData("FocalLength: ", dp.focalLength);
             telemetry.update();
         }
+
     }
 
     @Override
     protected void onStop() {
         camera.stopStreaming();
+        focalThread.interrupt();
+    }
+
+    boolean previousDpadUpState, previousDpadDownState;
+    public void focalController() {
+        if (gamepad1.dpad_up && !previousDpadUpState) {
+            dp.focalLength += 0.5;
+        } else if (gamepad1.dpad_down && !previousDpadDownState) {
+            dp.focalLength -= 0.5;
+        }
+        previousDpadDownState = gamepad1.dpad_down;
+        previousDpadUpState = gamepad1.dpad_up;
+
     }
 }

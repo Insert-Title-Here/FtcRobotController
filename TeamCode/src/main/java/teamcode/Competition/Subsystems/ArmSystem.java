@@ -18,12 +18,12 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.0;
-    private static final double HOUSING_POSITION = 0.37; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
-    private static final double SCORING_POSITION = 0.66;
+    private static final double HOUSING_POSITION = 0.2; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
+    private static final double SCORING_POSITION = 0.37;
 
     private static final double LINKAGE_DOWN = 0.0; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.7;
-    private static final double LINKAGE_SCORE = 1.0;
+    private static final double LINKAGE_SCORE = 0.7;
 
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -189,7 +189,7 @@ public class ArmSystem {
         if(linkage.getPosition() != LINKAGE_HOUSED){
             preScore();
         }
-        moveSlide(SLIDE_POWER, position);
+        moveSlideNew(SLIDE_POWER, (int) position);
         linkage.setPosition(LINKAGE_SCORE);
         stage = stage.EXTENDED;
     }
@@ -253,6 +253,7 @@ public class ArmSystem {
             while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {
                 winchMotor.setPower(power);
             }
+
         }else{
             Debug.log("retracting");
             while (winchEncoder.getCurrentPosition() - position < -100) {
@@ -265,10 +266,11 @@ public class ArmSystem {
     }
 
     public void moveSlideNew(double power, int position){
-        winchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         winchMotor.setTargetPosition(position);
-        winchMotor.setPower(power);
-        while(Math.abs(winchMotor.getCurrentPosition() - winchMotor.getTargetPosition()) < 100){
+        winchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        winchMotor.setPower(-power);
+        while(Math.abs(winchMotor.getCurrentPosition() - winchMotor.getTargetPosition()) > 100){
 
         }
         winchMotor.setPower(0);

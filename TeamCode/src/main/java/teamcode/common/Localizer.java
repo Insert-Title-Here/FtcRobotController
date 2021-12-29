@@ -284,8 +284,8 @@ public class Localizer extends Thread {
     }
 
     public void liftOdo(){
-        odoWinch.setPosition(1.0);
-        secondaryOdoWinch.setPosition(0.25);
+        odoWinch.setPosition(0);
+        secondaryOdoWinch.setPosition(0.24);
         odoState = OdoState.RAISED;
     }
 
