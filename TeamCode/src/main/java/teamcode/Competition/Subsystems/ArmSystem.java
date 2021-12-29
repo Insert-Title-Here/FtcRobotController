@@ -266,11 +266,11 @@ public class ArmSystem {
     }
 
     public void moveSlideNew(double power, int position){
-        winchMotor.setTargetPosition(position);
-        winchMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        winchEncoder.setTargetPosition(position);
+        winchEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         winchMotor.setPower(-power);
-        while(Math.abs(winchMotor.getCurrentPosition() - winchMotor.getTargetPosition()) > 100){
+        while(Math.abs(winchEncoder.getCurrentPosition() - winchEncoder.getTargetPosition()) > 100){
 
         }
         winchMotor.setPower(0);
