@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.openftc.revextensions2.ExpansionHubMotor;
+
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Debug;
 import teamcode.common.RobotPositionStateUpdater;
@@ -35,7 +38,7 @@ public class ArmSystem {
     private static final double SLIDE_POWER = 1.0;
     private static final long TIMEOUT_MILLIS = 5000;
 
-    private DcMotor intake, winchMotor, winchEncoder, conveyorMotor;
+    private ExpansionHubMotor intake, winchMotor, winchEncoder, conveyorMotor;
     private Servo house, linkage;
     private NormalizedColorSensor sensor;
     RobotPositionStateUpdater.RobotPositionState currentState;
@@ -43,9 +46,9 @@ public class ArmSystem {
 
 
     public ArmSystem(HardwareMap hardwareMap, boolean isTeleOp){
-        intake = hardwareMap.dcMotor.get("Intake");
-        winchMotor = hardwareMap.dcMotor.get("Winch");
-        winchEncoder = hardwareMap.dcMotor.get("WinchEncoder"); //TANK FrontLeftDrive MECANUM Winch
+        intake = (ExpansionHubMotor) hardwareMap.dcMotor.get("Intake");
+        winchMotor = (ExpansionHubMotor) hardwareMap.dcMotor.get("Winch");
+        winchEncoder = (ExpansionHubMotor) hardwareMap.dcMotor.get("WinchEncoder"); //TANK FrontLeftDrive MECANUM Winch
         //conveyorMotor = hardwareMap.dcMotor.get("Conveyor");
 
         house = hardwareMap.servo.get("House");
@@ -266,6 +269,7 @@ public class ArmSystem {
 
     }
 
+    private final double FEEDFORWARD_V = 3.0156;
     public void moveSlideNew(double power, int position){
         winchEncoder.setTargetPosition(position);
         winchEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -274,7 +278,7 @@ public class ArmSystem {
         while(Math.abs(winchEncoder.getCurrentPosition() - winchEncoder.getTargetPosition()) > 100){
 
         }
-        winchMotor.setPower(0);
+        winchMotor.setVelocity(FEEDFORWARD_V, AngleUnit.RADIANS);
     }
 
     //fix the winch shooting off into space
