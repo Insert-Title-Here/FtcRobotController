@@ -195,7 +195,7 @@ public class ArmSystem {
         if(linkage.getPosition() != LINKAGE_HOUSED){
             preScore();
         }
-        moveSlideNew(SLIDE_POWER, (int) position);
+        moveSlide(SLIDE_POWER, (int) position);
         linkage.setPosition(LINKAGE_SCORE);
         stage = stage.EXTENDED;
     }
@@ -257,8 +257,11 @@ public class ArmSystem {
         if(winchEncoder.getCurrentPosition() - position > 0){
             Debug.log("extending");
             while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {
+                AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
+                AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", winchEncoder.getTargetPosition());
                 winchMotor.setPower(power);
             }
+            Debug.log("done");
 
         }else{
             Debug.log("retracting");
@@ -267,7 +270,7 @@ public class ArmSystem {
             }
         }
 
-        winchMotor.setPower(0);
+        winchMotor.setVelocity(FEEDFORWARD_V, AngleUnit.RADIANS);
 
     }
 
