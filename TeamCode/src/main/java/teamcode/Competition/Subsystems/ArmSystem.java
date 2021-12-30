@@ -1,5 +1,7 @@
 package teamcode.Competition.Subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -271,13 +273,18 @@ public class ArmSystem {
 
     public final double FEEDFORWARD_V = 3.0156;
     public void moveSlideNew(double power, int position){
+        winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         winchEncoder.setTargetPosition(position);
         winchEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        winchMotor.setPower(-power);
+        winchMotor.setPower(power);
         while(Math.abs(winchEncoder.getCurrentPosition() - winchEncoder.getTargetPosition()) > 100){
-
+            AbstractOpMode.currentOpMode().telemetry.addData("current pos ", winchEncoder.getCurrentPosition());
+            AbstractOpMode.currentOpMode().telemetry.addData("target pos ", winchEncoder.getTargetPosition());
+            AbstractOpMode.currentOpMode().telemetry.update();
         }
+        Debug.log("LOOP TERMINATED.");
         winchMotor.setVelocity(FEEDFORWARD_V, AngleUnit.RADIANS);
     }
 
