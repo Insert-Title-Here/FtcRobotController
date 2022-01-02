@@ -3,6 +3,7 @@ package teamcode.Competition.Autos.MecanumAutos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -30,11 +31,15 @@ public class MecanumFreightAuto extends AbstractOpMode {
     OpenCvWebcam webcam;
     BarcodePipeline3.BarcodePosition position;
 
-    Thread secondaryFunctionsThread;
+    Thread secondaryFunctionsThread, timerThread;
 
     private final int FREIGHT = 1;
     private final double VELOCITY = 15;
     private final double OMEGA = 0.4;
+
+    double deltaTime, initialTime;
+    volatile currentCycleState state;
+    volatile boolean executeArmCommands;
 
 
     @Override
@@ -49,6 +54,15 @@ public class MecanumFreightAuto extends AbstractOpMode {
                 secondaryFunctionsSequence();
             }
         };
+
+        deltaTime = 0;
+
+        timerThread = new Thread(){
+            public void run(){
+                beginTiming();
+            }
+        };
+        state = currentCycleState.PRELOAD;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
@@ -79,6 +93,8 @@ public class MecanumFreightAuto extends AbstractOpMode {
         }
     }
 
+
+
     volatile boolean resetSensors, intake, extend, retract;
     //contingency plan for 0 freight, we set this to fencepost or comment out the intake section of it
     private void secondaryFunctionsSequence(){
@@ -95,26 +111,36 @@ public class MecanumFreightAuto extends AbstractOpMode {
         retract = false;
         for(int i = 0; i < FREIGHT; i++){
             while(!resetSensors && opModeIsActive()){}
-            localizer.manualZero(false);
-            resetSensors = false;
+            if(executeArmCommands) {
+                localizer.manualZero(false);
+                resetSensors = false;
+            }
 
             while(!intake && opModeIsActive());
-            boolean isStop = arm.intakeAuto(1);
-            drive.setEnvironmentalTerminate(true);
-            if(isStop){
-                drive.seteStop(true);
+            if(executeArmCommands) {
+                boolean isStop = arm.intakeAuto(1);
+                drive.setEnvironmentalTerminate(true);
+                if (isStop) {
+                    drive.seteStop(true);
+                }
+                intake = false;
             }
-            intake = false;
 
             while(!extend && opModeIsActive());
-            arm.raise(Constants.TOP_POSITION);
-            extend = false;
+            if(executeArmCommands) {
+                arm.raise(Constants.TOP_POSITION);
+                extend = false;
+            }
 
             while(!retract && opModeIsActive());
-            Utils.sleep(250);
-            arm.retract();
-            retract = false;
-
+            if(executeArmCommands) {
+                Utils.sleep(250);
+                arm.retract();
+                retract = false;
+            }
+            if(!executeArmCommands){
+                break;
+            }
         }
     }
 
@@ -126,23 +152,56 @@ public class MecanumFreightAuto extends AbstractOpMode {
         drive.rotateDistance(Math.toRadians(180), OMEGA);
         arm.score();
         retract = true;
-        drive.rotateDistance(Math.toRadians(90), -OMEGA);
+        drive.rotateDistance(Math.toRadians(-90), -OMEGA);
         //starting path
         for(int i = 0; i < FREIGHT; i++) {
             resetSensors = true;
+            state = currentCycleState.STRAFING_IN;
             drive.strafeDistanceSensor(VELOCITY);
             localizer.resumeUpdateCycles();
             intake = true;
+            state = currentCycleState.INTAKING;
             drive.moveToPosition(new Vector2D(24,0), VELOCITY); //replace this with seekCubes() if it works
+            state = currentCycleState.LEAVING;
             drive.moveToPosition(new Vector2D(0, 0), -VELOCITY);
             extend = true;
+            state = currentCycleState.SCORING;
             drive.moveToPosition(new Vector2D( 0, 24.5), VELOCITY); //replace this with a distance sensor command?
-            drive.moveToRotation(Math.toRadians(45), OMEGA);
+            drive.rotateDistance(Math.toRadians(45), OMEGA);
             arm.score();
-            drive.moveToRotation(Math.toRadians(0), -OMEGA);
+            drive.rotateDistance(Math.toRadians(0), -OMEGA);
             retract = true;
         }
 
+        if(state != currentCycleState.INTAKING && state != currentCycleState.LEAVING){
+
+            drive.seteStop(false);
+        }
+        if(state == currentCycleState.STRAFING_IN || state == currentCycleState.SCORING){
+            drive.rotateDistance(Math.toRadians(0), OMEGA);
+            localizer.manualZero(false);
+            drive.strafeDistanceSensor(VELOCITY);
+            localizer.resumeUpdateCycles();
+            drive.moveToPosition(new Vector2D(24,0), VELOCITY);
+        }
+
+    }
+
+
+    private enum currentCycleState{
+        PRELOAD, STRAFING_IN, INTAKING, LEAVING, SCORING
+    }
+    private void beginTiming() {
+        initialTime = time;
+        while(opModeIsActive()){
+            if(time - initialTime > 25){
+                executeArmCommands = false;
+                drive.seteStop(true);
+            }
+            if(time - initialTime > 10 && state == currentCycleState.PRELOAD){
+                drive.seteStop(true);            //we prob want the robot to stop on the preload case too because that means something catastrphic happened
+            }
+        }
     }
 
     @Override

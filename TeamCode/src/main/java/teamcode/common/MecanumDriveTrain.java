@@ -449,7 +449,7 @@ public class MecanumDriveTrain {
 
         environmentalTerminate = false;
 
-        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !environmentalTerminate){
+        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !environmentalTerminate && !eStop){
             state = localizer.getCurrentState();
             AbstractOpMode.currentOpMode().telemetry.addData("", state.toString());
             AbstractOpMode.currentOpMode().telemetry.update();
