@@ -60,9 +60,9 @@ public class Localizer extends Thread {
 
     //debugging constants, not used very much
 
-    File loggingFile = AppUtil.getInstance().getSettingsFile("lv.txt");
-    File secondaryLoggingFile = AppUtil.getInstance().getSettingsFile("rv.txt");
-    File tertiaryloggingFile = AppUtil.getInstance().getSettingsFile("YSLAM.txt");
+    File loggingFile = AppUtil.getInstance().getSettingsFile("x.txt");
+    File secondaryLoggingFile = AppUtil.getInstance().getSettingsFile("y.txt");
+    File tertiaryloggingFile = AppUtil.getInstance().getSettingsFile("pos.txt");
     File fourthLoggingFile = AppUtil.getInstance().getSettingsFile("Rotation.txt");
     File fifthLoggingFile = AppUtil.getInstance().getSettingsFile("vomega.txt");
     File sixthLoggingFile = AppUtil.getInstance().getSettingsFile("vy.txt");
@@ -98,7 +98,7 @@ public class Localizer extends Thread {
     private static T265Camera slamra;
     T265Camera.CameraUpdate currentSlamraPos;
     private Pose2d slamraStartingPose = new Pose2d(0,0,0);
-    private static double TAO = 0; //0.9 optimal
+    private static double TAO = 0.9; //0.9 optimal
     private static final double MEASUREMENT_VARIANCE = 0.01; // 0.01 + 0.02? account more for odo variance
     private double previousEstimateUncertainty;
     Matrix previousOdoMat;
@@ -229,14 +229,12 @@ public class Localizer extends Thread {
     @Override
     public void run() {
         // make sure we reset our accounting of start times
-        Debug.log("start");
         state.resetUpdateTime();
         startingTime = System.currentTimeMillis();
-        Debug.log("reset");
         if(slamra != null) {
             slamra.start();
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-            slamra.setPose(slamraStartingPose);
+            slamra.setPose(new Pose2d(0,0,0));
 
         }
         // max speed 300 Hz)
@@ -284,7 +282,7 @@ public class Localizer extends Thread {
     }
 
     public void liftOdo(){
-        odoWinch.setPosition(0);
+        odoWinch.setPosition(1.0);
         secondaryOdoWinch.setPosition(0.24);
         odoState = OdoState.RAISED;
     }
@@ -613,6 +611,7 @@ public class Localizer extends Thread {
             slamra = T265Helper.getCamera(new T265Camera.OdometryInfo(new Pose2d(5.5,0, 0), 1.0),hardwareMap.appContext);//new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         }
+
         //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
         // initialize hardware
         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
@@ -745,33 +744,32 @@ public class Localizer extends Thread {
             }
 
 
-//            final double robotRadius = 7.7;
-//            Pose2d slamraEstimatePose = currentSlamraPos.pose;
-//            double slamx = -slamraEstimatePose.getY();
-//            double slamy = 7.7 + (slamraEstimatePose.getX());
-//            double slamRotation = currentSlamraPos.pose.getHeading();
-//            double trueX = slamx + sin(slamRotation) * robotRadius;
-//            double trueY = slamy - (cos(slamRotation) * robotRadius);
+            final double robotRadius = 2.0;
+            Pose2d slamraEstimatePose = currentSlamraPos.pose;
+            double slamx = 0.5 + (slamraEstimatePose.getX());
+            double slamy = -slamraEstimatePose.getY();
+            double slamRotation = currentSlamraPos.pose.getHeading();
+            double trueX = slamx + sin(slamRotation) * robotRadius;
+            double trueY = slamy - (cos(slamRotation) * robotRadius);
 
 
 
-//            if (odoState == OdoState.LOWERED) {
-//                TAO = 0.9;
-//            } else {
-//                TAO = 0;
-//            }
-
-           TAO = 1.0;
-
-            if(currentSlamraPos.confidence != T265Camera.PoseConfidence.High){
-                TAO = 1.0;
-//                slamErrorX = trueX - odoEstimate.x ;
-//                slamErrorY = trueY - odoEstimate.y;
+            if (odoState == OdoState.LOWERED) {
+                TAO = 0.9; //0.9
+            } else {
+                TAO = 0;
             }
 
+
+//            if(currentSlamraPos.confidence != T265Camera.PoseConfidence.High){
+//                TAO = 1.0;
+//                slamErrorX = trueX - odoEstimate.x ;
+//                slamErrorY = trueY - odoEstimate.y;
+//            }
+
             double[][] vislamMat = {
-                    {currentSlamraPos.pose.getX()}, //trueX - slamErrorX
-                    {currentSlamraPos.pose.getY()}, //trueY - slamErrorY
+                    {trueX - slamErrorX}, //trueX - slamErrorX
+                    {trueY - slamErrorY}, //trueY - slamErrorY
                     {currentSlamraPos.pose.getHeading()},
                     {currentSlamraPos.velocity.getX()},
                     {currentSlamraPos.velocity.getY()},
@@ -807,11 +805,11 @@ public class Localizer extends Thread {
 //            AbstractOpMode.currentOpMode().telemetry.addData("confidence", currentSlamraPos.confidence);
 //           AbstractOpMode.currentOpMode().telemetry.update();
 
-           loggingString += iterator + "," + wheelPositions[0] + "\n";
-           secondaryLoggingString += iterator + "," + -wheelPositions[2] + "\n";
+           loggingString += iterator + "," + state.getCurrentState().getPosition().getX() + "\n";
+           secondaryLoggingString += iterator + "," + state.getCurrentState().getPosition().getY() + "\n";
 //            loggingString += odoEstimate.x + "," + odoEstimate.y + "\n";
 //            secondaryLoggingString += iterator + "," + odoEstimate.x + "\n";
-//            tertiaryLoggingString += iterator + "," + odoEstimate.y + "\n";
+            tertiaryLoggingString += state.getCurrentState().getPosition().loggerToString() + "\n";
             iterator++;
             }
         }

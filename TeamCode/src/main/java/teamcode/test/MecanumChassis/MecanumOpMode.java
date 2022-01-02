@@ -3,6 +3,8 @@ package teamcode.test.MecanumChassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.TeleOp.OfficialTeleOpScriptBlue;
 import teamcode.common.AbstractOpMode;
@@ -28,13 +30,13 @@ public class MecanumOpMode extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         drive = new MecanumDriveTrain(hardwareMap);
+        localizer = new Localizer(hardwareMap, new Vector2D(0, 0), 0, 10);
         arm = new ArmSystem(hardwareMap, true);
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
         linkageState = linkageState.RAISED;
 
-        localizer = new Localizer(hardwareMap, new Vector2D(0, 0), 0, 10);
         localizer.liftOdo();
 
         armThread = new Thread(){
@@ -56,7 +58,7 @@ public class MecanumOpMode extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 }else{
-                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.7);
+                    arm.intakeDumb(1.0);
                 }
 
             }
@@ -85,13 +87,14 @@ public class MecanumOpMode extends AbstractOpMode {
             // set to full
             arm.setWinchPower(1);
         } else if (gamepad1.dpad_down) {
-            arm.setWinchPower(-1);
+            arm.setWinchPower(-0.5);
         } else if(gamepad1.left_trigger > 0.3) {
-            if (pulleyState == PulleyState.RETRACTED || linkageState == LinkageState.RAISED) {
+            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 arm.raise(Constants.TOP_POSITION);
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
-            }        }else if(gamepad1.dpad_right ){
+            }
+        }else if(gamepad1.dpad_right ){
             if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 arm.raise(Constants.MEDIUM_POSITION);
                 pulleyState = PulleyState.MID_GOAL;
@@ -106,11 +109,10 @@ public class MecanumOpMode extends AbstractOpMode {
         }else{
             arm.intakeDumb(0);
             if(pulleyState != PulleyState.RETRACTED){
-                arm.setWinchPower(arm.FEEDFORWARD_V);
+                arm.setWinchVelocity(arm.FEEDFORWARD_V, AngleUnit.RADIANS);
             }else{
                 arm.setWinchPower(0);
             }
-            arm.setWinchPower(0);
         }
 
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
@@ -121,7 +123,7 @@ public class MecanumOpMode extends AbstractOpMode {
     protected void onStart() {
         armThread.start();
         while(opModeIsActive()){
-            drive.setPower(new Vector2D(-gamepad1.left_stick_x, -gamepad1.left_stick_y),  0.6 * gamepad1.right_stick_x);
+            drive.setPower(new Vector2D(gamepad1.left_stick_x, gamepad1.left_stick_y),  0.8 * gamepad1.right_stick_x);
         }
     }
 

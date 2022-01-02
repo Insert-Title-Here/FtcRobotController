@@ -116,14 +116,14 @@ public class OfficialTeleOpScriptBlue extends AbstractOpMode {
     private double startTime;
     private void armUpdate() {
         if(gamepad1.right_trigger > 0.3){
-            startTime = AbstractOpMode.currentOpMode().time;
+            //startTime = AbstractOpMode.currentOpMode().time;
             while(gamepad1.right_trigger > 0.3) {
                 double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
                 if(elapsedTime < 0.5 || linkageState == linkageState.RAISED){
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 }else{
-                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5); // 0.5 - 0.8 TANK, MECANUM 0.7-1.0
+                    arm.intakeDumb(1.0); // 0.5 - 0.8 TANK, MECANUM 0.7-1.0
                 }
 
             }

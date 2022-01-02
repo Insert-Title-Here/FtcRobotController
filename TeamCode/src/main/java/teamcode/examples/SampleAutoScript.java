@@ -46,7 +46,7 @@ public class SampleAutoScript extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         localizer = new Localizer(hardwareMap, new Vector2D(0, 0), 0, 10); //calibrate this
-        drivetrain = new MecanumDriveTrain(hardwareMap, localizer);
+        drivetrain = new MecanumDriveTrain(hardwareMap, localizer, false);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         DetectionAlgorithm detector = new DetectionAlgorithm();

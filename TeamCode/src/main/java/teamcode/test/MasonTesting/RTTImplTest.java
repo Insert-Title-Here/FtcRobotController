@@ -26,7 +26,7 @@ public class RTTImplTest extends AbstractOpMode {
         // W/ or W/ out live preview
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         webcam.setPipeline(pipeline);
-        drive = new MecanumDriveTrain(hardwareMap, localizer, pipeline);
+        drive = new MecanumDriveTrain(hardwareMap, localizer, pipeline, false);
     }
 
     @Override

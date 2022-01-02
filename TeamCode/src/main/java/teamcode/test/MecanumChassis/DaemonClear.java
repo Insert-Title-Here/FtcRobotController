@@ -27,7 +27,7 @@ public class DaemonClear extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         localizer = new Localizer(new Pose(0,0,0), hardwareMap);
-        drive = new MecanumDriveTrain(hardwareMap, localizer);
+        drive = new MecanumDriveTrain(hardwareMap, localizer, false);
         resetSensors = false;
         intake = false;
         extend = false;
@@ -75,7 +75,7 @@ public class DaemonClear extends AbstractOpMode {
         //starting path
         for(int i = 0; i < FREIGHT; i++) {
             resetSensors = true;
-            drive.strafeDistanceSensor(VELOCITY, false);
+            drive.strafeDistanceSensor(VELOCITY);
             localizer.resumeUpdateCycles();
             intake = true;
             drive.moveToPosition(new Vector2D(0, 24), VELOCITY); //replace this with seekCubes() if it works

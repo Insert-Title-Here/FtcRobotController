@@ -1,6 +1,7 @@
-package teamcode.Competition.Autos;
+package teamcode.Competition.Autos.TankAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -19,6 +20,7 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
+@Disabled
 @Autonomous(name="RedAutoFreight")
 public class RedAuto extends AbstractOpMode {
 

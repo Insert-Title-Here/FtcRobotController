@@ -32,9 +32,10 @@ public class MecanumDriveTrain {
     Vector2D previousError;
     double previousOmegaError;
 
-    DistanceSensor distanceLeft, distanceRight;
+    DistanceSensor distanceFront, distanceBack;
 
     private boolean environmentalTerminate, eStop;
+    private boolean isRed;
 
 
     /**
@@ -42,7 +43,8 @@ public class MecanumDriveTrain {
      *
      */
     final double pVelocity = 0.000725; //0.000725
-    final double dVelocity  = 0.047; //0.027
+    final double dVelocity  = 0.0; //0.027
+    final double FEEDFORWARD_PID = 0.1;
 
     //todo for optimizing is to tune the PID aggresively due to high accel
     //todo is necessary to retune due to the rework of voltage to velocity
@@ -56,37 +58,49 @@ public class MecanumDriveTrain {
 
     }
 
-    public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer){
+    public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer, boolean isRed){
         fl = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontLeftDrive");
         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
         bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
         br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
-        //distanceLeft = hardwareMap.get(DistanceSensor.class, "DistanceLeft");
-        //distanceRight = hardwareMap.get(DistanceSensor.class, "DistanceRight");
+
+        String frontDistance = "FrontDistanceSensor";
+        String backDistance = "BackDistanceSensor";
+        if(isRed){
+            frontDistance += "Red";
+            backDistance += "Red";
+        }else{
+            frontDistance += "Blue";
+            backDistance += "Blue";
+        }
+        distanceFront = hardwareMap.get(DistanceSensor.class, frontDistance);
+        distanceBack = hardwareMap.get(DistanceSensor.class, backDistance);
         this.localizer = localizer;
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
+        this.isRed = isRed;
 
     }
 
     CvDetectionPipeline pipeline;
 
-    public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer, CvDetectionPipeline pipeline){
+    public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer, CvDetectionPipeline pipeline, boolean isRed){
+        this(hardwareMap, localizer, isRed);
+        this.pipeline = pipeline;
+    }
+/*
         fl = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontLeftDrive");
         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
         bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
         br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
-        distanceLeft = hardwareMap.get(DistanceSensor.class, "DistanceLeft");
-        distanceRight = hardwareMap.get(DistanceSensor.class, "DistanceRight");
-        this.pipeline = pipeline;
+
         this.localizer = localizer;
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
 
-    }
-
+ */
 
     /**
      * DO NOT CALL THIS W/O ALL THE RIGHT CONSTRUCTORS
@@ -200,8 +214,8 @@ public class MecanumDriveTrain {
     }
 
 
-
-    public synchronized void strafeDistanceSensor(double desiredVelocity, boolean isRed){
+    //todo implement static angle adjustment so we can strafe diagonally
+    public synchronized void strafeDistanceSensor(double desiredVelocity){
         if(localizer == null){
             return;
         }
@@ -214,7 +228,7 @@ public class MecanumDriveTrain {
         environmentalTerminate = false;
 
         //todo calibrate the tolerance of it.
-        while(distanceLeft.getDistance(DistanceUnit.INCH) > 0.5 && distanceLeft.getDistance(DistanceUnit.INCH) > 0.5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+        while(distanceFront.getDistance(DistanceUnit.INCH) > 0.5 && distanceBack.getDistance(DistanceUnit.INCH) > 0.5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
 
 
             currentState = localizer.getCurrentState();
@@ -254,7 +268,7 @@ public class MecanumDriveTrain {
             }
 
             //Vector2D passedVector = new Vector2D(passedX, passedY);
-            previousVelocity = setStrafe(passedVal, isRed);
+            previousVelocity = setStrafe(passedVal);
 
             // previousVelocity.multiply(sign);
             previousError = error;
@@ -291,7 +305,7 @@ public class MecanumDriveTrain {
      *
      */
 
-    public void moveToPosition(Vector2D desiredPosition, double desiredVelocity){
+    public synchronized void moveToPosition(Vector2D desiredPosition, double desiredVelocity){
 
         if(localizer == null){
             return;
@@ -304,6 +318,7 @@ public class MecanumDriveTrain {
         Vector2D steadyStateError = new Vector2D(0,0);
         previousOmegaError = 0;
         environmentalTerminate = false;
+        double heading = currentState.getRotation();
 
         while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
 
@@ -328,31 +343,29 @@ public class MecanumDriveTrain {
 
 
 
-
             //found and fixed stupid math error
-            Vector2D passedVector = previousVelocity.add(new Vector2D(error.getX(), error.getY()));
-            if(Math.abs(fl.getPower()) == 1.0 || Math.abs(fr.getPower()) == 1.0 || Math.abs(bl.getPower()) == 1.0 || Math.abs(br.getPower()) == 1.0){
-                passedVector = new Vector2D(previousVelocity.getX(), previousVelocity.getY());
-                desiredVelocity = passedVector.magnitude();
+            double direction = error.getDirection();
+            Vector2D passedVector = previousVelocity.add(new Vector2D(error.getX(), -error.getY()));
+            Vector2D maxVector = new Vector2D(Math.cos(direction), Math.sin(direction));
+            double passedX = passedVector.getX();
+            double passedY = passedVector.getY();
+            if(Math.abs(maxVector.getX()) < Math.abs(passedX)){
+                if(getSign(maxVector.getX()) == getSign(passedX)){
+                    passedX = maxVector.getX();
+                }else{
+                    passedX = -maxVector.getX();
+                }
             }
-//            Vector2D maxVector = new Vector2D(Math.cos(direction), Math.sin(direction));
-//            if(Math.abs(maxVector.getX()) < Math.abs(passedX)){
-//                if(getSign(maxVector.getX()) == getSign(passedX)){
-//                    passedX = maxVector.getX();
-//                }else{
-//                    passedX = -maxVector.getX();
-//                }
-//            }
-//            if(Math.abs(maxVector.getY()) < Math.abs(passedY)){
-//                if(getSign(maxVector.getY()) == getSign(passedY)){
-//                    passedY = maxVector.getY();
-//                }else{
-//                    passedY = -maxVector.getY();
-//                }
-//            }
+            if(Math.abs(maxVector.getY()) < Math.abs(passedY)){
+                if(getSign(maxVector.getY()) == getSign(passedY)){
+                    passedY = maxVector.getY();
+                }else{
+                    passedY = -maxVector.getY();
+                }
+            }
 
-            //Vector2D passedVector = new Vector2D(passedX, passedY);
-            previousVelocity = setVelocity(passedVector,0);
+            passedVector = new Vector2D(passedX, passedY);
+            previousVelocity = setPower(passedVector,0.0);
 
            // previousVelocity.multiply(sign);
             previousError = error;
@@ -362,15 +375,18 @@ public class MecanumDriveTrain {
 //
             //AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
             //AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
-
-            AbstractOpMode.currentOpMode().telemetry.addData("", currentState);
-            //AbstractOpMode.currentOpMode().telemetry.addData("error", (Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude())));
-
+            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
             AbstractOpMode.currentOpMode().telemetry.update();
+
+
         }
+        AbstractOpMode.currentOpMode().telemetry.clear();
+        Debug.log("done");
         brake();
 
     }
+
+
 
     public String getMotorPower(){
         return"fl: " + fl.getPower() + "\n" +
@@ -398,9 +414,10 @@ public class MecanumDriveTrain {
         //Vt = rw
     private final double WHEEL_RADIUS_IN = 1.88976; // radius of the 96mm gobilda wheels in IN
     public void setMotorVelocity(double flVelocity, double frVelocity, double blVelocity, double brVelocity){
-        fl.setVelocity(flVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);
+
+        fl.setVelocity(-flVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);
         fr.setVelocity(frVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);
-        bl.setVelocity(blVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);
+        bl.setVelocity(-blVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);
         br.setVelocity(brVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);
     }
 
@@ -427,7 +444,7 @@ public class MecanumDriveTrain {
         brake();
     }
 
-    public synchronized void rotateDistance(double power, double radians){
+    public synchronized void rotateDistance(double radians, double power){
         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
 
         environmentalTerminate = false;
@@ -460,7 +477,7 @@ public class MecanumDriveTrain {
     /*
     gets the robot driving in a specified direction
      */
-    public void setPower(Vector2D velocity, double turnValue){
+    public Vector2D setPower(Vector2D velocity, double turnValue){
         turnValue = -turnValue;
         double direction = velocity.getDirection();
 
@@ -468,42 +485,32 @@ public class MecanumDriveTrain {
 
         double power = velocity.magnitude();
 
-        double angle = direction + (3 * Math.PI / 4.0);
+        double angle = direction + ( Math.PI / 4.0);
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
         setPower((power * sin - turnValue),(power * cos + turnValue),
                 (power * cos - turnValue), (power * sin + turnValue));
+        return new Vector2D(velocity.getX(), velocity.getY());
     }
 
-    /*
-    this exists because of the differences between the FTC controller and raw vectors
-     */
-    public Vector2D setPowerPurePursuit(Vector2D velocity, double turnValue){
+    public Vector2D setPower(Vector2D velocity, double turnValue, double robotHeading){
+        turnValue = -turnValue;
+        double direction = velocity.getDirection() + robotHeading;
 
-        turnValue = turnValue;
-        double direction = velocity.getDirection();
+
+
         double power = velocity.magnitude();
 
-        double angle = direction +  Math.PI / 4;
-
+        double angle = direction + ( Math.PI / 4.0);
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
-        // right movement
-        // fl +, fr -, bl -, br +
-        // positive clockwise
-        // fl +, fr -, bl +, br -
-        setPowerCorrect(power * sin + turnValue, -power * cos - turnValue,
-                -power * cos + turnValue, power * sin - turnValue);
-        return velocity;
+
+        setPower((power * sin - turnValue),(power * cos + turnValue),
+                (power * cos - turnValue), (power * sin + turnValue));
+        return new Vector2D(velocity.getX(), velocity.getY());
     }
 
-    public void setPowerCorrect(double flPow, double frPow, double blPow, double brPow) {
-        fl.setPower(flPow);
-        fr.setPower(frPow);
-        bl.setPower(-blPow);
-        br.setPower(brPow);
-    }
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
         fl.setPower(-flPow);
@@ -512,7 +519,7 @@ public class MecanumDriveTrain {
         br.setPower(brPow);
     }
 
-    public double setStrafe(double val, boolean isRed){
+    public double setStrafe(double val){
         if(isRed){
             setMotorVelocity(-val, val, val, -val);
         }else {

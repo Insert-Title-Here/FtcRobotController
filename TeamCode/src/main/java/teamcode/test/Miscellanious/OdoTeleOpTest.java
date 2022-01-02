@@ -18,7 +18,7 @@ public class OdoTeleOpTest extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        driveTrain = new MecanumDriveTrain(hardwareMap, localizer);
+        driveTrain = new MecanumDriveTrain(hardwareMap, localizer, false);
         localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0);
     }
 

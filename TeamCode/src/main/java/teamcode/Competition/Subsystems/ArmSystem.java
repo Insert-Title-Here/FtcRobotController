@@ -206,7 +206,7 @@ public class ArmSystem {
     }
 
     public void retract(){
-        moveSlide(-1, -100);
+        moveSlide(-0.3,3000);
        idleServos();
     }
 
@@ -219,6 +219,10 @@ public class ArmSystem {
 
     public void setWinchPower(double v) {
         winchMotor.setPower(v);
+    }
+
+    public void setWinchVelocity(double v, AngleUnit angleUnit){
+        winchMotor.setVelocity(v, angleUnit);
     }
 
     public void lowerLinkage() {
@@ -257,8 +261,9 @@ public class ArmSystem {
         if(winchEncoder.getCurrentPosition() - position > 0){
             Debug.log("extending");
             while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {
-                AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
-                AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", winchEncoder.getTargetPosition());
+//                AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
+//                AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", position);
+//                AbstractOpMode.currentOpMode().telemetry.update();
                 winchMotor.setPower(power);
             }
             Debug.log("done");
@@ -270,11 +275,18 @@ public class ArmSystem {
             }
         }
 
-        winchMotor.setVelocity(FEEDFORWARD_V, AngleUnit.RADIANS);
+        winchMotor.setVelocity(FEEDFORWARD_V * getSign(power), AngleUnit.RADIANS);
 
     }
 
-    public final double FEEDFORWARD_V = 3.0156;
+    public double getSign(double num){
+        if(num >= 0){
+            return 1.0;
+        }else{
+            return -1.0;
+        }
+    }
+    public final double FEEDFORWARD_V = 0.01; //3.0156 * 0.0254
     public void moveSlideNew(double power, int position){
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         AbstractOpMode.currentOpMode().telemetry.addData("current pos ", winchEncoder.getCurrentPosition());
