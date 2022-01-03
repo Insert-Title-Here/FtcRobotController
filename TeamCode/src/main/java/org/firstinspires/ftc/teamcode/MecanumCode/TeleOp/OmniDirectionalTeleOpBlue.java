@@ -26,6 +26,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     Thread capArmThread;
 
     Boolean driveSwapped = false;
+    Boolean previousBackState = false;
 
 
     /**
@@ -158,8 +159,12 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
     private void driveUpdate() {
 
-        if(gamepad1.back) {
+        if(gamepad1.back && !previousBackState) {
             driveSwapped = !driveSwapped;
+            previousBackState = true;
+        }
+        if(!gamepad1.back) {
+            previousBackState = false;
         }
 
 
