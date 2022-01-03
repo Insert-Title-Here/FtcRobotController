@@ -157,12 +157,11 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     }
 
     private void driveUpdate() {
-        if(gamepad1.dpad_right) {
-            driveSwapped = true;
+
+        if(gamepad1.back) {
+            driveSwapped = !driveSwapped;
         }
-        if(gamepad1.dpad_left) {
-            driveSwapped = false;
-        }
+
 
         if(driveSwapped) {
             if (gamepad1.right_bumper) { // replace this with a button for sprint
@@ -198,6 +197,16 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             capArm.goToPosition(0);
         }
 
+        if(gamepad1.dpad_right) {
+            //driveSwapped = true;
+            capArm.setPower(-0.3);
+        }else if(gamepad1.dpad_left) {
+            //driveSwapped = false;
+            capArm.setPower(0.3);
+        }else{
+            capArm.setPower(0);
+        }
+
 
 
         if(gamepad1.start) {
@@ -205,11 +214,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             sleep(500);
         }
 
-        if(gamepad1.back){
-            capArm.setPower(-0.3);
-        } else {
-            capArm.setPower(0);
-        }
+
 
         //capArm.setPower(gamepad2.left_stick_y / 2);
     }
