@@ -145,7 +145,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
         drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.RDIAGONAL);
         sleep(2000);
         drive.driveAuto(0.3, -900, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, -1550, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, -250, MecanumDriveTrain.MovementType.ROTATE);
         //drive.driveAuto(0.2, -50, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.setPower(-0.1, -0.1, -0.1, -0.1);
@@ -159,7 +159,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
             //capArm.goToPosition(300);
             //drive.driveAuto(0.3, -160, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
-            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -60, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
 
@@ -169,7 +169,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
         } else if (capstonePos == BarcodePipelineWarehouseRed.BarcodePosition.CENTER) {
             //drive.driveAuto(0.3, -180, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
-            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -120, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
             sleep(1000);
@@ -179,7 +179,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
 
 
         } else {
-            drive.driveAuto(0.3, -150, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -60, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
             capArm.toggleGrab();
             sleep(1000);
@@ -193,7 +193,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
 
         moveArm = true;
 
-        drive.driveAuto(0.3, 1900, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 2050, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, 2000, MecanumDriveTrain.MovementType.STRAIGHT);
 
     }

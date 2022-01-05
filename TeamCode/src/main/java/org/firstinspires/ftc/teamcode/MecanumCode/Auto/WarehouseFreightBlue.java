@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.MecanumCode.Auto.Vision.BarcodePipelineBlue;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Constants;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
@@ -20,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Warehouse + Freight Blue")
+@Autonomous(name="Warehouse Freight Blue Confirmation")
 public class WarehouseFreightBlue extends OpModeWrapper {
 
     MecanumDriveTrain drive;
@@ -36,6 +37,10 @@ public class WarehouseFreightBlue extends OpModeWrapper {
 
     WebcamName wc;
     OpenCvCamera camera;
+
+    Thread armMovementThread;
+    private volatile boolean moveArm;
+
 
     BarcodePipelineBlue.BarcodePosition capstonePos;
 
@@ -86,11 +91,16 @@ public class WarehouseFreightBlue extends OpModeWrapper {
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
+
+
             // Method will be called if the camera cannot be opened
             @Override
             public void onError(int errorCode) {
                 telemetry.addData("Camera Init Error", errorCode);
             }
+
+
+
         });
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -107,11 +117,29 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        moveArm = false;
+        armMovementThread = new Thread(){
+            @Override
+            public void run(){
+                while(!moveArm);
+                capArm.goToPosition(0);
+            }
+        };
+
+
+        while(!opModeIsActive()){
+            telemetry.addData("pos", brp.getPos());
+            telemetry.update();
+        }
+
+        capArm.setGrabberPosition(0.8);
+
 
     }
 
     @Override
     protected void onStart() {
+        armMovementThread.start();
 
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
@@ -121,30 +149,44 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
+
+
+        drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.RDIAGONAL);
+        sleep(2000);
+        drive.driveAuto(0.3, -1250, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.ROTATE);
+
+        /*
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+
+         */
         //capArm.goToPosition(300);
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
-            drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(300);
+            //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(Constants.TOP_GOAL_POS);
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
-            drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(1300);
+            //drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
 
         }else{
-            drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(2325);
+            //drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.goToPosition(Constants.MID_GOAL_POS);
         }
         capArm.toggleGrab();
-        sleep(3000);
-        drive.driveAuto(0.3, 720, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -950, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAIGHT);
+        sleep(1000);
+
+        moveArm = true;
+
+        drive.driveAuto(0.3, -2200, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, 2000, MecanumDriveTrain.MovementType.STRAIGHT);
+        //drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
         //double angle = imu.getAngularOrientation().firstAngle;
-        drive.writeLoggerToFile();
+        //drive.writeLoggerToFile();
 /*
         while(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).firstAngle < Math.PI){
             drive.setPowerAuto(0.3, MecanumDriveTrain.MovementType.ROTATE);
