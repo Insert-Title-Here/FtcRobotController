@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="CarouselFreight Red Confirmation")
+@Autonomous(name="Carousel Freight Red Confirmation")
 public class CarouselFreightRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;

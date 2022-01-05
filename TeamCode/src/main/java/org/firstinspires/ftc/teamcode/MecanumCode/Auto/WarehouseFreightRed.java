@@ -86,6 +86,8 @@ public class WarehouseFreightRed extends OpModeWrapper {
                 } */
 
                 camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+
             }
 
             // Method will be called if the camera cannot be opened
