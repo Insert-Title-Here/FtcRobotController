@@ -287,7 +287,7 @@ public class MecanumDriveTrain {
 
 
     public enum MovementType{
-        STRAIGHT, STRAFE, ROTATE
+        STRAIGHT, STRAFE, ROTATE, LDIAGONAL, RDIAGONAL
     }
 
     private double computeDeltas(double[] currentPositions){
@@ -321,6 +321,10 @@ public class MecanumDriveTrain {
             setPower(power, -power, -power, power);
         }else if(movement == MovementType.ROTATE){
             setPower(power, -power, power, -power);
+        }else if(movement == MovementType.LDIAGONAL){
+            setPower(power, 0, 0, power);
+        }else if(movement == MovementType.RDIAGONAL){
+            setPower(0, power, power, 0);
         }
         return power;
     }

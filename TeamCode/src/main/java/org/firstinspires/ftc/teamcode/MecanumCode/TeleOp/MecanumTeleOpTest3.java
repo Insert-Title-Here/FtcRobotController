@@ -50,9 +50,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Freight Arm Test 2", group="Linear Opmode")
+@TeleOp(name="Freight Arm Test 3", group="Linear Opmode")
 @Disabled
-public class MekanumTeleOpTest2 extends LinearOpMode {
+public class MecanumTeleOpTest3 extends LinearOpMode {
 
     DcMotor magneticExtension;
     Servo magnet;
@@ -71,7 +71,6 @@ public class MekanumTeleOpTest2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         magneticExtension = hardwareMap.get(DcMotor.class, "MagneticArm");
         magnet = hardwareMap.get(Servo.class, "Magnet");
         level = hardwareMap.get(Servo.class, "Level");
@@ -80,6 +79,16 @@ public class MekanumTeleOpTest2 extends LinearOpMode {
 
         magnet.setPosition(1);
         level.setPosition(levelPosition);
+
+        magneticArmThread = new Thread() {
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    magneticArmUpdate();
+                }
+            }
+
+        };
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -91,52 +100,52 @@ public class MekanumTeleOpTest2 extends LinearOpMode {
         magneticArmThread.start();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if (gamepad1.left_trigger > 0.1) {
+            if(gamepad1.left_trigger > 0.1) {
                 magneticExtension.setPower(gamepad1.left_trigger);
-            } else if (gamepad1.right_trigger > 0.1) {
+            } else if(gamepad1.right_trigger > 0.1) {
                 magneticExtension.setPower(-gamepad1.right_trigger);
             } else {
                 magneticExtension.setPower(0);
             }
 
             //if(gamepad1.a) {
-            //magneticIsExtended = true;
+                //magneticIsExtended = true;
             //}
 
-            if (gamepad1.dpad_up) {
+            if(gamepad1.dpad_up) {
                 dpadUpPressed = true;
-                if (levelPosition + 0.1 < 1) {
+                if(levelPosition + 0.1 < 1){
                     levelPosition += 0.1;
                 } else {
                     levelPosition = 1;
                 }
                 level.setPosition(levelPosition);
-                while (dpadUpPressed == gamepad1.dpad_up) {
+                while(dpadUpPressed == gamepad1.dpad_up) {
 
                 }
             }
 
-            if (gamepad1.dpad_down) {
+            if(gamepad1.dpad_down) {
                 dpadDownPressed = true;
-                if (levelPosition - 0.1 > 0) {
+                if(levelPosition - 0.1 > 0){
                     levelPosition -= 0.1;
                 } else {
                     levelPosition = 0;
                 }
                 level.setPosition(levelPosition);
-                while (dpadDownPressed == gamepad1.dpad_down) {
+                while(dpadDownPressed == gamepad1.dpad_down) {
 
                 }
             }
 
-            if (gamepad1.b) {
+            if(gamepad1.b) {
                 levelPosition = 0.5;
                 level.setPosition(levelPosition);
             }
-            if (gamepad1.y) {
+            if(gamepad1.y) {
                 level.setPosition(1);
             }
-            if (gamepad1.x) {
+            if(gamepad1.x) {
                 magnet.setPosition(0.5);
                 sleep(1000);
                 magnet.setPosition(1);
@@ -144,19 +153,18 @@ public class MekanumTeleOpTest2 extends LinearOpMode {
             }
             // Show the elapsed game time and wheel power.
             telemetry.addData("Arm Tics: ", magneticExtension.getCurrentPosition());
-            telemetry.addData("Level Position: ", levelPosition);
+            telemetry.addData("Level Position: ",levelPosition);
             telemetry.update();
         }
     }
-
-    public void magneticExtend(int armPosition) {
+    public void magneticExtend(int armPosition){
         magneticExtension.setTargetPosition(armPosition);
 
         magneticExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         magneticExtension.setPower(0.5);
 
-        while (magneticExtension.isBusy()) {
+        while(magneticExtension.isBusy()){
 
         }
 
@@ -165,5 +173,15 @@ public class MekanumTeleOpTest2 extends LinearOpMode {
         magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+    }
+    public void magneticArmUpdate(){
+        //if(magneticIsExtended) {
+        //    magneticExtend(-300);
+        //    } else {
+        //    magneticExtend(0);
+
+        if(gamepad1.a) {
+            magneticExtend(-300);
+        }
     }
 }

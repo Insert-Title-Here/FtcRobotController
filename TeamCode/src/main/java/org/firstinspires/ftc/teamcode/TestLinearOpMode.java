@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -36,7 +37,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+//import org.firstinspires.ftc.teamcode.MecanumCode.Auto.BarcodePipelineBlue;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 /**
@@ -52,28 +59,84 @@ import org.firstinspires.ftc.teamcode.TankDriveCode.Auto.DriveTrain;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TestLinearOpMode", group="Linear Opmode")
-@Disabled
-public class TestLinearOpMode extends LinearOpMode {
+@Autonomous(name="TestLinearOpMode")
+public class TestLinearOpMode extends OpModeWrapper {
+
+    WebcamName wc;
+    OpenCvCamera camera;
+
+    static final TestingBarcodePipeline bPipeline = new TestingBarcodePipeline();
+    static TestingBarcodePipeline.BarcodePosition capstonePos;
+
+
 
 
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    DcMotor carousel;
+    //DcMotor carousel;
 
+    @Override
+    protected void onInitialize(){
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        wc = hardwareMap.get(WebcamName.class, "Webcam");
+        // W/ or W/ out live preview
+        camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+        // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
 
+        camera.setPipeline(bPipeline);
+
+        // Open an asynchronous connection to the device
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+            // Start opening the camera and stream it
+            @Override
+            public void onOpened() {
+
+                /*
+                // create a rgb2gray mat pipeline
+                class GrayPipeline extends OpenCvPipeline {
+                    Mat gray = new Mat();
+                    @Override
+                    public Mat processFrame(Mat input) {
+                        // mat src, mat dst, int code, convert rgb img to gray
+                        Imgproc.cvtColor(input, gray, Imgproc.COLOR_RGB2GRAY);
+                        return gray;
+                    }
+                } */
+
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            // Method will be called if the camera cannot be opened
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+            }
+        });
+
+    }
 
 
     @Override
-    public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+    protected void onStart() {
+        capstonePos = bPipeline.getPos();
 
-        carousel = hardwareMap.get(DcMotor.class, "CarouselMotor");
-        carousel.setDirection(DcMotorSimple.Direction.FORWARD);
+        while(opModeIsActive()){
+            telemetry.addData("current max: ", bPipeline.getCurrentMaxValue());
+            telemetry.addData("avg1: ", bPipeline.avg1);
+            telemetry.addData("avg2: ", bPipeline.avg2);
+            telemetry.addData("avg3: ", bPipeline.avg3);
 
-        DriveTrain drive = new DriveTrain(hardwareMap);
+            telemetry.update();
+        }
+        //telemetry.addData("Status", "Initialized");
+        //telemetry.update();
+
+        //carousel = hardwareMap.get(DcMotor.class, "CarouselMotor");
+        //carousel.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        //+DriveTrain drive = new DriveTrain(hardwareMap);
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -85,11 +148,11 @@ public class TestLinearOpMode extends LinearOpMode {
 
 
         // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        runtime.reset();
+        //waitForStart();
+        //runtime.reset();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        //while (opModeIsActive()) {
 
             // Setup a variable for each drive wheel to save power level for telemetry
 
@@ -101,23 +164,23 @@ public class TestLinearOpMode extends LinearOpMode {
             // - This uses basic math to combine motions and is easier to drive straight.
 
 
-            double linear = -gamepad1.left_stick_y;
-            double rotational  =  gamepad1.right_stick_x;
-            double rotationPositiveCarousel = gamepad1.right_trigger;
-            double rotationNegativeCarousel = -gamepad1.left_trigger;
+            //double linear = -gamepad1.left_stick_y;
+            //double rotational  =  gamepad1.right_stick_x;
+            //double rotationPositiveCarousel = gamepad1.right_trigger;
+            //double rotationNegativeCarousel = -gamepad1.left_trigger;
 
             /*
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
             */
 
-            drive.setPower(linear, rotational);
+            //drive.setPower(linear, rotational);
 
-            if(gamepad1.right_trigger > 0.1){
-                carousel.setPower(rotationPositiveCarousel);
-            }else {
-                carousel.setPower(rotationNegativeCarousel);
-            }
+            //if(gamepad1.right_trigger > 0.1){
+                //carousel.setPower(rotationPositiveCarousel);
+            //}else {
+                //carousel.setPower(rotationNegativeCarousel);
+            //}
 
 
 
@@ -132,6 +195,12 @@ public class TestLinearOpMode extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
-        }
     }
+
+
+    @Override
+    protected void onStop() {
+
+    }
+
 }

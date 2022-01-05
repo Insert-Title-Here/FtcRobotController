@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Constants;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
@@ -25,16 +26,17 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     Thread capArmThread;
 
     Boolean driveSwapped = false;
+    Boolean previousBackState = false;
 
 
     /**
      * calibrate all these values kevin
      */
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.3;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.3;
+    private final double NORMAL_LINEAR_MODIFIER = 0.45;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
-    private final double SPRINT_ROTATIONAL_MODIFIER = 0.5;
+    private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
 
 
     @Override
@@ -85,7 +87,8 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         driveThread.start();
         armThread.start();
         capArmThread.start();
-        arm.setArmPosition(-100);
+        capArm.goToPosition(100);
+        arm.setArmPosition(Constants.MAGARM_RETRACTED);
         while(opModeIsActive());
     }
 
@@ -103,7 +106,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         if(gamepad1.a) {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
-            arm.setArmPosition(-275);
+            arm.setArmPosition(Constants.MAGARM_EXTENDED);
             while(gamepad1.a) {
 
             }
@@ -111,13 +114,13 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
         if(gamepad1.b) {
             // Lower level to cube height
-            arm.setLevelPosition(0);
+            arm.setLevelPosition(Constants.LEVEL_DOWN_POS);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
         if(gamepad1.y) {
             // Raise level
-            arm.setLevelPosition(0.85);
+            arm.setLevelPosition(Constants.LEVEL_UP_POS);
         }
 
         if(gamepad1.x) {
@@ -155,12 +158,15 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     }
 
     private void driveUpdate() {
-        if(gamepad2.right_bumper) {
-            driveSwapped = true;
+
+        if(gamepad1.back && !previousBackState) {
+            driveSwapped = !driveSwapped;
+            previousBackState = true;
         }
-        if(gamepad2.left_bumper) {
-            driveSwapped = false;
+        if(!gamepad1.back) {
+            previousBackState = false;
         }
+
 
         if(driveSwapped) {
             if (gamepad1.right_bumper) { // replace this with a button for sprint
@@ -178,35 +184,43 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
 
 
-        if (gamepad1.left_stick_button) {
+        /*if (gamepad1.left_stick_button) {
             drive.driveAuto(0.7, -3665, MecanumDriveTrain.MovementType.ROTATE);
             while (gamepad1.left_stick_button) {
 
             }
         }
+
+         */
     }
 
     private void capArmUpdate() {
 
-        if(gamepad2.dpad_up) {
-            capArm.setPower(0.3);
-        } else if(gamepad2.dpad_down) {
+        if(gamepad1.dpad_up) {
+            capArm.goToPosition(Constants.CAPPING_POS);
+        } else if(gamepad1.dpad_down) {
+            capArm.goToPosition(0);
+        }
+
+        if(gamepad1.dpad_right) {
+            //driveSwapped = true;
             capArm.setPower(-0.3);
-        }else {
+        }else if(gamepad1.dpad_left) {
+            //driveSwapped = false;
+            capArm.setPower(0.3);
+        }else{
             capArm.setPower(0);
         }
 
 
-        if (gamepad2.a) {
-            capArm.goToPosition(0);
-        }
-        if (gamepad2.b) {
-            capArm.goToPosition(2650);
-        }
-        if(gamepad2.x) {
+
+        if(gamepad1.start) {
             capArm.toggleGrab();
             sleep(500);
         }
+
+
+
         //capArm.setPower(gamepad2.left_stick_y / 2);
     }
 }

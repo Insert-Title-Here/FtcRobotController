@@ -119,7 +119,7 @@ public class MagneticArm {
 
     // 0.55 fully retracted, 0.45 fully extended
     public double getLevelPosition() {
-        if(magneticExtension.getCurrentPosition() < 0 && magneticExtension.getCurrentPosition() > -350 ) {
+        if(magneticExtension.getCurrentPosition() < 0 && magneticExtension.getCurrentPosition() > -276 ) {
             return (magneticExtension.getCurrentPosition() / 3500.0) + 0.55;
         } else {
             return 0.45;

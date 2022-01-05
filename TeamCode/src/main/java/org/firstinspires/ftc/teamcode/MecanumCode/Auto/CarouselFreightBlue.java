@@ -7,8 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.MecanumCode.Auto.Vision.BarcodePipelineBlue;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Constants;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
@@ -19,8 +21,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Freight Blue Confirmation")
-public class CarouselFrieghtBlue extends OpModeWrapper {
+@Autonomous(name="Carousel Freight Blue Confirmation")
+public class CarouselFreightBlue extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
@@ -131,12 +133,14 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
-        drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1750, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, -400, MecanumDriveTrain.MovementType.STRAIGHT);
+        carousel.spinCarousel(-5000, this, Carousel.CarouselMode.AUTO);
+        drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             drive.driveAuto(0.3, -510, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(1560);
+            capArm.goToPosition(Constants.TOP_GOAL_POS);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
@@ -148,7 +152,7 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
 
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.CENTER){
             drive.driveAuto(0.3, -555, MecanumDriveTrain.MovementType.STRAIGHT);
-            capArm.goToPosition(730);
+            capArm.goToPosition(Constants.MID_GOAL_POS);
             drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
@@ -159,7 +163,7 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
 
         }else{
             drive.driveAuto(0.3, -610, MecanumDriveTrain.MovementType.STRAIGHT);
-            //capArm.goToPosition(2325);
+            capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
 
             capArm.toggleGrab();
 
@@ -173,8 +177,9 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
         sleep(1000);
 
         drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, -880, MecanumDriveTrain.MovementType.STRAIGHT);
+        //drive.driveAuto(0.5, 1832, MecanumDriveTrain.MovementType.ROTATE);
+        //drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAFE);
+        //drive.driveAuto(0.3, 880, MecanumDriveTrain.MovementType.STRAIGHT);
 
         /*drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);
@@ -190,7 +195,7 @@ public class CarouselFrieghtBlue extends OpModeWrapper {
 
 
         //double angle = imu.getAngularOrientation().firstAngle;
-        drive.writeLoggerToFile();
+        //drive.writeLoggerToFile();
 /*
         while(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).firstAngle < Math.PI){
             drive.setPowerAuto(0.3, MecanumDriveTrain.MovementType.ROTATE);
