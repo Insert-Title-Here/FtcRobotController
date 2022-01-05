@@ -19,15 +19,16 @@ public class EndgameSystems {
      * Electronics Schematic,
      *
      * Capstone Mechanism
-     * 1xMotor
-     * 1xServo
+     * 1x crServo
+     * 2xServo
      *
      * Carousel
      * 1xCRServo
      * 1xEncoder
      */
 
-    private CRServo carousel;
+    private CRServo carousel, capstoneExtension;
+    private Servo xCap, yCap;
     private DcMotor carouselEncoder;
     private boolean isBlue;
 
@@ -48,18 +49,33 @@ public class EndgameSystems {
     public EndgameSystems(HardwareMap hardwareMap, boolean isBlue){
 
         if(isBlue) {
-            carousel = hardwareMap.crservo.get("Carousel");
-            carouselEncoder = hardwareMap.dcMotor.get("Winch");
+            carousel = hardwareMap.crservo.get("CarouselBlue");
+            carouselEncoder = hardwareMap.dcMotor.get("BackRightDrive");
         }else{
             carousel = hardwareMap.crservo.get("CapstoneServo");
-            carouselEncoder = hardwareMap.dcMotor.get("RightIntake");
+            carouselEncoder = hardwareMap.dcMotor.get("CarouselRedEncoder");
         }
+        xCap = hardwareMap.servo.get("xCap");
+        yCap = hardwareMap.servo.get("yCap");
+        capstoneExtension = hardwareMap.crservo.get("capExtension");
 
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.isBlue = isBlue;
 
+    }
+
+    public void setXCapPosition(double pos){
+        xCap.setPosition(pos);
+    }
+
+    public void setCapstoneExtensionPower(double pow){
+        capstoneExtension.setPower(pow);
+    }
+
+    public void setyCapPosition(double pos){
+        yCap.setPosition(pos);
     }
 
 

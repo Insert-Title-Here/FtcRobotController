@@ -22,13 +22,13 @@ import teamcode.common.Utils;
 public class ArmSystem {
 
     //House Servo values
-    private static final double INTAKE_POSITION = 0.0;
-    private static final double HOUSING_POSITION = 0.2; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
+    private static final double INTAKE_POSITION = 0.04;
+    private static final double HOUSING_POSITION = 0.16; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.37;
 
     private static final double LINKAGE_DOWN = 0.0; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
-    private static final double LINKAGE_HOUSED = 0.7;
-    private static final double LINKAGE_SCORE = 0.7;
+    private static final double LINKAGE_HOUSED = 0.8;
+    private static final double LINKAGE_SCORE = 0.8;
 
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -181,6 +181,7 @@ public class ArmSystem {
         Utils.sleep(250);
         linkage.setPosition(LINKAGE_HOUSED);
         stage = Stage.HOUSED;
+        Debug.log("finish");
 
 
     }
@@ -191,7 +192,7 @@ public class ArmSystem {
 
 
 
-    public void raise(double position) {
+    public synchronized void raise(double position) {
         if(linkage.getPosition() != LINKAGE_HOUSED){
             preScore();
         }
@@ -205,7 +206,7 @@ public class ArmSystem {
         house.setPosition(SCORING_POSITION);
     }
 
-    public void retract(){
+    public synchronized void retract(){
         moveSlide(-0.3,3000);
        idleServos();
     }
@@ -258,19 +259,23 @@ public class ArmSystem {
 
     public void moveSlide(double power, double position){
         AbstractOpMode.currentOpMode().telemetry.clear();
-        if(winchEncoder.getCurrentPosition() - position > 0){
+        if(winchEncoder.getCurrentPosition() - position < 0){
             Debug.log("extending");
-            while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {
-//                AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
-//                AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", position);
-//                AbstractOpMode.currentOpMode().telemetry.update();
+            while (winchEncoder.getCurrentPosition() < position) {
+                AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
+                AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", position);
+                AbstractOpMode.currentOpMode().telemetry.update();
                 winchMotor.setPower(power);
             }
             Debug.log("done");
 
         }else{
             Debug.log("retracting");
-            while (winchEncoder.getCurrentPosition() - position < -100) {
+            while (winchEncoder.getCurrentPosition()  > position) {
+                AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
+                AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", position);
+                AbstractOpMode.currentOpMode().telemetry.update();
+
                 winchMotor.setPower(power);
             }
         }

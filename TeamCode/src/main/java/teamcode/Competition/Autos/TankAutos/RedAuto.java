@@ -21,7 +21,7 @@ import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
 @Disabled
-@Autonomous(name="RedAutoFreight")
+@Autonomous(name="RedAutoFreight TANK")
 public class RedAuto extends AbstractOpMode {
 
     /**

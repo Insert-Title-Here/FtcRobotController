@@ -31,9 +31,9 @@ public class LocalizerTest extends AbstractOpMode {
     @Override
     protected void onStart() {
         localizer.start();
-        //drive.rotateDistance(-0.4,Math.toRadians(-45));
+        //drive.rotateDistance(Math.toRadians(180), 0.4);
         //Utils.sleep(10000);
-        drive.moveToPosition(new Vector2D(24,0), 12);
+        //drive.moveToPosition(new Vector2D(24,0), 12);
         while(opModeIsActive()){
             telemetry.addData("", localizer.getCurrentState());
             telemetry.update();

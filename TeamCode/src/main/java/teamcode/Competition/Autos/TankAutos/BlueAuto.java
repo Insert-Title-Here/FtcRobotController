@@ -22,7 +22,7 @@ import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
 @Disabled
-@Autonomous(name="BlueAutoFreight")
+@Autonomous(name="BlueAutoFreight TANK")
 public class BlueAuto extends AbstractOpMode {
 
     WestCoastDriveTrain driveTrain;

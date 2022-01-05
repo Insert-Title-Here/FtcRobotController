@@ -19,7 +19,7 @@ public class WinchTest extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         winchMotor = hardwareMap.dcMotor.get("Winch");
-        winchEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
+        winchEncoder = hardwareMap.dcMotor.get("WinchEncoder");
         winchMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

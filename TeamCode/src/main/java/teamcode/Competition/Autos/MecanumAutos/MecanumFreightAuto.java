@@ -14,6 +14,7 @@ import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
+import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.PositionStuff.Pose;
@@ -64,27 +65,27 @@ public class MecanumFreightAuto extends AbstractOpMode {
         };
         state = currentCycleState.PRELOAD;
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
+//
+//        // W/ or W/ out live preview
+//        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+//        BarcodePipeline3 pipeline = new BarcodePipeline3();
+//        pipeline.setSide(BarcodePipeline3.Side.RED);
+//        webcam.setPipeline(pipeline);
 
-        // W/ or W/ out live preview
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
-        BarcodePipeline3 pipeline = new BarcodePipeline3();
-        pipeline.setSide(BarcodePipeline3.Side.RED);
-        webcam.setPipeline(pipeline);
-
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addData("Camera Init Error", errorCode);
-                telemetry.update();
-            }
-        });
+//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+//            @Override
+//            public void onOpened() {
+//                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
+//            }
+//
+//            @Override
+//            public void onError(int errorCode) {
+//                telemetry.addData("Camera Init Error", errorCode);
+//                telemetry.update();
+//            }
+//        });
         localizer.lowerOdo();
         while(!opModeIsActive()){
             position = BarcodePipeline3.BarcodePosition.LEFT;
@@ -99,7 +100,7 @@ public class MecanumFreightAuto extends AbstractOpMode {
     //contingency plan for 0 freight, we set this to fencepost or comment out the intake section of it
     private void secondaryFunctionsSequence(){
         try {
-            Thread.currentThread().sleep(1000);
+            Thread.currentThread().sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -128,7 +129,7 @@ public class MecanumFreightAuto extends AbstractOpMode {
 
             while(!extend && opModeIsActive());
             if(executeArmCommands) {
-                arm.raise(Constants.TOP_POSITION);
+                arm.raise(Constants.TOP_POSITION + 3000);
                 extend = false;
             }
 
@@ -147,43 +148,52 @@ public class MecanumFreightAuto extends AbstractOpMode {
     @Override
     protected void onStart() {
         localizer.start();
-        secondaryFunctionsThread.start();
-        drive.moveToPosition(new Vector2D(24,24), VELOCITY);
-        drive.rotateDistance(Math.toRadians(180), OMEGA);
-        arm.score();
-        retract = true;
-        drive.rotateDistance(Math.toRadians(-90), -OMEGA);
-        //starting path
-        for(int i = 0; i < FREIGHT; i++) {
-            resetSensors = true;
-            state = currentCycleState.STRAFING_IN;
-            drive.strafeDistanceSensor(VELOCITY);
-            localizer.resumeUpdateCycles();
-            intake = true;
-            state = currentCycleState.INTAKING;
-            drive.moveToPosition(new Vector2D(24,0), VELOCITY); //replace this with seekCubes() if it works
-            state = currentCycleState.LEAVING;
-            drive.moveToPosition(new Vector2D(0, 0), -VELOCITY);
-            extend = true;
-            state = currentCycleState.SCORING;
-            drive.moveToPosition(new Vector2D( 0, 24.5), VELOCITY); //replace this with a distance sensor command?
-            drive.rotateDistance(Math.toRadians(45), OMEGA);
-            arm.score();
-            drive.rotateDistance(Math.toRadians(0), -OMEGA);
-            retract = true;
-        }
+        //secondaryFunctionsThread.start();
+        telemetry.clear();
+        drive.moveToPosition(new Vector2D(15,15),  VELOCITY);
+        Utils.sleep(1000);
+        drive.moveToPosition(new Vector2D(17.5,15), -VELOCITY);
+        Utils.sleep(1000);
+        //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
+        drive.rotateDistance(Math.toRadians(-165), OMEGA);
+//        arm.score();
+//        Utils.sleep(1000);
+//        retract = true;
+//        drive.rotateDistance(Math.toRadians(90), -OMEGA);
+//        //starting path
+//        for(int i = 0; i < FREIGHT; i++) {
+//            resetSensors = true;
+//            state = currentCycleState.STRAFING_IN;
+//            drive.strafeDistanceSensor(0.7);
+//            localizer.resumeUpdateCycles();
+//            intake = true;
+//            state = currentCycleState.INTAKING;
+//            telemetry.addData("", localizer.getCurrentState().toString());
+//            telemetry.update();
+//            Utils.sleep(2000);
+//            drive.moveToPosition(new Vector2D(36,0), VELOCITY); //replace this with seekCubes() if it works
+//            state = currentCycleState.LEAVING;
+//            drive.moveToPosition(new Vector2D(0, 0), -VELOCITY);
+//            extend = true;
+//            state = currentCycleState.SCORING;
+//            drive.moveToPosition(new Vector2D( 0, 24.5), VELOCITY); //replace this with a distance sensor command?
+//            drive.rotateDistance(Math.toRadians(45), OMEGA);
+//            arm.score();
+//            drive.rotateDistance(Math.toRadians(0), -OMEGA);
+//            retract = true;
+//        }
 
-        if(state != currentCycleState.INTAKING && state != currentCycleState.LEAVING){
-
-            drive.seteStop(false);
-        }
-        if(state == currentCycleState.STRAFING_IN || state == currentCycleState.SCORING){
-            drive.rotateDistance(Math.toRadians(0), OMEGA);
-            localizer.manualZero(false);
-            drive.strafeDistanceSensor(VELOCITY);
-            localizer.resumeUpdateCycles();
-            drive.moveToPosition(new Vector2D(24,0), VELOCITY);
-        }
+//        if(state != currentCycleState.INTAKING && state != currentCycleState.LEAVING){
+//
+//            drive.seteStop(false);
+//        }
+//        if(state == currentCycleState.STRAFING_IN || state == currentCycleState.SCORING){
+//            drive.rotateDistance(Math.toRadians(0), OMEGA);
+//            localizer.manualZero(false);
+//            drive.strafeDistanceSensor(VELOCITY);
+//            localizer.resumeUpdateCycles();
+//            drive.moveToPosition(new Vector2D(24,0), VELOCITY);
+//        }
 
     }
 
@@ -206,6 +216,7 @@ public class MecanumFreightAuto extends AbstractOpMode {
 
     @Override
     protected void onStop() {
+        localizer.stopThread();
 
     }
 }

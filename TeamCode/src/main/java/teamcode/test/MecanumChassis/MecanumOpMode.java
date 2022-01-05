@@ -12,6 +12,7 @@ import teamcode.common.Constants;
 import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
+import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
 @TeleOp(name="Mecanum Tele Op")
@@ -64,7 +65,7 @@ public class MecanumOpMode extends AbstractOpMode {
             }
         }else if(gamepad1.a){
             //add something to move the linkage outta the way
-            arm.intakeDumb(-0.6);
+            arm.intakeDumb(-0.8);
         }else if(gamepad1.x){
             long currentSampleTime = System.currentTimeMillis();
             if(currentSampleTime - scoredSampleTime > 200) {
@@ -101,9 +102,11 @@ public class MecanumOpMode extends AbstractOpMode {
                 linkageState = linkageState.RAISED;
             }
         }else if(gamepad1.y){
+            arm.raise(Constants.BOTTOM_POSITION);
             arm.score();
-            arm.runConveyorPos(1.0, 2000);
+            Utils.sleep(750);
             arm.idleServos();
+            arm.retract();
         }else if(gamepad1.dpad_left){
             arm.resetWinchEncoder();
         }else{
@@ -123,7 +126,7 @@ public class MecanumOpMode extends AbstractOpMode {
     protected void onStart() {
         armThread.start();
         while(opModeIsActive()){
-            drive.setPower(new Vector2D(gamepad1.left_stick_x, gamepad1.left_stick_y),  0.8 * gamepad1.right_stick_x);
+            drive.setPower(new Vector2D(gamepad1.left_stick_y, -gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
         }
     }
 
