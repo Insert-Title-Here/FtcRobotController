@@ -686,13 +686,10 @@ public class Localizer extends Thread {
      */
     public void manualZero(boolean explicit){
         freezeUpdate = true;
-        currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-        slamra.setPose(new Pose2d(0,0,0));
         lastWheelPositions = new double[]{0,0,0};
         previousHeading = 0;
         odoEstimate = new Pose(0,0,0);
         state.updateState(0,0,0,0,0,0);
-        slamra.stop();
         if(explicit){
             resumeUpdateCycles();
         }

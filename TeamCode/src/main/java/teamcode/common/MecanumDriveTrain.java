@@ -215,8 +215,7 @@ public class MecanumDriveTrain {
     }
 
 
-    //todo implement static angle adjustment so we can strafe diagonally
-    public synchronized void strafeDistanceSensor(double power){
+    public synchronized void strafeDistanceSensor(double power, double radians){
         if(localizer == null){
             return;
         }
@@ -226,13 +225,9 @@ public class MecanumDriveTrain {
         //todo calibrate the tolerance of it.
         while(distanceFront.getDistance(DistanceUnit.INCH) > 1.1 && distanceBack.getDistance(DistanceUnit.INCH) > 0.8 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
 
-
+            Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0), power);
             //Vector2D passedVector = new Vector2D(passedX, passedY);
-            setStrafe(power);
-            AbstractOpMode.currentOpMode().telemetry.addData("front", distanceFront.getDistance(DistanceUnit.INCH));
-            AbstractOpMode.currentOpMode().telemetry.addData("back", distanceBack.getDistance(DistanceUnit.INCH));
-            AbstractOpMode.currentOpMode().telemetry.update();
-
+            setPower(vec, 0);
 
             // previousVelocity.mult
 
@@ -325,13 +320,13 @@ public class MecanumDriveTrain {
             previousError = error;
 
 
-            //AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
-//
+            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
+
             //AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
             //AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
-            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
-            AbstractOpMode.currentOpMode().telemetry.addData("", error);
-            AbstractOpMode.currentOpMode().telemetry.addData("", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
+//            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
+//            AbstractOpMode.currentOpMode().telemetry.addData("", error);
+//            AbstractOpMode.currentOpMode().telemetry.addData("", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
 
 
 
@@ -413,8 +408,8 @@ public class MecanumDriveTrain {
 
         while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !environmentalTerminate && !eStop){
             state = localizer.getCurrentState();
-            AbstractOpMode.currentOpMode().telemetry.addData("", Math.toDegrees(state.getRotation()));
-            AbstractOpMode.currentOpMode().telemetry.update();
+//            AbstractOpMode.currentOpMode().telemetry.addData("", Math.toDegrees(state.getRotation()));
+//            AbstractOpMode.currentOpMode().telemetry.update();
             setPower(power, -power, power, -power);
         }
         brake();

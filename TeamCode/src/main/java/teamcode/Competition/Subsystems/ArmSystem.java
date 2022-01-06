@@ -268,19 +268,19 @@ public class ArmSystem {
                 winchMotor.setPower(power);
             }
             Debug.log("done");
-
+            winchMotor.setVelocity(FEEDFORWARD_V * getSign(power), AngleUnit.RADIANS);
         }else{
             Debug.log("retracting");
             while (winchEncoder.getCurrentPosition()  > position) {
                 AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
                 AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", position);
                 AbstractOpMode.currentOpMode().telemetry.update();
-
                 winchMotor.setPower(power);
             }
+            Debug.log("done");
+            winchMotor.setPower(0);
         }
 
-        winchMotor.setVelocity(FEEDFORWARD_V * getSign(power), AngleUnit.RADIANS);
 
     }
 

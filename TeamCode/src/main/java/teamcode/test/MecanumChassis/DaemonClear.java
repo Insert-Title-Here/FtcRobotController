@@ -75,7 +75,7 @@ public class DaemonClear extends AbstractOpMode {
         //starting path
         for(int i = 0; i < FREIGHT; i++) {
             resetSensors = true;
-            drive.strafeDistanceSensor(VELOCITY);
+            //drive.strafeDistanceSensor(VELOCITY);
             localizer.resumeUpdateCycles();
             intake = true;
             drive.moveToPosition(new Vector2D(0, 24), VELOCITY); //replace this with seekCubes() if it works

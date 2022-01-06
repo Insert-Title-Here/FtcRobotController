@@ -87,6 +87,7 @@ public class MecanumFreightAuto extends AbstractOpMode {
 //            }
 //        });
         localizer.lowerOdo();
+        executeArmCommands = true;
         while(!opModeIsActive()){
             position = BarcodePipeline3.BarcodePosition.LEFT;
             //telemetry.addData("", position);
@@ -105,26 +106,28 @@ public class MecanumFreightAuto extends AbstractOpMode {
             e.printStackTrace();
         }
 
-        arm.raise(Constants.TOP_POSITION);
+        if(position == BarcodePipeline3.BarcodePosition.RIGHT) {
+            arm.raise(Constants.BOTTOM_POSITION - 1500);
+        }else if(position == BarcodePipeline3.BarcodePosition.CENTER){
+            arm.raise(Constants.MEDIUM_POSITION + 3000);
+        }else{
+            arm.raise(Constants.TOP_POSITION + 3000);
+        }
         while(!retract && opModeIsActive());
         Utils.sleep(250);
         arm.retract();
         retract = false;
         for(int i = 0; i < FREIGHT; i++){
-            while(!resetSensors && opModeIsActive()){}
-            if(executeArmCommands) {
-                localizer.manualZero(false);
-                resetSensors = false;
-            }
+
 
             while(!intake && opModeIsActive());
             if(executeArmCommands) {
-                boolean isStop = arm.intakeAuto(1);
+                //boolean isStop = arm.intakeAuto(1);
                 drive.setEnvironmentalTerminate(true);
-                if (isStop) {
-                    drive.seteStop(true);
-                }
-                intake = false;
+//                if (isStop) {
+//                    drive.seteStop(true);
+//                }
+//                intake = false;
             }
 
             while(!extend && opModeIsActive());
@@ -148,40 +151,41 @@ public class MecanumFreightAuto extends AbstractOpMode {
     @Override
     protected void onStart() {
         localizer.start();
-        //secondaryFunctionsThread.start();
+        secondaryFunctionsThread.start();
         telemetry.clear();
         drive.moveToPosition(new Vector2D(15,15),  VELOCITY);
-        Utils.sleep(1000);
-        drive.moveToPosition(new Vector2D(17.5,15), -VELOCITY);
-        Utils.sleep(1000);
+        drive.moveToPosition(new Vector2D(18,15), VELOCITY);
+
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
-        drive.rotateDistance(Math.toRadians(-165), OMEGA);
-//        arm.score();
-//        Utils.sleep(1000);
-//        retract = true;
-//        drive.rotateDistance(Math.toRadians(90), -OMEGA);
+        drive.rotateDistance(Math.toRadians(180), OMEGA);
+        //drive.moveToPosition(new Vector2D(18.5,15), -VELOCITY);
+        arm.score();
+        Utils.sleep(1000);
+        retract = true;
+        drive.rotateDistance(Math.toRadians(90), -OMEGA);
 //        //starting path
-//        for(int i = 0; i < FREIGHT; i++) {
-//            resetSensors = true;
+        for(int i = 0; i < FREIGHT; i++) {
 //            state = currentCycleState.STRAFING_IN;
-//            drive.strafeDistanceSensor(0.7);
-//            localizer.resumeUpdateCycles();
-//            intake = true;
-//            state = currentCycleState.INTAKING;
-//            telemetry.addData("", localizer.getCurrentState().toString());
-//            telemetry.update();
-//            Utils.sleep(2000);
-//            drive.moveToPosition(new Vector2D(36,0), VELOCITY); //replace this with seekCubes() if it works
+            drive.strafeDistanceSensor(0.7, Math.toRadians(-30));
+            localizer.manualZero(true);
+
+            //Utils.sleep(1000);
+            intake = true;
+            state = currentCycleState.INTAKING;
+            drive.moveToPosition(new Vector2D(36,0), 2* VELOCITY); //replace this with seekCubes() if it works
 //            state = currentCycleState.LEAVING;
-//            drive.moveToPosition(new Vector2D(0, 0), -VELOCITY);
-//            extend = true;
-//            state = currentCycleState.SCORING;
-//            drive.moveToPosition(new Vector2D( 0, 24.5), VELOCITY); //replace this with a distance sensor command?
-//            drive.rotateDistance(Math.toRadians(45), OMEGA);
-//            arm.score();
-//            drive.rotateDistance(Math.toRadians(0), -OMEGA);
-//            retract = true;
-//        }
+            drive.strafeDistanceSensor(0.7, 0);
+            drive.moveToPosition(new Vector2D(-6, 0), VELOCITY);
+            extend = true;
+            state = currentCycleState.SCORING;
+            drive.moveToPosition(new Vector2D( -15, 15), VELOCITY); //replace this with a distance sensor command?
+            drive.moveToPosition(new Vector2D( 15, 18), -VELOCITY); //replace this with a distance sensor command?
+
+            drive.rotateDistance(Math.toRadians(-90), -OMEGA);
+            arm.score();
+            drive.rotateDistance(Math.toRadians(0), OMEGA);
+            retract = true;
+        }
 
 //        if(state != currentCycleState.INTAKING && state != currentCycleState.LEAVING){
 //

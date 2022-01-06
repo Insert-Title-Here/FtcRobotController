@@ -21,8 +21,8 @@ public class DistanceSensorTest extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        d1 = hardwareMap.get(DistanceSensor.class, "FrontDistanceSensorRed");
-        d2 = hardwareMap.get(DistanceSensor.class, "BackDistanceSensorRed");
+        d1 = hardwareMap.get(DistanceSensor.class, "FrontDistanceSensorBlue");
+        d2 = hardwareMap.get(DistanceSensor.class, "BackDistanceSensorBlue");
         localizer = new Localizer(new Pose(0,0,0), hardwareMap);
         drive = new MecanumDriveTrain(hardwareMap, localizer,true);
     }
