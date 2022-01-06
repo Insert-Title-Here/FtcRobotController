@@ -1,0 +1,961 @@
+Index: TeamCode/src/main/java/teamcode/Competition/Subsystems/ArmSystem.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teamcode.Competition.Subsystems;\r\n\r\nimport com.qualcomm.robotcore.hardware.CRServo;\r\nimport com.qualcomm.robotcore.hardware.DcMotor;\r\nimport com.qualcomm.robotcore.hardware.DcMotorSimple;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\nimport com.qualcomm.robotcore.hardware.NormalizedColorSensor;\r\nimport com.qualcomm.robotcore.hardware.NormalizedRGBA;\r\nimport com.qualcomm.robotcore.hardware.Servo;\r\n\r\n\r\nimport teamcode.common.AbstractOpMode;\r\nimport teamcode.common.RobotPositionStateUpdater;\r\nimport teamcode.common.Utils;\r\n\r\npublic class ArmSystem {\r\n\r\n    //House Servo values\r\n    private static final double INTAKE_POSITION = 0.0;\r\n    private static final double HOUSING_POSITION = 0.37; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point\r\n    private static final double SCORING_POSITION = 0.66;\r\n\r\n    private static final double LINKAGE_DOWN = 0.4; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.\r\n    private static final double LINKAGE_HOUSED = 0.7;\r\n    private static final double LINKAGE_SCORE = 0.8;\r\n\r\n\r\n    private static final float GREEN_THRESHOLD = 255; //not needed for now\r\n    private static final float RED_THRESHOLD = 255;\r\n    private static final float BLUE_THRESHOLD = 255;\r\n    private static final int YELLOW_THRESHOLD = 02552550;\r\n    private static final int WHITE_THRESHOLD = 0255255255;\r\n\r\n    private static final double SLIDE_POWER = 1.0;\r\n    private static final long TIMEOUT_MILLIS = 5000;\r\n\r\n    private DcMotor leftIntake, rightIntake, winchMotor, winchEncoder, conveyorMotor;\r\n    private Servo house, linkage;\r\n    private CRServo carousel, intakeServo;\r\n    private NormalizedColorSensor sensor;\r\n    RobotPositionStateUpdater.RobotPositionState currentState;\r\n    private Stage stage;\r\n\r\n\r\n    public ArmSystem(HardwareMap hardwareMap, boolean isTeleOp){\r\n        leftIntake = hardwareMap.dcMotor.get(\"LeftIntake\");\r\n        rightIntake = hardwareMap.dcMotor.get(\"RightIntake\");\r\n        winchMotor = hardwareMap.dcMotor.get(\"Winch\");\r\n        winchEncoder = hardwareMap.dcMotor.get(\"FrontLeftDrive\");\r\n        conveyorMotor = hardwareMap.dcMotor.get(\"Conveyor\");\r\n\r\n        house = hardwareMap.servo.get(\"House\");\r\n        linkage = hardwareMap.servo.get(\"Linkage\");\r\n        carousel = hardwareMap.get(CRServo.class, \"Carousel\");\r\n        intakeServo = hardwareMap.get(CRServo.class, \"IntakeServo\");\r\n\r\n        sensor = hardwareMap.get(NormalizedColorSensor.class, \"color\");\r\n        sensor.setGain(280); //325 is tested value but i think I trust this one more\r\n\r\n        winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        carousel.setDirection(DcMotorSimple.Direction.REVERSE);\r\n\r\n        if(isTeleOp){\r\n            house.setPosition(INTAKE_POSITION);\r\n        }else{\r\n            house.setPosition(HOUSING_POSITION);\r\n        }\r\n        linkage.setPosition(LINKAGE_HOUSED);\r\n        stage = Stage.IDLE;\r\n    }\r\n\r\n    public void intakeDumb(double power){\r\n        leftIntake.setPower(power);\r\n        rightIntake.setPower(-power);\r\n        intakeServo.setPower(power);\r\n    }\r\n\r\n    public void runConveyor(double power){\r\n        conveyorMotor.setPower(power);\r\n    }\r\n\r\n    public void runConveyorPos(double power, int position){\r\n        house.setPosition(SCORING_POSITION);\r\n        conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        conveyorMotor.setTargetPosition(-position);\r\n        conveyorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);\r\n        while(Math.abs(conveyorMotor.getCurrentPosition() - conveyorMotor.getTargetPosition()) > 10){\r\n            AbstractOpMode.currentOpMode().telemetry.addData(\"\", conveyorMotor.getCurrentPosition());\r\n            AbstractOpMode.currentOpMode().telemetry.addData(\"\", conveyorMotor.getTargetPosition());\r\n            AbstractOpMode.currentOpMode().telemetry.update();\r\n\r\n            conveyorMotor.setPower(-power);\r\n        }\r\n        conveyorMotor.setPower(0);\r\n    }\r\n\r\n\r\n    public void intake(double intakePower, boolean isAuto){\r\n        if(isAuto){\r\n            lowerLinkage();\r\n        }\r\n\r\n        if(stage == stage.HOUSED){\r\n            stage = stage.INTAKING;\r\n        }\r\n\r\n        if(stage == stage.INTAKING || stage == Stage.IDLE) {\r\n            boolean detectedElement = false;\r\n            NormalizedRGBA colors = sensor.getNormalizedColors();\r\n            double green = colors.green;\r\n            double blue = colors.blue;\r\n\r\n            if (green > 0.9) {\r\n                if (blue > 0.9) {\r\n                    detectedElement = true;\r\n                } else {\r\n                    detectedElement = true;\r\n                }\r\n            } else {\r\n                detectedElement = false;\r\n            }\r\n\r\n            intakeDumb(intakePower);\r\n            stage = Stage.INTAKING;\r\n            if(detectedElement) {\r\n\r\n                preScore();\r\n            }\r\n        }\r\n    }\r\n\r\n    public boolean intakeAuto(double intakePower){\r\n        lowerLinkage();\r\n        Utils.sleep(400);\r\n        boolean detectedElement = false;\r\n        long start = System.currentTimeMillis();\r\n        while(!detectedElement){\r\n            long current = System.currentTimeMillis();\r\n            NormalizedRGBA colors = sensor.getNormalizedColors();\r\n            double green = colors.green;\r\n            double blue = colors.blue;\r\n\r\n            if (green > 0.9) {\r\n                if (blue > 0.9) {\r\n                    detectedElement = true;\r\n                } else {\r\n                    detectedElement = true;\r\n                }\r\n            } else {\r\n                detectedElement = false;\r\n            }\r\n\r\n            intakeDumb(intakePower);\r\n            if(detectedElement) {\r\n                intakeDumb(-0.9);\r\n                Utils.sleep(500);\r\n                preScore();\r\n                intakeDumb(0);\r\n                return true;\r\n            }else if(current - start > TIMEOUT_MILLIS){\r\n                intakeDumb(0);\r\n                return false;\r\n            }\r\n        }\r\n        return false;\r\n\r\n    }\r\n\r\n    //will be merged into intake() later\r\n    public void preScore(){\r\n        intakeDumb(0);\r\n        house.setPosition(HOUSING_POSITION);\r\n        Utils.sleep(250);\r\n        linkage.setPosition(LINKAGE_HOUSED);\r\n        stage = Stage.HOUSED;\r\n\r\n\r\n    }\r\n\r\n    public boolean isLinkageInPreScore(){\r\n        return linkage.getPosition() != LINKAGE_SCORE;\r\n    }\r\n\r\n\r\n\r\n    public void raise(double position) {\r\n        if(linkage.getPosition() != LINKAGE_HOUSED){\r\n            preScore();\r\n        }\r\n        moveSlide(SLIDE_POWER, position);\r\n        linkage.setPosition(LINKAGE_SCORE);\r\n        stage = stage.EXTENDED;\r\n    }\r\n\r\n    //temporary tele op scoring function w/o color sensor\r\n    public void score(){\r\n        house.setPosition(SCORING_POSITION);\r\n    }\r\n\r\n    public void retract(){\r\n        moveSlide(-0.5, 100);\r\n       idleServos();\r\n    }\r\n\r\n    public void idleServos(){\r\n        house.setPosition(INTAKE_POSITION);\r\n        linkage.setPosition(LINKAGE_HOUSED);\r\n        stage = Stage.IDLE;\r\n    }\r\n\r\n\r\n    public void setWinchPower(double v) {\r\n        winchMotor.setPower(v);\r\n    }\r\n\r\n    public void lowerLinkage() {\r\n        house.setPosition(INTAKE_POSITION);\r\n        linkage.setPosition(LINKAGE_DOWN);\r\n    }\r\n\r\n    private enum Stage{\r\n        INTAKING, IDLE, HOUSED, EXTENDED\r\n    }\r\n\r\n    //tele op scoring function, assumes the freight is encapsulated in the house already and that the\r\n    //linkage is raised (not scoring). This method also assumes the Conveyor exists as well so if we\r\n    //get rid of the conveyor we need to change this\r\n    //uses color sensor data\r\n//    public void scoreCS(){\r\n//        if(stage == Stage.CUBE_HOUSED) {\r\n//\r\n//        }else if(stage == Stage.BALL_HOUSED){\r\n//            linkage.setPosition(LINKAGE_SCORE);\r\n//            moveSlide(SLIDE_POWER, TOP_POSITION);\r\n//            Utils.sleep(200);\r\n//            house.setPosition(SCORING_POSITION);\r\n//            Utils.sleep(500);\r\n//            moveSlide(-SLIDE_POWER, BOTTOM_POSITION);\r\n//\r\n//        }\r\n//        house.setPosition(INTAKE_POSITION);\r\n//        linkage.setPosition(LINKAGE_DOWN);\r\n//        stage = Stage.IDLE;\r\n\r\n    //}\r\n\r\n    public void moveSlide(double power, double position){\r\n        AbstractOpMode.currentOpMode().telemetry.clear();\r\n        while (Math.abs(winchEncoder.getCurrentPosition() - position) > 100) {\r\n            AbstractOpMode.currentOpMode().telemetry.addData(\"position\", winchEncoder.getCurrentPosition());\r\n            AbstractOpMode.currentOpMode().telemetry.update();\r\n            winchMotor.setPower(power);\r\n\r\n        }\r\n        winchMotor.setPower(0);\r\n\r\n    }\r\n\r\n    public void resetWinchEncoder(){\r\n        winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n    }\r\n\r\n    //needs to be rewritten if the conveyor is implemented\r\n\r\n\r\n    public int getLinearSlidePosition(){\r\n        return winchEncoder.getCurrentPosition();\r\n    }\r\n\r\n    public Stage getStage(){\r\n        return stage;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/teamcode/Competition/Subsystems/ArmSystem.java b/TeamCode/src/main/java/teamcode/Competition/Subsystems/ArmSystem.java
+--- a/TeamCode/src/main/java/teamcode/Competition/Subsystems/ArmSystem.java	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/src/main/java/teamcode/Competition/Subsystems/ArmSystem.java	(date 1639883308726)
+@@ -46,7 +46,7 @@
+         leftIntake = hardwareMap.dcMotor.get("LeftIntake");
+         rightIntake = hardwareMap.dcMotor.get("RightIntake");
+         winchMotor = hardwareMap.dcMotor.get("Winch");
+-        winchEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
++        winchEncoder = hardwareMap.dcMotor.get("Winch"); //TANK FrontLeftDrive MECANUM Winch
+         conveyorMotor = hardwareMap.dcMotor.get("Conveyor");
+ 
+         house = hardwareMap.servo.get("House");
+@@ -57,6 +57,7 @@
+         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
+         sensor.setGain(280); //325 is tested value but i think I trust this one more
+ 
++        winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+         carousel.setDirection(DcMotorSimple.Direction.REVERSE);
+@@ -199,7 +200,7 @@
+     }
+ 
+     public void retract(){
+-        moveSlide(-0.5, 100);
++        moveSlide(-1, -100);
+        idleServos();
+     }
+ 
+@@ -251,12 +252,13 @@
+             AbstractOpMode.currentOpMode().telemetry.addData("position", winchEncoder.getCurrentPosition());
+             AbstractOpMode.currentOpMode().telemetry.update();
+             winchMotor.setPower(power);
+-
+         }
+         winchMotor.setPower(0);
+ 
+     }
+ 
++    //fix the winch shooting off into space
++
+     public void resetWinchEncoder(){
+         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+Index: TeamCode/src/main/java/teamcode/test/MasonTesting/CvRTT.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// TEST SCRIPT FOR OPENCV BY MASON\r\n// link for reference: https://github.com/OpenFTC/EasyOpenCV/blob/master/doc/user_docs/camera_initialization_overview.md\r\n\r\npackage teamcode.test.MasonTesting;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;\r\n\r\nimport org.openftc.easyopencv.OpenCvCamera;\r\nimport org.openftc.easyopencv.OpenCvCameraFactory;\r\nimport org.openftc.easyopencv.OpenCvCameraRotation;\r\n\r\nimport java.util.ArrayList;\r\n\r\nimport teamcode.common.AbstractOpMode;\r\n\r\n@TeleOp(name = \"RT-Object Detection\")\r\npublic class CvRTT extends AbstractOpMode {\r\n\r\n    // Get webcam and create an OpenCvCamera\r\n    WebcamName wc;\r\n    OpenCvCamera camera;\r\n\r\n    // global obj\r\n    static final CvDetectionPipeline dp = new CvDetectionPipeline();\r\n\r\n    @Override\r\n    protected void onInitialize() {\r\n\r\n        // Init webcam and create a cam object using CvFactory\r\n        // Make sure to have the name of the webcam set in the config settings of the robot\r\n        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(\"cameraMonitorViewId\", \"id\", hardwareMap.appContext.getPackageName());\r\n        wc = hardwareMap.get(WebcamName.class, \"Webcam\");\r\n\r\n        // W/ or W/ out live preview\r\n        camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);\r\n        // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);\r\n\r\n        camera.setPipeline(dp);\r\n\r\n        // Open an asynchronous connection to the device\r\n        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {\r\n\r\n            // Start opening the camera and stream it\r\n            @Override\r\n            public void onOpened() {\r\n\r\n                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);\r\n            }\r\n\r\n            // Method will be called if the camera cannot be opened\r\n            @Override\r\n            public void onError(int errorCode) {\r\n                telemetry.addData(\"Camera Init Error\", errorCode);\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n\r\n        // Keep the op mode running, to keep the system from coming to a halt\r\n\r\n        while (opModeIsActive()) {\r\n            ArrayList<Double> xList = dp.xPointList();\r\n            ArrayList<Double> yList = dp.yPointList();\r\n            for (int i = 0; i < xList.size(); i++) {\r\n                telemetry.addData(\"\", xList.get(i) + \", \" + yList.get(i));\r\n            }\r\n            telemetry.update();\r\n        }\r\n    }\r\n\r\n    @Override\r\n    protected void onStop() {\r\n        camera.stopStreaming();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/teamcode/test/MasonTesting/CvRTT.java b/TeamCode/src/main/java/teamcode/test/MasonTesting/CvRTT.java
+--- a/TeamCode/src/main/java/teamcode/test/MasonTesting/CvRTT.java	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/src/main/java/teamcode/test/MasonTesting/CvRTT.java	(date 1639783461598)
+@@ -3,6 +3,8 @@
+ 
+ package teamcode.test.MasonTesting;
+ 
++import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
++
+ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+ 
+ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+@@ -25,6 +27,8 @@
+     // global obj
+     static final CvDetectionPipeline dp = new CvDetectionPipeline();
+ 
++
++
+     @Override
+     protected void onInitialize() {
+ 
+@@ -59,16 +63,23 @@
+ 
+     @Override
+     protected void onStart() {
+-
+         // Keep the op mode running, to keep the system from coming to a halt
+ 
+         while (opModeIsActive()) {
+-            ArrayList<Double> xList = dp.xPointList();
+-            ArrayList<Double> yList = dp.yPointList();
+-            for (int i = 0; i < xList.size(); i++) {
+-                telemetry.addData("", xList.get(i) + ", " + yList.get(i));
++
++            try {
++                Thread.sleep(50);
++            } catch (InterruptedException e) {
++                e.printStackTrace();
+             }
+-            telemetry.update();
++//            ArrayList<Double> xList = dp.xPointList();
++//            ArrayList<Double> yList = dp.yPointList();
++//            for (int i = 0; i < xList.size(); i++) {
++//                telemetry.addData("", xList.get(i) + ", " + yList.get(i));
++//            }
++//            telemetry.update();
++//            telemetry.addData("Init Method", 0);
++//            telemetry.update();
+         }
+     }
+ 
+Index: TeamCode/src/main/java/teamcode/test/MasonTesting/CvDetectionPipeline.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teamcode.test.MasonTesting;\r\n\r\nimport static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.Scanner;\r\nimport java.util.Set;\r\nimport java.util.TreeMap;\r\nimport java.util.TreeSet;\r\n\r\nimport org.checkerframework.checker.units.qual.A;\r\nimport org.opencv.core.Core;\r\nimport org.opencv.core.CvType;\r\nimport org.opencv.core.Mat;\r\nimport org.opencv.core.MatOfPoint;\r\nimport org.opencv.core.MatOfPoint2f;\r\nimport org.opencv.core.Point;\r\nimport org.opencv.core.Scalar;\r\nimport org.opencv.core.Size;\r\nimport org.opencv.imgcodecs.Imgcodecs;\r\nimport org.opencv.imgproc.Imgproc;\r\nimport org.opencv.utils.Converters;\r\nimport org.opencv.videoio.VideoCapture;\r\nimport org.openftc.easyopencv.OpenCvPipeline;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\nimport teamcode.common.Debug;\r\n\r\npublic class CvDetectionPipeline extends OpenCvPipeline {\r\n\r\n    ArrayList<Double> xPList = new ArrayList<>();\r\n    ArrayList<Double> yPList = new ArrayList<>();\r\n\r\n    final Scalar lower_yellow = new Scalar(0, 125, 125);\r\n    final Scalar upper_yellow = new Scalar(50, 255, 255);\r\n\r\n    final int focalLength = 32;\r\n    final double cameraAngle = 68;\r\n    int iterator;\r\n\r\n    @Override\r\n    public void init(Mat frame) {\r\n        // i hope this works lol\r\n        iterator = 0;\r\n    }\r\n\r\n    @Override\r\n    public synchronized Mat processFrame(Mat frame){\r\n//        // mat vars\r\n//        Mat hsv = new Mat();\r\n//        Mat blurred = new Mat();\r\n//        Mat mask = new Mat();\r\n//        Mat binary = new Mat();\r\n//        ArrayList<MatOfPoint> contours = new ArrayList<>();\r\n//\r\n//        // change src mat to be frame param\r\n//        Mat src = new Mat();\r\n//        frame.copyTo(src);\r\n//\r\n//        // apply blur, change color, get range\r\n//        Imgproc.GaussianBlur(src, blurred, new Size(7, 7), 0);\r\n//        Imgproc.cvtColor(blurred, hsv, Imgproc.COLOR_BGR2HSV);\r\n//        Core.inRange(hsv, lower_yellow, upper_yellow, mask);\r\n//\r\n//        // erosion and dilation noise reduction\r\n//        Imgproc.erode(mask, mask, new Mat(), new Point(-1, -1), 2);\r\n//        Imgproc.dilate(mask, mask, new Mat(), new Point(-1, -1), 2);\r\n//\r\n//        // get binary threshold\r\n//        Imgproc.threshold(mask, binary, 100, 255, Imgproc.THRESH_BINARY_INV);\r\n//\r\n//        // get contours and create subdivided contours list\r\n//        Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);\r\n//        ArrayList<MatOfPoint> subContours = new ArrayList<>();\r\n//\r\n//        // get arc length to get the needed individual cubes\r\n////        for (int i = 0; i < contours.size(); i++) {\r\n////            double val = Imgproc.arcLength(new MatOfPoint2f(contours.get(i).toArray()), true);\r\n////            if (val > 25) {\r\n////                subContours.add(contours.get(i));\r\n////            }\r\n////        }\r\n//\r\n//        // get x and y vals + x and y cords\r\n//        xPList.clear();\r\n//        yPList.clear();\r\n//        for (int i = 0; i < contours.size(); i++) {\r\n//            ArrayList<Point> pointList = new ArrayList<>();\r\n//            Converters.Mat_to_vector_Point(contours.get(i), pointList);\r\n//            ArrayList<Integer> xList = new ArrayList<>();\r\n//            ArrayList<Integer> yList = new ArrayList<>();\r\n//\r\n//            for (Point p : pointList) {\r\n//                xList.add((int) p.x);\r\n//                yList.add((int) p.y);\r\n//            }\r\n//\r\n//            int xMin = Integer.MAX_VALUE;\r\n//            int xMax = Integer.MIN_VALUE;\r\n//            for (int num : xList) {\r\n//                if (num < xMin) {\r\n//                    xMin = num;\r\n//                }\r\n//\r\n//                if (num > xMax) {\r\n//                    xMax = num;\r\n//                }\r\n//            }\r\n//\r\n//            int yMin = Integer.MAX_VALUE;\r\n//            int yMax = Integer.MIN_VALUE;\r\n//            for (int num : yList) {\r\n//                if (num < yMin) {\r\n//                    yMin = num;\r\n//                }\r\n//\r\n//                if (num > yMax) {\r\n//                    yMax = num;\r\n//                }\r\n//            }\r\n//\r\n//            int xCord = xMin + Math.abs((xMax - xMin) / 2);\r\n//            int yCord = yMin + Math.abs((yMax - yMin) / 2);\r\n//            int objWidth = Math.abs(xMax - xMin);\r\n//            int objHeight = Math.abs(yMax - xMin);\r\n//            Imgproc.drawMarker(src, new Point(xCord, yCord), new Scalar(255, 255, 255));\r\n//\r\n//            int srcWidth = src.width();\r\n//            int srcHeight = src.height();\r\n//\r\n//            // get distance\r\n//            double distance = distanceFinder(50.8, objWidth);\r\n//\r\n//            // flip around x/y coordinates due to how the robot uses vector movement\r\n//            double yPos = xCord; double xAmt = 0;\r\n//            xAmt = distance * Math.sin(cameraAngle);\r\n//            xAmt = Math.round((xAmt * 100.0) / 100.0);\r\n//            xPList.add(xAmt);\r\n//            yPList.add(yPos);\r\n//        }\r\n//        Imgproc.line(src, new Point(src.width() / 2, src.height()), new Point(src.width() / 2, 0), new Scalar(255, 255, 255));\r\n//        Imgproc.drawContours(src, contours, -1, new Scalar(255, 255, 255), 2, Imgproc.LINE_8);\r\n        iterator++;\r\n        Debug.log(iterator);\r\n        // comment part means src to frame, change back to src when comment heap is done\r\n        return frame;\r\n    }\r\n\r\n    public double distanceFinder(double realWidth, double pixelWidth) {\r\n        return (realWidth * focalLength) / pixelWidth;\r\n    }\r\n\r\n    public ArrayList<Double> xPointList() {\r\n        return xPList;\r\n    }\r\n\r\n    public ArrayList<Double> yPointList() {\r\n        return yPList;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/teamcode/test/MasonTesting/CvDetectionPipeline.java b/TeamCode/src/main/java/teamcode/test/MasonTesting/CvDetectionPipeline.java
+--- a/TeamCode/src/main/java/teamcode/test/MasonTesting/CvDetectionPipeline.java	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/src/main/java/teamcode/test/MasonTesting/CvDetectionPipeline.java	(date 1639786177827)
+@@ -23,9 +23,6 @@
+ import org.opencv.videoio.VideoCapture;
+ import org.openftc.easyopencv.OpenCvPipeline;
+ 
+-import java.util.ArrayList;
+-import java.util.List;
+-
+ import teamcode.common.Debug;
+ 
+ public class CvDetectionPipeline extends OpenCvPipeline {
+@@ -36,54 +33,63 @@
+     final Scalar lower_yellow = new Scalar(0, 125, 125);
+     final Scalar upper_yellow = new Scalar(50, 255, 255);
+ 
++    final Scalar lower_yellow_2 = new Scalar(125, 125, 0);
++    final Scalar upper_yellow_2 = new Scalar(255, 255, 50);
++
++    final Scalar cali_lower_yellow = new Scalar(180, 100, 49);
++    final Scalar cali_upper_yellow = new Scalar(180, 80.4, 100);
++
++    final Scalar cali_lower_yellow_2 = new Scalar(60, 100, 49);
++    final Scalar cali_upper_yellow_2 = new Scalar(60, 80.4, 100);
++
+     final int focalLength = 32;
+     final double cameraAngle = 68;
+     int iterator;
+ 
+     @Override
+     public void init(Mat frame) {
+-        // i hope this works lol
++        xPList.add(0.0);
++        yPList.add(0.0);
+         iterator = 0;
+     }
+ 
+     @Override
+     public synchronized Mat processFrame(Mat frame){
+-//        // mat vars
+-//        Mat hsv = new Mat();
+-//        Mat blurred = new Mat();
+-//        Mat mask = new Mat();
+-//        Mat binary = new Mat();
+-//        ArrayList<MatOfPoint> contours = new ArrayList<>();
+-//
+-//        // change src mat to be frame param
+-//        Mat src = new Mat();
+-//        frame.copyTo(src);
+-//
+-//        // apply blur, change color, get range
+-//        Imgproc.GaussianBlur(src, blurred, new Size(7, 7), 0);
+-//        Imgproc.cvtColor(blurred, hsv, Imgproc.COLOR_BGR2HSV);
+-//        Core.inRange(hsv, lower_yellow, upper_yellow, mask);
+-//
+-//        // erosion and dilation noise reduction
++        // mat vars
++        Mat hsv = new Mat();
++        Mat blurred = new Mat();
++        Mat mask = new Mat();
++        Mat binary = new Mat();
++        ArrayList<MatOfPoint> contours = new ArrayList<>();
++
++        // change src mat to be frame param
++
++
++        // apply blur, change color, get range
++        //Imgproc.GaussianBlur(src, blurred, new Size(7, 7), 0);
++        Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
++        Core.inRange(hsv, cali_lower_yellow_2, cali_upper_yellow_2, mask);
++
++        // erosion and dilation noise reduction
+ //        Imgproc.erode(mask, mask, new Mat(), new Point(-1, -1), 2);
+ //        Imgproc.dilate(mask, mask, new Mat(), new Point(-1, -1), 2);
+-//
+-//        // get binary threshold
+-//        Imgproc.threshold(mask, binary, 100, 255, Imgproc.THRESH_BINARY_INV);
+-//
+-//        // get contours and create subdivided contours list
+-//        Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+-//        ArrayList<MatOfPoint> subContours = new ArrayList<>();
+-//
+-//        // get arc length to get the needed individual cubes
+-////        for (int i = 0; i < contours.size(); i++) {
+-////            double val = Imgproc.arcLength(new MatOfPoint2f(contours.get(i).toArray()), true);
+-////            if (val > 25) {
+-////                subContours.add(contours.get(i));
+-////            }
+-////        }
+-//
+-//        // get x and y vals + x and y cords
++
++        // get binary threshold
++        Imgproc.threshold(mask, binary, 100, 255, Imgproc.THRESH_BINARY_INV);
++
++        // get contours and create subdivided contours list
++        Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
++        ArrayList<MatOfPoint> subContours = new ArrayList<>();
++
++        // get arc length to get the needed individual cubes
++//        for (int i = 0; i < contours.size(); i++) {
++//            double val = Imgproc.arcLength(new MatOfPoint2f(contours.get(i).toArray()), true);
++//            if (val > 25) {
++//                subContours.add(contours.get(i));
++//            }
++//        }
++
++        // get x and y vals + x and y cords
+ //        xPList.clear();
+ //        yPList.clear();
+ //        for (int i = 0; i < contours.size(); i++) {
+@@ -140,11 +146,17 @@
+ //            xPList.add(xAmt);
+ //            yPList.add(yPos);
+ //        }
+-//        Imgproc.line(src, new Point(src.width() / 2, src.height()), new Point(src.width() / 2, 0), new Scalar(255, 255, 255));
+-//        Imgproc.drawContours(src, contours, -1, new Scalar(255, 255, 255), 2, Imgproc.LINE_8);
+-        iterator++;
+-        Debug.log(iterator);
++        Imgproc.line(frame, new Point(frame.width() / 2, frame.height()), new Point(frame.width() / 2, 0), new Scalar(255, 255, 255));
++        Imgproc.drawContours(frame, contours, -1, new Scalar(255, 255, 255), 2, Imgproc.LINE_8);
++//        iterator++;
++//        Debug.log(iterator);
+         // comment part means src to frame, change back to src when comment heap is done
++        // memory fix?
++        hsv.release();
++        blurred.release();
++        mask.release();
++        binary.release();
++
+         return frame;
+     }
+ 
+Index: TeamCode/src/main/java/teamcode/test/MecanumChassis/MecanumOpMode.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teamcode.test.MecanumChassis;\r\n\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport teamcode.common.AbstractOpMode;\r\nimport teamcode.common.MecanumDriveTrain;\r\nimport teamcode.common.Vector2D;\r\n\r\n@TeleOp(name=\"Mecanum Tele Op\")\r\npublic class MecanumOpMode extends AbstractOpMode {\r\n    MecanumDriveTrain drive;\r\n\r\n    @Override\r\n    protected void onInitialize() {\r\n        drive = new MecanumDriveTrain(hardwareMap);\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        while(opModeIsActive()){\r\n            telemetry.addData(\"left stick x\", gamepad1.left_stick_x);\r\n            telemetry.addData(\"left stick y\", gamepad1.left_stick_y);\r\n            telemetry.addData(\"right stick x \", gamepad1.right_stick_x);\r\n            telemetry.update();\r\n\r\n            drive.setPower(new Vector2D(gamepad1.left_stick_x, gamepad1.left_stick_y),  0.6 * gamepad1.right_stick_x);\r\n        }\r\n    }\r\n\r\n    @Override\r\n    protected void onStop() {\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/teamcode/test/MecanumChassis/MecanumOpMode.java b/TeamCode/src/main/java/teamcode/test/MecanumChassis/MecanumOpMode.java
+--- a/TeamCode/src/main/java/teamcode/test/MecanumChassis/MecanumOpMode.java	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/src/main/java/teamcode/test/MecanumChassis/MecanumOpMode.java	(date 1639883308781)
+@@ -3,33 +3,133 @@
+ 
+ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+ 
++import teamcode.Competition.Subsystems.ArmSystem;
++import teamcode.Competition.TeleOp.OfficialTeleOpScriptBlue;
+ import teamcode.common.AbstractOpMode;
++import teamcode.common.Constants;
+ import teamcode.common.MecanumDriveTrain;
+ import teamcode.common.Vector2D;
+ 
+ @TeleOp(name="Mecanum Tele Op")
+ public class MecanumOpMode extends AbstractOpMode {
+     MecanumDriveTrain drive;
++    ArmSystem arm;
++    Thread armThread;
++
++    private ScoredButtonState state;
++    private PulleyState pulleyState;
++    private LinkageState linkageState;
++    private long scoredSampleTime;
++
+ 
+     @Override
+     protected void onInitialize() {
+         drive = new MecanumDriveTrain(hardwareMap);
++        arm = new ArmSystem(hardwareMap, true);
++
++        state = ScoredButtonState.RETRACTING;
++        pulleyState = PulleyState.RETRACTED;
++        linkageState = linkageState.RAISED;
++
++        armThread = new Thread(){
++            public void run(){
++                while(opModeIsActive()){
++                    armUpdate();
++                }
++            }
++        };
++    }
++
++    double startTime;
++    private void armUpdate() {
++        if(gamepad1.right_trigger > 0.3){
++            startTime = AbstractOpMode.currentOpMode().time;
++            while(gamepad1.right_trigger > 0.3) {
++                double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
++                if(elapsedTime < 0.5 || linkageState == linkageState.RAISED){
++                    arm.lowerLinkage();
++                    linkageState = LinkageState.LOWERED;
++                }else{
++                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.7);
++                }
++
++            }
++        }else if(gamepad1.a){
++            //add something to move the linkage outta the way
++            arm.intakeDumb(-0.6);
++        }else if(gamepad1.x){
++            long currentSampleTime = System.currentTimeMillis();
++            if(currentSampleTime - scoredSampleTime > 200) {
++                if(pulleyState != PulleyState.RETRACTED) {
++                    if (state == ScoredButtonState.RETRACTING) {
++                        state = ScoredButtonState.SCORED;
++                        arm.score();
++                    } else if (state == ScoredButtonState.SCORED) {
++                        state = ScoredButtonState.RETRACTING;
++                        arm.retract();
++                        pulleyState = PulleyState.RETRACTED;
++                    }
++                }
++                scoredSampleTime = System.currentTimeMillis();
++            }
++        } else if(gamepad1.b) {
++            arm.preScore();
++            linkageState = LinkageState.RAISED;
++        } else if (gamepad1.dpad_up) {
++            // set to full
++            arm.setWinchPower(1);
++        } else if (gamepad1.dpad_down) {
++            arm.setWinchPower(-1);
++        } else if(gamepad1.left_trigger > 0.3) {
++            if (pulleyState == PulleyState.RETRACTED || linkageState == LinkageState.RAISED) {
++                arm.raise(Constants.TOP_POSITION);
++                pulleyState = PulleyState.HIGH_GOAL;
++                linkageState = LinkageState.RAISED;
++            }
++        }else if(gamepad1.dpad_right ){
++            if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
++                arm.raise(Constants.MEDIUM_POSITION);
++                pulleyState = PulleyState.MID_GOAL;
++                linkageState = linkageState.RAISED;
++            }
++        }else if(gamepad1.y){
++            arm.score();
++            arm.runConveyorPos(1.0, 2000);
++            arm.idleServos();
++        }else if(gamepad1.dpad_left){
++            arm.resetWinchEncoder();
++        }else{
++            arm.intakeDumb(0);
++            arm.setWinchPower(0);
++        }
++
++        telemetry.addData("slide pos", arm.getLinearSlidePosition());
++        telemetry.update();
+     }
+ 
+     @Override
+     protected void onStart() {
++        armThread.start();
+         while(opModeIsActive()){
+-            telemetry.addData("left stick x", gamepad1.left_stick_x);
+-            telemetry.addData("left stick y", gamepad1.left_stick_y);
+-            telemetry.addData("right stick x ", gamepad1.right_stick_x);
+-            telemetry.update();
++            drive.setPower(new Vector2D(-gamepad1.left_stick_x, -gamepad1.left_stick_y),  0.6 * gamepad1.right_stick_x);
++        }
++    }
++
++    private enum ScoredButtonState{
++        SCORED, RETRACTING
++    }
+ 
+-            drive.setPower(new Vector2D(gamepad1.left_stick_x, gamepad1.left_stick_y),  0.6 * gamepad1.right_stick_x);
+-        }
++    private enum PulleyState{
++        HIGH_GOAL, MID_GOAL, RETRACTED
++    }
++
++    private enum LinkageState{
++        RAISED, LOWERED
+     }
++
+ 
+     @Override
+     protected void onStop() {
+-
++        armThread.interrupt();
+     }
+ }
+Index: TeamCode/src/main/java/teamcode/common/Constants.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teamcode.common;\r\n\r\npublic class Constants {\r\n\r\n    //Hardware device names\r\n    public static final String LEFT_VERTICAL_ODOMETER_NAME = \"FrontRightDrive\";\r\n    public static final String RIGHT_VERTICAL_ODOMETER_NAME = \"BackRightDrive\";\r\n    public static final String HORIZONTAL_ODOMETER_NAME = \"BackLeftDrive\";\r\n    public static final String LINEAR_SLIDE_ENCODER_NAME = \"FrontLeftDrive\";\r\n\r\n    //other relevant info\r\n    public static final String SAVE_FILE_PATH = \"\";\r\n    public static final double INITIAL_VELOCITY = 110.0 * Math.PI;\r\n\r\n\r\n    //Physics Constants\r\n    public static final double GRAVITY_IN_SEC = 386.09;\r\n\r\n    //Game Constants\r\n    public static final double TOP_POSITION = -13500; // +5k (from 20k to 8k, because of new gear)\r\n    public static final double MEDIUM_POSITION = -8000 ; //store these values as ticks, and just go with that, nothing fancy (from 145000 to 6k, because of new gear)\r\n    public static final double BOTTOM_POSITION = -2000;\r\n    public static final double CAP_POSITION = -16000;\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/teamcode/common/Constants.java b/TeamCode/src/main/java/teamcode/common/Constants.java
+--- a/TeamCode/src/main/java/teamcode/common/Constants.java	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/src/main/java/teamcode/common/Constants.java	(date 1639883308734)
+@@ -17,7 +17,7 @@
+     public static final double GRAVITY_IN_SEC = 386.09;
+ 
+     //Game Constants
+-    public static final double TOP_POSITION = -13500; // +5k (from 20k to 8k, because of new gear)
++    public static final double TOP_POSITION = -21000; // +5k (from 20k to 8k, because of new gear)
+     public static final double MEDIUM_POSITION = -8000 ; //store these values as ticks, and just go with that, nothing fancy (from 145000 to 6k, because of new gear)
+     public static final double BOTTOM_POSITION = -2000;
+     public static final double CAP_POSITION = -16000;
+Index: build.dependencies.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>repositories {\r\n    mavenCentral()\r\n    google() // Needed for androidx\r\n    jcenter()  // Needed for tensorflow-lite\r\n    flatDir {\r\n        dirs rootProject.file('libs')\r\n    }\r\n}\r\n\r\ndependencies {\r\n    implementation 'org.firstinspires.ftc:Inspection:7.0.0'\r\n    implementation 'org.firstinspires.ftc:Blocks:7.0.0'\r\n    implementation 'org.firstinspires.ftc:Tfod:7.0.0'\r\n    implementation 'org.firstinspires.ftc:RobotCore:7.0.0'\r\n    implementation 'org.firstinspires.ftc:RobotServer:7.0.0'\r\n    implementation 'org.firstinspires.ftc:OnBotJava:7.0.0'\r\n    implementation 'org.firstinspires.ftc:Hardware:7.0.0'\r\n    implementation 'org.firstinspires.ftc:FtcCommon:7.0.0'\r\n    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'\r\n    implementation 'androidx.appcompat:appcompat:1.2.0'\r\n    implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.dependencies.gradle b/build.dependencies.gradle
+--- a/build.dependencies.gradle	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/build.dependencies.gradle	(date 1639883308809)
+@@ -5,6 +5,8 @@
+     flatDir {
+         dirs rootProject.file('libs')
+     }
++
++
+ }
+ 
+ dependencies {
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_8\" default=\"true\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/.idea/misc.xml	(date 1639691694900)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: .idea/jarRepositories.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"RemoteRepositoriesConfiguration\">\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"central\" />\r\n      <option name=\"name\" value=\"Maven Central repository\" />\r\n      <option name=\"url\" value=\"https://repo1.maven.org/maven2\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"jboss.community\" />\r\n      <option name=\"name\" value=\"JBoss Community repository\" />\r\n      <option name=\"url\" value=\"https://repository.jboss.org/nexus/content/repositories/public/\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"BintrayJCenter\" />\r\n      <option name=\"name\" value=\"BintrayJCenter\" />\r\n      <option name=\"url\" value=\"https://jcenter.bintray.com/\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"Google\" />\r\n      <option name=\"name\" value=\"Google\" />\r\n      <option name=\"url\" value=\"https://dl.google.com/dl/android/maven2/\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"maven\" />\r\n      <option name=\"name\" value=\"maven\" />\r\n      <option name=\"url\" value=\"https://dl.bintray.com/first-tech-challenge/ftcsdk/\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"MavenRepo\" />\r\n      <option name=\"name\" value=\"MavenRepo\" />\r\n      <option name=\"url\" value=\"https://repo.maven.apache.org/maven2/\" />\r\n    </remote-repository>\r\n    <remote-repository>\r\n      <option name=\"id\" value=\"maven\" />\r\n      <option name=\"name\" value=\"maven\" />\r\n      <option name=\"url\" value=\"https://maven.0x778.tk\" />\r\n    </remote-repository>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/jarRepositories.xml b/.idea/jarRepositories.xml
+--- a/.idea/jarRepositories.xml	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/.idea/jarRepositories.xml	(date 1639883308715)
+@@ -36,5 +36,10 @@
+       <option name="name" value="maven" />
+       <option name="url" value="https://maven.0x778.tk" />
+     </remote-repository>
++    <remote-repository>
++      <option name="id" value="maven" />
++      <option name="name" value="maven" />
++      <option name="url" value="https://maven.brott.dev/" />
++    </remote-repository>
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"CompilerConfiguration\">\r\n    <bytecodeTargetLevel target=\"1.8\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/.idea/compiler.xml	(date 1639691694914)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="CompilerConfiguration">
+-    <bytecodeTargetLevel target="1.8" />
++    <bytecodeTargetLevel target="11" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: TeamCode/src/main/java/teamcode/common/MecanumDriveTrain.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teamcode.common;\r\n\r\nimport android.sax.StartElementListener;\r\n\r\nimport com.qualcomm.hardware.bosch.BNO055IMU;\r\nimport com.qualcomm.robotcore.hardware.DcMotor;\r\nimport com.qualcomm.robotcore.hardware.DistanceSensor;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\nimport com.qualcomm.robotcore.robot.Robot;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\r\nimport org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;\r\nimport org.openftc.easyopencv.OpenCvWebcam;\r\nimport org.openftc.revextensions2.ExpansionHubMotor;\r\n\r\nimport java.util.Vector;\r\n\r\nimport teamcode.test.MasonTesting.CvDetectionPipeline;\r\n\r\npublic class MecanumDriveTrain {\r\n    private static final double ANGULAR_TOLERANCE = 0.05;\r\n    final double COUNTS_PER_INCH = 920.111004;\r\n\r\n    /*\r\n    This has most of the relevant information regarding a 4 wheel Mecanum DriveTrain,\r\n    which is the most used DriveTrain in FTC\r\n     */\r\n\r\n    private ExpansionHubMotor fl, fr, bl, br;\r\n    Localizer localizer;\r\n    Vector2D previousVelocity;\r\n    Vector2D previousError;\r\n    double previousOmegaError;\r\n\r\n    DistanceSensor distance;\r\n\r\n    Logger logger;\r\n\r\n\r\n    /**\r\n     * PID Constants\r\n     *\r\n     */\r\n    final double pVelocity = 0.000725; //0.000725\r\n    final double dVelocity  = 0.047; //0.027\r\n\r\n    public MecanumDriveTrain(HardwareMap hardwareMap){\r\n        fl = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"FrontLeftDrive\");\r\n        fr = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"FrontRightDrive\");\r\n        bl = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"BackLeftDrive\");\r\n        br = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"BackRightDrive\");\r\n        correctMotors();\r\n\r\n    }\r\n\r\n    public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer){\r\n        fl = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"FrontLeftDrive\");\r\n        fr = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"FrontRightDrive\");\r\n        bl = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"BackLeftDrive\");\r\n        br = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"BackRightDrive\");\r\n        distance = hardwareMap.get(DistanceSensor.class, \"Distance\");\r\n        this.localizer = localizer;\r\n        previousVelocity = new Vector2D(0,0);\r\n        previousOmega = 0;\r\n        correctMotors();\r\n\r\n    }\r\n\r\n    CvDetectionPipeline pipeline;\r\n\r\n    public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer, CvDetectionPipeline pipeline){\r\n        fl = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"FrontLeftDrive\");\r\n        fr = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"FrontRightDrive\");\r\n        bl = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"BackLeftDrive\");\r\n        br = (ExpansionHubMotor) hardwareMap.dcMotor.get(\"BackRightDrive\");\r\n        distance = hardwareMap.get(DistanceSensor.class, \"Distance\");\r\n        this.pipeline = pipeline;\r\n        this.localizer = localizer;\r\n        previousVelocity = new Vector2D(0,0);\r\n        previousOmega = 0;\r\n        correctMotors();\r\n\r\n    }\r\n\r\n\r\n    /**\r\n     * DO NOT CALL THIS W/O ALL THE RIGHT CONSTRUCTORS\r\n     * @param desiredVelocity\r\n     * @param desiredRotate\r\n     */\r\n    public void seekCubes(double desiredVelocity, double desiredRotate){\r\n        if(pipeline == null || localizer == null){\r\n            return;\r\n        }\r\n        RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();\r\n        Vector2D robotPosition;\r\n        seekCubesRotate(desiredRotate);\r\n        Vector2D desiredPosition;\r\n        while(pipeline.yPointList().get(0) < 5) { //todo ask mason how to ensure I am tracking the same cube every time here\r\n            //todo idea about above, write a method that traverses the stack by placing it in an arrayList, calculating the smallest deviation from the originally stored value and assuming that is the target,\r\n            //this would dynamically adapt to the closest cube in the frame may cause some oscillation especially during the rotational phase.\r\n            currentState = localizer.getCurrentState();\r\n            robotPosition = new Vector2D(currentState.getPosition().getX(), currentState.getPosition().getY());\r\n\r\n            Vector2D cubeToRobotDisplacement = new Vector2D(pipeline.xPointList().get(0), pipeline.yPointList().get(0));\r\n            double cubeToRobotDisplacementMag = cubeToRobotDisplacement.magnitude();\r\n            Vector2D cubeToRobotDisplacementOriented = new Vector2D(robotPosition.getDirection(), cubeToRobotDisplacementMag);\r\n            desiredPosition = robotPosition.add(cubeToRobotDisplacementOriented);\r\n\r\n            currentState = localizer.getCurrentState();\r\n            Vector2D positionError = desiredPosition.subtract(currentState.getPosition());\r\n            double errorAngle = positionError.getDirection();\r\n            //angleOfTravel += 0; // (Math.PI / 4.0)mecanum need this because all the math is shifted by pi/4\r\n            Vector2D idealVelocity = Vector2D.fromAngleMagnitude(errorAngle, desiredVelocity);\r\n\r\n            Vector2D recordedVelocity = currentState.getVelocity();\r\n            //recordedVelocity.rotate(-Math.PI / 4.0);\r\n\r\n            double xError = (idealVelocity.getX() - recordedVelocity.getX());\r\n            double yError = (idealVelocity.getY() - recordedVelocity.getY());\r\n            Vector2D error = new Vector2D(xError, yError);\r\n            //Vector2D crossTrackError = new Vector2D(xError, yError);\r\n            Vector2D deltaError = error.subtract(previousError);\r\n            error = error.multiply(pVelocity);\r\n            deltaError = deltaError.multiply(dVelocity);\r\n            error.add(deltaError);\r\n\r\n\r\n\r\n\r\n            //found and fixed stupid math error\r\n            Vector2D passedVector = previousVelocity.add(new Vector2D(error.getX(), error.getY()));\r\n            if(Math.abs(fl.getPower()) == 1.0 || Math.abs(fr.getPower()) == 1.0 || Math.abs(bl.getPower()) == 1.0 || Math.abs(br.getPower()) == 1.0){\r\n                passedVector = new Vector2D(previousVelocity.getX(), previousVelocity.getY());\r\n                desiredVelocity = passedVector.magnitude();\r\n            }\r\n//            Vector2D maxVector = new Vector2D(Math.cos(direction), Math.sin(direction));\r\n//            if(Math.abs(maxVector.getX()) < Math.abs(passedX)){\r\n//                if(getSign(maxVector.getX()) == getSign(passedX)){\r\n//                    passedX = maxVector.getX();\r\n//                }else{\r\n//                    passedX = -maxVector.getX();\r\n//                }\r\n//            }\r\n//            if(Math.abs(maxVector.getY()) < Math.abs(passedY)){\r\n//                if(getSign(maxVector.getY()) == getSign(passedY)){\r\n//                    passedY = maxVector.getY();\r\n//                }else{\r\n//                    passedY = -maxVector.getY();\r\n//                }\r\n//            }\r\n\r\n            //Vector2D passedVector = new Vector2D(passedX, passedY);\r\n            previousVelocity = setVelocity(passedVector,0);\r\n\r\n            // previousVelocity.multiply(sign);\r\n            previousError = error;\r\n\r\n\r\n            //AbstractOpMode.currentOpMode().telemetry.addData(\"\", currentState.toString());\r\n//\r\n            //AbstractOpMode.currentOpMode().telemetry.addData(\"distance\", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));\r\n            //AbstractOpMode.currentOpMode().telemetry.addData(\"sign\", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));\r\n\r\n            AbstractOpMode.currentOpMode().telemetry.addData(\"\", currentState);\r\n            //AbstractOpMode.currentOpMode().telemetry.addData(\"error\", (Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude())));\r\n\r\n            AbstractOpMode.currentOpMode().telemetry.update();\r\n        }\r\n    }\r\n\r\n    private final double pOmega = 0;\r\n    private void seekCubesRotate(double desiredOmega) {\r\n        double xPartitionDeviation = pipeline.xPointList().get(0);\r\n        previousOmega = 0;\r\n        while(xPartitionDeviation > 5){\r\n            xPartitionDeviation = pipeline.xPointList().get(0);\r\n            double recordedOmega = localizer.getCurrentState().getAngularVelocity();\r\n            double omegaError = desiredOmega - recordedOmega;\r\n            omegaError *= pOmega;\r\n            double passedOmega = omegaError + previousOmega;\r\n            if(fl.getPower() == 1.0 || fr.getPower() == 1.0 || bl.getPower() == 1.0 || br.getPower() == 1.0){\r\n                passedOmega = 1.0;\r\n                desiredOmega = recordedOmega;\r\n            }else if(fl.getPower() == -1.0 || fr.getPower() == -1.0 || bl.getPower() == -1.0 || br.getPower() == -1.0){\r\n                passedOmega = -1.0;\r\n                desiredOmega = recordedOmega;\r\n            }\r\n            setVelocity(new Vector2D(0,0), passedOmega);\r\n            previousOmega = passedOmega;\r\n        }\r\n\r\n    }\r\n\r\n\r\n\r\n    public void strafeDistanceSensor(double desiredVelocity){\r\n        if(localizer == null){\r\n            return;\r\n        }\r\n        RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();\r\n\r\n        double previousError = 0;\r\n        double previousVelocity = 0;\r\n        Vector2D steadyStateError = new Vector2D(0,0);\r\n        previousOmegaError = 0;\r\n\r\n        //todo calibrate the tolerance of it.\r\n        while(distance.getDistance(DistanceUnit.INCH) > 0.5 && AbstractOpMode.currentOpMode().opModeIsActive()){\r\n\r\n            currentState = localizer.getCurrentState();\r\n\r\n            //angleOfTravel += 0; // (Math.PI / 4.0)mecanum need this because all the math is shifted by pi/4\r\n\r\n            Vector2D recordedVelocity = currentState.getVelocity();\r\n            double recordedVelocityMag = recordedVelocity.magnitude();\r\n            //recordedVelocity.rotate(-Math.PI / 4.0);\r\n\r\n            double error = desiredVelocity - recordedVelocityMag;\r\n            //Vector2D crossTrackError = new Vector2D(xError, yError);\r\n            //steadyStateError.add(error);\r\n            double deltaError = error - previousError;\r\n            error = error * pVelocity;\r\n            deltaError = deltaError * dVelocity;\r\n            error += deltaError;\r\n\r\n\r\n//            double sign = 1.0;\r\n//            if(error.getX() < 0 || error.getY() < 0){\r\n//                sign = -1.0;\r\n//            }\r\n            //error.add(previousVelocity);\r\n\r\n            //found and fixed stupid math error\r\n            double passedVal = previousVelocity + error;\r\n\r\n\r\n            if(passedVal > 1){\r\n                passedVal = 1;\r\n                desiredVelocity = currentState.getVelocity().magnitude();\r\n            }\r\n            if(passedVal < -1){\r\n                passedVal = -1;\r\n                desiredVelocity = currentState.getVelocity().magnitude();\r\n            }\r\n\r\n            //Vector2D passedVector = new Vector2D(passedX, passedY);\r\n            previousVelocity = setStrafe(passedVal);\r\n\r\n            // previousVelocity.multiply(sign);\r\n            previousError = error;\r\n\r\n        }\r\n        brake();\r\n\r\n\r\n\r\n    }\r\n\r\n\r\n    private void correctMotors() {\r\n        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);\r\n        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);\r\n        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);\r\n        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n\r\n    /**\r\n     * moving from position to position, assuming some kind of translational motion\r\n     * NEW no rotation involved since we can handle that as a single dimensional operation seperately rather than integrating it into the 3 dimensional operation it was\r\n     * @param desiredPosition the end point of the robot\r\n     * @param desiredVelocity the end velocity of the robot in inches per second\r\n     *\r\n     */\r\n\r\n    public void moveToPosition(Vector2D desiredPosition, double desiredVelocity){\r\n\r\n        if(localizer == null){\r\n            return;\r\n        }\r\n        RobotPositionStateUpdater.RobotPositionState currentState = localizer.getCurrentState();\r\n        Vector2D desiredPositionPointer = new Vector2D(desiredPosition.getX() - currentState.getPosition().getX() , desiredPosition.getY() - currentState.getPosition().getY());\r\n        Vector2D newDesiredPosition = desiredPosition.add(new Vector2D(5.0 * Math.cos(desiredPositionPointer.getDirection()), 5.0 * Math.sin(desiredPositionPointer.getDirection())));\r\n\r\n        previousError = new Vector2D(0,0);\r\n        Vector2D steadyStateError = new Vector2D(0,0);\r\n        previousOmegaError = 0;\r\n\r\n\r\n        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && AbstractOpMode.currentOpMode().opModeIsActive()){\r\n\r\n            currentState = localizer.getCurrentState();\r\n            Vector2D positionError = desiredPosition.subtract(currentState.getPosition());\r\n            double errorAngle = positionError.getDirection();\r\n            //angleOfTravel += 0; // (Math.PI / 4.0)mecanum need this because all the math is shifted by pi/4\r\n            Vector2D idealVelocity = Vector2D.fromAngleMagnitude(errorAngle, desiredVelocity);\r\n\r\n            Vector2D recordedVelocity = currentState.getVelocity();\r\n            //recordedVelocity.rotate(-Math.PI / 4.0);\r\n\r\n            double xError = (idealVelocity.getX() - recordedVelocity.getX());\r\n            double yError = (idealVelocity.getY() - recordedVelocity.getY());\r\n            Vector2D error = new Vector2D(xError, yError);\r\n            //Vector2D crossTrackError = new Vector2D(xError, yError);\r\n            steadyStateError.add(error);\r\n            Vector2D deltaError = error.subtract(previousError);\r\n            error = error.multiply(pVelocity);\r\n            deltaError = deltaError.multiply(dVelocity);\r\n            error.add(deltaError);\r\n\r\n\r\n\r\n\r\n            //found and fixed stupid math error\r\n            Vector2D passedVector = previousVelocity.add(new Vector2D(error.getX(), error.getY()));\r\n            if(Math.abs(fl.getPower()) == 1.0 || Math.abs(fr.getPower()) == 1.0 || Math.abs(bl.getPower()) == 1.0 || Math.abs(br.getPower()) == 1.0){\r\n                passedVector = new Vector2D(previousVelocity.getX(), previousVelocity.getY());\r\n                desiredVelocity = passedVector.magnitude();\r\n            }\r\n//            Vector2D maxVector = new Vector2D(Math.cos(direction), Math.sin(direction));\r\n//            if(Math.abs(maxVector.getX()) < Math.abs(passedX)){\r\n//                if(getSign(maxVector.getX()) == getSign(passedX)){\r\n//                    passedX = maxVector.getX();\r\n//                }else{\r\n//                    passedX = -maxVector.getX();\r\n//                }\r\n//            }\r\n//            if(Math.abs(maxVector.getY()) < Math.abs(passedY)){\r\n//                if(getSign(maxVector.getY()) == getSign(passedY)){\r\n//                    passedY = maxVector.getY();\r\n//                }else{\r\n//                    passedY = -maxVector.getY();\r\n//                }\r\n//            }\r\n\r\n            //Vector2D passedVector = new Vector2D(passedX, passedY);\r\n            previousVelocity = setVelocity(passedVector,0);\r\n\r\n           // previousVelocity.multiply(sign);\r\n            previousError = error;\r\n\r\n\r\n            //AbstractOpMode.currentOpMode().telemetry.addData(\"\", currentState.toString());\r\n//\r\n            //AbstractOpMode.currentOpMode().telemetry.addData(\"distance\", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));\r\n            //AbstractOpMode.currentOpMode().telemetry.addData(\"sign\", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));\r\n\r\n            AbstractOpMode.currentOpMode().telemetry.addData(\"\", currentState);\r\n            //AbstractOpMode.currentOpMode().telemetry.addData(\"error\", (Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude())));\r\n\r\n            AbstractOpMode.currentOpMode().telemetry.update();\r\n        }\r\n        brake();\r\n\r\n    }\r\n\r\n    public String getMotorPower(){\r\n        return\"fl: \" + fl.getPower() + \"\\n\" +\r\n                \"fr: \" + fr.getPower() + \"\\n\" +\r\n                \"bl: \" + bl.getPower() + \"\\n\" +\r\n                \"br: \" + br.getPower();\r\n    }\r\n\r\n    public Vector2D setVelocity(Vector2D velocity, double turnValue){\r\n        turnValue = -turnValue;\r\n        double direction = velocity.getDirection();\r\n\r\n\r\n\r\n        double power = velocity.magnitude();\r\n\r\n        double angle = direction + (Math.PI / 4.0);\r\n        double sin = Math.sin(angle);\r\n        double cos = Math.cos(angle);\r\n\r\n        setMotorVelocity((power * sin - turnValue),(power * cos - turnValue),\r\n                (power * cos + turnValue), (power * sin + turnValue));\r\n        return new Vector2D(velocity.getX(), velocity.getY());\r\n    }\r\n        //Vt = rw\r\n    private final double WHEEL_RADIUS_IN = 1.88976; // radius of the 96mm gobilda wheels in IN\r\n    public void setMotorVelocity(double flVelocity, double frVelocity, double blVelocity, double brVelocity){\r\n        fl.setVelocity(flVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);\r\n        fr.setVelocity(frVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);\r\n        bl.setVelocity(blVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);\r\n        br.setVelocity(brVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);\r\n    }\r\n\r\n\r\n    double previousOmega;\r\n    double pRotation;\r\n    public void moveToRotation(double desiredRotation, double omega){\r\n        if(localizer == null){\r\n            return;\r\n        }\r\n        RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();\r\n        previousOmega = 0;\r\n        while(Math.abs(desiredRotation - state.getRotation()) > 0.05){\r\n            state = localizer.getCurrentState();\r\n            double recordedOmega = state.getAngularVelocity();\r\n            double omegaError = omega - recordedOmega;\r\n            omegaError *= pRotation;\r\n            omega += omegaError;\r\n            setPowerPurePursuit(new Vector2D(0,0), omega);\r\n//            AbstractOpMode.currentOpMode().telemetry.addData(\"\", state.toString());\r\n//            AbstractOpMode.currentOpMode().telemetry.update();\r\n        }\r\n        brake();\r\n    }\r\n\r\n    private void brake() {\r\n        fl.setPower(0);\r\n        fr.setPower(0);\r\n        bl.setPower(0);\r\n        br.setPower(0);\r\n        previousVelocity = new Vector2D(0,0);\r\n    }\r\n\r\n\r\n    public DcMotor[] getMotors(){\r\n        return new DcMotor[]{fl,fr,bl,br};\r\n    }\r\n\r\n\r\n    /*\r\n    gets the robot driving in a specified direction\r\n     */\r\n    public void setPower(Vector2D velocity, double turnValue){\r\n        turnValue = -turnValue;\r\n        double direction = velocity.getDirection();\r\n\r\n\r\n\r\n        double power = velocity.magnitude();\r\n\r\n        double angle = direction + (3 * Math.PI / 4.0);\r\n        double sin = Math.sin(angle);\r\n        double cos = Math.cos(angle);\r\n\r\n        setPower((power * sin - turnValue),(power * cos + turnValue),\r\n                (power * cos - turnValue), (power * sin + turnValue));\r\n    }\r\n\r\n    /*\r\n    this exists because of the differences between the FTC controller and raw vectors\r\n     */\r\n    public Vector2D setPowerPurePursuit(Vector2D velocity, double turnValue){\r\n\r\n        turnValue = turnValue;\r\n        double direction = velocity.getDirection();\r\n        double power = velocity.magnitude();\r\n\r\n        double angle = direction +  Math.PI / 4;\r\n\r\n        double sin = Math.sin(angle);\r\n        double cos = Math.cos(angle);\r\n        // right movement\r\n        // fl +, fr -, bl -, br +\r\n        // positive clockwise\r\n        // fl +, fr -, bl +, br -\r\n        setPowerCorrect(power * sin + turnValue, -power * cos - turnValue,\r\n                -power * cos + turnValue, power * sin - turnValue);\r\n        return velocity;\r\n    }\r\n\r\n    public void setPowerCorrect(double flPow, double frPow, double blPow, double brPow) {\r\n        fl.setPower(flPow);\r\n        fr.setPower(frPow);\r\n        bl.setPower(-blPow);\r\n        br.setPower(brPow);\r\n    }\r\n\r\n    public void setPower(double flPow, double frPow, double blPow, double brPow) {\r\n        fl.setPower(-flPow);\r\n        fr.setPower(frPow);\r\n        bl.setPower(-blPow);\r\n        br.setPower(brPow);\r\n    }\r\n\r\n    public double setStrafe(double val){\r\n        fl.setPower(val);\r\n        fr.setPower(-val);\r\n        bl.setPower(-val);\r\n        br.setPower(val);\r\n        return val;\r\n    }\r\n\r\n    private boolean isNear(double globalRads, double angle, boolean isBig) {\r\n        if (isBig) {\r\n            return Math.abs(globalRads - angle) < (2 * ANGULAR_TOLERANCE);\r\n        }else {\r\n            return Math.abs(globalRads - angle) < (ANGULAR_TOLERANCE);\r\n        }\r\n    }\r\n\r\n    public void zero() {\r\n        setPower(0,0,0,0);\r\n    }\r\n\r\n    private int getSign(double num){\r\n        if(num < 0){\r\n            return -1;\r\n        }else {\r\n            return 1;\r\n        }\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/teamcode/common/MecanumDriveTrain.java b/TeamCode/src/main/java/teamcode/common/MecanumDriveTrain.java
+--- a/TeamCode/src/main/java/teamcode/common/MecanumDriveTrain.java	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/src/main/java/teamcode/common/MecanumDriveTrain.java	(date 1639883308754)
+@@ -32,9 +32,9 @@
+     Vector2D previousError;
+     double previousOmegaError;
+ 
+-    DistanceSensor distance;
++    DistanceSensor distanceLeft, distanceRight;
+ 
+-    Logger logger;
++    private boolean environmentalTerminate, eStop;
+ 
+ 
+     /**
+@@ -44,6 +44,9 @@
+     final double pVelocity = 0.000725; //0.000725
+     final double dVelocity  = 0.047; //0.027
+ 
++    //todo for optimizing is to tune the PID aggresively due to high accel
++    //todo is necessary to retune due to the rework of voltage to velocity
++
+     public MecanumDriveTrain(HardwareMap hardwareMap){
+         fl = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontLeftDrive");
+         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
+@@ -58,7 +61,8 @@
+         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
+         bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
+         br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
+-        distance = hardwareMap.get(DistanceSensor.class, "Distance");
++        distanceLeft = hardwareMap.get(DistanceSensor.class, "DistanceLeft");
++        distanceRight = hardwareMap.get(DistanceSensor.class, "DistanceRight");
+         this.localizer = localizer;
+         previousVelocity = new Vector2D(0,0);
+         previousOmega = 0;
+@@ -73,7 +77,8 @@
+         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
+         bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
+         br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
+-        distance = hardwareMap.get(DistanceSensor.class, "Distance");
++        distanceLeft = hardwareMap.get(DistanceSensor.class, "DistanceLeft");
++        distanceRight = hardwareMap.get(DistanceSensor.class, "DistanceRight");
+         this.pipeline = pipeline;
+         this.localizer = localizer;
+         previousVelocity = new Vector2D(0,0);
+@@ -96,7 +101,8 @@
+         Vector2D robotPosition;
+         seekCubesRotate(desiredRotate);
+         Vector2D desiredPosition;
+-        while(pipeline.yPointList().get(0) < 5) { //todo ask mason how to ensure I am tracking the same cube every time here
++        environmentalTerminate = false;
++        while(pipeline.yPointList().get(0) < 5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate) { //todo ask mason how to ensure I am tracking the same cube every time here
+             //todo idea about above, write a method that traverses the stack by placing it in an arrayList, calculating the smallest deviation from the originally stored value and assuming that is the target,
+             //this would dynamically adapt to the closest cube in the frame may cause some oscillation especially during the rotational phase.
+             currentState = localizer.getCurrentState();
+@@ -173,7 +179,8 @@
+     private void seekCubesRotate(double desiredOmega) {
+         double xPartitionDeviation = pipeline.xPointList().get(0);
+         previousOmega = 0;
+-        while(xPartitionDeviation > 5){
++        environmentalTerminate = false;
++        while(xPartitionDeviation > 5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+             xPartitionDeviation = pipeline.xPointList().get(0);
+             double recordedOmega = localizer.getCurrentState().getAngularVelocity();
+             double omegaError = desiredOmega - recordedOmega;
+@@ -194,7 +201,7 @@
+ 
+ 
+ 
+-    public void strafeDistanceSensor(double desiredVelocity){
++    public void strafeDistanceSensor(double desiredVelocity, boolean isRed){
+         if(localizer == null){
+             return;
+         }
+@@ -204,9 +211,11 @@
+         double previousVelocity = 0;
+         Vector2D steadyStateError = new Vector2D(0,0);
+         previousOmegaError = 0;
++        environmentalTerminate = false;
+ 
+         //todo calibrate the tolerance of it.
+-        while(distance.getDistance(DistanceUnit.INCH) > 0.5 && AbstractOpMode.currentOpMode().opModeIsActive()){
++        while(distanceLeft.getDistance(DistanceUnit.INCH) > 0.5 && distanceLeft.getDistance(DistanceUnit.INCH) > 0.5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
++
+ 
+             currentState = localizer.getCurrentState();
+ 
+@@ -245,7 +254,7 @@
+             }
+ 
+             //Vector2D passedVector = new Vector2D(passedX, passedY);
+-            previousVelocity = setStrafe(passedVal);
++            previousVelocity = setStrafe(passedVal, isRed);
+ 
+             // previousVelocity.multiply(sign);
+             previousError = error;
+@@ -294,9 +303,9 @@
+         previousError = new Vector2D(0,0);
+         Vector2D steadyStateError = new Vector2D(0,0);
+         previousOmegaError = 0;
++        environmentalTerminate = false;
+ 
+-
+-        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && AbstractOpMode.currentOpMode().opModeIsActive()){
++        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+ 
+             currentState = localizer.getCurrentState();
+             Vector2D positionError = desiredPosition.subtract(currentState.getPosition());
+@@ -404,7 +413,8 @@
+         }
+         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
+         previousOmega = 0;
+-        while(Math.abs(desiredRotation - state.getRotation()) > 0.05){
++        environmentalTerminate = false;
++        while(Math.abs(desiredRotation - state.getRotation()) > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+             state = localizer.getCurrentState();
+             double recordedOmega = state.getAngularVelocity();
+             double omegaError = omega - recordedOmega;
+@@ -486,11 +496,12 @@
+         br.setPower(brPow);
+     }
+ 
+-    public double setStrafe(double val){
+-        fl.setPower(val);
+-        fr.setPower(-val);
+-        bl.setPower(-val);
+-        br.setPower(val);
++    public double setStrafe(double val, boolean isRed){
++        if(isRed){
++            setMotorVelocity(-val, val, val, -val);
++        }else {
++            setMotorVelocity(val, -val, -val, val);
++        }
+         return val;
+     }
+ 
+@@ -514,6 +525,13 @@
+         }
+     }
+ 
++    public void setEnvironmentalTerminate(boolean val){
++        environmentalTerminate = val;
++    }
++
++    public void seteStop(boolean val){
++        eStop = val;
++    }
+ 
+ 
+ 
+Index: TeamCode/src/main/java/teamcode/common/Localizer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teamcode.common;\r\nimport com.arcrobotics.ftclib.geometry.Pose2d;\r\nimport com.arcrobotics.ftclib.geometry.Rotation2d;\r\nimport com.arcrobotics.ftclib.geometry.Transform2d;\r\nimport com.arcrobotics.ftclib.geometry.Translation2d;\r\nimport com.qualcomm.hardware.bosch.BNO055IMU;\r\nimport com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;\r\nimport com.qualcomm.robotcore.hardware.DcMotor;\r\nimport com.qualcomm.robotcore.hardware.DcMotorSimple;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\nimport com.qualcomm.robotcore.hardware.NormalizedColorSensor;\r\nimport com.qualcomm.robotcore.hardware.NormalizedRGBA;\r\nimport com.qualcomm.robotcore.hardware.Servo;\r\nimport com.qualcomm.robotcore.util.ReadWriteFile;\r\nimport com.spartronics4915.lib.T265Camera;\r\n\r\nimport org.apache.commons.math3.analysis.function.Abs;\r\nimport org.apache.commons.math3.geometry.euclidean.threed.Vector3D;\r\nimport org.apache.commons.math3.linear.Array2DRowRealMatrix;\r\nimport org.apache.commons.math3.linear.DecompositionSolver;\r\nimport org.apache.commons.math3.linear.LUDecomposition;\r\nimport org.apache.commons.math3.linear.MatrixUtils;\r\nimport org.apache.commons.math3.linear.RealMatrix;\r\nimport org.checkerframework.checker.units.qual.A;\r\nimport org.checkerframework.checker.units.qual.Angle;\r\nimport org.firstinspires.ftc.robotcore.internal.system.AppUtil;\r\nimport org.openftc.revextensions2.ExpansionHubEx;\r\nimport org.openftc.revextensions2.ExpansionHubMotor;\r\nimport org.openftc.revextensions2.RevBulkData;\r\n\r\nimport java.io.File;\r\nimport java.io.FileNotFoundException;\r\nimport java.io.PrintStream;\r\nimport java.util.ArrayList;\r\nimport java.util.Arrays;\r\nimport java.util.List;\r\nimport java.util.Vector;\r\nimport java.util.concurrent.atomic.AtomicBoolean;\r\n\r\nimport teamcode.common.PositionStuff.Point;\r\nimport teamcode.common.PositionStuff.Pose;\r\nimport teamcode.common.PurePursuit.MathFunctions;\r\n\r\nimport static java.lang.Math.*;\r\n\r\npublic class Localizer extends Thread {\r\n    //TODO before reading this file please note the static import of the math class,\r\n    // odds are if you see a math function it is from that and not a constatnt/method I created\r\n    //https://docs.google.com/document/d/1JQuU2M--rVFEa9ApKkOcc0CalsBxKjH-l0PQLRW7F3c/edit?usp=sharing proof behind the math\r\n\r\n    //odometry wheel constants, MUST BE CALIBRATED FOR EACH ROBOT\r\n    private static final double TICKS_PER_REV = 8192;\r\n    private static final double WHEEL_DIAMETER = 1.378; //1.181 for 60 mm, 1.417 for 72mm\r\n    private static final double GEAR_RATIO = 1;\r\n    private static final double CHASSIS_LENGTH = 7.078;\r\n    private static final double ODO_XY_DISTANCE = 4.05; //x value\r\n    private static final double ODO_YX_DISTANCE = 3.5; //Y value\r\n    private static final double WINCH_RADIUS = 1;\r\n\r\n\r\n\r\n    //debugging constants, not used very much\r\n\r\n    File loggingFile = AppUtil.getInstance().getSettingsFile(\"Position.txt\");\r\n    File secondaryLoggingFile = AppUtil.getInstance().getSettingsFile(\"XSLAM.txt\");\r\n    File tertiaryloggingFile = AppUtil.getInstance().getSettingsFile(\"YSLAM.txt\");\r\n    File fourthLoggingFile = AppUtil.getInstance().getSettingsFile(\"Rotation.txt\");\r\n    File fifthLoggingFile = AppUtil.getInstance().getSettingsFile(\"vomega.txt\");\r\n    File sixthLoggingFile = AppUtil.getInstance().getSettingsFile(\"vy.txt\");\r\n    public String loggingString, secondaryLoggingString, tertiaryLoggingString, fourthLoggingString, fifthLoggingString, sixthLoggingString;\r\n    private int iterator;\r\n    //-2.641358450698 - (-2.641358450698 * 1.2)\r\n\r\n\r\n\r\n    // set to true when thread is requested to shutdown\r\n    private AtomicBoolean stop = new AtomicBoolean(false);\r\n    // sensors run at 300 Hz\r\n    // this is the length of that interval in milliseconds\r\n    private long runInterval = (long)Math.round(1.0/50.0 * 1000.0);\r\n    //1.0/300.0 * 1,000,000.0\r\n\r\n    //hardware and timing constants, all of this is set up in the constructor\r\n    private long elapsedTime, startingTime;\r\n    private RobotPositionStateUpdater state;\r\n    private final ExpansionHubMotor leftVertical, rightVertical, horizontal; //general odometry encoders, universal for each year\r\n    private final ExpansionHubEx hub1;\r\n    private RevBulkData data1, data2;\r\n    private BNO055IMU imu;\r\n    private double previousOuterArcLength = 0;\r\n    private double previousInnerArcLength = 0;\r\n    private double previousHorizontalArcLength = 0;\r\n    private long minElapsedTime, maxElapsedTime;\r\n\r\n    //Kalman filter parameters, the ones declared up here must also be tuned for EVERY ROBOT\r\n\r\n    private static final double INCHES_TO_METERS = 0.0254; //-8.628937\r\n        Transform2d cameraToRobot = new Transform2d(new Translation2d(0,0), new Rotation2d()); //-7.965 * INCHES_TO_METERS,  0 * INCHES_TO_METERS 0.8, -7.2\r\n    private static T265Camera slamra;\r\n    T265Camera.CameraUpdate currentSlamraPos;\r\n    private Pose2d slamraStartingPose;\r\n    private static double TAO = 0; //0.9 optimal\r\n    private static final double MEASUREMENT_VARIANCE = 0.01; // 0.01 + 0.02? account more for odo variance\r\n    private double previousEstimateUncertainty;\r\n    Matrix previousOdoMat;\r\n    Matrix previousIdealMat;\r\n    Matrix previousVislamMat;\r\n\r\n    //Game specific fields\r\n    Servo odoWinch, secondaryOdoWinch;\r\n    OdoState odoState;\r\n\r\n\r\n    /**\r\n     * Adjust the following to weigh the following out of your program\r\n     *\r\n     * High Frequency Sensor, TAO = 0\r\n     * Low Frequency Sensor, TAO = 1\r\n     *\r\n     */\r\n\r\n\r\n\r\n\r\n\r\n    //Non Kalman constructor, may make this an option later but for now this is deprecated\r\n    /**\r\n     * @param position in inches\r\n     * @param globalRads in radians\r\n     */\r\n    @Deprecated\r\n    public Localizer(HardwareMap hardwareMap, Vector2D position, double globalRads) {\r\n        minElapsedTime = 0;\r\n        maxElapsedTime = 0;\r\n        hub1 = hardwareMap.get(ExpansionHubEx.class,\"Control Hub\");\r\n        loggingString = \"\";\r\n        secondaryLoggingString = \"\";\r\n        //hub2 = hardwareMap.get(ExpansionHubEx.class,\"Expansion Hub 2\");\r\n        // initialize hardware\r\n        leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);\r\n        rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);\r\n        horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);\r\n\r\n\r\n        // setup initial position;\r\n        previousHorizontalArcLength = 0;\r\n        previousInnerArcLength = 0;\r\n        previousOuterArcLength = 0;\r\n        startingTime = System.currentTimeMillis();\r\n        state = new RobotPositionStateUpdater(position, new Vector2D(0,0), globalRads, 0);\r\n        resetEncoders();\r\n\r\n        odoState = OdoState.LOWERED;\r\n        type = constructorType.DEPRECATED;\r\n\r\n    }\r\n\r\n    //Kalman Constructor\r\n\r\n    /**\r\n     *\r\n     * @param hardwareMap hardware interface we use, just passing in the opModes HardwareMap\r\n     *                    field is always sufficient\r\n     * @param position the starting position of the robot as a vector in inches\r\n     * @param globalRads the starting orientation of the robot in radians\r\n     * @param previousEstimateUncertainty the covariance of the kinematic models estimate,\r\n     *                                    greater value means trusting the measured values more and\r\n     *                                    smaller value means trusting the kinematic models estimate more\r\n     */\r\n    public Localizer(HardwareMap hardwareMap, Vector2D position, double globalRads, double previousEstimateUncertainty){\r\n\r\n        if(slamra == null) {\r\n            Debug.log(\"here\");\r\n            slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);\r\n            currentSlamraPos = slamra.getLastReceivedCameraUpdate();\r\n        }\r\n        slamraStartingPose = new Pose2d(0 * INCHES_TO_METERS, 0 * INCHES_TO_METERS, new Rotation2d(globalRads));\r\n        this.previousEstimateUncertainty = previousEstimateUncertainty; //this should always be a high value otherwise bad things will happen\r\n        minElapsedTime = 0;\r\n        maxElapsedTime = 0;\r\n        hub1 = hardwareMap.get(ExpansionHubEx.class,\"Control Hub\");\r\n        loggingString = \"\";\r\n        secondaryLoggingString = \"\";\r\n        //hub2 = hardwareMap.get(ExpansionHubEx.class,\"Expansion Hub 2\");\r\n        // initialize hardware\r\n        imu = hardwareMap.get(BNO055IMU.class, \"imu\");\r\n        leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);\r\n        rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);\r\n        horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);\r\n\r\n        odoWinch = hardwareMap.servo.get(\"OdoWinch\");\r\n        secondaryOdoWinch = hardwareMap.servo.get(\"SecondaryOdoWinch\");\r\n\r\n        // setup initial position;\r\n        previousHorizontalArcLength = 0;\r\n        previousInnerArcLength = 0;\r\n        previousOuterArcLength = 0;\r\n\r\n        previousVislamMat = new Matrix(6,1);\r\n        previousIdealMat = new Matrix(6,1);\r\n        startingTime = System.currentTimeMillis();\r\n        state = new RobotPositionStateUpdater(position, new Vector2D(0,0), globalRads, 0);\r\n\r\n        double[][] previousOdoArray = {\r\n                {state.getCurrentState().getPosition().getX()},\r\n                {state.getCurrentState().getPosition().getY()},\r\n                {state.getCurrentState().getRotation()},\r\n                {0},\r\n                {0}, //this whole class assumes constant velocity and it is fair to assume the robot starts still\r\n                {0}\r\n        };\r\n        previousOdoMat = new Matrix(previousOdoArray);\r\n\r\n        //lowerOdo();\r\n        resetEncoders();\r\n        iterator = 1;\r\n        odoState = OdoState.LOWERED;\r\n        type = constructorType.KALMAN;\r\n    }\r\n\r\n\r\n\r\n    public void stopThread() {\r\n        if(slamra != null) {\r\n            Debug.log(\"end\");\r\n            slamra.stop();\r\n        }\r\n        this.stop.set(true);\r\n    }\r\n    @Override\r\n    public void run() {\r\n        // make sure we reset our accounting of start times\r\n        state.resetUpdateTime();\r\n        startingTime = System.currentTimeMillis();\r\n        if(slamra != null) {\r\n            slamra.start();\r\n            currentSlamraPos = slamra.getLastReceivedCameraUpdate();\r\n            slamra.setPose(slamraStartingPose);\r\n        }\r\n        // max speed 300 Hz)\r\n        while (!stop.get()) {\r\n            long millis = System.currentTimeMillis();\r\n            if(type == constructorType.DEPRECATED) {\r\n                update();\r\n            }else if(type == constructorType.KALMAN) {\r\n                updateKalman();\r\n            }else if(type == constructorType.MAT) {\r\n                matUpdate();\r\n            }\r\n            long runtime = System.currentTimeMillis() - millis;\r\n\r\n            if (runtime > runInterval) {\r\n                // this is very bad\r\n                // todo break here.\r\n                minElapsedTime++;\r\n                runtime=runInterval;\r\n            }\r\n            maxElapsedTime++;\r\n//            loggingString += (runInterval - runtime) +\"\\n\";\r\n//            ReadWriteFile.writeFile(loggingFile, loggingString);\r\n            try {\r\n                // cast should be fine here since we're likely dealing with only\r\n                // a few milliseconds\r\n                sleep(runInterval - runtime);\r\n            } catch (InterruptedException e) {\r\n                // this probably isn't bad.\r\n                e.printStackTrace();\r\n            }\r\n        }\r\n    }\r\n\r\n    //initializing the odo, not to be confused with zeroing it\r\n    private void resetEncoders() {\r\n        leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        leftVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        rightVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        //horizontal.setDirection(DcMotorSimple.Direction.REVERSE);\r\n        //leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);\r\n    }\r\n\r\n    public void liftOdo(){\r\n        odoWinch.setPosition(1.0);\r\n        secondaryOdoWinch.setPosition(0.25);\r\n        odoState = OdoState.RAISED;\r\n    }\r\n\r\n    public void lowerOdo(){\r\n        odoWinch.setPosition(0);\r\n        secondaryOdoWinch.setPosition(0);\r\n        odoState = OdoState.LOWERED;\r\n    }\r\n\r\n    private enum OdoState{\r\n        RAISED, LOWERED\r\n    }\r\n\r\n    private enum constructorType{\r\n        DEPRECATED, KALMAN, MAT\r\n    }\r\n\r\n    constructorType type;\r\n\r\n    //zeroing the odo\r\n    public void resetOdometersTravelling(){\r\n        leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        previousHorizontalArcLength = 0;\r\n        previousInnerArcLength = 0;\r\n        previousOuterArcLength = 0;\r\n    }\r\n\r\n    //exposes the state to exterior classes\r\n    public RobotPositionStateUpdater.RobotPositionState getCurrentState() {\r\n        return state.getCurrentState();\r\n    }\r\n\r\n    //see top of class for formalized proof of the math\r\n    @Deprecated //use updateKalman instead\r\n    private synchronized void update() {\r\n        // read sensor data\r\n        data1 = hub1.getBulkInputData();\r\n\r\n\r\n        double innerArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical));\r\n        // encoder orientation is the same, which means they generate opposite rotation signals\r\n        double outerArcLength =  encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical));\r\n        double horizontalArcLength = encoderTicksToInches(data1.getMotorCurrentPosition(horizontal));\r\n\r\n        double leftVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(leftVertical));\r\n        double rightVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(rightVertical));\r\n        double horizontalVelocity = encoderTicksToInches(data1.getMotorVelocity(horizontal));\r\n\r\n        // calculate positions\r\n        double deltaInnerArcLength = innerArcLength - previousInnerArcLength;\r\n        double deltaOuterArcLength = outerArcLength - previousOuterArcLength;\r\n        double deltaHorizontalArcLength = horizontalArcLength - previousHorizontalArcLength;\r\n\r\n        double arcLength = (deltaInnerArcLength + deltaOuterArcLength) / 2.0;\r\n        double deltaVerticalDiff = (deltaInnerArcLength - deltaOuterArcLength) / 2.0;\r\n\r\n//(deltaOuterArcLength - deltaInnerArcLength)\r\n        // CHASSIS_LENGTH is the diamater of the circle.\r\n        // phi is arclength divided by radius for small phi\r\n        double phi =  (2.0 * deltaVerticalDiff) / (CHASSIS_LENGTH);\r\n        double hypotenuse;\r\n\r\n\r\n\r\n        // When phi is small, the full formula is numerically unstable.\r\n        // for small phi, sin(phi) = phi and cos(phi) = 1\r\n        // thus small phi, hypotense = arcLength\r\n        if(abs(phi) < 0.0001){\r\n            hypotenuse = arcLength;\r\n        }else{\r\n            hypotenuse = (arcLength * sin(phi)) / (phi * cos(phi / 2.0));\r\n        }\r\n\r\n        double horizontalDelta = deltaHorizontalArcLength - (phi * ODO_XY_DISTANCE);\r\n        double verticalDelta = hypotenuse * cos(phi/2.0)  + deltaVerticalDiff - (phi *ODO_YX_DISTANCE);\r\n\r\n\r\n        // calculate velocities\r\n        // a difference in velocity will be due to rotation.\r\n        // however since both encoders count this difference, this is double counted\r\n        // So arc length of rotation divided by the radius gives us the rotational velocity\r\n        // the factors of two cancel!\r\n        double omega = (leftVerticalVelocity - rightVerticalVelocity)/CHASSIS_LENGTH;\r\n        double deltaVy = (leftVerticalVelocity + rightVerticalVelocity)/2.0;\r\n        double deltaVx = horizontalVelocity;\r\n        //Debug.log(horizontalDelta);\r\n        state.updateDelta(horizontalDelta, verticalDelta, phi, deltaVx, deltaVy, omega);\r\n        previousInnerArcLength = innerArcLength;\r\n        previousOuterArcLength = outerArcLength;\r\n        previousHorizontalArcLength = horizontalArcLength;\r\n        elapsedTime = System.currentTimeMillis() - startingTime;\r\n//        loggingString +=  hypotenuse  + \"\\n\";\r\n//        loggingString +=  arcLength  + \"\\n\";\r\n//        loggingString += deltaVerticalDiff + \"\\n\";\r\n//        loggingString += phi + \"\\n\";\r\n//        loggingString += deltaInnerArcLength + \"\\n\";\r\n//        loggingString += deltaOuterArcLength + \"\\n\";\r\n//        loggingString += deltaHorizontalArcLength + \"\\n\";\r\n//        loggingString += \"\\n\";\r\n//        ReadWriteFile.writeFile(loggingFile, loggingString);\r\n        //AbstractOpMode.currentOpMode().telemetry.addData(\"AL:\", arcLength);\r\n        //AbstractOpMode.currentOpMode().telemetry.addData(\"DVD:\", deltaVerticalDiff);\r\n//        AbstractOpMode.currentOpMode().telemetry.addData(\"\", this::getCurrentState);\r\n//        AbstractOpMode.currentOpMode().telemetry.update();\r\n    }\r\n\r\n\r\n\r\n\r\n    //updating a cycle using the Kalman Filter, a method which takes 3 measurements, Odometry, VISLAM\r\n    //and a third measurement using physics to predict where the robot is (we call this the kinematic model)\r\n    private synchronized void updateKalman(){\r\n        // read sensor data\r\n        data1 = hub1.getBulkInputData();\r\n        currentSlamraPos = slamra.getLastReceivedCameraUpdate();\r\n        RobotPositionStateUpdater.RobotPositionState currentState = getCurrentState();\r\n\r\n        int leftVerticalTics = data1.getMotorCurrentPosition(leftVertical);\r\n        int rightVerticalTics = data1.getMotorCurrentPosition(rightVertical);\r\n        int horizontalTics = data1.getMotorCurrentPosition(horizontal);\r\n\r\n        double innerArcLength = encoderTicksToInches(leftVerticalTics);\r\n        // encoder orientation is the same, which means they generate opposite rotation signals\r\n        double outerArcLength =  -encoderTicksToInches(rightVerticalTics);\r\n        double horizontalArcLength = -encoderTicksToInches(horizontalTics);\r\n\r\n//        double leftVerticalVelocity = encoderTicksToInches(data1.getMotorVelocity(leftVertical));\r\n//        double rightVerticalVelocity = -encoderTicksToInches(data1.getMotorVelocity(rightVertical));\r\n//        double horizontalVelocity = -encoderTicksToInches(data1.getMotorVelocity(horizontal));\r\n\r\n        // calculate positions\r\n        double deltaInnerArcLength = innerArcLength - previousInnerArcLength;\r\n        double deltaOuterArcLength = outerArcLength - previousOuterArcLength;\r\n        double deltaHorizontalArcLength = horizontalArcLength - previousHorizontalArcLength;\r\n\r\n        double leftVerticalVelocity =deltaInnerArcLength / 0.02;\r\n        double rightVerticalVelocity = deltaOuterArcLength / 0.02;\r\n        double horizontalVelocity = deltaHorizontalArcLength/ 0.02;\r\n\r\n        double arcLength = (deltaInnerArcLength + deltaOuterArcLength) / 2.0;\r\n        double deltaVerticalDiff = (deltaInnerArcLength - deltaOuterArcLength) / 2.0;\r\n\r\n\r\n        // CHASSIS_LENGTH is the diamater of the circle.\r\n        // phi is arclength divided by radius for small phi\r\n        double phi =  (2.0 * deltaVerticalDiff) / (CHASSIS_LENGTH);\r\n        double hypotenuse;\r\n\r\n        double rotation = previousOdoMat.getValue(2,0);\r\n\r\n        //loggingString += currentState.getPosition().getX() + \" , \" + currentState.getPosition().getY() + \" , \" + currentState.getRotation() + \"\\n\";\r\n        // When phi is small, the full formula is numerically unstable.\r\n        // for small phi, sin(phi) = phi and cos(phi) = 1\r\n        // thus small phi, hypotense = arcLength\r\n        if(abs(phi) < 0.1){ //0.001\r\n            hypotenuse = arcLength;\r\n        }else{\r\n            hypotenuse = (arcLength * sin(rotation + phi)) / (phi * cos(rotation + phi / 2.0));\r\n        }\r\n\r\n        double horizontalDelta = deltaHorizontalArcLength  + hypotenuse * sin(rotation +phi); // - (phi * ODO_XY_DISTANCE) X\r\n        double verticalDelta = hypotenuse * cos(rotation + phi) - (phi * ODO_YX_DISTANCE); //y\r\n\r\n\r\n        // calculate velocities\r\n        // a difference in velocity will be due to rotation.\r\n        // however since both encoders count this difference, this is double counted\r\n        // So arc length of rotation divided by the radius gives us the rotational velocity\r\n        // the factors of two cancel!\r\n        double omega = (leftVerticalVelocity - rightVerticalVelocity)/CHASSIS_LENGTH;\r\n        double deltaVy = (leftVerticalVelocity + rightVerticalVelocity)/2.0;\r\n        double deltaVx = horizontalVelocity;\r\n\r\n//        if(odoState == OdoState.RAISED){\r\n//            TAO = 0;\r\n//        }else{\r\n//            TAO = 1;\r\n//        }\r\n\r\n        //scaling the deltas to make the Odometry its own independent measurement\r\n        horizontalDelta *= TAO;\r\n        verticalDelta *= TAO;\r\n        phi *= TAO;\r\n        omega *= TAO;\r\n        deltaVx *= TAO;\r\n        deltaVy *= TAO;\r\n\r\n\r\n        //matrix declarations\r\n        final double robotRadius =7.7;\r\n        Pose2d slamraEstimatePose = currentSlamraPos.pose;\r\n        double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;\r\n        double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);\r\n        double slamRotation = currentSlamraPos.pose.getRotation().getRadians();\r\n        double trueX = slamx + sin(slamRotation) * robotRadius;\r\n        double trueY = slamy - (cos(slamRotation) * robotRadius);\r\n\r\n        double[][] vislamMat = {\r\n                {trueX},\r\n                {trueY},\r\n                {-slamraEstimatePose.getRotation().getRadians()},\r\n                {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},\r\n                {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},\r\n                {currentSlamraPos.velocity.omegaRadiansPerSecond}\r\n        };\r\n//        if(abs(vislamMat[3][0]) < 0.2){\r\n//            vislamMat[3][0] = 0;\r\n//        }\r\n//        if(abs(vislamMat[4][0]) < 0.2){\r\n//            vislamMat[4][0] = 0;\r\n//        }\r\n//        if(abs(vislamMat[5][0]) < 0.2){\r\n//            vislamMat[5][0] = 0;\r\n//        }\r\n        Matrix slamraEstimate = new Matrix(vislamMat);\r\n\r\n        double[][] odoMat = {\r\n                {previousOdoMat.getValue(0,0) + horizontalDelta},\r\n                {previousOdoMat.getValue(1,0) + verticalDelta},\r\n                {previousOdoMat.getValue(2,0) + phi},\r\n                {deltaVx},\r\n                {deltaVy},\r\n                {omega}\r\n        };\r\n        Matrix odoEstimate = new Matrix(odoMat);\r\n\r\n        double[][] currentStateMat = {\r\n                {currentState.getPosition().getX()},\r\n                {currentState.getPosition().getY()},\r\n                {currentState.getRotation()},\r\n                {currentState.getVelocity().getX()},\r\n                {currentState.getVelocity().getY()},\r\n                {currentState.getAngularVelocity()}\r\n        };\r\n        Matrix currentStateEstimate = new Matrix(currentStateMat);\r\n\r\n        elapsedTime = System.currentTimeMillis() - startingTime;\r\n\r\n        double[][] deltaMat = {\r\n                {currentState.getVelocity().getX() * elapsedTime / 1000.0},\r\n                {currentState.getVelocity().getY() * elapsedTime / 1000.0},\r\n                {currentState.getAngularVelocity() * elapsedTime / 1000.0},\r\n                {0},\r\n                {0},\r\n                {0}\r\n        };\r\n\r\n\r\n        Matrix kinematicModel = new Matrix(deltaMat);\r\n        Matrix idealEstimate = kinematicModel.add(currentStateEstimate);\r\n\r\n        //update this here to keep odo estimate truly independent of everything else,\r\n        //if one system starts drifting we dont want the covariance of the odo to suffer\r\n        double[][] previousOdoArray = {\r\n                {odoEstimate.getValue(0,0)},\r\n                {odoEstimate.getValue(1,0)},\r\n                {odoEstimate.getValue(2,0)},\r\n                {odoEstimate.getValue(3,0)},\r\n                {odoEstimate.getValue(4,0)},\r\n                {odoEstimate.getValue(5,0)},\r\n        };\r\n            previousOdoMat = new Matrix(previousOdoArray);\r\n\r\n        slamraEstimate.multiply(1.0-TAO);\r\n        Matrix complementaryStateEstimtate = odoEstimate.add(slamraEstimate); //measured state, Z\r\n\r\n        double kalmanGain = previousEstimateUncertainty / (previousEstimateUncertainty + MEASUREMENT_VARIANCE);\r\n\r\n        kalmanGain = 1;\r\n\r\n        double currentEstimateUncertainty = (1 - kalmanGain) * previousEstimateUncertainty;\r\n\r\n\r\n        idealEstimate.multiply(1 - kalmanGain);\r\n        //multiplying only the distance components since we assume constant velocity\r\n        //the kinematic model assumes constant velocity meaning that the values was\r\n        //being greatly diminished causing overacceleration\r\n        complementaryStateEstimtate.setValue(0,0, complementaryStateEstimtate.getValue(0,0) * kalmanGain);\r\n        complementaryStateEstimtate.setValue(1,0, complementaryStateEstimtate.getValue(1,0) * kalmanGain);\r\n        complementaryStateEstimtate.setValue(2,0, complementaryStateEstimtate.getValue(2,0) * kalmanGain);\r\n        Matrix finalStateEstimate = complementaryStateEstimtate.add(idealEstimate);\r\n\r\n\r\n        double dx = finalStateEstimate.getValue(0,0);\r\n        double dy = finalStateEstimate.getValue(1,0);\r\n        double dphi = finalStateEstimate.getValue(2,0);\r\n        double dvx = complementaryStateEstimtate.getValue(3,0);\r\n        double dvy = complementaryStateEstimtate.getValue(4,0);\r\n        double domega = complementaryStateEstimtate.getValue(5,0);\r\n\r\n\r\n        state.updateState(dx, dy, dphi, dvx, dvy, domega);\r\n\r\n        loggingString += state.getCurrentState().getPosition().loggerToString()+ \"\\n\";\r\n        secondaryLoggingString += iterator + \",\" +  state.getCurrentState().getPosition().getX() + \"\\n\";\r\n        tertiaryLoggingString += iterator+ \",\" +  state.getCurrentState().getPosition().getY() + \"\\n\";\r\n//        fourthLoggingString += iterator + \",\" + rotation + \"\\n\";\r\n//        fifthLoggingString += iterator + \",\" + domega + \"\\n\";\r\n//        sixthLoggingString += iterator+ \",\" + dvy + \"\\n\";\r\n        startingTime = System.currentTimeMillis();\r\n        previousInnerArcLength = innerArcLength;\r\n        previousOuterArcLength = outerArcLength;\r\n        previousHorizontalArcLength = horizontalArcLength;\r\n        previousEstimateUncertainty = currentEstimateUncertainty;\r\n        iterator++;\r\n    }\r\n\r\n    DecompositionSolver solver;\r\n\r\n    ArrayList<Pose> wheelPoses;\r\n    double[] lastWheelPositions;\r\n    private Pose odoEstimate;\r\n    private Pose poseVelocity;\r\n\r\n\r\n    private Logger logger;\r\n    public Localizer(Pose start, HardwareMap hardwareMap){\r\n        hub1 = hardwareMap.get(ExpansionHubEx.class,\"Control Hub\");\r\n        loggingString = \"\";\r\n        secondaryLoggingString = \"\";\r\n        state = new RobotPositionStateUpdater();\r\n        if(slamra == null) {\r\n            Debug.log(\"here\");\r\n            slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);\r\n            currentSlamraPos = slamra.getLastReceivedCameraUpdate();\r\n        }\r\n        slamraStartingPose = new Pose2d(0 * INCHES_TO_METERS, 0 * INCHES_TO_METERS, new Rotation2d(start.heading));\r\n\r\n        //hub2 = hardwareMap.get(ExpansionHubEx.class,\"Expansion Hub 2\");\r\n        // initialize hardware\r\n        leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);\r\n        rightVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.RIGHT_VERTICAL_ODOMETER_NAME);\r\n        horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);\r\n        odoWinch = hardwareMap.servo.get(\"OdoWinch\");\r\n        secondaryOdoWinch = hardwareMap.servo.get(\"SecondaryOdoWinch\");\r\n        this.logger = logger;\r\n\r\n\r\n        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();\r\n        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;\r\n        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;\r\n        parameters.calibrationDataFile = \"BNO055IMUCalibration.json\"; // see the calibration sample opmode\r\n        parameters.loggingEnabled      = true;\r\n        parameters.loggingTag          = \"IMU\";\r\n        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();\r\n\r\n        imu = hardwareMap.get(BNO055IMU.class, \"imu\");\r\n        imu.initialize(parameters);\r\n\r\n        type = constructorType.MAT;\r\n\r\n\r\n        Array2DRowRealMatrix inverseMatrix = new Array2DRowRealMatrix(3, 3);\r\n\r\n\r\n        wheelPoses = new ArrayList<>();\r\n        wheelPoses.add(new Pose(4.01885,-6.471937, Math.toRadians(180))); //LV // // -3.91885,-6.471937\r\n        wheelPoses.add(new Pose(4.5222, 0.10685, Math.toRadians(90))); //H //-4.5222, 0.10685\r\n        //wheelPoses.add(new Vector2D(4.18685,-6.336937)); //RV\r\n\r\n\r\n        for (int i = 0; i < 2; i++) {\r\n            Pose position = wheelPoses.get(i);\r\n            double x = cos(position.heading);\r\n            double y = sin(position.heading);\r\n\r\n            double val = position.x * y - position.y * x;\r\n\r\n            inverseMatrix.setEntry(i, 0, x);\r\n            inverseMatrix.setEntry(i, 1, y);\r\n            inverseMatrix.setEntry(i, 2, val);\r\n//            Debug.log(positionVector.getX() * orientationVector.getY());\r\n//            Debug.log(positionVector.getY() * orientationVector.getX());\r\n        }\r\n\r\n        inverseMatrix.setEntry(2,2,1.0);\r\n\r\n        freezeUpdate = false;\r\n\r\n        solver = new LUDecomposition(inverseMatrix).getSolver();\r\n        Debug.log(solver.isNonSingular());\r\n        lastWheelPositions = new double[]{0,0,0};\r\n        odoEstimate = start.clone();\r\n        poseVelocity = new Pose(0,0,0);\r\n        previousHeading = 0;\r\n        odoState = OdoState.LOWERED;\r\n\r\n\r\n        resetEncoders();\r\n        iterator = 1;\r\n\r\n    }\r\n\r\n    volatile boolean freezeUpdate;\r\n    public void manualZero(){\r\n        freezeUpdate = true;\r\n        while(currentSlamraPos.confidence != T265Camera.PoseConfidence.High){\r\n            currentSlamraPos = slamra.getLastReceivedCameraUpdate();\r\n            AbstractOpMode.currentOpMode().telemetry.addData(\"con\", currentSlamraPos.confidence);\r\n            AbstractOpMode.currentOpMode().telemetry.update();\r\n            slamra.setPose(new Pose2d(0,0,new Rotation2d(0)));\r\n        }\r\n        leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        leftVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        rightVertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);\r\n        lastWheelPositions = new double[]{0,0,0};\r\n        previousHeading = 0;\r\n        odoEstimate = new Pose(0,0,0);\r\n        state.updateState(0,0,0,0,0,0);\r\n        //todo if we use gyro then I need to save that value and start offsetting angle by that\r\n        freezeUpdate = false;\r\n    }\r\n\r\n    public double directionToHeading(double direction){\r\n        return Math.PI / 2.0 - direction;\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n    double previousHeading;\r\n    private static final double X_SCALAR = 0.1;\r\n    private static final double Y_SCALAR = 0.1;\r\n    private synchronized void matUpdate() {\r\n        if(!freezeUpdate) {\r\n            data1 = hub1.getBulkInputData();\r\n            currentSlamraPos = slamra.getLastReceivedCameraUpdate();\r\n            double heading = (imu.getAngularOrientation().firstAngle);\r\n            double dHeading = heading - previousHeading;\r\n\r\n\r\n            double[] wheelPositions = new double[]{encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical)),\r\n                    encoderTicksToInches(data1.getMotorCurrentPosition(horizontal)),\r\n                    -encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical)),\r\n            };\r\n            double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], dHeading};\r\n            Pose robotPoseDelta = calculatePoseDelta(wheelDeltas);\r\n            odoEstimate = relativeOdometryUpdate(robotPoseDelta);\r\n            double[] wheelVelocities = new double[]{wheelDeltas[0] / 0.02, wheelDeltas[1] / 0.02, wheelDeltas[2] / 0.02};\r\n\r\n            if (wheelVelocities != null) {\r\n                poseVelocity = calculatePoseDelta(wheelVelocities);\r\n            }\r\n\r\n            final double robotRadius = 7.7;\r\n            Pose2d slamraEstimatePose = currentSlamraPos.pose;\r\n            double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;\r\n            double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);\r\n            double slamRotation = currentSlamraPos.pose.getRotation().getRadians();\r\n            double trueX = slamx + sin(slamRotation) * robotRadius;\r\n            double trueY = slamy - (cos(slamRotation) * robotRadius);\r\n\r\n\r\n            if (odoState == OdoState.LOWERED) {\r\n                TAO = 0.9;\r\n            } else {\r\n                TAO = 0;\r\n            }\r\n\r\n            double[][] vislamMat = {\r\n                    {trueX},\r\n                    {trueY},\r\n                    {angleWrap(slamraEstimatePose.getRotation().getRadians())},\r\n                    {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},\r\n                    {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},\r\n                    {currentSlamraPos.velocity.omegaRadiansPerSecond}\r\n            };\r\n//        if(abs(vislamMat[3][0]) < 0.2){\r\n//            vislamMat[3][0] = 0;\r\n//        }\r\n//        if(abs(vislamMat[4][0]) < 0.2){\r\n//            vislamMat[4][0] = 0;\r\n//        }\r\n//        if(abs(vislamMat[5][0]) < 0.2){\r\n//            vislamMat[5][0] = 0;\r\n//        }\r\n            Matrix slamraEstimate = new Matrix(vislamMat);\r\n\r\n            double[][] odoMat = {\r\n                    {odoEstimate.x},\r\n                    {odoEstimate.y},\r\n                    {odoEstimate.heading},\r\n                    {poseVelocity.x},\r\n                    {poseVelocity.y},\r\n                    {poseVelocity.heading}\r\n            };\r\n            Matrix odoMatrix = new Matrix(odoMat);\r\n\r\n            odoMatrix.multiply(TAO);\r\n\r\n            slamraEstimate.multiply(1.0 - TAO);\r\n            Matrix complementaryStateEstimtate = odoMatrix.add(slamraEstimate); //measured state, Z\r\n\r\n            state.updateState(complementaryStateEstimtate.getValue(0, 0),\r\n                    complementaryStateEstimtate.getValue(1, 0),\r\n                    complementaryStateEstimtate.getValue(2, 0),\r\n                    complementaryStateEstimtate.getValue(3, 0),\r\n                    complementaryStateEstimtate.getValue(4, 0),\r\n                    complementaryStateEstimtate.getValue(5, 0));\r\n\r\n            previousHeading = heading;\r\n\r\n            lastWheelPositions = new double[]{wheelPositions[0], wheelPositions[1], wheelPositions[2]};\r\n\r\n\r\n//            loggingString += odoEstimate.x + \",\" + odoEstimate.y + \"\\n\";\r\n//            secondaryLoggingString += iterator + \",\" + odoEstimate.x + \"\\n\";\r\n//            tertiaryLoggingString += iterator + \",\" + odoEstimate.y + \"\\n\";\r\n//            iterator++;\r\n            }\r\n        }\r\n\r\n        private double angleWrap(double angle) {\r\n            while(angle >= PI){\r\n                angle -= 2 * PI;\r\n            }\r\n            while(angle < -PI){\r\n                angle += 2 * PI;\r\n            }\r\n            return angle;\r\n        }\r\n\r\n    private static final double EPSILON = 1e-6;\r\n\r\n    private Pose relativeOdometryUpdate(Pose robotPoseDelta) {\r\n        double dtheta = robotPoseDelta.heading;\r\n        double sineTerm, cosTerm;\r\n\r\n        if (approxEquals(dtheta, 0)) {\r\n            sineTerm = 1.0 - dtheta * dtheta / 6.0;\r\n            cosTerm = dtheta / 2.0;\r\n        } else {\r\n            sineTerm = Math.sin(dtheta) / dtheta;\r\n            cosTerm = (1 - Math.cos(dtheta)) / dtheta;\r\n        }\r\n\r\n        Point fieldPositionDelta = new Point(\r\n                sineTerm * robotPoseDelta.x - cosTerm * robotPoseDelta.y,\r\n                cosTerm * robotPoseDelta.x + sineTerm * robotPoseDelta.y\r\n        );\r\n\r\n        Pose fieldPoseDelta = new Pose(fieldPositionDelta.rotated(odoEstimate.heading), robotPoseDelta.heading);\r\n\r\n\r\n\r\n        Pose fieldPose = new Pose(odoEstimate.x,odoEstimate.y, odoEstimate.heading);\r\n\r\n        return fieldPose.add(fieldPoseDelta);\r\n    }\r\n\r\n    public static boolean approxEquals(double d1, double d2) {\r\n        if (Double.isInfinite(d1)) {\r\n            // Infinity - infinity is NaN, so we need a special case\r\n            return d1 == d2;\r\n        } else {\r\n            return Math.abs(d1 - d2) < EPSILON;\r\n        }\r\n    }\r\n\r\n    private Pose calculatePoseDelta(double[] wheelDeltas) {\r\n        RealMatrix m = MatrixUtils.createRealMatrix(new double[][]{wheelDeltas});\r\n        RealMatrix rawPoseDelta = solver.solve(m.transpose());\r\n        return new Pose(\r\n                rawPoseDelta.getEntry(0, 0),\r\n                rawPoseDelta.getEntry(1, 0),\r\n                rawPoseDelta.getEntry(2, 0));\r\n\r\n    }\r\n\r\n\r\n    public Pose getOdoEstimate(){\r\n        return odoEstimate;\r\n    }\r\n\r\n    public Pose getPoseVelocity(){\r\n        return poseVelocity;\r\n    }\r\n\r\n    public int getIterator(){\r\n        return iterator;\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n    /*\r\n     Array2DRowRealMatrix inverseMatrix = new Array2DRowRealMatrix(3, 3);\r\n        ArrayList<Vector3D> wheelPoses = new ArrayList<Vector3D>();\r\n        Vector3D LV_POSE = new Vector3D(0,0, 0); //x, y, angle from center\r\n        Vector3D RV_POSE = new Vector3D(0,0, Math.toRadians(180));\r\n        Vector3D H_POSE = new Vector3D(0,0, Math.toRadians(90));\r\n        wheelPoses.add(LV_POSE);\r\n        wheelPoses.add(RV_POSE);\r\n        wheelPoses.add(H_POSE);\r\n\r\n        for(Vector3D wheel: wheelPoses){\r\n            double wheelXOffset = Math.cos(wheel.getZ());\r\n            double wheelYOffset = Math.sin(wheel.getZ());\r\n\r\n        }\r\n     */\r\n\r\n    public void manualPositionWrite(RobotPositionStateUpdater.RobotPositionState newState){\r\n        state.updateState(newState.getPosition().getX(), newState.getPosition().getY(), newState.getRotation(), newState.getVelocity().getX(), newState.getVelocity().getY(), newState.getAngularVelocity());\r\n    }\r\n\r\n    private double linearSlideEncoderTicksToInches(int motorCurrentPosition) {\r\n        return motorCurrentPosition / TICKS_PER_REV;\r\n    }\r\n\r\n\r\n    public long getMinElapsedTime(){\r\n        return minElapsedTime;\r\n    }\r\n\r\n    public long getMaxElapsedTime(){\r\n        return maxElapsedTime;\r\n    }\r\n\r\n    public static double encoderTicksToInches(int ticks) {\r\n        return WHEEL_DIAMETER * PI * GEAR_RATIO * ticks / TICKS_PER_REV;\r\n    }\r\n    public static int inchesToEncoderTicks(double inches){\r\n        return (int)((TICKS_PER_REV / (WHEEL_DIAMETER  * PI * GEAR_RATIO)) * inches);\r\n    }\r\n\r\n    public double getLeftVerticalOdometerPosition(){\r\n        return encoderTicksToInches(leftVertical.getCurrentPosition());\r\n    }\r\n\r\n    public double getLeftVerticalOdometerVelocity(){\r\n        return leftVertical.getVelocity();\r\n    }\r\n\r\n    public double getRightVerticalOdometerVelocity(){\r\n        return rightVertical.getVelocity();\r\n    }\r\n\r\n    public double getHorizontalOdometerVelocity(){\r\n        return horizontal.getVelocity();\r\n    }\r\n\r\n    public double getRightVerticalOdometerPosition(){\r\n        return -encoderTicksToInches(rightVertical.getCurrentPosition());\r\n    }\r\n\r\n    public double getHorizontalOdometerPosition(){\r\n        return -encoderTicksToInches(horizontal.getCurrentPosition());\r\n    }\r\n\r\n    public void writeLoggerToFile(){\r\n        try {\r\n            PrintStream ps = new PrintStream(loggingFile);\r\n            PrintStream pstwo = new PrintStream(secondaryLoggingFile);\r\n            PrintStream psThree = new PrintStream(tertiaryloggingFile);\r\n            PrintStream psfour = new PrintStream(fourthLoggingFile);\r\n            PrintStream psfive = new PrintStream(fifthLoggingFile);\r\n            PrintStream psSix = new PrintStream(sixthLoggingFile);\r\n            ps.println(loggingString);\r\n            pstwo.println(secondaryLoggingString);\r\n            psThree.println(tertiaryLoggingString);\r\n            psfour.println(fourthLoggingString);\r\n            psfive.println(fifthLoggingString);\r\n            psSix.println(sixthLoggingString);\r\n        } catch (FileNotFoundException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n    }\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n//  Matrix shit, saving the start of my unsimplified proof of the math\r\n//        double[][] stateTransistionMat = {\r\n//                {currentState.getVelocity().getX() * elapsedTime * 1000, 0, 0, 0, 0, 0},\r\n//                {0, currentState.getVelocity().getY() * elapsedTime * 1000, 0, 0, 0, 0},\r\n//                {0, 0, currentState.getAngularVelocity() * elapsedTime * 1000, 0, 0, 0},\r\n//                {0, 0, 0, currentState.getVelocity().getX(), 0, 0},\r\n//                {0, 0, 0, 0, currentState.getVelocity().getY(), 0},\r\n//                {0, 0, 0, 0, 0, currentState.getAngularVelocity()}\r\n//        };\r\n//\r\n//        Matrix stateTransistionMatrix = new Matrix(stateTransistionMat);\r\n//\r\n//        //we have an estimate according to kinematics (assumes constant acceleration)\r\n//        //Matrix idealStateEstimate = currentStateEstimate.add(KinematicMotionModel);\r\n//        Matrix transposedStateTransitionMatrix = stateTransistionMatrix.transpose();\r\n//        Matrix controlMatrix;\r\n//\r\n//        Matrix estimateUncertianty = stateTransistionMatrix.multiply(previousProcessNoise);\r\n//        estimateUncertianty = estimateUncertianty.multiply(transposedStateTransitionMatrix);\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/teamcode/common/Localizer.java b/TeamCode/src/main/java/teamcode/common/Localizer.java
+--- a/TeamCode/src/main/java/teamcode/common/Localizer.java	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/src/main/java/teamcode/common/Localizer.java	(date 1639883308744)
+@@ -1,8 +1,7 @@
+ package teamcode.common;
+-import com.arcrobotics.ftclib.geometry.Pose2d;
+-import com.arcrobotics.ftclib.geometry.Rotation2d;
+-import com.arcrobotics.ftclib.geometry.Transform2d;
+-import com.arcrobotics.ftclib.geometry.Translation2d;
++
++import com.acmerobotics.roadrunner.*;
++import com.acmerobotics.roadrunner.geometry.Pose2d;
+ import com.qualcomm.hardware.bosch.BNO055IMU;
+ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+ import com.qualcomm.robotcore.hardware.DcMotor;
+@@ -13,6 +12,7 @@
+ import com.qualcomm.robotcore.hardware.Servo;
+ import com.qualcomm.robotcore.util.ReadWriteFile;
+ import com.spartronics4915.lib.T265Camera;
++import com.spartronics4915.lib.T265Helper;
+ 
+ import org.apache.commons.math3.analysis.function.Abs;
+ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+@@ -95,7 +95,7 @@
+     //Kalman filter parameters, the ones declared up here must also be tuned for EVERY ROBOT
+ 
+     private static final double INCHES_TO_METERS = 0.0254; //-8.628937
+-        Transform2d cameraToRobot = new Transform2d(new Translation2d(0,0), new Rotation2d()); //-7.965 * INCHES_TO_METERS,  0 * INCHES_TO_METERS 0.8, -7.2
++        Pose2d cameraToRobot = new Pose2d(0,0,0); //-7.965 * INCHES_TO_METERS,  0 * INCHES_TO_METERS 0.8, -7.2
+     private static T265Camera slamra;
+     T265Camera.CameraUpdate currentSlamraPos;
+     private Pose2d slamraStartingPose;
+@@ -171,10 +171,10 @@
+ 
+         if(slamra == null) {
+             Debug.log("here");
+-            slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
++            slamra = new T265Camera(new T265Camera.OdometryInfo(cameraToRobot, 1.0), hardwareMap.appContext);
+             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+         }
+-        slamraStartingPose = new Pose2d(0 * INCHES_TO_METERS, 0 * INCHES_TO_METERS, new Rotation2d(globalRads));
++        slamraStartingPose = new Pose2d(0 , 0, globalRads);
+         this.previousEstimateUncertainty = previousEstimateUncertainty; //this should always be a high value otherwise bad things will happen
+         minElapsedTime = 0;
+         maxElapsedTime = 0;
+@@ -479,17 +479,17 @@
+         Pose2d slamraEstimatePose = currentSlamraPos.pose;
+         double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;
+         double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);
+-        double slamRotation = currentSlamraPos.pose.getRotation().getRadians();
++        double slamRotation = currentSlamraPos.pose.getHeading();
+         double trueX = slamx + sin(slamRotation) * robotRadius;
+         double trueY = slamy - (cos(slamRotation) * robotRadius);
+ 
+         double[][] vislamMat = {
+                 {trueX},
+                 {trueY},
+-                {-slamraEstimatePose.getRotation().getRadians()},
+-                {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
+-                {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
+-                {currentSlamraPos.velocity.omegaRadiansPerSecond}
++                {slamRotation},
++                {currentSlamraPos.velocity.getX()},
++                {currentSlamraPos.velocity.getY()},
++                {currentSlamraPos.velocity.getHeading()}
+         };
+ //        if(abs(vislamMat[3][0]) < 0.2){
+ //            vislamMat[3][0] = 0;
+@@ -601,7 +601,7 @@
+     private Pose poseVelocity;
+ 
+ 
+-    private Logger logger;
++    //todo implment 3 wheel system BOTH HERE AND IN THE MATUPDATE
+     public Localizer(Pose start, HardwareMap hardwareMap){
+         hub1 = hardwareMap.get(ExpansionHubEx.class,"Control Hub");
+         loggingString = "";
+@@ -609,11 +609,9 @@
+         state = new RobotPositionStateUpdater();
+         if(slamra == null) {
+             Debug.log("here");
+-            slamra = new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
++            slamra = T265Helper.getCamera(new T265Camera.OdometryInfo(new Pose2d(0,0, 0), 1.0),hardwareMap.appContext);//new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
+             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+         }
+-        slamraStartingPose = new Pose2d(0 * INCHES_TO_METERS, 0 * INCHES_TO_METERS, new Rotation2d(start.heading));
+-
+         //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
+         // initialize hardware
+         leftVertical = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.LEFT_VERTICAL_ODOMETER_NAME);
+@@ -621,19 +619,17 @@
+         horizontal = (ExpansionHubMotor)hardwareMap.dcMotor.get(Constants.HORIZONTAL_ODOMETER_NAME);
+         odoWinch = hardwareMap.servo.get("OdoWinch");
+         secondaryOdoWinch = hardwareMap.servo.get("SecondaryOdoWinch");
+-        this.logger = logger;
+-
+ 
+-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+-        parameters.loggingEnabled      = true;
+-        parameters.loggingTag          = "IMU";
+-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+-
+-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+-        imu.initialize(parameters);
++//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
++//        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
++//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
++//        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
++//        parameters.loggingEnabled      = true;
++//        parameters.loggingTag          = "IMU";
++//        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
++//
++//        imu = hardwareMap.get(BNO055IMU.class, "imu");
++//        imu.initialize(parameters);
+ 
+         type = constructorType.MAT;
+ 
+@@ -644,10 +640,11 @@
+         wheelPoses = new ArrayList<>();
+         wheelPoses.add(new Pose(4.01885,-6.471937, Math.toRadians(180))); //LV // // -3.91885,-6.471937
+         wheelPoses.add(new Pose(4.5222, 0.10685, Math.toRadians(90))); //H //-4.5222, 0.10685
+-        //wheelPoses.add(new Vector2D(4.18685,-6.336937)); //RV
++        wheelPoses.add(new Pose(4.18685,-6.336937, Math.toRadians(-180))); //RV
+ 
+ 
+-        for (int i = 0; i < 2; i++) {
++
++        for (int i = 0; i < 3; i++) {
+             Pose position = wheelPoses.get(i);
+             double x = cos(position.heading);
+             double y = sin(position.heading);
+@@ -661,7 +658,7 @@
+ //            Debug.log(positionVector.getY() * orientationVector.getX());
+         }
+ 
+-        inverseMatrix.setEntry(2,2,1.0);
++        //inverseMatrix.setEntry(2,2,1.0);
+ 
+         freezeUpdate = false;
+ 
+@@ -679,14 +676,20 @@
+ 
+     }
+ 
+-    volatile boolean freezeUpdate;
+-    public void manualZero(){
++    private volatile boolean freezeUpdate;
++
++
++    /**
++     *
++     * @param explicit set true if you want updates to resume immediately after reset has been executed
++     */
++    public void manualZero(boolean explicit){
+         freezeUpdate = true;
+         while(currentSlamraPos.confidence != T265Camera.PoseConfidence.High){
+             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+             AbstractOpMode.currentOpMode().telemetry.addData("con", currentSlamraPos.confidence);
+             AbstractOpMode.currentOpMode().telemetry.update();
+-            slamra.setPose(new Pose2d(0,0,new Rotation2d(0)));
++            slamra.setPose(new Pose2d(0,0,0));
+         }
+         leftVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         rightVertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+@@ -698,7 +701,13 @@
+         previousHeading = 0;
+         odoEstimate = new Pose(0,0,0);
+         state.updateState(0,0,0,0,0,0);
++        if(explicit){
++            freezeUpdate = false;
++        }
+         //todo if we use gyro then I need to save that value and start offsetting angle by that
++    }
++
++    public void resumeUpdateCycles(){
+         freezeUpdate = false;
+     }
+ 
+@@ -711,21 +720,19 @@
+ 
+ 
+     double previousHeading;
+-    private static final double X_SCALAR = 0.1;
+-    private static final double Y_SCALAR = 0.1;
++    //TODO implement 3 wheel system BOTH HERE AND IN THE CONSTRUCTOR
+     private synchronized void matUpdate() {
+         if(!freezeUpdate) {
+             data1 = hub1.getBulkInputData();
+             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+-            double heading = (imu.getAngularOrientation().firstAngle);
+-            double dHeading = heading - previousHeading;
++
+ 
+ 
+             double[] wheelPositions = new double[]{encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical)),
+                     encoderTicksToInches(data1.getMotorCurrentPosition(horizontal)),
+                     -encoderTicksToInches(data1.getMotorCurrentPosition(rightVertical)),
+             };
+-            double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], dHeading};
++            double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], wheelPositions[2] - lastWheelPositions[2]};
+             Pose robotPoseDelta = calculatePoseDelta(wheelDeltas);
+             odoEstimate = relativeOdometryUpdate(robotPoseDelta);
+             double[] wheelVelocities = new double[]{wheelDeltas[0] / 0.02, wheelDeltas[1] / 0.02, wheelDeltas[2] / 0.02};
+@@ -738,7 +745,7 @@
+             Pose2d slamraEstimatePose = currentSlamraPos.pose;
+             double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;
+             double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);
+-            double slamRotation = currentSlamraPos.pose.getRotation().getRadians();
++            double slamRotation = currentSlamraPos.pose.getHeading();
+             double trueX = slamx + sin(slamRotation) * robotRadius;
+             double trueY = slamy - (cos(slamRotation) * robotRadius);
+ 
+@@ -752,10 +759,10 @@
+             double[][] vislamMat = {
+                     {trueX},
+                     {trueY},
+-                    {angleWrap(slamraEstimatePose.getRotation().getRadians())},
+-                    {-currentSlamraPos.velocity.vyMetersPerSecond / INCHES_TO_METERS},
+-                    {currentSlamraPos.velocity.vxMetersPerSecond / INCHES_TO_METERS},
+-                    {currentSlamraPos.velocity.omegaRadiansPerSecond}
++                    {slamRotation},
++                    {currentSlamraPos.velocity.getX()},
++                    {currentSlamraPos.velocity.getY()},
++                    {currentSlamraPos.velocity.getHeading()}
+             };
+ //        if(abs(vislamMat[3][0]) < 0.2){
+ //            vislamMat[3][0] = 0;
+@@ -790,7 +797,6 @@
+                     complementaryStateEstimtate.getValue(4, 0),
+                     complementaryStateEstimtate.getValue(5, 0));
+ 
+-            previousHeading = heading;
+ 
+             lastWheelPositions = new double[]{wheelPositions[0], wheelPositions[1], wheelPositions[2]};
+ 
+@@ -988,4 +994,4 @@
+ //        Matrix controlMatrix;
+ //
+ //        Matrix estimateUncertianty = stateTransistionMatrix.multiply(previousProcessNoise);
+-//        estimateUncertianty = estimateUncertianty.multiply(transposedStateTransitionMatrix);
++//        estimateUncertianty = estimateUncertianty.multiply(transposedStateTransitionMatrix);
+\ No newline at end of file
+Index: TeamCode/src/main/java/teamcode/Competition/TeleOp/OfficialTeleOpScriptBlue.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package teamcode.Competition.TeleOp;\r\n\r\nimport com.qualcomm.hardware.bosch.BNO055IMU;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport teamcode.Competition.Subsystems.ArmSystem;\r\nimport teamcode.Competition.Subsystems.EndgameSystems;\r\nimport teamcode.common.AbstractOpMode;\r\nimport teamcode.common.Constants;\r\nimport teamcode.common.Localizer;\r\nimport teamcode.common.Vector2D;\r\nimport teamcode.common.WestCoastDriveTrain;\r\n\r\n\r\n@TeleOp(name=\"tele op BLUE\")\r\npublic class OfficialTeleOpScriptBlue extends AbstractOpMode {\r\n\r\n    WestCoastDriveTrain drive;\r\n    ArmSystem arm;\r\n    EndgameSystems system;\r\n    Thread driveThread, driverTwoThread;\r\n    Thread armThread;\r\n    BNO055IMU imu;\r\n    Localizer localizer;\r\n\r\n\r\n\r\n    private static final double INTAKE_POWER = 1.0;\r\n    private static final double SPRINT_LINEAR_MODIFIER = 1.0;\r\n    private static final double NORMAL_LINEAR_MODIFIER = 1.0;\r\n    private static final double SPRINT_ROTATIONAL_MODIFIER = 1.0;\r\n    private static final double NORMAL_ROTATIONAL_MODIFIER = 0.5;\r\n    private boolean isSprint;\r\n    private long scoredSampleTime;\r\n\r\n    private ScoredButtonState state;\r\n    private PulleyState pulleyState;\r\n    private LinkageState linkageState;\r\n\r\n    private boolean moveOnCarousel;\r\n    private boolean isCarousel;\r\n\r\n\r\n    @Override\r\n    protected void onInitialize() {\r\n        arm = new ArmSystem(hardwareMap, true);\r\n        drive = new WestCoastDriveTrain(hardwareMap);\r\n        system = new EndgameSystems(hardwareMap, true); //TODO make a copy of tele op\r\n\r\n        imu = hardwareMap.get(BNO055IMU.class, \"imu\");\r\n        isSprint = true;\r\n\r\n        localizer = new Localizer(hardwareMap, new Vector2D(0,0), 0,10);\r\n        localizer.liftOdo();\r\n\r\n        moveOnCarousel = true;\r\n\r\n        //Initialize IMU parameters\r\n\r\n        state = ScoredButtonState.RETRACTING;\r\n        pulleyState = PulleyState.RETRACTED;\r\n        linkageState = linkageState.RAISED;\r\n\r\n        driveThread = new Thread(){\r\n            public void run(){\r\n                while(opModeIsActive()){\r\n                    driveUpdate();\r\n                }\r\n            }\r\n        };\r\n        armThread = new Thread(){\r\n            public void run(){\r\n                while(opModeIsActive()){\r\n                    armUpdate();\r\n                }\r\n            }\r\n        };\r\n        driverTwoThread = new Thread(){\r\n            public void run(){\r\n                while(opModeIsActive()){\r\n                    driverTwoUpdate();\r\n                }\r\n            }\r\n        };\r\n\r\n    }\r\n\r\n    private void driverTwoUpdate() {\r\n        if(gamepad1.left_bumper){\r\n            while(gamepad1.left_bumper) {\r\n                system.runCarousel(1);\r\n            }\r\n        }else if(gamepad1.right_bumper){\r\n            isCarousel = true;\r\n            if(moveOnCarousel) {\r\n                moveOnCarousel = false;\r\n                drive.setPower(-0.1, 0);\r\n                try {\r\n                    Thread.currentThread().sleep(500);\r\n                } catch (InterruptedException e) {\r\n                    e.printStackTrace();\r\n                }\r\n            }\r\n            system.scoreDuck();\r\n            isCarousel = false;\r\n\r\n        }else {\r\n            system.runCarousel(0);\r\n        }\r\n\r\n//        telemetry.addData(\"stage\", arm.getStage());\r\n//        telemetry.update();\r\n\r\n    }\r\n\r\n    private double startTime;\r\n    private void armUpdate() {\r\n        if(gamepad1.right_trigger > 0.3){\r\n            startTime = AbstractOpMode.currentOpMode().time;\r\n            while(gamepad1.right_trigger > 0.3) {\r\n                double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;\r\n                if(elapsedTime < 0.5 || linkageState == linkageState.RAISED){\r\n                    arm.lowerLinkage();\r\n                    linkageState = LinkageState.LOWERED;\r\n                }else{\r\n                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5);\r\n                }\r\n\r\n            }\r\n        }else if(gamepad1.a){\r\n            //add something to move the linkage outta the way\r\n            arm.intakeDumb(-0.6);\r\n        }else if(gamepad1.x){\r\n            long currentSampleTime = System.currentTimeMillis();\r\n            if(currentSampleTime - scoredSampleTime > 200) {\r\n                if(pulleyState != PulleyState.RETRACTED) {\r\n                    if (state == ScoredButtonState.RETRACTING) {\r\n                        state = ScoredButtonState.SCORED;\r\n                        arm.score();\r\n                    } else if (state == ScoredButtonState.SCORED) {\r\n                        state = ScoredButtonState.RETRACTING;\r\n                        arm.retract();\r\n                        pulleyState = PulleyState.RETRACTED;\r\n                    }\r\n                }\r\n                scoredSampleTime = System.currentTimeMillis();\r\n            }\r\n        } else if(gamepad1.b) {\r\n            arm.preScore();\r\n            linkageState = LinkageState.RAISED;\r\n        } else if (gamepad1.dpad_up) {\r\n            // set to full\r\n                arm.setWinchPower(1);\r\n        } else if (gamepad1.dpad_down) {\r\n            arm.setWinchPower(-1);\r\n        } else if(gamepad1.left_trigger > 0.3) {\r\n            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {\r\n                arm.raise(Constants.TOP_POSITION);\r\n                pulleyState = PulleyState.HIGH_GOAL;\r\n                linkageState = LinkageState.RAISED;\r\n            }\r\n        }else if(gamepad1.dpad_right ){\r\n            if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {\r\n                arm.raise(Constants.MEDIUM_POSITION);\r\n                pulleyState = PulleyState.MID_GOAL;\r\n                linkageState = linkageState.RAISED;\r\n            }\r\n        }else if(gamepad1.y){\r\n            arm.score();\r\n            arm.runConveyorPos(1.0, 2000);\r\n            arm.idleServos();\r\n        }else if(gamepad1.dpad_left){\r\n            arm.resetWinchEncoder();\r\n        }else{\r\n            arm.intakeDumb(0);\r\n            arm.setWinchPower(0);\r\n        }\r\n        telemetry.addData(\"slide pos\", arm.getLinearSlidePosition());\r\n        telemetry.update();\r\n    }\r\n\r\n    private static final double ROTATE_DPAD = 0.3;\r\n    private static final double LINEAR_DPAD = 0.5;\r\n\r\n    //TODO change this if necessary\r\n    private void driveUpdate() {\r\n        if(!isCarousel) {\r\n            if (gamepad1.right_stick_button) {\r\n                drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, SPRINT_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);\r\n            } else if (gamepad1.left_stick_button) {\r\n                drive.setPower(0.15 * gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);\r\n            } else {\r\n                drive.setPower(NORMAL_LINEAR_MODIFIER * gamepad1.left_stick_y, NORMAL_ROTATIONAL_MODIFIER * gamepad1.right_stick_x);\r\n            }\r\n        }\r\n\r\n    }\r\n\r\n    private enum ScoredButtonState{\r\n        SCORED, RETRACTING\r\n    }\r\n\r\n    private enum PulleyState{\r\n        HIGH_GOAL, MID_GOAL, RETRACTED\r\n    }\r\n\r\n    private enum LinkageState{\r\n        RAISED, LOWERED\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        driveThread.start();\r\n        armThread.start();\r\n        driverTwoThread.start();\r\n        while(opModeIsActive()){\r\n        }\r\n    }\r\n\r\n    @Override\r\n    protected void onStop() {\r\n        driveThread.interrupt();\r\n        driverTwoThread.interrupt();\r\n        armThread.interrupt();\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/teamcode/Competition/TeleOp/OfficialTeleOpScriptBlue.java b/TeamCode/src/main/java/teamcode/Competition/TeleOp/OfficialTeleOpScriptBlue.java
+--- a/TeamCode/src/main/java/teamcode/Competition/TeleOp/OfficialTeleOpScriptBlue.java	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/src/main/java/teamcode/Competition/TeleOp/OfficialTeleOpScriptBlue.java	(date 1639883308727)
+@@ -123,7 +123,7 @@
+                     arm.lowerLinkage();
+                     linkageState = LinkageState.LOWERED;
+                 }else{
+-                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5);
++                    arm.intakeDumb(0.3 * Math.abs(Math.sin(2 * elapsedTime)) + 0.5); // 0.5 - 0.8 TANK, MECANUM 0.7-1.0
+                 }
+ 
+             }
+Index: TeamCode/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//\r\n// build.gradle in TeamCode\r\n//\r\n// Most of the definitions for building your module reside in a common, shared\r\n// file 'build.common.gradle'. Being factored in this way makes it easier to\r\n// integrate updates to the FTC into your code. If you really need to customize\r\n// the build definitions, you can place those customizations in this file, but\r\n// please think carefully as to whether such customizations are really necessary\r\n// before doing so.\r\n\r\n\r\n// Custom definitions may go here\r\n\r\n// Include common definitions from above.\r\napply from: '../build.common.gradle'\r\napply from: '../build.dependencies.gradle'\r\n\r\n\r\nrepositories {\r\n    maven { url = \"https://maven.0x778.tk\" }\r\n}\r\n\r\ndependencies {\r\n    implementation project(':FtcRobotController')\r\n    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')\r\n    implementation 'com.spartronics4915.lib:ftc265:2.1.9'\r\n    implementation 'org.openftc:easyopencv:1.5.0'\r\n    implementation 'org.openftc:rev-extensions-2:1.2'\r\n    implementation 'org.apache.commons:commons-math3:3.6.1'\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/build.gradle b/TeamCode/build.gradle
+--- a/TeamCode/build.gradle	(revision 724d226f48d7f7727ff8cd39da29c1368f0c5d4e)
++++ b/TeamCode/build.gradle	(date 1639883308841)
+@@ -17,15 +17,23 @@
+ 
+ 
+ repositories {
+-    maven { url = "https://maven.0x778.tk" }
++    maven {url = "https://maven.0x778.tk"}
++    maven { url = 'https://maven.brott.dev/' }
+ }
+ 
+ dependencies {
+     implementation project(':FtcRobotController')
+     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
++<<<<<<< HEAD
+     implementation 'com.spartronics4915.lib:ftc265:2.1.9'
++    implementation 'org.openftc:easyopencv:1.5.1'
++=======
+     implementation 'org.openftc:easyopencv:1.5.0'
++>>>>>>> 27c00062044c6159aecf49350678a4c74b5eac06
+     implementation 'org.openftc:rev-extensions-2:1.2'
+     implementation 'org.apache.commons:commons-math3:3.6.1'
++    implementation 'com.acmerobotics.roadrunner:core:0.5.4'
++    implementation files('lib/ftc265-3.0.0-pre.5.aar')
++    implementation 'com.intel.realsense:librealsense:2.41.1-ftc265@aar'
+ 
+ }

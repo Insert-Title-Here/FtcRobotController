@@ -70,16 +70,21 @@ public class EndgameSystems {
         xCap.setPosition(pos);
     }
 
+    public double getXCapPosition() {
+        return xCap.getPosition();
+    }
+
     public void setCapstoneExtensionPower(double pow){
         capstoneExtension.setPower(pow);
     }
 
-    public void setyCapPosition(double pos){
+    public void setYCapPosition(double pos){
         yCap.setPosition(pos);
     }
 
-
-
+    public double getYCapPosition() {
+        return yCap.getPosition();
+    }
 
     public void scoreDuck() {
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

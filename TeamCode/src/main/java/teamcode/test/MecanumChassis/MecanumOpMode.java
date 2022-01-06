@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import teamcode.Competition.Subsystems.ArmSystem;
+import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.Competition.TeleOp.OfficialTeleOpScriptBlue;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
@@ -19,13 +20,16 @@ import teamcode.common.Vector2D;
 public class MecanumOpMode extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem arm;
-    Thread armThread;
+    Thread armThread, capThread;
     Localizer localizer;
+    EndgameSystems endgameSystems;
 
     private ScoredButtonState state;
     private PulleyState pulleyState;
     private LinkageState linkageState;
     private long scoredSampleTime;
+
+    int iterator;
 
 
     @Override
@@ -33,6 +37,7 @@ public class MecanumOpMode extends AbstractOpMode {
         drive = new MecanumDriveTrain(hardwareMap);
         localizer = new Localizer(hardwareMap, new Vector2D(0, 0), 0, 10);
         arm = new ArmSystem(hardwareMap, true);
+        endgameSystems = new EndgameSystems(hardwareMap, false);
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
@@ -47,6 +52,28 @@ public class MecanumOpMode extends AbstractOpMode {
                 }
             }
         };
+
+        capThread = new Thread() {
+            public void run() {
+                while (opModeIsActive()) {
+                    capUpdate();
+                }
+            }
+        };
+        iterator = 0;
+
+    }
+
+    private void capUpdate() {
+        if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
+            double val = gamepad2.left_trigger - gamepad2.right_trigger;
+            endgameSystems.setCapstoneExtensionPower((Math.abs(val) >= 1) ? 1 : val);
+        }
+        if(iterator % 4 == 0) {
+            endgameSystems.setXCapPosition(endgameSystems.getXCapPosition() + gamepad2.left_stick_x * 0.05);
+            endgameSystems.setYCapPosition(endgameSystems.getYCapPosition() + gamepad2.right_stick_y * 0.05);
+        }
+        iterator++;
     }
 
     double startTime;
@@ -109,11 +136,11 @@ public class MecanumOpMode extends AbstractOpMode {
             arm.retract();
         }else if(gamepad1.dpad_left){
             arm.resetWinchEncoder();
-        }else{
+        }else {
             arm.intakeDumb(0);
-            if(pulleyState != PulleyState.RETRACTED){
+            if (pulleyState != PulleyState.RETRACTED) {
                 arm.setWinchVelocity(arm.FEEDFORWARD_V, AngleUnit.RADIANS);
-            }else{
+            } else {
                 arm.setWinchPower(0);
             }
         }
@@ -125,6 +152,7 @@ public class MecanumOpMode extends AbstractOpMode {
     @Override
     protected void onStart() {
         armThread.start();
+        capThread.start();
         while(opModeIsActive()){
             drive.setPower(new Vector2D(gamepad1.left_stick_y, -gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
         }
@@ -146,5 +174,6 @@ public class MecanumOpMode extends AbstractOpMode {
     @Override
     protected void onStop() {
         armThread.interrupt();
+        capThread.interrupt();
     }
 }

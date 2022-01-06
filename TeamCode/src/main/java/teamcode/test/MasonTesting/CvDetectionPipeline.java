@@ -45,6 +45,9 @@ public class CvDetectionPipeline extends OpenCvPipeline {
     double sensorHeight = 24;
     final double cameraAngle = 68;
 
+    // distance in inches
+    double distance = 0.0;
+
     @Override
     public void init(Mat frame) {
         xPList.add(0.0);
@@ -133,7 +136,8 @@ public class CvDetectionPipeline extends OpenCvPipeline {
             int srcWidth = frame.width();
             int srcHeight = frame.height();
 
-            double distanceToObject = distance(srcHeight, objHeight);
+            distance = distance(srcHeight, objHeight);
+
             // get distance
 //            double distance = distanceFinder(2.0, objWidth);
 ////
@@ -147,6 +151,7 @@ public class CvDetectionPipeline extends OpenCvPipeline {
 ////            yPList.add(yPos);
 //            yPList.add(0.0);
         }
+        Debug.log("DIST: " + distance);
         Imgproc.line(frame, new Point(frame.width() / 2, frame.height()), new Point(frame.width() / 2, 0), new Scalar(255, 255, 255));
         Imgproc.drawContours(frame, subContours, -1, new Scalar(255, 255, 255), 2, Imgproc.LINE_8);
         // comment part means src to frame, change back to src when comment heap is done
@@ -163,6 +168,10 @@ public class CvDetectionPipeline extends OpenCvPipeline {
     public double distance(int imageHeight, double objectHeight) {
         // divide by 25.4 to get inches from mm
         return ((focalLength * objectHeight * imageHeight) / (objectHeight * sensorHeight)) / 25.4;
+    }
+
+    public double distanceToObj() {
+        return distance;
     }
 
     public synchronized ArrayList<Double> xPointList() {
