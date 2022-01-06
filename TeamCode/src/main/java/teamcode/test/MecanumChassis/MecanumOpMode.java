@@ -67,12 +67,16 @@ public class MecanumOpMode extends AbstractOpMode {
     private void capUpdate() {
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
             double val = gamepad2.left_trigger - gamepad2.right_trigger;
-            endgameSystems.setCapstoneExtensionPower((Math.abs(val) >= 1) ? 1 : val);
+            endgameSystems.setCapstoneExtensionPower((Math.abs(val) >= 1) ? -1 : val);
+        }else{
+            endgameSystems.setCapstoneExtensionPower(0);
         }
-        if(iterator % 4 == 0) {
-            endgameSystems.setXCapPosition(endgameSystems.getXCapPosition() + gamepad2.left_stick_x * 0.05);
-            endgameSystems.setYCapPosition(endgameSystems.getYCapPosition() + gamepad2.right_stick_y * 0.05);
-        }
+        telemetry.addData("lt", gamepad2.left_trigger);
+        telemetry.addData("rt", gamepad2.right_trigger);
+        telemetry.update();
+
+            endgameSystems.setXCapPosition(endgameSystems.getXCapPosition() + gamepad2.left_stick_x * 0.01); // remove multiplier and getCapPosition()
+            endgameSystems.setYCapPosition(endgameSystems.getYCapPosition() + gamepad2.right_stick_y * 0.01);
         iterator++;
     }
 
@@ -145,8 +149,7 @@ public class MecanumOpMode extends AbstractOpMode {
             }
         }
 
-        telemetry.addData("slide pos", arm.getLinearSlidePosition());
-        telemetry.update();
+
     }
 
     @Override

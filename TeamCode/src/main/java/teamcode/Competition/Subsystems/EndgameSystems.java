@@ -52,15 +52,15 @@ public class EndgameSystems {
             carousel = hardwareMap.crservo.get("CarouselBlue");
             carouselEncoder = hardwareMap.dcMotor.get("BackRightDrive");
         }else{
-            carousel = hardwareMap.crservo.get("CapstoneServo");
-            carouselEncoder = hardwareMap.dcMotor.get("CarouselRedEncoder");
+            //carousel = hardwareMap.crservo.get("CapstoneServo");
+            //carouselEncoder = hardwareMap.dcMotor.get("CarouselRedEncoder");
         }
         xCap = hardwareMap.servo.get("xCap");
         yCap = hardwareMap.servo.get("yCap");
         capstoneExtension = hardwareMap.crservo.get("capExtension");
 
-        carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.isBlue = isBlue;
 
