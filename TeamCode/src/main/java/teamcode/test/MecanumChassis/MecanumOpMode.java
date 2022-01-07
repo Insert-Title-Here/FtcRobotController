@@ -20,7 +20,7 @@ import teamcode.common.Vector2D;
 public class MecanumOpMode extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem arm;
-    Thread armThread, capThread;
+    Thread armThread;/*capThread*/
     Localizer localizer;
     EndgameSystems endgameSystems;
 
@@ -53,13 +53,13 @@ public class MecanumOpMode extends AbstractOpMode {
             }
         };
 
-        capThread = new Thread() {
-            public void run() {
-                while (opModeIsActive()) {
-                    capUpdate();
-                }
-            }
-        };
+//        capThread = new Thread() {
+//            public void run() {
+//                while (opModeIsActive()) {
+//                    capUpdate();
+//                }
+//            }
+//        };
         iterator = 0;
 
     }
@@ -75,8 +75,8 @@ public class MecanumOpMode extends AbstractOpMode {
         telemetry.addData("rt", gamepad2.right_trigger);
         telemetry.update();
 
-            endgameSystems.setXCapPosition(endgameSystems.getXCapPosition() + gamepad2.left_stick_x * 0.01); // remove multiplier and getCapPosition()
-            endgameSystems.setYCapPosition(endgameSystems.getYCapPosition() + gamepad2.right_stick_y * 0.01);
+        endgameSystems.setXCapPosition(gamepad2.left_stick_x);
+        endgameSystems.setYCapPosition(gamepad2.right_stick_y);
         iterator++;
     }
 
@@ -155,7 +155,7 @@ public class MecanumOpMode extends AbstractOpMode {
     @Override
     protected void onStart() {
         armThread.start();
-        capThread.start();
+        //capThread.start();
         while(opModeIsActive()){
             drive.setPower(new Vector2D(gamepad1.left_stick_y, -gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
         }
@@ -177,6 +177,6 @@ public class MecanumOpMode extends AbstractOpMode {
     @Override
     protected void onStop() {
         armThread.interrupt();
-        capThread.interrupt();
+        //capThread.interrupt();
     }
 }
