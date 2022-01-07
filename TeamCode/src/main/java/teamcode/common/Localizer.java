@@ -663,7 +663,6 @@ public class Localizer extends Thread {
         freezeUpdate = false;
 
         solver = new LUDecomposition(inverseMatrix).getSolver();
-        Debug.log(solver.isNonSingular());
         lastWheelPositions = new double[]{0,0,0};
         odoEstimate = start.clone();
         poseVelocity = new Pose(0,0,0);

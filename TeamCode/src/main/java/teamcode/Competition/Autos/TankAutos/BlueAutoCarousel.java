@@ -23,7 +23,7 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
-@Autonomous(name="CarouselBlue")
+@Autonomous(name="CarouselBlue TANK")
 public class BlueAutoCarousel extends AbstractOpMode {
     WestCoastDriveTrain driveTrain;
     ArmSystem arm;

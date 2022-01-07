@@ -1,4 +1,4 @@
-package teamcode.Competition.TeleOp;
+package teamcode.Competition.TeleOp.Tank;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

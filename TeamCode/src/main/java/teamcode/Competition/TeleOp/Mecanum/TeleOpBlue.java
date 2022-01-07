@@ -1,4 +1,4 @@
-package teamcode.test.MecanumChassis;
+package teamcode.Competition.TeleOp.Mecanum;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,36 +7,33 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
-import teamcode.Competition.TeleOp.OfficialTeleOpScriptBlue;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
-import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
-@TeleOp(name="Mecanum Tele Op")
-public class MecanumOpMode extends AbstractOpMode {
+@TeleOp(name="Tele Op Blue")
+public class TeleOpBlue extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem arm;
     Thread armThread, capThread;
     Localizer localizer;
-    EndgameSystems endgameSystems;
+    EndgameSystems systems;
 
     private ScoredButtonState state;
     private PulleyState pulleyState;
     private LinkageState linkageState;
     private long scoredSampleTime;
 
-    int iterator;
 
     @Override
     protected void onInitialize() {
         drive = new MecanumDriveTrain(hardwareMap);
         localizer = new Localizer(hardwareMap, new Vector2D(0, 0), 0, 10);
         arm = new ArmSystem(hardwareMap, true);
-        endgameSystems = new EndgameSystems(hardwareMap, false);
+        systems = new EndgameSystems(hardwareMap, true);
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
@@ -60,7 +57,7 @@ public class MecanumOpMode extends AbstractOpMode {
             }
         };
 
-        endgameSystems.zeroCap();
+        systems.zeroCap();
     }
 
     // For changing ranges of given variable
@@ -74,18 +71,18 @@ public class MecanumOpMode extends AbstractOpMode {
 
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
             double val = gamepad2.right_trigger - gamepad2.left_trigger;
-            endgameSystems.setCapstoneExtensionPower(-val);
+            systems.setCapstoneExtensionPower(-val);
         }else{
-            endgameSystems.setCapstoneExtensionPower(0);
+            systems.setCapstoneExtensionPower(0);
         }
 
-        double xPos = endgameSystems.getXCapPosition();
-        double yPos = endgameSystems.getYCapPosition();
-        endgameSystems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -0.0005, 0.0005))));
-        endgameSystems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -0.001, 0.001));
+        double xPos = systems.getXCapPosition();
+        double yPos = systems.getYCapPosition();
+        systems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -0.0005, 0.0005))));
+        systems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -0.001, 0.001));
 
         if (gamepad2.y) {
-            endgameSystems.zeroCap();
+            systems.zeroCap();
         }
     }
 
@@ -135,13 +132,13 @@ public class MecanumOpMode extends AbstractOpMode {
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
             }
-        }else if(gamepad1.dpad_right ){
+        }else if(gamepad1.y ){
             if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 arm.raise(Constants.MEDIUM_POSITION);
                 pulleyState = PulleyState.MID_GOAL;
                 linkageState = linkageState.RAISED;
             }
-        }else if(gamepad1.y){
+        }else if(gamepad1.dpad_right){
             arm.raise(Constants.BOTTOM_POSITION);
             arm.score();
             Utils.sleep(750);
@@ -149,7 +146,14 @@ public class MecanumOpMode extends AbstractOpMode {
             arm.retract();
         }else if(gamepad1.dpad_left){
             arm.resetWinchEncoder();
+        }if(gamepad1.left_bumper){
+            while(gamepad1.left_bumper) {
+                systems.runCarousel(1);
+            }
+        }else if(gamepad1.right_bumper){
+            systems.scoreDuck();
         }else {
+            systems.runCarousel(0);
             arm.intakeDumb(0);
             if (pulleyState != PulleyState.RETRACTED) {
                 arm.setWinchVelocity(arm.FEEDFORWARD_V, AngleUnit.RADIANS);

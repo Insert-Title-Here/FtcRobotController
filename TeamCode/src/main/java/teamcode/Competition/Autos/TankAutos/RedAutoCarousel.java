@@ -23,7 +23,7 @@ import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 import teamcode.test.MasonTesting.CvDetectionPipeline;
 
-@Autonomous(name="CarouselRed")
+@Autonomous(name="CarouselRed TANK")
 public class RedAutoCarousel extends AbstractOpMode {
     WestCoastDriveTrain driveTrain;
     ArmSystem arm;

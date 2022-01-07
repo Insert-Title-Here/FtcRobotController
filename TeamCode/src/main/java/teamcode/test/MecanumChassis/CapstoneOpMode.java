@@ -3,18 +3,8 @@ package teamcode.test.MecanumChassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
-import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
-import teamcode.Competition.TeleOp.OfficialTeleOpScriptBlue;
 import teamcode.common.AbstractOpMode;
-import teamcode.common.Constants;
-import teamcode.common.Debug;
-import teamcode.common.Localizer;
-import teamcode.common.MecanumDriveTrain;
-import teamcode.common.Utils;
-import teamcode.common.Vector2D;
 
 @TeleOp(name = "Capstone Tele Op")
 public class CapstoneOpMode extends AbstractOpMode {

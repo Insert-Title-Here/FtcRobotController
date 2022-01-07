@@ -203,6 +203,7 @@ public class ArmSystem {
 
     //temporary tele op scoring function w/o color sensor
     public synchronized void score(){
+        Debug.log("here");
         house.setPosition(SCORING_POSITION);
     }
 

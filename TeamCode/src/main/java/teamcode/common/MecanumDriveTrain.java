@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.robot.Robot;
 
 import org.apache.commons.math3.analysis.function.Abs;
+import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -221,12 +222,24 @@ public class MecanumDriveTrain {
         }
 
         environmentalTerminate = false;
+        double distanceFrontThreshold;
+        double distanceBackThreshold;
+        if(isRed){
+            distanceFrontThreshold = 1.1;
+            distanceBackThreshold = 0.8;
+        }else{
+            distanceFrontThreshold = 0.6;
+            distanceBackThreshold = 0.8;
+        }
 
         //todo calibrate the tolerance of it.
-        while(distanceFront.getDistance(DistanceUnit.INCH) > 1.1 && distanceBack.getDistance(DistanceUnit.INCH) > 0.8 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+        while(distanceFront.getDistance(DistanceUnit.INCH) > distanceFrontThreshold && distanceBack.getDistance(DistanceUnit.INCH) > distanceBackThreshold && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
 
             Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0), power);
             //Vector2D passedVector = new Vector2D(passedX, passedY);
+            AbstractOpMode.currentOpMode().telemetry.addData("", distanceFront.getDistance(DistanceUnit.INCH));
+            AbstractOpMode.currentOpMode().telemetry.addData("", distanceBack.getDistance(DistanceUnit.INCH));
+            AbstractOpMode.currentOpMode().telemetry.update();
             setPower(vec, 0);
 
             // previousVelocity.mult

@@ -2,28 +2,20 @@ package teamcode.Competition.Autos.MecanumAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import teamcode.Competition.Pipeline.BarcodePipeline3;
 import teamcode.Competition.Subsystems.ArmSystem;
-import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
-import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
-import teamcode.common.WestCoastDriveTrain;
 
-@Autonomous(name="RedAutoFreight")
-public class MecanumFreightAuto extends AbstractOpMode {
+@Autonomous(name="CarouselRed")
+public class CarouselAutoRed extends AbstractOpMode {
 
     MecanumDriveTrain drive;
     ArmSystem arm;
@@ -34,7 +26,6 @@ public class MecanumFreightAuto extends AbstractOpMode {
 
     Thread secondaryFunctionsThread, timerThread;
 
-    private final int FREIGHT = 1;
     private final double VELOCITY = 15;
     private final double OMEGA = 0.4;
 
@@ -117,35 +108,7 @@ public class MecanumFreightAuto extends AbstractOpMode {
         Utils.sleep(250);
         arm.retract();
         retract = false;
-        for(int i = 0; i < FREIGHT; i++){
 
-
-            while(!intake && opModeIsActive());
-            if(executeArmCommands) {
-                boolean isStop = arm.intakeAuto(1);
-                drive.setEnvironmentalTerminate(true);
-                if (isStop) {
-                    drive.seteStop(true);
-                }
-                intake = false;
-            }
-
-            while(!extend && opModeIsActive());
-            if(executeArmCommands) {
-                arm.raise(Constants.TOP_POSITION + 3000);
-                extend = false;
-            }
-
-            while(!retract && opModeIsActive());
-            if(executeArmCommands) {
-                Utils.sleep(250);
-                arm.retract();
-                retract = false;
-            }
-            if(!executeArmCommands){
-                break;
-            }
-        }
     }
 
     @Override
@@ -153,39 +116,17 @@ public class MecanumFreightAuto extends AbstractOpMode {
         localizer.start();
         secondaryFunctionsThread.start();
         telemetry.clear();
-        drive.moveToPosition(new Vector2D(15,15),  VELOCITY);
-        drive.moveToPosition(new Vector2D(18,15), VELOCITY);
+        drive.moveToPosition(new Vector2D(30,5),  VELOCITY);
 
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
-        drive.rotateDistance(Math.toRadians(180), OMEGA);
+        drive.rotateDistance(Math.toRadians(90), OMEGA);
         //drive.moveToPosition(new Vector2D(18.5,15), -VELOCITY);
         arm.score();
         Utils.sleep(1000);
         retract = true;
         drive.rotateDistance(Math.toRadians(90), -OMEGA);
 //        //starting path
-        for(int i = 0; i < FREIGHT; i++) {
-//            state = currentCycleState.STRAFING_IN;
-            drive.strafeDistanceSensor(0.7, Math.toRadians(-30));
-            localizer.manualZero(true);
 
-            //Utils.sleep(1000);
-            intake = true;
-            state = currentCycleState.INTAKING;
-            drive.moveToPosition(new Vector2D(36,0), 2* VELOCITY); //replace this with seekCubes() if it works
-//            state = currentCycleState.LEAVING;
-            drive.strafeDistanceSensor(0.7, 0);
-            drive.moveToPosition(new Vector2D(-6, 0), VELOCITY);
-            extend = true;
-            state = currentCycleState.SCORING;
-            drive.moveToPosition(new Vector2D( -15, 15), VELOCITY); //replace this with a distance sensor command?
-            //drive.moveToPosition(new Vector2D( 15, 18), -VELOCITY); //replace this with a distance sensor command?
-
-            drive.rotateDistance(Math.toRadians(-90), -OMEGA);
-            arm.score();
-            drive.rotateDistance(Math.toRadians(0), OMEGA);
-            retract = true;
-        }
 
 //        if(state != currentCycleState.INTAKING && state != currentCycleState.LEAVING){
 //
