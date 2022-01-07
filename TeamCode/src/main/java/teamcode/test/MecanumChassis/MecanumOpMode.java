@@ -20,7 +20,7 @@ import teamcode.common.Vector2D;
 public class MecanumOpMode extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem arm;
-    Thread armThread;/*capThread*/
+    Thread armThread, capThread;
     Localizer localizer;
     EndgameSystems endgameSystems;
 
@@ -30,7 +30,6 @@ public class MecanumOpMode extends AbstractOpMode {
     private long scoredSampleTime;
 
     int iterator;
-
 
     @Override
     protected void onInitialize() {
@@ -53,31 +52,41 @@ public class MecanumOpMode extends AbstractOpMode {
             }
         };
 
-//        capThread = new Thread() {
-//            public void run() {
-//                while (opModeIsActive()) {
-//                    capUpdate();
-//                }
-//            }
-//        };
-        iterator = 0;
+        capThread = new Thread() {
+            public void run() {
+                while (opModeIsActive()) {
+                    capUpdate();
+                }
+            }
+        };
 
+        endgameSystems.zeroCap();
     }
 
+    // For changing ranges of given variable
+    private double map(double val, double in_min, double in_max, double out_min, double out_max) {
+        return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+
+    // Flag variable for keeping every servo frozen until game start
+    boolean capping = false;
     private void capUpdate() {
+
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
-            double val = gamepad2.left_trigger - gamepad2.right_trigger;
-            endgameSystems.setCapstoneExtensionPower((Math.abs(val) >= 1) ? -1 : val);
+            double val = gamepad2.right_trigger - gamepad2.left_trigger;
+            endgameSystems.setCapstoneExtensionPower(-val);
         }else{
             endgameSystems.setCapstoneExtensionPower(0);
         }
-        telemetry.addData("lt", gamepad2.left_trigger);
-        telemetry.addData("rt", gamepad2.right_trigger);
-        telemetry.update();
 
-        endgameSystems.setXCapPosition(gamepad2.left_stick_x);
-        endgameSystems.setYCapPosition(gamepad2.right_stick_y);
-        iterator++;
+        double xPos = endgameSystems.getXCapPosition();
+        double yPos = endgameSystems.getYCapPosition();
+        endgameSystems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -0.0005, 0.0005))));
+        endgameSystems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -0.001, 0.001));
+
+        if (gamepad2.y) {
+            endgameSystems.zeroCap();
+        }
     }
 
     double startTime;
@@ -155,7 +164,7 @@ public class MecanumOpMode extends AbstractOpMode {
     @Override
     protected void onStart() {
         armThread.start();
-        //capThread.start();
+        capThread.start();
         while(opModeIsActive()){
             drive.setPower(new Vector2D(gamepad1.left_stick_y, -gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
         }
@@ -177,6 +186,6 @@ public class MecanumOpMode extends AbstractOpMode {
     @Override
     protected void onStop() {
         armThread.interrupt();
-        //capThread.interrupt();
+        capThread.interrupt();
     }
 }

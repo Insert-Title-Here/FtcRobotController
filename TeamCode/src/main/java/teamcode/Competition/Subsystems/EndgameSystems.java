@@ -86,6 +86,11 @@ public class EndgameSystems {
         return yCap.getPosition();
     }
 
+    public void zeroCap() {
+        xCap.setPosition(0);
+        yCap.setPosition(1);
+    }
+
     public void scoreDuck() {
         carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int pose = 20000;
