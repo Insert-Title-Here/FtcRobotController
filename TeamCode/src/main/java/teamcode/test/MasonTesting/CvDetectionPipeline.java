@@ -92,6 +92,7 @@ public class CvDetectionPipeline extends OpenCvPipeline {
         // get x and y vals + x and y cords
         xPList.clear();
         yPList.clear();
+        double xCord = 0.0;
         for (int i = 0; i < subContours.size(); i++) {
             ArrayList<Point> pointList = new ArrayList<>();
             Converters.Mat_to_vector_Point(subContours.get(i), pointList);
@@ -127,11 +128,12 @@ public class CvDetectionPipeline extends OpenCvPipeline {
                 }
             }
 
-            int xCord = xMin + Math.abs((xMax - xMin) / 2);
+            xCord = xMin + Math.abs((xMax - xMin) / 2);
             int yCord = yMin + Math.abs((yMax - yMin) / 2);
             int objWidth = Math.abs(xMax - xMin);
             int objHeight = Math.abs(yMax - xMin);
             Imgproc.drawMarker(frame, new Point(xCord, yCord), new Scalar(255, 255, 255));
+            Imgproc.putText(frame, "X:" + xCord, new Point(xCord, yCord), Imgproc.FONT_HERSHEY_COMPLEX, 0.6, new Scalar(255, 255, 255));
 
             int srcWidth = frame.width();
             int srcHeight = frame.height();
@@ -151,7 +153,7 @@ public class CvDetectionPipeline extends OpenCvPipeline {
 ////            yPList.add(yPos);
 //            yPList.add(0.0);
         }
-        Debug.log("DIST: " + distance);
+        Debug.log("DIST: " + xCord);
         Imgproc.line(frame, new Point(frame.width() / 2, frame.height()), new Point(frame.width() / 2, 0), new Scalar(255, 255, 255));
         Imgproc.drawContours(frame, subContours, -1, new Scalar(255, 255, 255), 2, Imgproc.LINE_8);
         // comment part means src to frame, change back to src when comment heap is done
