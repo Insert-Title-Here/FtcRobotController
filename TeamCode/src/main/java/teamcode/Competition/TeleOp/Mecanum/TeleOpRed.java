@@ -26,7 +26,7 @@ public class TeleOpRed extends AbstractOpMode {
     private PulleyState pulleyState;
     private LinkageState linkageState;
     private long scoredSampleTime;
-
+    private double yCapSpeed, xCapSpeed;
 
     @Override
     protected void onInitialize() {
@@ -58,6 +58,12 @@ public class TeleOpRed extends AbstractOpMode {
         };
 
         systems.zeroCap();
+        yCapSpeed = 0.001;
+        xCapSpeed = 0.0005;
+        previousLeft = false;
+        previousRight = false;
+        previousUp = false;
+        previousDown = false;
     }
 
     // For changing ranges of given variable
@@ -67,6 +73,7 @@ public class TeleOpRed extends AbstractOpMode {
 
     // Flag variable for keeping every servo frozen until game start
     boolean capping = false;
+    boolean previousLeft, previousRight, previousUp, previousDown;
     private void capUpdate() {
 
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
@@ -83,7 +90,19 @@ public class TeleOpRed extends AbstractOpMode {
 
         if (gamepad2.y) {
             systems.zeroCap();
+        } else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
+            xCapSpeed += 0.0002;
+        } else if (gamepad2.dpad_left && previousLeft != gamepad2.dpad_left) {
+            xCapSpeed -= 0.0002;
+        } else if (gamepad2.dpad_up && previousUp != gamepad2.dpad_up) {
+            yCapSpeed += 0.0002;
+        } else if (gamepad2.dpad_down && previousDown != gamepad2.dpad_down) {
+            yCapSpeed -= 0.0002;
         }
+        previousLeft = gamepad2.dpad_left;
+        previousRight = gamepad2.dpad_right;
+        previousUp = gamepad2.dpad_up;
+        previousDown = gamepad2.dpad_down;
     }
 
     double startTime;

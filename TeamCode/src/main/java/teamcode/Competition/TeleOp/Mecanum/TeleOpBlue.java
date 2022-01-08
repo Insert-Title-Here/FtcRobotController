@@ -60,7 +60,7 @@ public class TeleOpBlue extends AbstractOpMode {
         systems.zeroCap();
         yCapSpeed = 0.001;
         xCapSpeed = 0.0005;
-        previousleft = false;
+        previousLeft = false;
         previousRight = false;
         previousUp = false;
         previousDown = false;
@@ -73,7 +73,7 @@ public class TeleOpBlue extends AbstractOpMode {
 
     // Flag variable for keeping every servo frozen until game start
     boolean capping = false;
-    boolean previousleft, previousRight, previousUp, previousDown;
+    boolean previousLeft, previousRight, previousUp, previousDown;
     private void capUpdate() {
 
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
@@ -92,14 +92,14 @@ public class TeleOpBlue extends AbstractOpMode {
             systems.zeroCap();
         } else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
             xCapSpeed += 0.0002;
-        } else if (gamepad2.dpad_left && previousleft != gamepad2.dpad_left) {
+        } else if (gamepad2.dpad_left && previousLeft != gamepad2.dpad_left) {
             xCapSpeed -= 0.0002;
         } else if (gamepad2.dpad_up && previousUp != gamepad2.dpad_up) {
             yCapSpeed += 0.0002;
         } else if (gamepad2.dpad_down && previousDown != gamepad2.dpad_down) {
             yCapSpeed -= 0.0002;
         }
-        previousleft = gamepad2.dpad_left;
+        previousLeft = gamepad2.dpad_left;
         previousRight = gamepad2.dpad_right;
         previousUp = gamepad2.dpad_up;
         previousDown = gamepad2.dpad_down;
