@@ -1,6 +1,7 @@
 package teamcode.Competition.TeleOp.Tank;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.Competition.Subsystems.ArmSystem;
@@ -12,7 +13,9 @@ import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
 
+
 @TeleOp(name="tele op BLUE")
+@Disabled
 public class OfficialTeleOpScriptBlue extends AbstractOpMode {
 
     WestCoastDriveTrain drive;

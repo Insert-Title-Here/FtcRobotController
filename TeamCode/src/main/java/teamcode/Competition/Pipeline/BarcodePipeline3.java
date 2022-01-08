@@ -125,7 +125,7 @@ public class BarcodePipeline3 extends OpenCvPipeline {
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB)); //center region
         region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB)); //right region
 
-         avg1 = (int) Core.mean(region1_Cb).val[0];
+        avg1 = (int) Core.mean(region1_Cb).val[0];
         avg2 = (int) Core.mean(region2_Cb).val[0];
         avg3 = (int) Core.mean(region3_Cb).val[0];
 
@@ -169,13 +169,13 @@ public class BarcodePipeline3 extends OpenCvPipeline {
 
         if (Math.abs(side1 - side2) < 15) { //todo change this and other values at L2
 
-//            Imgproc.rectangle(
-//                    input,
-//                    region1_pointA,
-//                    region1_pointB,
-//                    GREEN,
-//                    2
-//            );
+            Imgproc.rectangle(
+                    input,
+                    region1_pointA,
+                    region1_pointB,
+                    GREEN,
+                    2
+            );
 
             position = BarcodePosition.RIGHT;
         }else if (min == side1) {

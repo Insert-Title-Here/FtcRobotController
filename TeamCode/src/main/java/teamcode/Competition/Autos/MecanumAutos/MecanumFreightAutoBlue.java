@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import teamcode.Competition.Pipeline.BarcodePipeline3;
+import teamcode.Competition.Pipeline.MecanumAutoPosition;
+import teamcode.Competition.Pipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
@@ -20,9 +22,11 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem arm;
     Localizer localizer;
+    MecanumAutoPosition autoPos;
 
     OpenCvWebcam webcam;
-    BarcodePipeline3.BarcodePosition position;
+    //BarcodePipeline3.BarcodePosition position;
+    MecanumBarcodePipeline.BarcodePosition position;
 
     Thread secondaryFunctionsThread, timerThread;
 
@@ -40,6 +44,7 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
         localizer = new Localizer(new Pose(0,0,0), hardwareMap);
         drive = new MecanumDriveTrain(hardwareMap, localizer, false);
         arm = new ArmSystem(hardwareMap, false);
+        //autoPos = new MecanumAutoPosition(MecanumBarcodePipeline.Side.BLUE);
 
         secondaryFunctionsThread = new Thread(){
             @Override
@@ -81,7 +86,7 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
         localizer.lowerOdo();
         executeArmCommands = true;
         while(!opModeIsActive()){
-            position = BarcodePipeline3.BarcodePosition.RIGHT;
+            position = MecanumBarcodePipeline.BarcodePosition.RIGHT;
             //telemetry.addData("", position);
             //telemetry.update();
         }
@@ -98,9 +103,9 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
             e.printStackTrace();
         }
 
-        if(position == BarcodePipeline3.BarcodePosition.RIGHT) {
+        if(position == MecanumBarcodePipeline.BarcodePosition.RIGHT) {
             arm.raise(Constants.BOTTOM_POSITION - 1500);
-        }else if(position == BarcodePipeline3.BarcodePosition.CENTER){
+        }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
             arm.raise(Constants.MEDIUM_POSITION + 3000);
         }else{
             arm.raise(Constants.TOP_POSITION + 3000);

@@ -102,7 +102,9 @@ public class TeleOpRed extends AbstractOpMode {
             }
         }else if(gamepad1.a){
             //add something to move the linkage outta the way
-            arm.intakeDumb(-0.8);
+            while(gamepad1.a) {
+                arm.intakeDumb(-0.8);
+            }
         }else if(gamepad1.x){
             long currentSampleTime = System.currentTimeMillis();
             if(currentSampleTime - scoredSampleTime > 200) {
@@ -170,7 +172,7 @@ public class TeleOpRed extends AbstractOpMode {
         armThread.start();
         capThread.start();
         while(opModeIsActive()){
-            drive.setPower(new Vector2D(gamepad1.left_stick_y, -gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
+            drive.setPower(new Vector2D(-gamepad1.left_stick_y, gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
         }
     }
 
