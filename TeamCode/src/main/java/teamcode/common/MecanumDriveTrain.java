@@ -277,6 +277,8 @@ public class MecanumDriveTrain {
      */
 
     boolean maxReached;
+    Vector2D previousPosition;
+    int lowMagnitudeHardwareCycles;
 
     public synchronized void moveToPosition(Vector2D desiredPosition, double desiredVelocity){
 
@@ -292,12 +294,17 @@ public class MecanumDriveTrain {
         previousOmegaError = 0;
         environmentalTerminate = false;
         double heading = currentState.getRotation();
+        Debug.log(desiredVelocity);
+        lowMagnitudeHardwareCycles = 0;
+        previousPosition = currentState.getPosition();
 
         while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
 
             currentState = localizer.getCurrentState();
+            Vector2D position = currentState.getPosition();
+            Vector2D deltaPosition = position.subtract(previousPosition);
             Vector2D positionError = desiredPosition.subtract(currentState.getPosition());
-            double errorAngle = positionError.getDirection();
+            double errorAngle = positionError.getDirection() - heading;
             //angleOfTravel += 0; // (Math.PI / 4.0)mecanum need this because all the math is shifted by pi/4
             Vector2D idealVelocity = Vector2D.fromAngleMagnitude(errorAngle, desiredVelocity);
 
@@ -321,7 +328,7 @@ public class MecanumDriveTrain {
 
 
             //found and fixed stupid math error
-            Vector2D passedVector = previousVelocity.add(new Vector2D(error.getX(), -error.getY()));
+            Vector2D passedVector = previousVelocity.add(new Vector2D(error.getX(), error.getY()));
 
             if(passedVector.magnitude() > 1.0){
                 passedVector = passedVector.normalize();
@@ -331,9 +338,13 @@ public class MecanumDriveTrain {
 
            // previousVelocity.multiply(sign);
             previousError = error;
+            previousPosition = new Vector2D(position.getX(), position.getY());
 
 
             AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
+            AbstractOpMode.currentOpMode().telemetry.addData("dpos", deltaPosition.magnitude());
+            AbstractOpMode.currentOpMode().telemetry.addData("", lowMagnitudeHardwareCycles);
+
 
             //AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
             //AbstractOpMode.currentOpMode().telemetry.addData("sign", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));
@@ -421,8 +432,8 @@ public class MecanumDriveTrain {
 
         while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !environmentalTerminate && !eStop){
             state = localizer.getCurrentState();
-//            AbstractOpMode.currentOpMode().telemetry.addData("", Math.toDegrees(state.getRotation()));
-//            AbstractOpMode.currentOpMode().telemetry.update();
+            AbstractOpMode.currentOpMode().telemetry.addData("", state);
+            AbstractOpMode.currentOpMode().telemetry.update();
             setPower(power, -power, power, -power);
         }
         brake();
@@ -490,6 +501,7 @@ public class MecanumDriveTrain {
     }
 
     public double setStrafe(double val){
+        Debug.log("here");
         if(!isRed){
             setPower(-val, val, val, -val);
         }else {

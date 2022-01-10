@@ -138,7 +138,7 @@ public class EndgameSystems {
 
     public void scoreDuckAuto() {
         carouselEncoderRed.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        int pose = 40000;
+        int pose = 25000;
         double direction;
         if(isBlue){
             direction = -1;

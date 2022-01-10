@@ -1,4 +1,7 @@
-package teamcode.Competition.Pipeline;
+// TEST SCRIPT FOR OPENCV BY MASON
+// link for reference: https://github.com/OpenFTC/EasyOpenCV/blob/master/doc/user_docs/camera_initialization_overview.md
+
+package teamcode.Competition.Pipeline.Calibrators;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,20 +11,22 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import teamcode.Competition.Pipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.TankPipeline.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 
-@TeleOp(name = "Mecanum Webcam Calibration")
-public class MecanumAutoPosition extends AbstractOpMode{
+@TeleOp(name = "Webcam Calibration")
+public class CvAutoPosition extends AbstractOpMode {
 
+    // Get webcam and create an OpenCvCamera
     WebcamName wc;
     OpenCvCamera camera;
 
-    static final MecanumBarcodePipeline mbp = new MecanumBarcodePipeline();
-    private MecanumBarcodePipeline.Side side;
+    // global obj
+    static final BarcodePipeline3 brp = new BarcodePipeline3();
 
     @Override
     protected void onInitialize() {
+
         // Init webcam and create a cam object using CvFactory
         // Make sure to have the name of the webcam set in the config settings of the robot
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -30,10 +35,9 @@ public class MecanumAutoPosition extends AbstractOpMode{
         // W/ or W/ out live preview
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
-        camera.setPipeline(mbp);
+        brp.setSide(BarcodePipeline3.Side.RED);
+        camera.setPipeline(brp);
 
-        telemetry.addData("IT WORKS *shtrugs", 000);
-        telemetry.update();
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -71,8 +75,12 @@ public class MecanumAutoPosition extends AbstractOpMode{
 
     @Override
     protected void onStart() {
-        while (opModeIsActive()) {
 
+        // Keep the op mode running, to keep the system from coming to a halt
+
+        while (opModeIsActive()) {
+            //telemetry.addData("position", brp.getPos());
+            //telemetry.update();
         }
     }
 

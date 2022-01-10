@@ -638,9 +638,9 @@ public class Localizer extends Thread {
 
 
         wheelPoses = new ArrayList<>();
-        wheelPoses.add(new Pose(10,-2.8, 0)); //LV //-5.5 // -3.91885,-6.471937
-        wheelPoses.add(new Pose(3.3, 0,  Math.toRadians(90))); //H //-4.5222, 0.10685
-        wheelPoses.add(new Pose(0,2.8, 0)); //RV //-5.5
+        wheelPoses.add(new Pose(0,-2.6, 0)); //LV //-5.5 // -3.91885,-6.471937
+        wheelPoses.add(new Pose(-4.5, 0,  Math.toRadians(90))); //H //-4.5222, 0.10685 //-3.5
+        wheelPoses.add(new Pose(0,2.6, 0)); //RV //-5.5
 
 
 
@@ -726,7 +726,7 @@ public class Localizer extends Thread {
 //            double dHeading = heading - previousHeading;
 
             double[] wheelPositions = new double[]{encoderTicksToInches(data1.getMotorCurrentPosition(leftVertical)),
-                    -encoderTicksToInches(data1.getMotorCurrentPosition(horizontal)),
+                    encoderTicksToInches(data1.getMotorCurrentPosition(horizontal)),
                     -encoderTicksToInches((data1.getMotorCurrentPosition(rightVertical))),
             };
             double[] wheelDeltas = new double[]{wheelPositions[0] - lastWheelPositions[0], wheelPositions[1] - lastWheelPositions[1], wheelPositions[2] - lastWheelPositions[2]};

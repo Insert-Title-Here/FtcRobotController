@@ -3,26 +3,21 @@ package teamcode.Competition.Autos.MecanumAutos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import teamcode.Competition.Pipeline.BarcodePipeline3;
-import teamcode.Competition.Pipeline.MecanumAutoPosition;
-import teamcode.Competition.Pipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.Calibrators.MecanumAutoPosition;
+import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
-import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
-import teamcode.common.Debug;
 import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
-import teamcode.common.WestCoastDriveTrain;
 
 @Autonomous(name="RedAutoFreight")
 public class MecanumFreightAuto extends AbstractOpMode {

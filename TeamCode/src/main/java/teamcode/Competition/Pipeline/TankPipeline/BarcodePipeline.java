@@ -1,5 +1,4 @@
-package teamcode.Competition.Pipeline;
-
+package teamcode.Competition.Pipeline.TankPipeline;
 
 
 import org.opencv.core.Core;
@@ -12,8 +11,20 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import teamcode.common.AbstractOpMode;
 
-public class BarcodePipeline3 extends OpenCvPipeline {
-    //variant of the barcode pipeline which assumes 3 targets are in sight
+public class BarcodePipeline extends OpenCvPipeline {
+
+    // define col constants
+    static final Scalar BLUE = new Scalar(0, 0, 255);
+    static final Scalar GREEN = new Scalar(0, 255, 0);
+    static final int calibratedRange = 16;
+
+    // get anchor points for each region
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 160);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(150, 160);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 160);
+    static final int REGION_WIDTH = 40;
+    static final int REGION_HEIGHT = 80;
+
     // define position enums
     public enum BarcodePosition
     {
@@ -23,23 +34,13 @@ public class BarcodePipeline3 extends OpenCvPipeline {
     }
 
     public enum Side{
-
         RED, BLUE;
     }
 
 
-    // define col constants
-    static final Scalar BLUE = new Scalar(0, 0, 255);
-    static final Scalar GREEN = new Scalar(0, 255, 0);
-
-    // get anchor points for each region
-    static Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 140);
-    static Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(135, 140);
-    static Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 140);
 
 
-    static final int REGION_WIDTH = 40;
-    static final int REGION_HEIGHT = 40;
+
 
     // define top left and bottom right region points
     Point region1_pointA = new Point(
@@ -63,15 +64,23 @@ public class BarcodePipeline3 extends OpenCvPipeline {
 
     // Create vars
     Mat region1_Cb, region2_Cb, region3_Cb;
-    //    Mat YCrCb = new Mat();
+//    Mat YCrCb = new Mat();
 //    Mat Cb = new Mat();
     Mat RGB = new Mat();
+
     Mat B = new Mat();
     int avg1, avg2, avg3;
 
     // create pos var, with vol tag due to the var changing at runtime
     volatile BarcodePosition position = BarcodePosition.RIGHT;
     volatile Side side = Side.BLUE;
+
+
+    // converts rgb frame to ycrcb, extracts cb channel
+//    void inputToCb(Mat input) {
+//        Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+//        Core.extractChannel(YCrCb, Cb, 2);
+//    }
 
     void inputToB(Mat input) {
         Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
@@ -84,42 +93,12 @@ public class BarcodePipeline3 extends OpenCvPipeline {
 
         region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB));
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB));
-        //region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
+        region3_Cb = B.submat(new Rect(region3_pointA, region3_pointB));
     }
 
     @Override
     public Mat processFrame(Mat input) {
         inputToB(input);
-
-        if(side == Side.BLUE){
-            Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 140);
-            Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(135, 140);
-            Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 140);
-
-        }else {
-            Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 180);
-            Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(155, 180);
-            Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 200);
-        }
-        Point region1_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region2_pointA = new Point(
-                REGION2_TOPLEFT_ANCHOR_POINT.x,
-                REGION2_TOPLEFT_ANCHOR_POINT.y);
-        Point region2_pointB = new Point(
-                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region3_pointA = new Point(
-                REGION3_TOPLEFT_ANCHOR_POINT.x,
-                REGION3_TOPLEFT_ANCHOR_POINT.y);
-        Point region3_pointB = new Point(
-                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
 
         region1_Cb = B.submat(new Rect(region1_pointA, region1_pointB)); //left region
         region2_Cb = B.submat(new Rect(region2_pointA, region2_pointB)); //center region
@@ -130,7 +109,7 @@ public class BarcodePipeline3 extends OpenCvPipeline {
         avg3 = (int) Core.mean(region3_Cb).val[0];
 
         Imgproc.rectangle(
-              input,
+                input,
                 region1_pointA,
                 region1_pointB,
                 BLUE,
@@ -154,20 +133,17 @@ public class BarcodePipeline3 extends OpenCvPipeline {
         );
 
         int min;
-        // min = Math.min(Math.min(avg1, avg2), avg3);
-        int side1;
-        int side2;
-        if(side == Side.RED) {
-            min = Math.min(avg2, avg3);
-            side1 = avg2;
-            side2 = avg3;
-        }else{
+        if (side == Side.BLUE){
             min = Math.min(avg1, avg2);
-            side1 = avg1;
-            side2 = avg2;
+        }else{
+            min = Math.min(avg2, avg3);
         }
 
-        if (Math.abs(side1 - side2) < 15) { //todo change this and other values at L2
+        if(Math.abs(avg1 - avg2) < 15 && side == Side.BLUE){
+                position = BarcodePosition.LEFT;
+        } else if(Math.abs(avg2 - avg3) < 15 && side == Side.RED){
+                position = BarcodePosition.RIGHT;
+        } else if (min == avg1) {
 
             Imgproc.rectangle(
                     input,
@@ -177,8 +153,8 @@ public class BarcodePipeline3 extends OpenCvPipeline {
                     2
             );
 
-            position = BarcodePosition.RIGHT;
-        }else if (min == side1) {
+            position = BarcodePosition.CENTER;
+        }else if (min == avg2) {
 
             Imgproc.rectangle(
                     input,
@@ -187,27 +163,34 @@ public class BarcodePipeline3 extends OpenCvPipeline {
                     GREEN,
                     2
             );
-
-
-            position = BarcodePosition.LEFT;
-        } else if (min == side2) {
-
-            Imgproc.rectangle(
-                    input,
-                    region3_pointA,
-                    region3_pointB,
-                    GREEN,
-                    2
-            );
-
-            position = BarcodePosition.CENTER;
+            if(side == Side.BLUE) {
+                position = BarcodePosition.RIGHT;
+            }else{
+                position = BarcodePosition.LEFT;
+            }
+//        } else if (min == avg3) {
+//
+//            Imgproc.rectangle(
+//                    input,
+//                    region3_pointA,
+//                    region3_pointB,
+//                    GREEN,
+//                    2
+//            );
+//
+//            position = BarcodePosition.RIGHT;
+        }else if(min == avg3){
+            if(side == Side.RED){
+                position = BarcodePosition.CENTER;
+            }
         }
 
-         AbstractOpMode.currentOpMode().telemetry.addData("avg1", avg1);
+        AbstractOpMode.currentOpMode().telemetry.addData("avg1", avg1);
         AbstractOpMode.currentOpMode().telemetry.addData("avg2", avg2);
         AbstractOpMode.currentOpMode().telemetry.addData("avg3", avg3);
         AbstractOpMode.currentOpMode().telemetry.addData("position", position);
         AbstractOpMode.currentOpMode().telemetry.update();
+
         return input;
     }
 
@@ -223,4 +206,3 @@ public class BarcodePipeline3 extends OpenCvPipeline {
         return side;
     }
 }
-

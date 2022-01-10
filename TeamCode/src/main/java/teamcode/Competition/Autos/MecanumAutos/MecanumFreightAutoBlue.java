@@ -4,9 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import teamcode.Competition.Pipeline.BarcodePipeline3;
-import teamcode.Competition.Pipeline.MecanumAutoPosition;
-import teamcode.Competition.Pipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.Calibrators.MecanumAutoPosition;
+import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
