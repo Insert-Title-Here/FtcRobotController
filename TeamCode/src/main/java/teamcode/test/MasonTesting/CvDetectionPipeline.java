@@ -3,6 +3,7 @@ package teamcode.test.MasonTesting;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -33,6 +34,7 @@ public class CvDetectionPipeline extends OpenCvPipeline {
 
     ArrayList<Double> xPList = new ArrayList<>();
     ArrayList<Double> yPList = new ArrayList<>();
+    HashMap<Integer, Double> height = new HashMap<>();
 
     final Scalar cali_lower_yellow_3 = new Scalar(13, 130, 100);
     final Scalar cali_upper_yellow_3 = new Scalar(29, 255, 255);
@@ -132,13 +134,16 @@ public class CvDetectionPipeline extends OpenCvPipeline {
             int yCord = yMin + Math.abs((yMax - yMin) / 2);
             int objWidth = Math.abs(xMax - xMin);
             int objHeight = Math.abs(yMax - xMin);
+            double distance2 = distance(objHeight);
+            height.put(objHeight, distance2);
+
             Imgproc.drawMarker(frame, new Point(xCord, yCord), new Scalar(255, 255, 255));
             Imgproc.putText(frame, "X:" + xCord, new Point(xCord, yCord), Imgproc.FONT_HERSHEY_COMPLEX, 0.6, new Scalar(255, 255, 255));
 
             int srcWidth = frame.width();
             int srcHeight = frame.height();
 
-            distance = distance(srcHeight, objHeight);
+
 
             // get distance
 //            double distance = distanceFinder(2.0, objWidth);
@@ -153,7 +158,7 @@ public class CvDetectionPipeline extends OpenCvPipeline {
 ////            yPList.add(yPos);
 //            yPList.add(0.0);
         }
-        Debug.log("DIST: " + xCord);
+        //Debug.log("DIST: " + xCord);
         Imgproc.line(frame, new Point(frame.width() / 2, frame.height()), new Point(frame.width() / 2, 0), new Scalar(255, 255, 255));
         Imgproc.drawContours(frame, subContours, -1, new Scalar(255, 255, 255), 2, Imgproc.LINE_8);
         // comment part means src to frame, change back to src when comment heap is done
@@ -163,13 +168,20 @@ public class CvDetectionPipeline extends OpenCvPipeline {
         mask.release();
         binary.release();
 
+        Debug.log("------------");
+        for (int val : height.keySet()) {
+            Debug.log("px: " + val + " | d: " + height.get(val) + "in");
+        }
+
+        height.clear();
+
         return frame;
     }
 
     // gets distance to object in mm
-    public double distance(int imageHeight, double objectHeight) {
+    public double distance(double objectHeight) {
         // divide by 25.4 to get inches from mm
-        return ((focalLength * objectHeight * imageHeight) / (objectHeight * sensorHeight)) / 25.4;
+        return ((12 * 50.8 * 240) / (objectHeight * 4.155372568)) / 25.4;
     }
 
     public double distanceToObj() {
