@@ -20,7 +20,7 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
 @Autonomous(name="RedAutoFreight")
-public class MecanumFreightAuto extends AbstractOpMode {
+public class MecanumFreightAutoRed extends AbstractOpMode {
 
     MecanumDriveTrain drive;
     ArmSystem arm;
@@ -156,11 +156,11 @@ public class MecanumFreightAuto extends AbstractOpMode {
         localizer.start();
         secondaryFunctionsThread.start();
         telemetry.clear();
-        drive.moveToPosition(new Vector2D(15,15),  VELOCITY);
-        drive.moveToPosition(new Vector2D(18,15), VELOCITY);
+        drive.moveToPosition(new Vector2D(14,-14),  VELOCITY);
+        drive.moveToPosition(new Vector2D(18.5,-14), VELOCITY);
 
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
-        drive.rotateDistance(Math.toRadians(180), OMEGA);
+        drive.rotateDistance(Math.toRadians(180),  OMEGA);
         //drive.moveToPosition(new Vector2D(18.5,15), -VELOCITY);
         arm.score();
         Utils.sleep(1000);
@@ -169,13 +169,13 @@ public class MecanumFreightAuto extends AbstractOpMode {
 //        //starting path
        // for(int i = 0; i < FREIGHT; i++) {
 //            state = currentCycleState.STRAFING_IN;
-            drive.strafeDistanceSensor(0.7, Math.toRadians(-30));
+            drive.strafeDistanceSensor(0.7, Math.toRadians(-15));
             localizer.manualZero(true);
 
             //Utils.sleep(1000);
             //intake = true;
             state = currentCycleState.INTAKING;
-            drive.moveToPosition(new Vector2D(36,0), 2* VELOCITY); //replace this with seekCubes() if it works
+            drive.moveToPosition(new Vector2D(24,0), 2* VELOCITY); //replace this with seekCubes() if it works
 //            state = currentCycleState.LEAVING;
 //            drive.strafeDistanceSensor(0.7, 0);
 //            drive.moveToPosition(new Vector2D(-6, 0), VELOCITY);

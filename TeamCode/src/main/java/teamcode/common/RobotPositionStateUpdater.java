@@ -39,7 +39,7 @@ public class RobotPositionStateUpdater {
         public String toString(){
             return "Position: "  + position.toString() + "\n" +
                     "Velocity: " + velocity.toString() + "\n" +
-                    "rotation: " + rotation + "\n" +
+                    "rotation: " + Math.toDegrees(rotation) + "\n" +
                     "angular Velocity: " + angularVelocity + "\n";
         }
 

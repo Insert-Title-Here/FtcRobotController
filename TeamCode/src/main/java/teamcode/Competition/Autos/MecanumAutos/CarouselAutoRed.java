@@ -8,7 +8,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import teamcode.Competition.Pipeline.TankPipeline.BarcodePipeline3;
+import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
@@ -20,7 +20,7 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
-@Autonomous(name="CarouselRed")
+@Autonomous(name="CarouselRed acuiaieheah")
 public class CarouselAutoRed extends AbstractOpMode {
 
     MecanumDriveTrain drive;
@@ -29,7 +29,7 @@ public class CarouselAutoRed extends AbstractOpMode {
     EndgameSystems system;
 
     OpenCvWebcam webcam;
-    BarcodePipeline3.BarcodePosition position;
+    MecanumBarcodePipeline.BarcodePosition position;
 
     Thread secondaryFunctionsThread, timerThread;
 
@@ -43,10 +43,10 @@ public class CarouselAutoRed extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        localizer = new Localizer(new Pose(0,0,0), hardwareMap);
-        drive = new MecanumDriveTrain(hardwareMap, localizer, true);
-        arm = new ArmSystem(hardwareMap, false);
         system = new EndgameSystems(hardwareMap, false);
+        localizer = new Localizer(new Pose(0,0,0), hardwareMap);
+        drive = new MecanumDriveTrain(hardwareMap, localizer, true, system);
+        arm = new ArmSystem(hardwareMap, false);
 
         secondaryFunctionsThread = new Thread(){
             @Override
@@ -64,27 +64,27 @@ public class CarouselAutoRed extends AbstractOpMode {
         };
         state = currentCycleState.PRELOAD;
 
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
-//
-//        // W/ or W/ out live preview
-//        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
-//        BarcodePipeline3 pipeline = new BarcodePipeline3();
-//        pipeline.setSide(BarcodePipeline3.Side.RED);
-//        webcam.setPipeline(pipeline);
-//
-//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-//            @Override
-//            public void onOpened() {
-//                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//                telemetry.addData("Camera Init Error", errorCode);
-//                telemetry.update();
-//            }
-//        });
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
+
+        // W/ or W/ out live preview
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+        MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
+        pipeline.setSide(MecanumBarcodePipeline.Side.RED);
+        webcam.setPipeline(pipeline);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
         localizer.lowerOdo();
         executeArmCommands = true;
         extend = false;
@@ -92,9 +92,9 @@ public class CarouselAutoRed extends AbstractOpMode {
         spin = false;
         duckExit = false;
         while(!opModeIsActive()){
-            position = BarcodePipeline3.BarcodePosition.RIGHT;
-            //telemetry.addData("", position);
-            //telemetry.update();
+            position = pipeline.getPos();
+            telemetry.addData("", position);
+            telemetry.update();
         }
     }
 
@@ -103,55 +103,45 @@ public class CarouselAutoRed extends AbstractOpMode {
     volatile boolean duckExit, spin, extend, retract;
     //contingency plan for 0 freight, we set this to fencepost or comment out the intake section of it
     private void secondaryFunctionsSequence(){
-        while(!spin && opModeIsActive());
-        if(executeArmCommands){
-            system.scoreDuckAuto();
-        }
-        spin = false;
-        Debug.log("here");
-        duckExit = true;
 
-        while(!retract && opModeIsActive());
-        Utils.sleep(250);
-        Debug.log("here");
-        if(executeArmCommands) {
-            arm.retract();
-        }
-        retract = false;
+
 
     }
 
     @Override
     protected void onStart() {
         localizer.start();
-        secondaryFunctionsThread.start();
         telemetry.clear();
         drive.moveToPosition(new Vector2D(9,0),  VELOCITY);
 
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
         drive.rotateDistance(Math.toRadians(-90), -OMEGA);
         drive.moveToPosition(new Vector2D(14,-20), VELOCITY);
-        drive.moveToPosition(new Vector2D(5.5,-20), VELOCITY);
-        spin = true;
+        drive.moveToPosition(new Vector2D(6.0,-19), VELOCITY);
+        drive.smartDuck();
         //drive.setStrafe(-0.1);
-        while(!duckExit && opModeIsActive());
-        drive.moveToPosition(new Vector2D(40,-17), VELOCITY);
-        drive.rotateDistance(Math.toRadians(-90), OMEGA);
-        drive.moveToPosition(new Vector2D(45,5), VELOCITY);
-        drive.rotateDistance(Math.toRadians(-90), -OMEGA);
+        drive.moveToPosition(new Vector2D(34,-15), VELOCITY);
+        double rotation = localizer.getCurrentState().getRotation();
+        double delta = Math.toRadians(-100) - rotation;
+        telemetry.clear();
+        Debug.log(delta);
+        drive.rotateDistance(Math.toRadians(-100), OMEGA);
+        localizer.manualZero(true);
+        drive.moveToPosition(new Vector2D(-23,0), VELOCITY);
+        //drive.rotateDistance(Math.toRadians(-85), OMEGA);
 
-        if (position == BarcodePipeline3.BarcodePosition.RIGHT) {
-            arm.raise(Constants.BOTTOM_POSITION - 1500);
-        } else if (position == BarcodePipeline3.BarcodePosition.CENTER) {
-            arm.raise(Constants.MEDIUM_POSITION + 3000);
+        if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+            arm.raise(Constants.BOTTOM_POSITION );
+        } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
+            arm.raise(Constants.MEDIUM_POSITION + 2000);
         } else {
-            arm.raise(Constants.TOP_POSITION + 1000);
+            arm.raise(Constants.TOP_POSITION);
         }
         arm.score();
         Utils.sleep(1000);
-        retract = true;
-        drive.moveToPosition(new Vector2D(30,-17), VELOCITY);
 
+        drive.moveToPosition(new Vector2D(-2,-10), VELOCITY); //25
+        arm.retract();
         while(opModeIsActive());
 
     }

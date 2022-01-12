@@ -17,6 +17,7 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.util.Vector;
 
+import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.test.MasonTesting.CvDetectionPipeline;
 
 public class MecanumDriveTrain {
@@ -30,6 +31,7 @@ public class MecanumDriveTrain {
 
     private ExpansionHubMotor fl, fr, bl, br;
     Localizer localizer;
+    EndgameSystems systems;
     Vector2D previousVelocity;
     Vector2D previousError;
     double previousOmegaError;
@@ -78,6 +80,7 @@ public class MecanumDriveTrain {
         distanceFront = hardwareMap.get(DistanceSensor.class, frontDistance);
         distanceBack = hardwareMap.get(DistanceSensor.class, backDistance);
         this.localizer = localizer;
+        this.systems = systems;
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
@@ -85,10 +88,15 @@ public class MecanumDriveTrain {
 
     }
 
+    public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer, boolean isRed, EndgameSystems systems){
+        this(hardwareMap, localizer, isRed);
+        this.systems = systems;
+    }
+
     CvDetectionPipeline pipeline;
 
     public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer, CvDetectionPipeline pipeline, boolean isRed){
-        this(hardwareMap, localizer, isRed);
+        //this(hardwareMap, localizer, isRed);
         this.pipeline = pipeline;
     }
 /*
@@ -103,6 +111,38 @@ public class MecanumDriveTrain {
         correctMotors();
 
  */
+
+    public synchronized void smartDuck(){
+        systems.setCarouselMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        systems.setCarouselMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        systems.runCarousel(-0.1);
+        Utils.sleep(100);
+        double currentTicks = systems.getCarouselPos();
+        double previousTicks = 0;
+        while(Math.abs(currentTicks - previousTicks) > 50){
+            currentTicks = systems.getCarouselPos();
+            setStrafe(0.2);
+            previousTicks = currentTicks;
+            AbstractOpMode.currentOpMode().telemetry.addData("dc", currentTicks - previousTicks);
+            AbstractOpMode.currentOpMode().telemetry.addData("why", systems.getCarouselPos());
+            AbstractOpMode.currentOpMode().telemetry.update();
+        }
+        Utils.sleep(250);
+        setStrafe(0);
+        while(Math.abs(currentTicks - previousTicks) < 50){
+            previousTicks = currentTicks;
+            currentTicks = systems.getCarouselPos();
+            setStrafe(-0.2);
+            AbstractOpMode.currentOpMode().telemetry.addData("dc", Math.abs(currentTicks - previousTicks));
+            AbstractOpMode.currentOpMode().telemetry.addData("why", systems.getCarouselPos());
+            AbstractOpMode.currentOpMode().telemetry.update();
+        }
+        setStrafe(0);
+        AbstractOpMode.currentOpMode().telemetry.clear();
+
+        systems.runCarousel(0);
+        systems.scoreDuckAuto();
+    }
 
     /**
      * DO NOT CALL THIS W/O ALL THE RIGHT CONSTRUCTORS
@@ -225,14 +265,15 @@ public class MecanumDriveTrain {
         double distanceFrontThreshold;
         double distanceBackThreshold;
         if(isRed){
-            distanceFrontThreshold = 1.1;
-            distanceBackThreshold = 0.8;
+            distanceFrontThreshold = 0.4;
+            distanceBackThreshold = 0.5;
         }else{
             distanceFrontThreshold = 0.6;
             distanceBackThreshold = 0.8;
         }
 
         //todo calibrate the tolerance of it.
+        AbstractOpMode.currentOpMode().telemetry.clear();
         while(distanceFront.getDistance(DistanceUnit.INCH) > distanceFrontThreshold && distanceBack.getDistance(DistanceUnit.INCH) > distanceBackThreshold && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
 
             Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0), power);
@@ -432,8 +473,8 @@ public class MecanumDriveTrain {
 
         while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !environmentalTerminate && !eStop){
             state = localizer.getCurrentState();
-            AbstractOpMode.currentOpMode().telemetry.addData("", state);
-            AbstractOpMode.currentOpMode().telemetry.update();
+//            AbstractOpMode.currentOpMode().telemetry.addData("", state);
+//            AbstractOpMode.currentOpMode().telemetry.update();
             setPower(power, -power, power, -power);
         }
         brake();
@@ -501,7 +542,6 @@ public class MecanumDriveTrain {
     }
 
     public double setStrafe(double val){
-        Debug.log("here");
         if(!isRed){
             setPower(-val, val, val, -val);
         }else {

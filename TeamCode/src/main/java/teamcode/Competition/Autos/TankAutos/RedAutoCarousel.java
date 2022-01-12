@@ -2,6 +2,7 @@ package teamcode.Competition.Autos.TankAutos;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -22,6 +23,7 @@ import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 import teamcode.test.MasonTesting.CvDetectionPipeline;
 
+@Disabled
 @Autonomous(name="CarouselRed TANK")
 public class RedAutoCarousel extends AbstractOpMode {
     WestCoastDriveTrain driveTrain;
