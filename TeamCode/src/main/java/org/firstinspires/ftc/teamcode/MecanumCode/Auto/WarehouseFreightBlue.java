@@ -161,25 +161,37 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
 
+
          */
         //capArm.goToPosition(300);
+
+        capstonePos = BarcodePipelineBlue.BarcodePosition.LEFT;
+
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
+            capArm.toggleGrab();
+            sleep(1000);
+            capArm.toggleGrab();
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
             //drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
-
+            drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
+            capArm.toggleGrab();
+            sleep(1000);
+            capArm.toggleGrab();
+            drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.STRAIGHT);
         }else{
             //drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
+            capArm.toggleGrab();
+            sleep(1000);
+            capArm.toggleGrab();
         }
-        capArm.toggleGrab();
-        sleep(1000);
 
         moveArm = true;
 
-        drive.driveAuto(0.3, -2200, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -2400, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, 2000, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAIGHT);

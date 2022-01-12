@@ -133,7 +133,7 @@ public class FrieghtBlueNoCarousel extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
-        drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1750, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
@@ -160,13 +160,15 @@ public class FrieghtBlueNoCarousel extends OpModeWrapper {
 
 
         }else{
-            drive.driveAuto(0.3, -610, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -710, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
 
             capArm.toggleGrab();
 
             sleep(1000);
             capArm.toggleGrab();
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
+
 
         }
         //capArm.goToPosition(300);
@@ -175,8 +177,8 @@ public class FrieghtBlueNoCarousel extends OpModeWrapper {
         sleep(1000);
 
         drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, -880, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -2800, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -630, MecanumDriveTrain.MovementType.STRAIGHT);
 
         /*drive.driveAuto(0.3, -2500, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -1900, MecanumDriveTrain.MovementType.ROTATE);

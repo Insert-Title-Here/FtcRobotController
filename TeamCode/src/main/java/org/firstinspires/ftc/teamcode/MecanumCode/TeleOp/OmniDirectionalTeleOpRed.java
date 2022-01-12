@@ -204,10 +204,10 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             capArm.goToPosition(0);
         }
 
-        if(gamepad1.dpad_right) {
+        if(gamepad1.dpad_right && capArm.getTelemetry()[0] > Constants.CAPPING_POS) {
             //driveSwapped = true;
             capArm.setPower(-0.3);
-        }else if(gamepad1.dpad_left) {
+        }else if(gamepad1.dpad_left && capArm.getTelemetry()[0] < 0) {
             //driveSwapped = false;
             capArm.setPower(0.3);
         }else{
