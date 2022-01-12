@@ -181,6 +181,7 @@ public class CvDetectionPipeline extends OpenCvPipeline {
     // gets distance to object in mm
     public double distance(double objectHeight) {
         // divide by 25.4 to get inches from mm
+        // revisit the focal constant for vertical focal length
         return ((12 * 50.8 * 240) / (objectHeight * 4.155372568)) / 25.4;
     }
 
