@@ -27,6 +27,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
     Boolean driveSwapped = false;
     Boolean previousBackState = false;
+    Boolean previousStartState = false;
 
 
     /**
@@ -141,6 +142,17 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             //arm.setExtensionSMPower(0);
             arm.setExtensionPower(0);
         }
+
+
+        if(gamepad1.start && !previousStartState) {
+            capArm.toggleGrab();
+            previousStartState = true;
+        }
+        if(!gamepad1.start) {
+            previousStartState = false;
+        }
+
+
         telemetry.addData("Arm Tics", arm.getEncoderTics());
         telemetry.addData("Level Position: ", arm.getTelemetry()[0]);
         telemetry.addData("Level Position Actual", arm.getTelemetry()[1]);
@@ -202,7 +214,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             capArm.goToPosition(0);
         }
 
-        if(gamepad1.dpad_right && capArm.getTelemetry()[0] > Constants.CAPPING_POS) {
+        if(gamepad1.dpad_right && capArm.getTelemetry()[0] > Constants.MAX_MANUAL_CAP) {
             //driveSwapped = true;
             capArm.setPower(-0.3);
         }else if(gamepad1.dpad_left && capArm.getTelemetry()[0] < 0) {
@@ -210,13 +222,6 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             capArm.setPower(0.3);
         }else{
             capArm.setPower(0);
-        }
-
-
-
-        if(gamepad1.start) {
-            capArm.toggleGrab();
-            sleep(500);
         }
 
 
