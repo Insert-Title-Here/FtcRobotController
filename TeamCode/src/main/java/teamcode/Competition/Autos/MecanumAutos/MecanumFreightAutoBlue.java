@@ -2,10 +2,15 @@ package teamcode.Competition.Autos.MecanumAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import teamcode.Competition.Pipeline.Calibrators.MecanumAutoPosition;
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.TankPipeline.BarcodePipeline3;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
@@ -31,7 +36,7 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
 
     private final int FREIGHT = 0;
     private final double VELOCITY = 15;
-    private final double OMEGA = 0.6;
+    private final double OMEGA = 0.4;
 
     double deltaTime, initialTime;
     volatile currentCycleState state;
@@ -61,31 +66,31 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
         };
         state = currentCycleState.PRELOAD;
 
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
-//
-//        // W/ or W/ out live preview
-//        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
-//        BarcodePipeline3 pipeline = new BarcodePipeline3();
-//        pipeline.setSide(BarcodePipeline3.Side.RED);
-//        webcam.setPipeline(pipeline);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
 
-//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-//            @Override
-//            public void onOpened() {
-//                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//                telemetry.addData("Camera Init Error", errorCode);
-//                telemetry.update();
-//            }
-//        });
+        // W/ or W/ out live preview
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+        MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
+        pipeline.setSide(MecanumBarcodePipeline.Side.BLUE);
+        webcam.setPipeline(pipeline);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
         localizer.lowerOdo();
         executeArmCommands = true;
         while(!opModeIsActive()){
-            position = MecanumBarcodePipeline.BarcodePosition.RIGHT;
+            position = pipeline.getPos();
             //telemetry.addData("", position);
             //telemetry.update();
         }
@@ -102,8 +107,8 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
             e.printStackTrace();
         }
 
-        if(position == MecanumBarcodePipeline.BarcodePosition.RIGHT) {
-            arm.raise(Constants.BOTTOM_POSITION - 1500);
+        if(position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+            arm.raise(Constants.BOTTOM_POSITION - 2500);
         }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
             arm.raise(Constants.MEDIUM_POSITION + 3000);
         }else{
@@ -111,7 +116,7 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
         }
         while(!retract && opModeIsActive());
         Utils.sleep(250);
-        arm.retract();
+        arm.moveSlide(-1,0);
         retract = false;
         for(int i = 0; i < FREIGHT; i++){
 
@@ -135,7 +140,7 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
             while(!retract && opModeIsActive());
             if(executeArmCommands) {
                 Utils.sleep(250);
-                arm.retract();
+                arm.moveSlide(-1,0);
                 retract = false;
             }
             if(!executeArmCommands){
@@ -149,9 +154,9 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
         localizer.start();
         secondaryFunctionsThread.start();
         telemetry.clear();
-        drive.moveToPosition(new Vector2D(15,-15),  VELOCITY);
+        drive.moveToPosition(new Vector2D(15,15),  VELOCITY);
         drive.rotateDistance(Math.toRadians(180), OMEGA);
-        //drive.moveToPosition(new Vector2D(18,-15), VELOCITY);
+        drive.moveToPosition(new Vector2D(19,12), VELOCITY);
 
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
 
@@ -169,9 +174,9 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
             //Utils.sleep(1000);
             intake = true;
             state = currentCycleState.INTAKING;
-            drive.moveToPosition(new Vector2D(36,0), 2* VELOCITY); //replace this with seekCubes() if it works
+            drive.moveToPosition(new Vector2D(48,0), 2* VELOCITY); //replace this with seekCubes() if it works
 //            state = currentCycleState.LEAVING;
-            drive.strafeDistanceSensor(-0.7, 0);
+            //drive.strafeDistanceSensor(-0.7, 0);
 //            drive.moveToPosition(new Vector2D(-6, 0), VELOCITY);
 //            extend = true;
 //            state = currentCycleState.SCORING;

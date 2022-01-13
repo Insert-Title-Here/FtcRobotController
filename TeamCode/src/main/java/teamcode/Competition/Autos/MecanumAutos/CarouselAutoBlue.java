@@ -117,7 +117,7 @@ public class CarouselAutoBlue extends AbstractOpMode {
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
         drive.rotateDistance(Math.toRadians(105), OMEGA);
         drive.moveToPosition(new Vector2D(14,20), VELOCITY);
-        drive.moveToPosition(new Vector2D(3,18), VELOCITY);
+        drive.moveToPosition(new Vector2D(4.5,19), VELOCITY);
         drive.smartDuck(true);
         //drive.setStrafe(-0.1);
         drive.moveToPosition(new Vector2D(34,15), VELOCITY);
@@ -127,11 +127,11 @@ public class CarouselAutoBlue extends AbstractOpMode {
         Debug.log(delta);
         drive.rotateDistance(Math.toRadians(100), -OMEGA);
         localizer.manualZero(true);
-        drive.moveToPosition(new Vector2D(-15,0), VELOCITY);
+        drive.moveToPosition(new Vector2D(-15.25,0), VELOCITY);
         //drive.rotateDistance(Math.toRadians(-85), OMEGA);
 
         if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-            arm.raise(Constants.BOTTOM_POSITION );
+            arm.raise(Constants.MEDIUM_POSITION - 2000);
         } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
             arm.raise(Constants.MEDIUM_POSITION + 2000);
         } else {
@@ -140,7 +140,7 @@ public class CarouselAutoBlue extends AbstractOpMode {
         arm.score();
         Utils.sleep(1000);
 
-        drive.moveToPosition(new Vector2D(-2,10), VELOCITY); //25
+        drive.moveToPosition(new Vector2D(10,16), VELOCITY); //25
         arm.retract();
         while(opModeIsActive());
 
