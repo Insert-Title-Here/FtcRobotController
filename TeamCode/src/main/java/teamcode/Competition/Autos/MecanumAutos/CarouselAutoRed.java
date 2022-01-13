@@ -20,7 +20,7 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
-@Autonomous(name="CarouselRed acuiaieheah")
+@Autonomous(name="CarouselRed")
 public class CarouselAutoRed extends AbstractOpMode {
 
     MecanumDriveTrain drive;
@@ -118,7 +118,7 @@ public class CarouselAutoRed extends AbstractOpMode {
         drive.rotateDistance(Math.toRadians(-90), -OMEGA);
         drive.moveToPosition(new Vector2D(14,-20), VELOCITY);
         drive.moveToPosition(new Vector2D(6.0,-19), VELOCITY);
-        drive.smartDuck();
+        drive.smartDuck(false);
         //drive.setStrafe(-0.1);
         drive.moveToPosition(new Vector2D(34,-15), VELOCITY);
         double rotation = localizer.getCurrentState().getRotation();

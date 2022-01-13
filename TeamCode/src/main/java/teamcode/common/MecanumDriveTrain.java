@@ -112,16 +112,22 @@ public class MecanumDriveTrain {
 
  */
 
-    public synchronized void smartDuck(){
+    public synchronized void smartDuck(boolean blue){
         systems.setCarouselMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         systems.setCarouselMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double direction;
+        if(blue){
+            direction = -1;
+        }else{
+            direction = 1;
+        }
         systems.runCarousel(-0.1);
         Utils.sleep(100);
         double currentTicks = systems.getCarouselPos();
         double previousTicks = 0;
         while(Math.abs(currentTicks - previousTicks) > 50){
             currentTicks = systems.getCarouselPos();
-            setStrafe(0.2);
+            setStrafe(0.2 * direction);
             previousTicks = currentTicks;
             AbstractOpMode.currentOpMode().telemetry.addData("dc", currentTicks - previousTicks);
             AbstractOpMode.currentOpMode().telemetry.addData("why", systems.getCarouselPos());
@@ -132,7 +138,7 @@ public class MecanumDriveTrain {
         while(Math.abs(currentTicks - previousTicks) < 50){
             previousTicks = currentTicks;
             currentTicks = systems.getCarouselPos();
-            setStrafe(-0.2);
+            setStrafe(-0.2 * direction);
             AbstractOpMode.currentOpMode().telemetry.addData("dc", Math.abs(currentTicks - previousTicks));
             AbstractOpMode.currentOpMode().telemetry.addData("why", systems.getCarouselPos());
             AbstractOpMode.currentOpMode().telemetry.update();

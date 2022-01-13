@@ -157,15 +157,15 @@ public class MecanumFreightAutoRed extends AbstractOpMode {
         secondaryFunctionsThread.start();
         telemetry.clear();
         drive.moveToPosition(new Vector2D(14,-14),  VELOCITY);
-        drive.moveToPosition(new Vector2D(18.5,-14), VELOCITY);
+        drive.moveToPosition(new Vector2D(18,-14), VELOCITY);
 
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
-        drive.rotateDistance(Math.toRadians(180),  OMEGA);
+        drive.rotateDistance(Math.toRadians(-165),  OMEGA);
         //drive.moveToPosition(new Vector2D(18.5,15), -VELOCITY);
         arm.score();
         Utils.sleep(1000);
         retract = true;
-        drive.rotateDistance(Math.toRadians(90), -OMEGA);
+        drive.rotateDistance(Math.toRadians(105), -OMEGA);
 //        //starting path
        // for(int i = 0; i < FREIGHT; i++) {
 //            state = currentCycleState.STRAFING_IN;
