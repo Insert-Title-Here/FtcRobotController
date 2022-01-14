@@ -62,6 +62,11 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name="TestLinearOpMode")
 public class TestLinearOpMode extends OpModeWrapper {
 
+    DcMotor fl;
+    DcMotor fr;
+    DcMotor bl;
+    DcMotor br;
+
     WebcamName wc;
     OpenCvCamera camera;
 
@@ -78,6 +83,11 @@ public class TestLinearOpMode extends OpModeWrapper {
 
     @Override
     protected void onInitialize(){
+        fl = hardwareMap.get(DcMotor.class, "LeftFrontDrive");
+        fr = hardwareMap.get(DcMotor.class, "RightFrontDrive");
+        bl = hardwareMap.get(DcMotor.class, "LeftBackDrive");
+        br = hardwareMap.get(DcMotor.class, "RightBackDrive");
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         wc = hardwareMap.get(WebcamName.class, "Webcam");
         // W/ or W/ out live preview
@@ -120,6 +130,38 @@ public class TestLinearOpMode extends OpModeWrapper {
 
     @Override
     protected void onStart() {
+        fl.setPower(0.5);
+        fr.setPower(0.5);
+        bl.setPower(0.5);
+        br.setPower(0.5);
+
+        sleep(5000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         capstonePos = bPipeline.getPos();
 
         while(opModeIsActive()){
