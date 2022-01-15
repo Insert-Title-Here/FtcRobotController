@@ -126,6 +126,8 @@ public class WarehouseFreightBlue extends OpModeWrapper {
             }
         };
 
+        magArm.setMagnetPosition(MagneticArm.magnetState.OPEN);
+
 
         while(!opModeIsActive()){
             telemetry.addData("pos", brp.getPos());
@@ -141,6 +143,8 @@ public class WarehouseFreightBlue extends OpModeWrapper {
     protected void onStart() {
         armMovementThread.start();
 
+        capstonePos = brp.getPos();
+
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.ROTATE);
@@ -151,10 +155,10 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         // Strafe: 590 tics/ft - = Left, + = Right
 
 
-        drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.RDIAGONAL);
+        drive.driveAuto(0.3, -450, MecanumDriveTrain.MovementType.RDIAGONAL);
         sleep(2000);
         drive.driveAuto(0.3, -1250, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.2, 1000, MecanumDriveTrain.MovementType.ROTATE);
 
         /*
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -165,7 +169,8 @@ public class WarehouseFreightBlue extends OpModeWrapper {
          */
         //capArm.goToPosition(300);
 
-        capstonePos = BarcodePipelineBlue.BarcodePosition.LEFT;
+        //To lock path:
+        // capstonePos = BarcodePipelineBlue.BarcodePosition.LEFT;
 
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -176,25 +181,38 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
             //drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
-            drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
-            drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
         }else{
             //drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
+            //drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.ROTATE);
+            //drive.driveAuto(0.3, -50, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
+            //drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.STRAIGHT);
+            //drive.driveAuto(0.3, 70, MecanumDriveTrain.MovementType.ROTATE);
         }
 
         moveArm = true;
 
-        drive.driveAuto(0.3, -2200, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 180, MecanumDriveTrain.MovementType.ROTATE);
+        // Instead of -2200 strafe:
+
+        drive.driveAuto(0.3, -1000, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, -250, MecanumDriveTrain.MovementType.STRAFE);
+
+        sleep(1000);
+
+        //drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, 1300, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1300, MecanumDriveTrain.MovementType.STRAFE);
+        magArm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
         //drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAIGHT);
 
 

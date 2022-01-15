@@ -156,7 +156,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
 
         sleep(1000);
 
-        capstonePos = BarcodePipelineWarehouseRed.BarcodePosition.CENTER;
+        //capstonePos = BarcodePipelineWarehouseRed.BarcodePosition.CENTER;
 
         if (capstonePos == BarcodePipelineWarehouseRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
