@@ -149,7 +149,7 @@ public class CarouselFreightRed extends OpModeWrapper {
         carousel.spinCarousel(5000, this, Carousel.CarouselMode.AUTO);
         drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1400, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, 600, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 450, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -700, MecanumDriveTrain.MovementType.STRAIGHT);
 

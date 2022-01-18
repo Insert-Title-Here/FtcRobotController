@@ -168,13 +168,14 @@ public class CarouselFreightBlue extends OpModeWrapper {
 
 
         }else{
-            drive.driveAuto(0.3, -610, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -660, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
 
             capArm.toggleGrab();
 
             sleep(1000);
             capArm.toggleGrab();
+            drive.driveAuto(0.3, 50, MecanumDriveTrain.MovementType.STRAIGHT);
 
         }
         //capArm.goToPosition(300);

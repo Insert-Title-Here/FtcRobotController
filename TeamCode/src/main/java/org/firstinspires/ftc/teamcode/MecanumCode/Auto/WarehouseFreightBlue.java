@@ -126,7 +126,7 @@ public class WarehouseFreightBlue extends OpModeWrapper {
             }
         };
 
-        magArm.setMagnetPosition(MagneticArm.magnetState.OPEN);
+        //magArm.setMagnetPosition(MagneticArm.magnetState.OPEN);
 
 
         while(!opModeIsActive()){

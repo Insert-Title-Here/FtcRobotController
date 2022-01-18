@@ -147,7 +147,9 @@ public class WarehouseFreightRed extends OpModeWrapper {
         drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.RDIAGONAL);
         sleep(2000);
         drive.driveAuto(0.3, -900, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.driveAuto(0.3, -250, MecanumDriveTrain.MovementType.ROTATE);
         //drive.driveAuto(0.2, -50, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.setPower(-0.1, -0.1, -0.1, -0.1);
@@ -190,6 +192,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
             capArm.toggleGrab();
 
             drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAFE);
 
 
             //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
