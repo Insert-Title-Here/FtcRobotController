@@ -1,4 +1,4 @@
-package teamcode.Competition.Autos.MecanumAutos;
+package teamcode.Competition.Autos.MecanumAutos.OdometryAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -110,6 +110,7 @@ public class CarouselAutoRed extends AbstractOpMode {
 
     @Override
     protected void onStart() {
+        webcam.stopStreaming();
         localizer.start();
         telemetry.clear();
         drive.moveToPosition(new Vector2D(9,0),  VELOCITY);
@@ -117,7 +118,7 @@ public class CarouselAutoRed extends AbstractOpMode {
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
         drive.rotateDistance(Math.toRadians(-90), -OMEGA);
         drive.moveToPosition(new Vector2D(14,-20), VELOCITY);
-        drive.moveToPosition(new Vector2D(6.0,-19), VELOCITY);
+        drive.moveToPosition(new Vector2D(4,-19), VELOCITY);
         drive.smartDuck(false);
         //drive.setStrafe(-0.1);
         drive.moveToPosition(new Vector2D(34,-15), VELOCITY);
@@ -125,13 +126,13 @@ public class CarouselAutoRed extends AbstractOpMode {
         double delta = Math.toRadians(-100) - rotation;
         telemetry.clear();
         Debug.log(delta);
-        drive.rotateDistance(Math.toRadians(-100), OMEGA);
+        drive.rotateDistance(Math.toRadians(-105), OMEGA);
         localizer.manualZero(true);
-        drive.moveToPosition(new Vector2D(-23,0), VELOCITY);
+        drive.moveToPosition(new Vector2D(-17,0), VELOCITY);
         //drive.rotateDistance(Math.toRadians(-85), OMEGA);
 
         if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-            arm.raise(Constants.BOTTOM_POSITION );
+            arm.raise(Constants.TOP_POSITION);
         } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
             arm.raise(Constants.MEDIUM_POSITION + 2000);
         } else {

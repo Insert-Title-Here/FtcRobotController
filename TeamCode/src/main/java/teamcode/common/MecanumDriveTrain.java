@@ -1,21 +1,18 @@
 package teamcode.common;
 
-import android.sax.StartElementListener;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.robot.Robot;
 
-import org.apache.commons.math3.analysis.function.Abs;
-import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.openftc.easyopencv.OpenCvWebcam;
+import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
-
-import java.util.Vector;
+import org.openftc.revextensions2.RevBulkData;
 
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.test.MasonTesting.CvDetectionPipeline;
@@ -30,6 +27,7 @@ public class MecanumDriveTrain {
      */
 
     private ExpansionHubMotor fl, fr, bl, br;
+    private BNO055IMU imu;
     Localizer localizer;
     EndgameSystems systems;
     Vector2D previousVelocity;
@@ -87,6 +85,108 @@ public class MecanumDriveTrain {
         this.isRed = isRed;
 
     }
+
+    /**
+     * drive encoder constructor
+     */
+    private DcMotorEx fle, fre, ble, bre;
+    public MecanumDriveTrain(HardwareMap hardwareMap, boolean isRed, EndgameSystems systems){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        this.isRed = isRed;
+        this.systems = systems;
+
+        fl = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontLeftDrive");
+        fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
+        bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
+        br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
+
+        fle = hardwareMap.get(DcMotorEx.class, "");
+        fre = hardwareMap.get(DcMotorEx.class, "");
+        ble = hardwareMap.get(DcMotorEx.class, "");
+        bre = hardwareMap.get(DcMotorEx.class, "");
+
+
+
+
+
+
+
+        String frontDistance = "FrontDistanceSensor";
+        String backDistance = "BackDistanceSensor";
+        if(!isRed){
+            frontDistance += "Red";
+            backDistance += "Red";
+        }else{
+            frontDistance += "Blue";
+            backDistance += "Blue";
+        }
+        distanceFront = hardwareMap.get(DistanceSensor.class, frontDistance);
+        distanceBack = hardwareMap.get(DistanceSensor.class, backDistance);
+        previousVelocity = new Vector2D(0,0);
+        previousOmega = 0;
+        correctMotors();
+
+    }
+
+    public void rotateDistanceDERadian(double radians, double power){
+        double deltaRadians = radians - imu.getAngularOrientation().firstAngle;
+        power *= getSign(deltaRadians);
+        while(Math.abs(imu.getAngularOrientation().firstAngle - radians) > 0.05){
+            setPower(power, -power, power, -power);
+        }
+        brake();
+    }
+
+    public void rotateDistanceDE(double degrees, double power){
+        double radians = Math.toRadians(degrees);
+        rotateDistanceDERadian(radians, power);
+    }
+
+    /**
+     *
+     * @param distance tics
+     * @param degrees degrees
+     * @param power voltage, always should be positive
+     * @param omega voltage, always should be positive
+     */
+    public void moveDistanceDE(int distance, double degrees, double power, double omega){
+        double radians = Math.toRadians(degrees);
+        power *= getSign(distance);
+        Vector2D vec = Vector2D.fromAngleMagnitude(radians, power);
+        double globalHeading = imu.getAngularOrientation().firstAngle;
+        radians = radians + (Math.PI / 4.0) ; //45deg + globalHeading
+        int flDistance = (int)(Math.sin(radians) * distance); //TODO check if this is right, if not flip the sign
+        int frDistance = (int)(Math.cos(radians) * distance);
+        int blDistance = (int)(Math.cos(radians) * distance);
+        int brDistance = (int)(Math.sin(radians) * distance);
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(fle.getCurrentPosition() < flDistance && fre.getCurrentPosition() < frDistance
+        && ble.getCurrentPosition() < blDistance && bre.getCurrentPosition() < brDistance){
+            setPower(vec, 0);
+        }
+        brake();
+        rotateDistanceDERadian(globalHeading, omega);
+    }
+
+    public void setEncoderMode(DcMotor.RunMode runMode){
+        fle.setMode(runMode);
+        fre.setMode(runMode);
+        ble.setMode(runMode);
+        bre.setMode(runMode);
+    }
+
+
 
     public MecanumDriveTrain(HardwareMap hardwareMap, Localizer localizer, boolean isRed, EndgameSystems systems){
         this(hardwareMap, localizer, isRed);
@@ -263,6 +363,7 @@ public class MecanumDriveTrain {
 
 
     public synchronized void strafeDistanceSensor(double power, double radians){
+
         if(localizer == null){
             return;
         }
@@ -271,21 +372,30 @@ public class MecanumDriveTrain {
         double distanceFrontThreshold;
         double distanceBackThreshold;
         if(isRed){
-            distanceFrontThreshold = 0.4;
+            distanceFrontThreshold = 0.5;
             distanceBackThreshold = 0.5;
         }else{
-            distanceFrontThreshold = 0.6;
+            distanceFrontThreshold = 0.9;
             distanceBackThreshold = 0.8;
         }
+        double lowMagnitudeFrontReading = 0;
+        double lowMagnitudeBackReading = 0;
 
         //todo calibrate the tolerance of it.
         AbstractOpMode.currentOpMode().telemetry.clear();
-        while(distanceFront.getDistance(DistanceUnit.INCH) > distanceFrontThreshold && distanceBack.getDistance(DistanceUnit.INCH) > distanceBackThreshold && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+        while(distanceFront.getDistance(DistanceUnit.INCH) > distanceFrontThreshold && distanceBack.getDistance(DistanceUnit.INCH) > distanceBackThreshold){
+
+
 
             Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0), power);
             //Vector2D passedVector = new Vector2D(passedX, passedY);
-            AbstractOpMode.currentOpMode().telemetry.addData("", distanceFront.getDistance(DistanceUnit.INCH));
-            AbstractOpMode.currentOpMode().telemetry.addData("", distanceBack.getDistance(DistanceUnit.INCH));
+            AbstractOpMode.currentOpMode().telemetry.addData("front", distanceFront.getDistance(DistanceUnit.INCH));
+            AbstractOpMode.currentOpMode().telemetry.addData("back", distanceBack.getDistance(DistanceUnit.INCH));
+            AbstractOpMode.currentOpMode().telemetry.addData("front", distanceFront);
+            AbstractOpMode.currentOpMode().telemetry.addData("back", distanceBack);
+            AbstractOpMode.currentOpMode().telemetry.addData("front", lowMagnitudeFrontReading);
+            AbstractOpMode.currentOpMode().telemetry.addData("back", lowMagnitudeBackReading);
+
             AbstractOpMode.currentOpMode().telemetry.update();
             setPower(vec, 0);
 
@@ -388,9 +498,9 @@ public class MecanumDriveTrain {
             previousPosition = new Vector2D(position.getX(), position.getY());
 
 
-            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
-            AbstractOpMode.currentOpMode().telemetry.addData("dpos", deltaPosition.magnitude());
-            AbstractOpMode.currentOpMode().telemetry.addData("", lowMagnitudeHardwareCycles);
+//            AbstractOpMode.currentOpMode().telemetry.addData("", currentState.toString());
+//            AbstractOpMode.currentOpMode().telemetry.addData("dpos", deltaPosition.magnitude());
+//            AbstractOpMode.currentOpMode().telemetry.addData("", lowMagnitudeHardwareCycles);
 
 
             //AbstractOpMode.currentOpMode().telemetry.addData("distance", Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()));

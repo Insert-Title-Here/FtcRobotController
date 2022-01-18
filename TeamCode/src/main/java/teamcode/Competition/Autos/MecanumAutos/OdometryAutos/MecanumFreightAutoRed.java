@@ -1,4 +1,4 @@
-package teamcode.Competition.Autos.MecanumAutos;
+package teamcode.Competition.Autos.MecanumAutos.OdometryAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -114,7 +114,7 @@ public class MecanumFreightAutoRed extends AbstractOpMode {
         }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
             arm.raise(Constants.MEDIUM_POSITION + 3000);
         }else{
-            arm.raise(Constants.TOP_POSITION + 2000);
+            arm.raise(Constants.TOP_POSITION );
         }
         while(!retract && opModeIsActive());
         Utils.sleep(250);
@@ -169,13 +169,13 @@ public class MecanumFreightAutoRed extends AbstractOpMode {
 //        //starting path
        // for(int i = 0; i < FREIGHT; i++) {
 //            state = currentCycleState.STRAFING_IN;
-            drive.strafeDistanceSensor(0.7, Math.toRadians(-15));
-            localizer.manualZero(true);
-
+            //drive.strafeDistanceSensor(0.7, Math.toRadians(-15));
+            //localizer.manualZero(true);
+            drive.moveToPosition(new Vector2D(3,3), VELOCITY);
             //Utils.sleep(1000);
             //intake = true;
-            state = currentCycleState.INTAKING;
-            drive.moveToPosition(new Vector2D(24,0), 2* VELOCITY); //replace this with seekCubes() if it works
+            //state = currentCycleState.INTAKING;
+            //drive.moveToPosition(new Vector2D(24,0), 2* VELOCITY); //replace this with seekCubes() if it works
 //            state = currentCycleState.LEAVING;
 //            drive.strafeDistanceSensor(0.7, 0);
 //            drive.moveToPosition(new Vector2D(-6, 0), VELOCITY);

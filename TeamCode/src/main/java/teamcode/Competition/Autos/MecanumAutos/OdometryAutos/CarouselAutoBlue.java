@@ -1,4 +1,4 @@
-package teamcode.Competition.Autos.MecanumAutos;
+package teamcode.Competition.Autos.MecanumAutos.OdometryAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -110,14 +110,15 @@ public class CarouselAutoBlue extends AbstractOpMode {
 
     @Override
     protected void onStart() {
+        webcam.stopStreaming();
         localizer.start();
         telemetry.clear();
         drive.moveToPosition(new Vector2D(9,0),  VELOCITY);
 
         //drive.moveToPosition(new Vector2D(20, 16), VELOCITY);
         drive.rotateDistance(Math.toRadians(105), OMEGA);
-        drive.moveToPosition(new Vector2D(14,20), VELOCITY);
-        drive.moveToPosition(new Vector2D(4.5,19), VELOCITY);
+        drive.moveToPosition(new Vector2D(14,17), VELOCITY);
+        drive.moveToPosition(new Vector2D(4.5,17), VELOCITY);
         drive.smartDuck(true);
         //drive.setStrafe(-0.1);
         drive.moveToPosition(new Vector2D(34,15), VELOCITY);
@@ -125,13 +126,13 @@ public class CarouselAutoBlue extends AbstractOpMode {
         double delta = Math.toRadians(-100) - rotation;
         telemetry.clear();
         Debug.log(delta);
-        drive.rotateDistance(Math.toRadians(100), -OMEGA);
+        drive.rotateDistance(Math.toRadians(90), -OMEGA);
         localizer.manualZero(true);
-        drive.moveToPosition(new Vector2D(-15.25,0), VELOCITY);
+        drive.moveToPosition(new Vector2D(-27,0), VELOCITY);//15.25
         //drive.rotateDistance(Math.toRadians(-85), OMEGA);
 
         if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-            arm.raise(Constants.MEDIUM_POSITION - 2000);
+            arm.raise(Constants.BOTTOM_POSITION + 2500);
         } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
             arm.raise(Constants.MEDIUM_POSITION + 2000);
         } else {
@@ -140,7 +141,7 @@ public class CarouselAutoBlue extends AbstractOpMode {
         arm.score();
         Utils.sleep(1000);
 
-        drive.moveToPosition(new Vector2D(10,16), VELOCITY); //25
+        drive.moveToPosition(new Vector2D(1,7), VELOCITY); //25
         arm.retract();
         while(opModeIsActive());
 

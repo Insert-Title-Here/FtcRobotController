@@ -1,4 +1,4 @@
-package teamcode.Competition.Autos.MecanumAutos;
+package teamcode.Competition.Autos.MecanumAutos.OdometryAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -112,7 +112,7 @@ public class MecanumFreightAutoBlue extends AbstractOpMode {
         }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
             arm.raise(Constants.MEDIUM_POSITION + 3000);
         }else{
-            arm.raise(Constants.TOP_POSITION + 3000);
+            arm.raise(Constants.TOP_POSITION +1000);
         }
         while(!retract && opModeIsActive());
         Utils.sleep(250);

@@ -32,8 +32,7 @@ public class MecanumAutoPosition extends AbstractOpMode{
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
         camera.setPipeline(mbp);
 
-        telemetry.addData("IT WORKS *shtrugs", 000);
-        telemetry.update();
+        mbp.setSide(MecanumBarcodePipeline.Side.RED);
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
