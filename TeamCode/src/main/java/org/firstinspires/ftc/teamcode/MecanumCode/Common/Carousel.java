@@ -37,11 +37,11 @@ public class Carousel {
 
             }
         } else {
-            carousel.setPower(0.5);
+            carousel.setPower(0.7);
             while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
                 power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
-                if (power < 0.5) {
-                    carousel.setPower(0.5);
+                if (power < 0.7) {
+                    carousel.setPower(0.7);
                 } else if (power > 1){
                     carousel.setPower(1);
                 } else {

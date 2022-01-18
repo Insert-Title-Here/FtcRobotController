@@ -147,14 +147,18 @@ public class WarehouseFreightRed extends OpModeWrapper {
         drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.RDIAGONAL);
         sleep(2000);
         drive.driveAuto(0.3, -900, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.driveAuto(0.3, -250, MecanumDriveTrain.MovementType.ROTATE);
         //drive.driveAuto(0.2, -50, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.setPower(-0.1, -0.1, -0.1, -0.1);
 
         capArm.setGrabberPosition(0.85);
 
-        sleep(5000);
+        sleep(1000);
+
+        //capstonePos = BarcodePipelineWarehouseRed.BarcodePosition.CENTER;
 
         if (capstonePos == BarcodePipelineWarehouseRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -181,13 +185,14 @@ public class WarehouseFreightRed extends OpModeWrapper {
 
 
         } else {
-            drive.driveAuto(0.3, -60, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
 
-            drive.driveAuto(0.3, 50, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAFE);
 
 
             //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -196,7 +201,10 @@ public class WarehouseFreightRed extends OpModeWrapper {
         moveArm = true;
 
         drive.driveAuto(0.3, 2050, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 2000, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1300, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.STRAIGHT);
+
 
     }
 

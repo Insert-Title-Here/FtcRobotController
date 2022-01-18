@@ -149,13 +149,15 @@ public class CarouselFreightRed extends OpModeWrapper {
         carousel.spinCarousel(5000, this, Carousel.CarouselMode.AUTO);
         drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1400, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, 600, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1400, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, -850, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 450, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -700, MecanumDriveTrain.MovementType.STRAIGHT);
 
         capArm.setGrabberPosition(0.85);
 
         sleep(500);
+
+        //capstonePos = BarcodePipelineRed.BarcodePosition.CENTER;
 
         if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -182,18 +184,18 @@ public class CarouselFreightRed extends OpModeWrapper {
 
 
         } else {
-            drive.driveAuto(0.3, -400, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
 
-            //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 250, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
         moveArm = true;
 
-        drive.driveAuto(0.3, 1350, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1200, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAFE);
 
         }

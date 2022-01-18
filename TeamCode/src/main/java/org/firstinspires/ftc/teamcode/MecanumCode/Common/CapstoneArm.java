@@ -29,7 +29,11 @@ public class CapstoneArm {
     public void goToPosition(int armPosition) {
         capExtension.setTargetPosition(armPosition);
         capExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        capExtension.setPower(0.5);
+        if(armPosition == 0) {
+            capExtension.setPower(0.3);
+        } else {
+            capExtension.setPower(0.5);
+        }
         while (capExtension.isBusy()) {
 
         }
