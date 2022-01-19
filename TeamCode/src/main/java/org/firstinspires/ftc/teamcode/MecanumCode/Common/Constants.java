@@ -13,4 +13,5 @@ public class Constants {
 
     public static final double LEVEL_DOWN_POS = 0;
     public static final double LEVEL_UP_POS = 1;
+    public static final int TICS_TO_FOOT = 2000; //TODO: change the number here
 }
