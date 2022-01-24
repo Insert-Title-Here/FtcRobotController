@@ -26,13 +26,15 @@ public class MecanumDriveTrain {
     which is the most used DriveTrain in FTC
      */
 
-    private ExpansionHubMotor fl, fr, bl, br;
+    private DcMotorEx fl, fr, bl, br;
     private BNO055IMU imu;
     Localizer localizer;
     EndgameSystems systems;
     Vector2D previousVelocity;
     Vector2D previousError;
     double previousOmegaError;
+
+    LynxModule hub;
 
     DistanceSensor distanceFront, distanceBack;
 
@@ -89,7 +91,6 @@ public class MecanumDriveTrain {
     /**
      * drive encoder constructor
      */
-    private DcMotorEx fle, fre, ble, bre;
     public MecanumDriveTrain(HardwareMap hardwareMap, boolean isRed, EndgameSystems systems){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
@@ -104,20 +105,14 @@ public class MecanumDriveTrain {
         this.isRed = isRed;
         this.systems = systems;
 
-        fl = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontLeftDrive");
-        fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
-        bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
-        br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
-
-        fle = hardwareMap.get(DcMotorEx.class, "");
-        fre = hardwareMap.get(DcMotorEx.class, "");
-        ble = hardwareMap.get(DcMotorEx.class, "");
-        bre = hardwareMap.get(DcMotorEx.class, "");
+        fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
+        fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
+        bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
+        br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
 
 
-
-
-
+        hub = hardwareMap.get(LynxModule.class, "Control Hub");
+        hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
 
         String frontDistance = "FrontDistanceSensor";
@@ -171,19 +166,46 @@ public class MecanumDriveTrain {
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while(fle.getCurrentPosition() < flDistance && fre.getCurrentPosition() < frDistance
-        && ble.getCurrentPosition() < blDistance && bre.getCurrentPosition() < brDistance){
+
+
+        LynxModule.BulkData data = hub.getBulkData();
+        //AbstractOpMode.currentOpMode().telemetry.addData("fl", data.getMotorCurrentPosition(0));
+        AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
+        //AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+        AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
+        //AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
+        AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
+        //AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+        AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
+        AbstractOpMode.currentOpMode().telemetry.update();
+
+        while((-Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(flDistance) && Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance)
+        && -Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance))){
+            hub.clearBulkCache();
+            data = hub.getBulkData();
+            AbstractOpMode.currentOpMode().telemetry.addData("fl",- data.getMotorCurrentPosition(0));
+            //AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+            //AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", -data.getMotorCurrentPosition(2));
+            //AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+            //AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
+            AbstractOpMode.currentOpMode().telemetry.update();
+
+
             setPower(vec, 0);
         }
+
         brake();
         rotateDistanceDERadian(globalHeading, omega);
     }
 
     public void setEncoderMode(DcMotor.RunMode runMode){
-        fle.setMode(runMode);
-        fre.setMode(runMode);
-        ble.setMode(runMode);
-        bre.setMode(runMode);
+        fl.setMode(runMode);
+        fr.setMode(runMode);
+        bl.setMode(runMode);
+        br.setMode(runMode);
     }
 
 

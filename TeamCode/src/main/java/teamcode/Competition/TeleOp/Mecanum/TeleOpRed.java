@@ -161,10 +161,10 @@ public class TeleOpRed extends AbstractOpMode {
             }
         }else if(gamepad1.dpad_right){
             arm.raise(Constants.BOTTOM_POSITION);
-            arm.score();
+            arm.runConveyorPos(1, 2000);
             Utils.sleep(750);
             arm.idleServos();
-            arm.retract();
+            arm.moveSlide(-1, 0);
         }else if(gamepad1.dpad_left){
             arm.resetWinchEncoder();
         }if(gamepad1.left_bumper){
@@ -210,7 +210,7 @@ public class TeleOpRed extends AbstractOpMode {
 
     @Override
     protected void onStop() {
-        armThread.interrupt();
-        capThread.interrupt();
+        //armThread.interrupt();
+        //capThread.interrupt();
     }
 }

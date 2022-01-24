@@ -23,10 +23,10 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.04;
-    private static final double HOUSING_POSITION = 0.2; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
+    private static final double HOUSING_POSITION = 0.15; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.5;
 
-    private static final double LINKAGE_DOWN = 0.0; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
+    private static final double LINKAGE_DOWN = 0.26; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.8;
     private static final double LINKAGE_SCORE = 0.8;
 
@@ -51,7 +51,7 @@ public class ArmSystem {
         intake = (ExpansionHubMotor) hardwareMap.dcMotor.get("Intake");
         winchMotor = (ExpansionHubMotor) hardwareMap.dcMotor.get("Winch");
         winchEncoder = (ExpansionHubMotor) hardwareMap.dcMotor.get("WinchEncoder"); //TANK FrontLeftDrive MECANUM Winch
-        //conveyorMotor = hardwareMap.dcMotor.get("Conveyor");
+        conveyorMotor = (ExpansionHubMotor) hardwareMap.dcMotor.get("Ramp");
 
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");

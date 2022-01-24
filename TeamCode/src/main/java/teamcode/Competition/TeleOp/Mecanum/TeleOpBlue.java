@@ -156,18 +156,18 @@ public class TeleOpBlue extends AbstractOpMode {
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
             }
-        }else if(gamepad1.y ){
+        }else if(gamepad1.dpad_right && pulleyState != PulleyState.RETRACTED){
             if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 arm.raise(Constants.MEDIUM_POSITION);
                 pulleyState = PulleyState.MID_GOAL;
                 linkageState = linkageState.RAISED;
             }
-        }else if(gamepad1.dpad_right){
+        }else if(gamepad1.y){
             arm.raise(Constants.BOTTOM_POSITION);
-            arm.score();
-            Utils.sleep(750);
+            arm.runConveyorPos(1, 2000);
             arm.idleServos();
-            arm.retract();
+            arm.moveSlide(-1, 0);
+            pulleyState = PulleyState.RETRACTED;
         }else if(gamepad1.dpad_left){
             arm.resetWinchEncoder();
         }if(gamepad1.left_bumper){
@@ -177,7 +177,7 @@ public class TeleOpBlue extends AbstractOpMode {
         }else if(gamepad1.right_bumper){
             systems.scoreDuck();
         }else {
-            telemetry.addData("not intake", "");
+            telemetry.addData("pulley", pulleyState);
             telemetry.update();
             systems.runCarousel(0);
             arm.intakeDumb(0);
@@ -215,7 +215,7 @@ public class TeleOpBlue extends AbstractOpMode {
 
     @Override
     protected void onStop() {
-        armThread.interrupt();
-        capThread.interrupt();
+        //armThread.interrupt();
+        //capThread.interrupt();
     }
 }

@@ -53,9 +53,9 @@ public class EndgameSystems {
 
     public EndgameSystems(HardwareMap hardwareMap, boolean isBlue){
         carouselBlue = hardwareMap.crservo.get("CarouselBlue");
-        carouselEncoderBlue = hardwareMap.dcMotor.get("BackRightDrive");
+        carouselEncoderBlue = hardwareMap.dcMotor.get("Intake");
         carouselRed = hardwareMap.crservo.get("CarouselRed");
-        carouselEncoderRed = hardwareMap.dcMotor.get("CarouselRedEncoder");
+        carouselEncoderRed = hardwareMap.dcMotor.get("Winch");
         xCap = hardwareMap.servo.get("xCap");
         yCap = hardwareMap.servo.get("yCap");
         capstoneExtension = hardwareMap.crservo.get("capExtension");
