@@ -127,7 +127,11 @@ public class MagneticArm {
     }
 
     public void setExtensionPower(double power) {
-        magneticExtension.setPower(power);
+        if(-275 < magneticExtension.getCurrentPosition() && magneticExtension.getCurrentPosition() < 0) {
+            magneticExtension.setPower(power);
+        } else {
+            magneticExtension.setPower(0);
+        }
     }
 
     public double[] getTelemetry() {
