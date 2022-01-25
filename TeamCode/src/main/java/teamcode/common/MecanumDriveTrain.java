@@ -132,18 +132,22 @@ public class MecanumDriveTrain {
 
     }
 
-    public void rotateDistanceDERadian(double radians, double power){
+    public synchronized void rotateDistanceDERadian(double radians, double power){
         double deltaRadians = radians - imu.getAngularOrientation().firstAngle;
-        power *= getSign(deltaRadians);
+        power *= -getSign(deltaRadians);
         while(Math.abs(imu.getAngularOrientation().firstAngle - radians) > 0.05){
             setPower(power, -power, power, -power);
         }
         brake();
     }
 
-    public void rotateDistanceDE(double degrees, double power){
+    public synchronized void rotateDistanceDE(double degrees, double power){
         double radians = Math.toRadians(degrees);
         rotateDistanceDERadian(radians, power);
+    }
+
+    public double getAngle(){
+        return imu.getAngularOrientation().firstAngle;
     }
 
     /**
@@ -153,7 +157,7 @@ public class MecanumDriveTrain {
      * @param power voltage, always should be positive
      * @param omega voltage, always should be positive
      */
-    public void moveDistanceDE(int distance, double degrees, double power, double omega){
+    public synchronized void moveDistanceDE(int distance, double degrees, double power, double omega){
         double radians = Math.toRadians(degrees);
         power *= getSign(distance);
         Vector2D vec = Vector2D.fromAngleMagnitude(radians, power);
@@ -179,8 +183,8 @@ public class MecanumDriveTrain {
         AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
         AbstractOpMode.currentOpMode().telemetry.update();
 
-        while((-Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(flDistance) && Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance)
-        && -Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance))){
+        while((Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(flDistance) && Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance)
+        && Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance))){
             hub.clearBulkCache();
             data = hub.getBulkData();
             AbstractOpMode.currentOpMode().telemetry.addData("fl",- data.getMotorCurrentPosition(0));

@@ -107,7 +107,7 @@ public class TeleOpRed extends AbstractOpMode {
 
     double startTime;
     private void armUpdate() {
-        if(gamepad1.right_trigger > 0.3){
+        if(gamepad1.right_trigger > 0.3 && pulleyState == PulleyState.RETRACTED){
             startTime = AbstractOpMode.currentOpMode().time;
             while(gamepad1.right_trigger > 0.3) {
                 double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
@@ -165,6 +165,7 @@ public class TeleOpRed extends AbstractOpMode {
             Utils.sleep(750);
             arm.idleServos();
             arm.moveSlide(-1, 0);
+            pulleyState = PulleyState.RETRACTED;
         }else if(gamepad1.dpad_left){
             arm.resetWinchEncoder();
         }if(gamepad1.left_bumper){
