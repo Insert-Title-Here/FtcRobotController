@@ -127,7 +127,7 @@ public class MagneticArm {
     }
 
     public void setExtensionPower(double power) {
-        if(-275 < magneticExtension.getCurrentPosition() && magneticExtension.getCurrentPosition() < 0) {
+        if(-220 < magneticExtension.getCurrentPosition() && magneticExtension.getCurrentPosition() < -50) {
             magneticExtension.setPower(power);
         } else {
             magneticExtension.setPower(0);
