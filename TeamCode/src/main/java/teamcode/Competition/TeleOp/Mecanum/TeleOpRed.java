@@ -153,18 +153,17 @@ public class TeleOpRed extends AbstractOpMode {
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
             }
-        }else if(gamepad1.y ){
+        }else if(gamepad1.dpad_right && pulleyState == PulleyState.RETRACTED){
             if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 arm.raise(Constants.MEDIUM_POSITION);
                 pulleyState = PulleyState.MID_GOAL;
                 linkageState = linkageState.RAISED;
             }
-        }else if(gamepad1.dpad_right){
-            arm.raise(Constants.BOTTOM_POSITION);
+        }else if(gamepad1.y && pulleyState == PulleyState.RETRACTED){
             arm.runConveyorPos(1, 2000);
             Utils.sleep(750);
             arm.idleServos();
-            arm.moveSlide(-1, 0);
+            //arm.moveSlide(-1, 0);
             pulleyState = PulleyState.RETRACTED;
         }else if(gamepad1.dpad_left){
             arm.resetWinchEncoder();
@@ -175,6 +174,8 @@ public class TeleOpRed extends AbstractOpMode {
         }else if(gamepad1.right_bumper){
             systems.scoreDuck();
         }else {
+            telemetry.addData("pulley", pulleyState);
+            telemetry.update();
             systems.runCarousel(0);
             arm.intakeDumb(0);
             if (pulleyState != PulleyState.RETRACTED) {

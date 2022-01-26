@@ -90,14 +90,14 @@ public class ArmSystem {
     public void runConveyorPos(double power, int position){
         house.setPosition(SCORING_POSITION);
         conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        conveyorMotor.setTargetPosition(-position);
+        conveyorMotor.setTargetPosition(position);
         conveyorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while(Math.abs(conveyorMotor.getCurrentPosition() - conveyorMotor.getTargetPosition()) > 10){
             AbstractOpMode.currentOpMode().telemetry.addData("", conveyorMotor.getCurrentPosition());
             AbstractOpMode.currentOpMode().telemetry.addData("", conveyorMotor.getTargetPosition());
             AbstractOpMode.currentOpMode().telemetry.update();
 
-            conveyorMotor.setPower(-power);
+            conveyorMotor.setPower(power);
         }
         conveyorMotor.setPower(0);
     }
@@ -208,7 +208,7 @@ public class ArmSystem {
     }
 
     public synchronized void retract(){
-        moveSlide(-0.3,3000);
+        moveSlide(-0.3,0);
        idleServos();
     }
 
