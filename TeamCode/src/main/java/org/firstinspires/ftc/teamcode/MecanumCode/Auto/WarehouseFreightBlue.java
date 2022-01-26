@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 
 
 @Autonomous(name="Warehouse Freight Blue Confirmation")
-public class WarehouseFreightBlue extends OpModeWrapper {
+public class adWarehouseFreightBlue extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
