@@ -1,6 +1,7 @@
 package teamcode.test.MecanumChassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Debug;
@@ -10,7 +11,7 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
-
+@Disabled
 @Autonomous(name="Manual zero")
 public class ManualZeroTest extends AbstractOpMode {
     WestCoastDriveTrain drive;

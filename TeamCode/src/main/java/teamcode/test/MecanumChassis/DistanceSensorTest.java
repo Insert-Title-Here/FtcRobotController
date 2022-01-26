@@ -1,6 +1,7 @@
 package teamcode.test.MecanumChassis;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
@@ -11,6 +12,7 @@ import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.PositionStuff.Pose;
 
+@Disabled
 @TeleOp(name="Distance sensor")
 public class DistanceSensorTest extends AbstractOpMode {
     DistanceSensor d1, d2; //blue 0.75 //red d1 < 1.1 and d2 < 0.8

@@ -3,13 +3,14 @@ package teamcode.test.MecanumChassis;
 import android.speech.tts.TextToSpeech;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.android.AndroidTextToSpeech;
 
 import java.util.Locale;
 
 import teamcode.common.AbstractOpMode;
-
+@Disabled
 @Autonomous(name="Tesxt")
 public class Tesxt extends AbstractOpMode {
     TextToSpeech tts;

@@ -11,7 +11,7 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Vector2D;
 
 
-
+@Disabled
 @Autonomous(name="Mat")
 public class MatLocalizertest extends AbstractOpMode {
     Localizer localizer;

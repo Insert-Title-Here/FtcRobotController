@@ -1,5 +1,6 @@
 package teamcode.test.MecanumChassis;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.openftc.revextensions2.ExpansionHubEx;
@@ -12,6 +13,7 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
+@Disabled
 @TeleOp(name="LocalizerCalibrate")
 public class LocalizerTest extends AbstractOpMode {
 

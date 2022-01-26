@@ -10,7 +10,7 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 
 @Autonomous(name="Blue DE Warehouse")
-public class RedDEWarehouseAuto extends AbstractOpMode {
+public class BlueDEWarehouseAuto extends AbstractOpMode {
 
     MecanumDriveTrain drive;
     ArmSystem arm;
@@ -26,7 +26,7 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
         flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread(){
             public void run(){
-                while(opModeIsActive()){
+
                     while(!flags[0]);
                     arm.moveSlide( 1.0, Constants.TOP_POSITION);
                     flags[0] = false;
@@ -39,8 +39,9 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
                     }
                     arm.retract();
                     flags[1] = false;
-
-                }
+                while(opModeIsActive()); //this was a mistake I made in my inital one too,
+                // you want this here as a buffer so that the thread doesnt prematurely end vs what
+                //I had which looped the threads actions and because the flags were all true there was no buffer time
             }
         };
     }
@@ -76,7 +77,6 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
         sleep(1000);
         drive.moveDistanceDE(1000, -90, 0.3, 0);
         drive.moveDistanceDE(800, 0, 0.3, 0);
-
 
 
         while(opModeIsActive());

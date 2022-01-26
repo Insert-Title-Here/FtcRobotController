@@ -10,7 +10,7 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 
 @Autonomous(name="Red DE Duck")
-public class    RedDEDuckAuto extends AbstractOpMode {
+public class BlueDEDuckAuto extends AbstractOpMode {
 
     MecanumDriveTrain drive;
     ArmSystem arm;

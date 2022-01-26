@@ -12,7 +12,7 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Vector2D;
 import teamcode.common.WestCoastDriveTrain;
 
-
+@Disabled
 @Autonomous(name="roll")
 public class OdoRoll extends AbstractOpMode {
 

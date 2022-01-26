@@ -151,9 +151,9 @@ public class MecanumDriveTrain {
     }
 
     /**
-     *
-     * @param distance tics
-     * @param degrees degrees
+     * makes the drive move in an omnidirectional vector of the users choice
+     * @param distance tics magnitude of the vector
+     * @param degrees degrees that the vector should be rotated relative to the robots definiton of front, (rotation of 0 makes the robot drive all 4 wheels straight intake side facing)
      * @param power voltage, always should be positive
      * @param omega voltage, always should be positive
      */
@@ -163,7 +163,7 @@ public class MecanumDriveTrain {
         Vector2D vec = Vector2D.fromAngleMagnitude(radians, power);
         double globalHeading = imu.getAngularOrientation().firstAngle;
         radians = radians + (Math.PI / 4.0) ; //45deg + globalHeading
-        int flDistance = (int)(Math.sin(radians) * distance); //TODO check if this is right, if not flip the sign
+        int flDistance = (int)(Math.sin(radians) * distance);
         int frDistance = (int)(Math.cos(radians) * distance);
         int blDistance = (int)(Math.cos(radians) * distance);
         int brDistance = (int)(Math.sin(radians) * distance);
@@ -390,9 +390,6 @@ public class MecanumDriveTrain {
 
     public synchronized void strafeDistanceSensor(double power, double radians){
 
-        if(localizer == null){
-            return;
-        }
 
         environmentalTerminate = false;
         double distanceFrontThreshold;
@@ -411,7 +408,7 @@ public class MecanumDriveTrain {
         AbstractOpMode.currentOpMode().telemetry.clear();
         while(distanceFront.getDistance(DistanceUnit.INCH) > distanceFrontThreshold && distanceBack.getDistance(DistanceUnit.INCH) > distanceBackThreshold){
 
-
+            Utils.sleep(500);
 
             Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0), power);
             //Vector2D passedVector = new Vector2D(passedX, passedY);

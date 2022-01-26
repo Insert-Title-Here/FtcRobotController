@@ -1,11 +1,13 @@
 package teamcode.test.MecanumChassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @Autonomous(name="color")
 public class ColorSensorTest extends AbstractOpMode {
 

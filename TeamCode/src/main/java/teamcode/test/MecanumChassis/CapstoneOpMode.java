@@ -1,11 +1,13 @@
 package teamcode.test.MecanumChassis;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @TeleOp(name = "Capstone Tele Op")
 public class CapstoneOpMode extends AbstractOpMode {
     EndgameSystems endgameSystems;

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.vuforia.Image;
@@ -34,6 +35,7 @@ import teamcode.common.Vector2D;
 import static android.graphics.Bitmap.createBitmap;
 import static android.graphics.Bitmap.createScaledBitmap;
 
+@Disabled
 @TeleOp(name = "Vuforia")
 public class MineralTrackerOpMode extends AbstractOpMode {
     VuforiaLocalizer vuforia = null;

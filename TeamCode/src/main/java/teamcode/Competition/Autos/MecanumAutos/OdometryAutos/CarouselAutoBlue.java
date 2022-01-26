@@ -1,6 +1,7 @@
 package teamcode.Competition.Autos.MecanumAutos.OdometryAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -19,7 +20,7 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
-
+@Disabled
 @Autonomous(name="CarouselBlue")
 public class CarouselAutoBlue extends AbstractOpMode {
 
