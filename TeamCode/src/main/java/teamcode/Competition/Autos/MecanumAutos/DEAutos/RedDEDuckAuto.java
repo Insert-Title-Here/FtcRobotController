@@ -1,6 +1,5 @@
 package teamcode.Competition.Autos.MecanumAutos.DEAutos;
 
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import teamcode.Competition.Subsystems.ArmSystem;
@@ -11,7 +10,7 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 
 @Autonomous(name="Red DE Duck")
-public class RedDEDuckAuto extends AbstractOpMode {
+public class    RedDEDuckAuto extends AbstractOpMode {
 
     MecanumDriveTrain drive;
     ArmSystem arm;
@@ -60,7 +59,6 @@ public class RedDEDuckAuto extends AbstractOpMode {
         system.scoreDuckAuto();
         //drive.smartDuck(true);
         while(opModeIsActive());
-
 
     }
 
