@@ -28,7 +28,16 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
             public void run(){
 
                     while(!flags[0]);
-                    arm.moveSlide( 1.0, Constants.TOP_POSITION);
+                    //If top goal then go to:
+
+                    //arm.moveSlide( 1.0, Constants.TOP_POSITION);
+
+                    //If middle goal then go to:
+                    arm.moveSlide( 1.0, Constants.MEDIUM_POSITION);
+
+                    //If bottom goal then go to:
+                    //arm.moveSlide( 1.0, Constants.BOTTOM_POSITION);
+
                     flags[0] = false;
                     while(!flags[1]);
                     arm.score();
@@ -66,17 +75,17 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
 
          */
 
-        drive.moveDistanceDE(400, 0, 0.3, 0);
+        drive.moveDistanceDE(500, 0, 0.3, 0);
         flags[0] = true;
-        drive.rotateDistanceDE(135, 0.3);
+        drive.rotateDistanceDE(128, 0.3);
         sleep(1000);
-        drive.moveDistanceDE(350, -180, 0.3, 0);
+        drive.moveDistanceDE(490, -180, 0.3, 0);
         flags[1] = true;
         sleep(1000);
         drive.rotateDistanceDE(90, 0.3);
         sleep(1000);
-        drive.moveDistanceDE(1000, -90, 0.3, 0);
-        drive.moveDistanceDE(800, 0, 0.3, 0);
+        drive.moveDistanceDE(1700, -90, 0.6, 0);
+        drive.moveDistanceDE(1200, 0, 0.3, 0);
 
 
         while(opModeIsActive());

@@ -18,7 +18,6 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Debug;
 import teamcode.common.RobotPositionStateUpdater;
 import teamcode.common.Utils;
-
 public class ArmSystem {
 
     //House Servo values
