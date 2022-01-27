@@ -2,12 +2,20 @@ package teamcode.Competition.Autos.MecanumAutos.DEAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+
+import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
+
 
 @Autonomous(name="Blue DE Warehouse")
 public class BlueDEWarehouseAuto extends AbstractOpMode {
@@ -16,7 +24,11 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
     ArmSystem arm;
     EndgameSystems system;
     volatile boolean[] flags;
-    Thread armCommands ;
+    Thread armCommands;
+    OpenCvWebcam webcam;
+    MecanumBarcodePipeline.BarcodePosition position;
+
+
     @Override
     protected void onInitialize() {
         system = new EndgameSystems(hardwareMap, false);
@@ -28,16 +40,13 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
             public void run(){
 
                     while(!flags[0]);
-                    //If top goal then go to:
-
-                    //arm.moveSlide( 1.0, Constants.TOP_POSITION);
-
-                    //If middle goal then go to:
-                    arm.moveSlide( 1.0, Constants.MEDIUM_POSITION);
-
-                    //If bottom goal then go to:
-                    //arm.moveSlide( 1.0, Constants.BOTTOM_POSITION);
-
+                    if(position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+                        arm.runConveyorPos(1.0, 2000);
+                    }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
+                        arm.moveSlide( 1.0, Constants.MEDIUM_POSITION);
+                    }else{
+                        arm.moveSlide(1.0, Constants.TOP_POSITION);
+                    }
                     flags[0] = false;
                     while(!flags[1]);
                     arm.score();
@@ -53,6 +62,33 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
                 //I had which looped the threads actions and because the flags were all true there was no buffer time
             }
         };
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
+
+        // W/ or W/ out live preview
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+        MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
+        pipeline.setSide(MecanumBarcodePipeline.Side.BLUE);
+        webcam.setPipeline(pipeline);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
+        while(!opModeIsActive()){
+            position = pipeline.getPos();
+            telemetry.addData("", position);
+            telemetry.update();
+        }
     }
 
     @Override

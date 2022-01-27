@@ -2,6 +2,13 @@ package teamcode.Competition.Autos.MecanumAutos.DEAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+
+import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
@@ -16,7 +23,12 @@ public class BlueDEDuckAuto extends AbstractOpMode {
     ArmSystem arm;
     EndgameSystems system;
     volatile boolean[] flags;
-    Thread armCommands ;
+    Thread armCommands;
+
+    OpenCvWebcam webcam;
+    MecanumBarcodePipeline.BarcodePosition position;
+
+
     @Override
     protected void onInitialize() {
         system = new EndgameSystems(hardwareMap, true);
@@ -28,7 +40,13 @@ public class BlueDEDuckAuto extends AbstractOpMode {
             public void run(){
 
                 while(!flags[0]);
-                arm.moveSlide(1.0, Constants.TOP_POSITION);
+                if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
+                    arm.runConveyorPos(1,2000);
+                }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
+                    arm.moveSlide(1.0, Constants.MEDIUM_POSITION);
+                }else {
+                    arm.moveSlide(1.0, Constants.TOP_POSITION);
+                }
                 while(!flags[1]);
                 arm.score();
                 try {
@@ -40,6 +58,33 @@ public class BlueDEDuckAuto extends AbstractOpMode {
                 while(opModeIsActive());
             }
         };
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
+
+        // W/ or W/ out live preview
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+        MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
+        pipeline.setSide(MecanumBarcodePipeline.Side.BLUE);
+        webcam.setPipeline(pipeline);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
+        while(!opModeIsActive()){
+            position = pipeline.getPos();
+            telemetry.addData("", position);
+            telemetry.update();
+        }
     }
 
     @Override
