@@ -21,7 +21,7 @@ public class BaseDrive extends LinearOpMode {
     double power = 0.5;
 
     @Override
-    private void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 

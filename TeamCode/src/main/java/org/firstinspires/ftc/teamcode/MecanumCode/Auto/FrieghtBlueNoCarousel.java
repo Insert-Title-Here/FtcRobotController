@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 
 
 @Autonomous(name="Freight Blue Confirmation")
-public class tFrieghtBlueNoCarousel extends OpModeWrapper {
+public class FrieghtBlueNoCarousel extends OpModeWrapper {
 
     MecanumDriveTrain drive;
     Carousel carousel;
