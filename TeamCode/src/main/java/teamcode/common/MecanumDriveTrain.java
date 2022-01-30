@@ -205,6 +205,60 @@ public class MecanumDriveTrain {
         rotateDistanceDERadian(globalHeading, omega);
     }
 
+    public synchronized void moveDistanceDENoErrorCorrection(int distance, double degrees, double power){
+        double radians = Math.toRadians(degrees);
+        power *= getSign(distance);
+        Vector2D vec = Vector2D.fromAngleMagnitude(radians, power);
+        double globalHeading = imu.getAngularOrientation().firstAngle;
+        radians = radians + (Math.PI / 4.0) ; //45deg + globalHeading
+        int flDistance = (int)(Math.sin(radians) * distance);
+        int frDistance = (int)(Math.cos(radians) * distance);
+        int blDistance = (int)(Math.cos(radians) * distance);
+        int brDistance = (int)(Math.sin(radians) * distance);
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+        LynxModule.BulkData data = hub.getBulkData();
+        //AbstractOpMode.currentOpMode().telemetry.addData("fl", data.getMotorCurrentPosition(0));
+        AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
+        //AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+        AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
+        //AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
+        AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
+        //AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+        AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
+        AbstractOpMode.currentOpMode().telemetry.update();
+
+        while((Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(flDistance) && Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance)
+                && Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance))){
+            hub.clearBulkCache();
+            data = hub.getBulkData();
+            AbstractOpMode.currentOpMode().telemetry.addData("fl",- data.getMotorCurrentPosition(0));
+            //AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+            //AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", -data.getMotorCurrentPosition(2));
+            //AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+            //AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
+            AbstractOpMode.currentOpMode().telemetry.update();
+
+
+            setPower(vec, 0);
+        }
+
+        brake();
+    }
+
+    public void cleanup(){
+
+        imu.close();
+        hub.clearBulkCache();
+
+    }
+
     public void setEncoderMode(DcMotor.RunMode runMode){
         fl.setMode(runMode);
         fr.setMode(runMode);
@@ -621,7 +675,7 @@ public class MecanumDriveTrain {
 
     }
 
-    private void brake() {
+    public void brake() {
         fl.setPower(0);
         fr.setPower(0);
         bl.setPower(0);

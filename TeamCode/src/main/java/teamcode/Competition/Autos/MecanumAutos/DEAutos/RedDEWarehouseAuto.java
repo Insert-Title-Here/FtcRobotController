@@ -1,7 +1,5 @@
 package teamcode.Competition.Autos.MecanumAutos.DEAutos;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -15,25 +13,20 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
-import teamcode.common.Utils;
 
-@Autonomous(name="Blue DE Duck")
-public class BlueDEDuckAuto extends AbstractOpMode {
-
-    MecanumDriveTrain drive;
-    ArmSystem arm;
-    EndgameSystems system;
-    volatile boolean[] flags;
-    Thread armCommands;
-
-    OpenCvWebcam webcam;
-    MecanumBarcodePipeline.BarcodePosition position;
+public class RedDEWarehouseAuto extends AbstractOpMode {
+    private static final int FREIGHT = 0;
+    private MecanumDriveTrain drive;
+    private ArmSystem arm;
+    private boolean[] flags;
+    private Thread armCommands;
+    private OpenCvWebcam webcam;
+    private MecanumBarcodePipeline.BarcodePosition position;
 
 
     @Override
     protected void onInitialize() {
-        system = new EndgameSystems(hardwareMap, true);
-        drive = new MecanumDriveTrain(hardwareMap, false, system);
+        drive = new MecanumDriveTrain(hardwareMap, true, null);
         arm = new ArmSystem(hardwareMap, false);
         Debug.log("here");
         flags = new boolean[]{false, false, false, false, false};
@@ -42,9 +35,7 @@ public class BlueDEDuckAuto extends AbstractOpMode {
 
                 while(!flags[0]);
                 if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
-                    arm.moveSlide(1.0, Constants.BOTTOM_POSITION);
-                    Utils.sleep(250);
-                    arm.runConveyorPos(0.8, 2000);
+                    arm.runConveyorPos(1,2000);
                 }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
                     arm.moveSlide(1.0, Constants.MEDIUM_POSITION);
                 }else {
@@ -57,11 +48,7 @@ public class BlueDEDuckAuto extends AbstractOpMode {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-                    arm.moveSlide(-1.0, 0);
-                } else {
-                    arm.retract();
-                }
+                arm.retract();
                 while(!flags[2]);
                 arm.moveSlide(1.0, Constants.TOP_POSITION);
                 while(!flags[3]);
@@ -82,7 +69,7 @@ public class BlueDEDuckAuto extends AbstractOpMode {
         // W/ or W/ out live preview
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
-        pipeline.setSide(MecanumBarcodePipeline.Side.BLUE);
+        pipeline.setSide(MecanumBarcodePipeline.Side.RED);
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -106,56 +93,12 @@ public class BlueDEDuckAuto extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        webcam.stopStreaming();
-        armCommands.start();
-        //arm.idleServos();
-        drive.moveDistanceDE(400, 0, 0.3, 0);
-        drive.rotateDistanceDE(-75, 0.3);
-        Utils.sleep(500);
-        drive.moveDistanceDE(1400, -90, 0.3, 0.2);
-        //drive.moveDistanceDE(200, -90, 0.3, 0.2);
-        flags[0] = true;
-        drive.moveDistanceDE(400, -180, 0.3, 0.2);
-        flags[1] =true;
-        drive.moveDistanceDE(300, 0, 0.3, 0.2);
-        drive.moveDistanceDE(1920, 70, 0.3, 0.2);
-        drive.rotateDistanceDE(-75, 0.2);
-        drive.moveDistanceDE(100, 90, 0.2, 0.2);
 
-        //drive.setStrafe(-0.01);
-        system.scoreDuckAuto();
-        drive.moveDistanceDE(100, -90, 0.3, 0.2);
-        drive.rotateDistanceDE(-165, 0.3);
-        arm.lowerLinkage();
-        Utils.sleep(500);
-        drive.moveDistanceDE(200, 0, 0.2, 0.2);
-        //drive.setPower(0.2,0.2,0.2,0.2);
-        arm.intakeDumb(1.0);
-        drive.moveDistanceDE(1000, 90, 0.2, 0.2);
-        drive.moveDistanceDENoErrorCorrection(800, -90, 0.2);
-        drive.brake();
-        arm.preScoreDuck();
-        arm.intakeDumb(0);
-        drive.rotateDistanceDE(-95, 0.3);
-        Utils.sleep(200);
-
-        drive.moveDistanceDE(2100, -90, 0.3,0.2);
-        flags[2] = true;
-        drive.moveDistanceDENoErrorCorrection(650, 180, 0.3);
-        //drive.rotateDistanceDE(-90, 0.3);
-        flags[3] = true;
-        drive.moveDistanceDE(620, 0, 0.3,0.2);
-
-
-
-        //drive.smartDuck(true);
-        while(opModeIsActive());
 
     }
 
     @Override
     protected void onStop() {
-        drive.cleanup();
 
     }
 }

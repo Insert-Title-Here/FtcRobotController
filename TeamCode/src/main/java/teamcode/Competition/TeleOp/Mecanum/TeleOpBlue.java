@@ -19,7 +19,6 @@ public class TeleOpBlue extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem arm;
     Thread armThread, capThread;
-    Localizer localizer;
     EndgameSystems systems;
 
     private ScoredButtonState state;
@@ -31,7 +30,6 @@ public class TeleOpBlue extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         drive = new MecanumDriveTrain(hardwareMap);
-        localizer = new Localizer(hardwareMap, new Vector2D(0, 0), 0, 10);
         arm = new ArmSystem(hardwareMap, true);
         systems = new EndgameSystems(hardwareMap, true);
 
@@ -39,7 +37,6 @@ public class TeleOpBlue extends AbstractOpMode {
         pulleyState = PulleyState.RETRACTED;
         linkageState = linkageState.RAISED;
 
-        localizer.liftOdo();
 
         armThread = new Thread(){
             public void run(){

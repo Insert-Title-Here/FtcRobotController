@@ -17,9 +17,9 @@ public class Constants {
     public static final double GRAVITY_IN_SEC = 386.09;
 
     //Game Constants
-    public static final double TOP_POSITION = 17000; // -14000 TANK   -21000
+    public static final double TOP_POSITION = 16850; // -14000 TANK   -21000
     public static final double MEDIUM_POSITION = 8000 ; //store these values as ticks, and just go with that, nothing fancy (from 145000 to 6k, because of new gear)
-    public static final double BOTTOM_POSITION = 3500;
+    public static final double BOTTOM_POSITION = 2000;
     public static final double CAP_POSITION = 16000;
 
 
