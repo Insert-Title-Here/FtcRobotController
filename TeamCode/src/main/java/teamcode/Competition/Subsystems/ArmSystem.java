@@ -22,7 +22,7 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.04;
-    private static final double HOUSING_POSITION = 0.25; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
+    private static final double HOUSING_POSITION = 0.2 ; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.5;
 
     private static final double LINKAGE_DOWN = 0.26; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
@@ -91,14 +91,13 @@ public class ArmSystem {
     }
 
     public void runConveyorPos(double power, int position){
+        linkage.setPosition(LINKAGE_SCORE);
         house.setPosition(SCORING_POSITION);
         conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         conveyorMotor.setTargetPosition(position);
         conveyorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while(Math.abs(conveyorMotor.getCurrentPosition() - conveyorMotor.getTargetPosition()) > 10){
-            AbstractOpMode.currentOpMode().telemetry.addData("", conveyorMotor.getCurrentPosition());
-            AbstractOpMode.currentOpMode().telemetry.addData("", conveyorMotor.getTargetPosition());
-            AbstractOpMode.currentOpMode().telemetry.update();
+
 
             conveyorMotor.setPower(power);
         }
@@ -184,7 +183,7 @@ public class ArmSystem {
         Utils.sleep(250);
         linkage.setPosition(LINKAGE_HOUSED);
         stage = Stage.HOUSED;
-        Debug.log("finish");
+        //Debug.log("finish");
 
 
     }
@@ -213,12 +212,17 @@ public class ArmSystem {
 
     //temporary tele op scoring function w/o color sensor
     public synchronized void score(){
-        Debug.log("here");
         house.setPosition(SCORING_POSITION);
     }
 
     public synchronized void retract(){
-        moveSlide(-0.3,3000);
+        while (winchEncoder.getCurrentPosition()  > 1500) {
+//                AbstractOpMode.currentOpMode().telemetry.addData("curR", winchEncoder.getCurrentPosition());
+//                AbstractOpMode.currentOpMode().telemetry.addData("tarR", position);
+//                AbstractOpMode.currentOpMode().telemetry.update();
+            winchMotor.setPower(-0.3);
+        }
+        winchMotor.setPower(0);
        idleServos();
     }
 
@@ -269,28 +273,25 @@ public class ArmSystem {
     //}
 
     public void moveSlide(double power, double position){
-        AbstractOpMode.currentOpMode().telemetry.clear();
-        if(winchEncoder.getCurrentPosition() - position < 0){
-            Debug.log("extending");
             while (winchEncoder.getCurrentPosition() < position) {
-                AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
-                AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", position);
-                AbstractOpMode.currentOpMode().telemetry.update();
+//                AbstractOpMode.currentOpMode().telemetry.addData("curE", winchEncoder.getCurrentPosition());
+//                AbstractOpMode.currentOpMode().telemetry.addData("tarE",position);
+//                AbstractOpMode.currentOpMode().telemetry.update();
                 winchMotor.setPower(power);
             }
-            Debug.log("done");
-            winchMotor.setVelocity(FEEDFORWARD_V * getSign(power), AngleUnit.RADIANS);
-        }else{
-            Debug.log("retracting");
-            while (winchEncoder.getCurrentPosition()  > position) {
-                AbstractOpMode.currentOpMode().telemetry.addData("CUR: ", winchEncoder.getCurrentPosition());
-                AbstractOpMode.currentOpMode().telemetry.addData("TAR: ", position);
-                AbstractOpMode.currentOpMode().telemetry.update();
-                winchMotor.setPower(power);
-            }
-            Debug.log("done");
+            //winchMotor.setVelocity(FEEDFORWARD_V, AngleUnit.RADIANS);
             winchMotor.setPower(0);
+
+    }
+
+    public void moveSlideAuto(double power, double position){
+        while (winchEncoder.getCurrentPosition() < position) {
+//                AbstractOpMode.currentOpMode().telemetry.addData("curE", winchEncoder.getCurrentPosition());
+//                AbstractOpMode.currentOpMode().telemetry.addData("tarE",position);
+//                AbstractOpMode.currentOpMode().telemetry.update();
+            winchMotor.setPower(power);
         }
+        winchMotor.setVelocity(FEEDFORWARD_V, AngleUnit.RADIANS);
 
 
     }
@@ -333,6 +334,7 @@ public class ArmSystem {
     public int getLinearSlidePosition(){
         return winchEncoder.getCurrentPosition();
     }
+
 
     public Stage getStage(){
         return stage;

@@ -43,13 +43,13 @@ public class RedDEDuckAuto extends AbstractOpMode {
 
                 while (!flags[0]) ;
                 if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-                    arm.moveSlide(1.0, Constants.BOTTOM_POSITION);
+                    arm.moveSlideAuto(1.0, Constants.BOTTOM_POSITION);
                     Utils.sleep(250);
                     arm.runConveyorPos(0.8, 2000);
                 } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
-                    arm.moveSlide(1.0, Constants.MEDIUM_POSITION);
+                    arm.moveSlideAuto(1.0, Constants.MEDIUM_POSITION + 1500);
                 } else {
-                    arm.moveSlide(1.0, Constants.TOP_POSITION);
+                    arm.moveSlideAuto(1.0, Constants.TOP_POSITION);
                 }
                 while (!flags[1]) ;
                 arm.score();
@@ -58,15 +58,11 @@ public class RedDEDuckAuto extends AbstractOpMode {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-                    arm.moveSlide(-1.0, 0);
-                } else {
-                    arm.retract();
-                }
+                arm.retract();
                 while (!flags[2]) ;
 
                 Utils.sleep(500);
-                arm.moveSlide(1.0, Constants.TOP_POSITION);
+                arm.moveSlideAuto(1.0, Constants.TOP_POSITION);
                 while (!flags[3]) ;
                 arm.score();
                 try {

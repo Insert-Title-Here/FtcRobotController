@@ -26,6 +26,7 @@ public class TeleOpRed extends AbstractOpMode {
     private LinkageState linkageState;
     private long scoredSampleTime;
     private double yCapSpeed, xCapSpeed;
+    private double previousExtensionTime;
 
     @Override
     protected void onInitialize() {
@@ -61,6 +62,7 @@ public class TeleOpRed extends AbstractOpMode {
         previousRight = false;
         previousUp = false;
         previousDown = false;
+        previousExtensionTime = 0;
     }
 
     // For changing ranges of given variable
@@ -145,13 +147,15 @@ public class TeleOpRed extends AbstractOpMode {
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
         } else if(gamepad1.left_trigger > 0.3) {
-            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
+            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED &&  time - previousExtensionTime > 5) {
+                previousExtensionTime = time;
                 arm.raise(Constants.TOP_POSITION);
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
             }
         }else if(gamepad1.dpad_right && pulleyState == PulleyState.RETRACTED){
-            if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
+            if(pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED  && time - previousExtensionTime > 5) {
+                previousExtensionTime = time;
                 arm.raise(Constants.MEDIUM_POSITION);
                 pulleyState = PulleyState.MID_GOAL;
                 linkageState = linkageState.RAISED;
