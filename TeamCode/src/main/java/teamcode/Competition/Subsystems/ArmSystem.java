@@ -216,11 +216,11 @@ public class ArmSystem {
     }
 
     public synchronized void retract(){
-        while (winchEncoder.getCurrentPosition()  > 1500) {
+        while (winchEncoder.getCurrentPosition()  > 0) {
 //                AbstractOpMode.currentOpMode().telemetry.addData("curR", winchEncoder.getCurrentPosition());
 //                AbstractOpMode.currentOpMode().telemetry.addData("tarR", position);
 //                AbstractOpMode.currentOpMode().telemetry.update();
-            winchMotor.setPower(-0.3);
+            winchMotor.setPower(-1);
         }
         winchMotor.setPower(0);
        idleServos();
