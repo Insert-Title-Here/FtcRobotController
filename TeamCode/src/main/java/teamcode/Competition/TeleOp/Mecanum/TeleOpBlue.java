@@ -182,7 +182,7 @@ public class TeleOpBlue extends AbstractOpMode {
         }else if(gamepad1.right_bumper){
             systems.scoreDuck();
         }else {
-
+            arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);
         }

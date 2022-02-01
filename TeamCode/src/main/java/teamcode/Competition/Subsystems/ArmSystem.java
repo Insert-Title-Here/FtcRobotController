@@ -220,7 +220,7 @@ public class ArmSystem {
 //                AbstractOpMode.currentOpMode().telemetry.addData("curR", winchEncoder.getCurrentPosition());
 //                AbstractOpMode.currentOpMode().telemetry.addData("tarR", position);
 //                AbstractOpMode.currentOpMode().telemetry.update();
-            winchMotor.setPower(-1);
+            winchMotor.setPower(-1.0);
         }
         winchMotor.setPower(0);
        idleServos();
