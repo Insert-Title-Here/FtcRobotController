@@ -150,7 +150,7 @@ public class CarouselFreightRed extends OpModeWrapper {
         drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1400, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, 450, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 1250, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -700, MecanumDriveTrain.MovementType.STRAIGHT);
 
         capArm.setGrabberPosition(0.85);
@@ -196,7 +196,7 @@ public class CarouselFreightRed extends OpModeWrapper {
         moveArm = true;
 
         drive.driveAuto(0.3, 1200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -550, MecanumDriveTrain.MovementType.STRAFE);
 
         }
 

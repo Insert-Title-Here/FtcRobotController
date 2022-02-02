@@ -204,13 +204,13 @@ public class WarehouseFreightBlue extends OpModeWrapper {
 
         drive.driveAuto(0.3, -1000, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1100, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.3, 1070, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, -340, MecanumDriveTrain.MovementType.STRAFE);
 
         sleep(1000);
 
         //drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, 1400, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1300, MecanumDriveTrain.MovementType.STRAFE);
         magArm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
         //drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAIGHT);
