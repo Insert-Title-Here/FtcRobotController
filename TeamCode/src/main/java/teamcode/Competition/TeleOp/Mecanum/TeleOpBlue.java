@@ -215,6 +215,10 @@ public class TeleOpBlue extends AbstractOpMode {
         RAISED, LOWERED
     }
 
+    private enum CycleStyle{
+        HIGH, MID
+    }
+
 
     @Override
     protected void onStop() {

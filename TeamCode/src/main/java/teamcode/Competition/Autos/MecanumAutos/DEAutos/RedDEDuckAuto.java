@@ -29,6 +29,7 @@ public class RedDEDuckAuto extends AbstractOpMode {
 
     OpenCvWebcam webcam;
     MecanumBarcodePipeline.BarcodePosition position;
+    private final double POWER = 0.5;
 
 
     @Override
@@ -109,22 +110,22 @@ public class RedDEDuckAuto extends AbstractOpMode {
         armCommands.start();
         //arm.idleServos();
         drive.moveDistanceDE(400, 0, 0.3, 0);
+        Utils.sleep(500);
         drive.rotateDistanceDE(75, 0.3);
         Utils.sleep(500);
 
         drive.moveDistanceDE(1400, 90, 0.3, 0.2);
         //drive.moveDistanceDE(200, -90, 0.3, 0.2);
         flags[0] = true;
-        drive.moveDistanceDE(500, -180, 0.3, 0.2);
+        drive.moveDistanceDE(400, -180, POWER , 0.2);
         Utils.sleep(500);
         flags[1] =true;
-        drive.moveDistanceDE(400, 0, 0.3, 0.2);
-        drive.moveDistanceDE(2050, -72.69, 0.3, 0.2);
-        drive.rotateDistanceDE(75, 0.2);
-        drive.moveDistanceDE(100, -90, 0.2, 0.2);
+        drive.moveDistanceDE(300, 0, POWER, 0.2);
+        drive.moveDistanceDE(2200, -62.69, POWER * 2, 0.2);
+
 
         system.scoreDuckAuto();
-        drive.moveDistanceDE(200, 90, 0.3, 0.2);
+        drive.moveDistanceDE(200, 90, POWER, 0.2);
         drive.rotateDistanceDE(165, 0.3);
         arm.lowerLinkage();
         Utils.sleep(500);
@@ -135,20 +136,20 @@ public class RedDEDuckAuto extends AbstractOpMode {
         arm.intakeDumb(1.0);
         drive.moveDistanceDENoErrorCorrection(1000, -90, 0.2);
         //drive.moveDistanceDENoErrorCorrection(200, 0, 0.3);
-        drive.moveDistanceDENoErrorCorrection(600, 90, 0.2);
+        drive.moveDistanceDENoErrorCorrection(800, 90, 0.2);
         drive.brake();
         arm.preScoreDuck();
         arm.intakeDumb(0);
-        drive.rotateDistanceDE(80, 0.3);
+        drive.rotateDistanceDE(80, -0.3);
         Utils.sleep(200);
         flags[2] = true;
         drive.moveDistanceDE(1800, 90, 0.3,0.2);
-        drive.moveDistanceDENoErrorCorrection(800, 180, 0.3);
+        drive.moveDistanceDENoErrorCorrection(800, 180, POWER);
         //drive.rotateDistanceDE(75, 0.3);
         flags[3] = true;
         Utils.sleep(250);
         //drive.rotateDistanceDE(105, 0.3);
-        drive.moveDistanceDE(600, 0, 0.3,0.2);
+        drive.moveDistanceDE(600, 0, POWER,0.2);
 
 
 

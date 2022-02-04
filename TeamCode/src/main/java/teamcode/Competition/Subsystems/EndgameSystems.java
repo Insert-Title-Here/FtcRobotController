@@ -64,6 +64,7 @@ public class EndgameSystems {
         //carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.isBlue = isBlue;
+        zeroCap();
 
     }
 
@@ -166,14 +167,22 @@ public class EndgameSystems {
         carouselEncoderRed.setTargetPosition(pose);
         carouselEncoderRed.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs(carouselEncoderRed.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive()){
-            carouselRed.setPower(.1 * direction);
-            carouselBlue.setPower(.1 * direction);
+            if(Math.abs(carouselEncoderRed.getCurrentPosition()) < 15000){
+                carouselRed.setPower(.15 * direction);
+                carouselBlue.setPower(.15 * direction);
+
+            }else{
+                carouselRed.setPower(1 * direction);
+                carouselBlue.setPower(1 * direction);
+
+            }
             AbstractOpMode.currentOpMode().telemetry.addData("curr", carouselEncoderRed.getCurrentPosition());
             AbstractOpMode.currentOpMode().telemetry.addData("tar", carouselEncoderRed.getTargetPosition());
             AbstractOpMode.currentOpMode().telemetry.update();
 
         }
         carouselRed.setPower(0);
+        carouselBlue.setPower(0.1 * direction);
         carouselEncoderRed.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
