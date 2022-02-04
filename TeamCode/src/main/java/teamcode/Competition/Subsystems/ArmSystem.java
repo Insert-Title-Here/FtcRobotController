@@ -205,8 +205,9 @@ public class ArmSystem {
         if(linkage.getPosition() != LINKAGE_HOUSED){
             preScore();
         }
-        moveSlide(SLIDE_POWER, (int) position);
         linkage.setPosition(LINKAGE_SCORE);
+        moveSlide(SLIDE_POWER, (int) position);
+
         stage = stage.EXTENDED;
     }
 
