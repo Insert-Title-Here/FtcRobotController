@@ -102,7 +102,7 @@ public class EndgameSystems {
         carouselEncoderRed.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselEncoderBlue.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        int pose = 20000;
+        int pose = 18000;
         long currentTime = System.currentTimeMillis();
 
         carouselEncoderRed.setTargetPosition(pose);
@@ -113,12 +113,20 @@ public class EndgameSystems {
 
         carouselEncoderBlue.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs(carouselEncoderRed.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive() && Math.abs(carouselEncoderBlue.getCurrentPosition()) < Math.abs(carouselEncoderBlue.getTargetPosition())){
+        //while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs(carouselEncoderRed.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive() && Math.abs(carouselEncoderBlue.getCurrentPosition()) < Math.abs(carouselEncoderBlue.getTargetPosition())){
+        while (Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs(carouselEncoderRed.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive()) {
             AbstractOpMode.currentOpMode().telemetry.addData("target", pose);
-            AbstractOpMode.currentOpMode().telemetry.addData("current", carouselEncoderRed.getCurrentPosition());
+            AbstractOpMode.currentOpMode().telemetry.addData("current", Math.abs(carouselEncoderRed.getCurrentPosition()));
             AbstractOpMode.currentOpMode().telemetry.update();
-            carouselBlue.setPower(0.25  * multiplier);
-            carouselRed.setPower(0.25 * multiplier);
+            // first 8000 ticks go normal, then speed
+            if (Math.abs(carouselEncoderRed.getCurrentPosition()) < carouselEncoderRed.getTargetPosition() * 0.44) {
+                carouselBlue.setPower(0.25  * multiplier);
+                carouselRed.setPower(0.25 * multiplier);
+            } else {
+                carouselBlue.setPower(1  * multiplier);
+                carouselRed.setPower(1 * multiplier);
+            }
+
 //            if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.1){
 //                if(carouselEncoder.getCurrentPosition() > carouselEncoder.getTargetPosition() * 0.2){
 //                    carousel.setPower(1 );
