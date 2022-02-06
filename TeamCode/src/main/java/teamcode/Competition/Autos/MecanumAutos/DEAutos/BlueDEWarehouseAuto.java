@@ -121,6 +121,7 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
         drive.rotateDistanceDE(90, 0.3);
         sleep(1000);
         drive.moveDistanceDE(1700, -90, 0.6, 0);
+        sleep(1000);
         drive.moveDistanceDE(1200, 0, 0.3, 0);
 
 
