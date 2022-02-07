@@ -43,9 +43,9 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
                     if(position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
                         arm.runConveyorPos(1.0, 2000);
                     }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
-                        arm.moveSlide( 1.0, Constants.MEDIUM_POSITION);
+                        arm.moveSlide( 1.0, Constants.MEDIUM_POSITION + 1000);
                     }else{
-                        arm.moveSlide(1.0, Constants.TOP_POSITION);
+                        arm.moveSlide(1.0, Constants.TOP_POSITION + 1000);
                     }
                     flags[0] = false;
                     while(!flags[1]);
@@ -113,14 +113,18 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
 
         drive.moveDistanceDE(500, 0, 0.3, 0);
         flags[0] = true;
-        drive.rotateDistanceDE(128, 0.3);
+        drive.rotateDistanceDE(120, 0.3);
         sleep(1000);
-        drive.moveDistanceDE(490, -180, 0.3, 0);
+        drive.moveDistanceDE(440, -180, 0.3, 0);
         flags[1] = true;
         sleep(1000);
         drive.rotateDistanceDE(90, 0.3);
         sleep(1000);
+<<<<<<< Updated upstream
         drive.moveDistanceDE(1700, -90, 0.6, 0);
+=======
+        drive.moveDistanceDE(1700, -90, 0.3, 0);
+>>>>>>> Stashed changes
         sleep(1000);
         drive.moveDistanceDE(1200, 0, 0.3, 0);
 

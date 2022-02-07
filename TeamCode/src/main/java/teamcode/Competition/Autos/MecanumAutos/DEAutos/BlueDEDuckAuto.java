@@ -43,15 +43,18 @@ public class BlueDEDuckAuto extends AbstractOpMode {
                 while(!flags[0]);
                 if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
                     arm.raise( Constants.BOTTOM_POSITION);
-                    Utils.sleep(250);
-                    arm.runConveyorPos(0.8, 2000);
+
                 }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
                     arm.raise( Constants.MEDIUM_POSITION + 1500);
                 }else {
                     arm.raise( Constants.TOP_POSITION +1000);
                 }
                 while(!flags[1]);
-                arm.score();
+                if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
+                    arm.runConveyorPos(0.8, 2000);
+                }else {
+                    arm.score();
+                }
                 try {
                     Thread.currentThread().sleep(500);
                 } catch (InterruptedException e) {
@@ -112,15 +115,16 @@ public class BlueDEDuckAuto extends AbstractOpMode {
         //drive.moveDistanceDE(200, -90, 0.3, 0.2);
         flags[0] = true;
         Utils.sleep(500);
-        drive.moveDistanceDE(400, -180, 0.3, 0.2);
+        drive.moveDistanceDE(350, -180, 0.3, 0.2);
         flags[1] =true;
-        drive.moveDistanceDE(300, 0, 0.3, 0.2);
-        drive.moveDistanceDE(1920, 70, 0.3, 0.2);
+        Utils.sleep(500);
+        drive.moveDistanceDE(250, 0, 0.3, 0.2);
+        drive.moveDistanceDE(2100, 70, 0.3, 0.2);
         drive.rotateDistanceDE(-75, 0.2);
         drive.moveDistanceDENoErrorCorrection(100, 90, 0.2);
 
         //drive.setStrafe(-0.01);
-        system.scoreDuckAuto();
+        drive.spinDuck(true);
         drive.moveDistanceDE(100, -90, 0.3, 0.2);
         drive.rotateDistanceDE(-165, 0.3);
         arm.lowerLinkage();

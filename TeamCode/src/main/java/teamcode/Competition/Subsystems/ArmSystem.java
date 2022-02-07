@@ -22,12 +22,12 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.04;
-    private static final double HOUSING_POSITION = 0.2 ; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
+    private static final double HOUSING_POSITION = 0.15 ; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.5;
 
     private static final double LINKAGE_DOWN = 0.26; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.6;
-    private static final double LINKAGE_SCORE = 0.7;
+    private static final double LINKAGE_SCORE = 0.8;
 
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -93,6 +93,7 @@ public class ArmSystem {
     public void runConveyorPos(double power, int position){
         linkage.setPosition(LINKAGE_SCORE);
         house.setPosition(SCORING_POSITION);
+        Utils.sleep(500);
         conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         conveyorMotor.setTargetPosition(position);
         conveyorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -192,7 +193,6 @@ public class ArmSystem {
         Utils.sleep(250);
         linkage.setPosition(LINKAGE_HOUSED);
         stage = Stage.HOUSED;
-        intakeDumb(0);
     }
 
     public boolean isLinkageInPreScore(){
@@ -214,6 +214,14 @@ public class ArmSystem {
     //temporary tele op scoring function w/o color sensor
     public synchronized void score(){
         house.setPosition(SCORING_POSITION);
+    }
+
+    public synchronized void scoreAuto(boolean far){
+        if(far){
+            house.setPosition(SCORING_POSITION + 0.2);
+        }else{
+            house.setPosition(SCORING_POSITION);
+        }
     }
 
     public synchronized void retract(){

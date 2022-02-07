@@ -185,6 +185,7 @@ public class TeleOpRed extends AbstractOpMode {
 
             systems.runCarousel(0);
             arm.intakeDumb(0);
+            arm.setWinchPower(0 );
         }
 
 

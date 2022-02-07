@@ -34,14 +34,9 @@ public class EndgameSystems {
 
 
     public void runCarousel(double power) {
-        double direction;
-        if(isBlue){
-            direction = 1;
-        }else {
-            direction = -1;
-        }
-        carouselRed.setPower(power * direction);
-        carouselBlue.setPower(power * direction);
+
+        carouselRed.setPower(power );
+        carouselBlue.setPower(power);
     }
 
     public double getCarouselPos(){
@@ -184,6 +179,13 @@ public class EndgameSystems {
         carouselRed.setPower(0);
         carouselBlue.setPower(0.1 * direction);
         carouselEncoderRed.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public DcMotor getBlueCarouselEncoder() {
+        return carouselEncoderBlue;
+    }
+    public DcMotor getRedCarouselEncoder() {
+        return carouselEncoderRed;
     }
 
 }

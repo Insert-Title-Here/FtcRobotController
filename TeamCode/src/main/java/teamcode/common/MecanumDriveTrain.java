@@ -80,7 +80,6 @@ public class MecanumDriveTrain {
         distanceFront = hardwareMap.get(DistanceSensor.class, frontDistance);
         distanceBack = hardwareMap.get(DistanceSensor.class, backDistance);
         this.localizer = localizer;
-        this.systems = systems;
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
@@ -145,6 +144,49 @@ public class MecanumDriveTrain {
         double radians = Math.toRadians(degrees);
         rotateDistanceDERadian(radians, power);
     }
+
+
+    public void spinDuck(boolean blue){
+        systems.setCarouselMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        systems.setCarouselMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        int pose = -25000;
+        double direction;
+        DcMotor carouselEncoder;
+        if(blue){
+            carouselEncoder = systems.getBlueCarouselEncoder();
+            direction = -1;
+        }else {
+            direction = 1;
+            carouselEncoder = systems.getRedCarouselEncoder();
+        }
+        pose *= direction;
+
+        carouselEncoder.setTargetPosition(pose);
+        carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(Math.abs(carouselEncoder.getCurrentPosition()) < Math.abs(carouselEncoder.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive()){
+            if(Math.abs(carouselEncoder.getCurrentPosition()) < 100) {
+            setStrafe(0.02);
+            }else{
+                brake();
+            }
+
+            if(Math.abs(carouselEncoder.getCurrentPosition()) < 10000){
+                systems.runCarousel(0.1 * direction);
+            }else{
+                systems.runCarousel(0.5 * direction);
+                systems.runCarousel(0.5 * direction);
+
+            }
+            AbstractOpMode.currentOpMode().telemetry.addData("curr", carouselEncoder.getCurrentPosition());
+            AbstractOpMode.currentOpMode().telemetry.addData("tar", carouselEncoder.getTargetPosition());
+            AbstractOpMode.currentOpMode().telemetry.update();
+
+        }
+        systems.runCarousel(0);
+        carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
 
     public double getAngle(){
         return imu.getAngularOrientation().firstAngle;

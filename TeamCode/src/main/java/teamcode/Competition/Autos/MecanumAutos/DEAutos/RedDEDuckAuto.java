@@ -34,33 +34,15 @@ public class RedDEDuckAuto extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        system = new EndgameSystems(hardwareMap, false);
-        drive = new MecanumDriveTrain(hardwareMap, true, system);
+        system = new EndgameSystems(hardwareMap, true);
+        drive = new MecanumDriveTrain(hardwareMap, false, system);
         arm = new ArmSystem(hardwareMap, false);
         Debug.log("here");
         flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread(){
             public void run() {
 
-                while (!flags[0]) ;
-                if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-                    arm.raise( Constants.BOTTOM_POSITION);
-                    Utils.sleep(250);
-                    arm.runConveyorPos(0.8, 2000);
-                } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
-                    arm.raise(Constants.MEDIUM_POSITION + 1500);
-                } else {
-                    arm.raise(Constants.TOP_POSITION);
-                }
-                while (!flags[1]) ;
-                arm.score();
-                try {
-                    Thread.currentThread().sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                arm.retract();
-                while (!flags[2]) ;
+                while (!flags[2]);
 
                 Utils.sleep(500);
                 arm.raise(Constants.TOP_POSITION + 1000);
@@ -116,40 +98,63 @@ public class RedDEDuckAuto extends AbstractOpMode {
 
         drive.moveDistanceDE(1400, 90, 0.3, 0.2);
         //drive.moveDistanceDE(200, -90, 0.3, 0.2);
-        flags[0] = true;
+        if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+            arm.raise(Constants.BOTTOM_POSITION);
+            Utils.sleep(250);
+
+        } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
+            arm.raise(Constants.MEDIUM_POSITION + 2500);
+        } else {
+            arm.raise(Constants.TOP_POSITION + 2000);
+        }
         drive.moveDistanceDE(400, -180, POWER , 0.2);
-        Utils.sleep(500);
-        flags[1] =true;
-        drive.moveDistanceDE(300, 0, POWER, 0.2);
-        drive.moveDistanceDE(2200, -62.69, POWER * 2, 0.2);
+        Utils.sleep(800);
+        if(position == MecanumBarcodePipeline.BarcodePosition.RIGHT){
+            arm.scoreAuto(false);
+        }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
+            arm.scoreAuto(true);
+        }else{
+            arm.runConveyorPos(0.8, 2000);
+        }
+        try {
+            Thread.currentThread().sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        arm.retract();
+
+        drive.moveDistanceDE(250, 0, POWER, 0.2);
+        Utils.sleep(300);
+        drive.moveDistanceDE(2180, -72.69, 0.3, 0.2);
 
 
-        system.scoreDuckAuto();
-        drive.moveDistanceDE(200, 90, POWER, 0.2);
+        drive.spinDuck(false);
+        drive.moveDistanceDE(300, 90, POWER, 0.2);
         drive.rotateDistanceDE(165, 0.3);
         arm.lowerLinkage();
         Utils.sleep(500);
         drive.moveDistanceDENoErrorCorrection(200, -90, 0.2);
 
-        drive.moveDistanceDENoErrorCorrection(300, 0, 0.2);
+        drive.moveDistanceDENoErrorCorrection(350, 0, 0.2);
         //drive.setPower(0.2,0.2,0.2,0.2);
         arm.intakeDumb(1.0);
         drive.moveDistanceDENoErrorCorrection(1000, -90, 0.2);
         //drive.moveDistanceDENoErrorCorrection(200, 0, 0.3);
-        drive.moveDistanceDENoErrorCorrection(800, 90, 0.2);
         drive.brake();
         arm.preScoreDuck();
-        arm.intakeDumb(0);
+        Utils.sleep(500);
         drive.rotateDistanceDE(80, -0.3);
         Utils.sleep(200);
+        arm.intakeDumb(0);
         flags[2] = true;
-        drive.moveDistanceDE(1800, 90, 0.3,0.2);
-        drive.moveDistanceDENoErrorCorrection(800, 180, POWER);
+        drive.moveDistanceDE(1600, 90, 0.3,0.2);
+        Utils.sleep(250);
+        drive.moveDistanceDENoErrorCorrection(200, 180, POWER);
         //drive.rotateDistanceDE(75, 0.3);
         flags[3] = true;
         Utils.sleep(250);
         //drive.rotateDistanceDE(105, 0.3);
-        drive.moveDistanceDE(600, 0, POWER,0.2);
+        drive.moveDistanceDE(900, 0, POWER,0.2);
 
 
 
