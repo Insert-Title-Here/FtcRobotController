@@ -120,11 +120,11 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
         sleep(1000);
         drive.rotateDistanceDE(90, 0.3);
         sleep(1000);
-<<<<<<< Updated upstream
+//<<<<<<< Updated upstream
         drive.moveDistanceDE(1700, -90, 0.6, 0);
-=======
+//=======
         drive.moveDistanceDE(1700, -90, 0.3, 0);
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
         sleep(1000);
         drive.moveDistanceDE(1200, 0, 0.3, 0);
 
