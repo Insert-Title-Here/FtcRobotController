@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -14,6 +17,7 @@ import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 
+import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.test.MasonTesting.CvDetectionPipeline;
 
@@ -33,6 +37,9 @@ public class MecanumDriveTrain {
     Vector2D previousVelocity;
     Vector2D previousError;
     double previousOmegaError;
+    private NormalizedColorSensor sensor;
+    ArmSystem arm;
+
 
     LynxModule hub;
 
@@ -90,7 +97,7 @@ public class MecanumDriveTrain {
     /**
      * drive encoder constructor
      */
-    public MecanumDriveTrain(HardwareMap hardwareMap, boolean isRed, EndgameSystems systems){
+    public MecanumDriveTrain(HardwareMap hardwareMap, boolean isRed, EndgameSystems systems, ArmSystem arm){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -108,6 +115,10 @@ public class MecanumDriveTrain {
         fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
         br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
+        sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
+        sensor.setGain(280); //325 is tested value but i think I trust this one more
+        this.arm = arm;
+
 
 
         hub = hardwareMap.get(LynxModule.class, "Control Hub");
@@ -128,7 +139,10 @@ public class MecanumDriveTrain {
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
-
+        Debug.log(fl.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        Debug.log(fr.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        Debug.log(bl.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        Debug.log(br.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
     }
 
     public synchronized void rotateDistanceDERadian(double radians, double power){
@@ -214,6 +228,8 @@ public class MecanumDriveTrain {
 
 
 
+
+
         LynxModule.BulkData data = hub.getBulkData();
         //AbstractOpMode.currentOpMode().telemetry.addData("fl", data.getMotorCurrentPosition(0));
         AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
@@ -246,6 +262,139 @@ public class MecanumDriveTrain {
         brake();
         rotateDistanceDERadian(globalHeading, omega);
     }
+
+    private void setPIDFCoefficients(PIDFCoefficients coefficients){
+        fl.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coefficients);
+        fr.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coefficients);
+        bl.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coefficients);
+        br.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coefficients);
+    }
+
+    public synchronized void moveDistanceDEVelocity(int distance, double degrees, double velocity){
+        double radians = Math.toRadians(degrees);
+        velocity *= getSign(distance);
+        Vector2D vec = Vector2D.fromAngleMagnitude(radians, velocity);
+        double globalHeading = imu.getAngularOrientation().firstAngle;
+        radians = radians + (Math.PI / 4.0) ; //45deg + globalHeading
+        int flDistance = (int)(Math.sin(radians) * distance);
+        int frDistance = (int)(Math.cos(radians) * distance);
+        int blDistance = (int)(Math.cos(radians) * distance);
+        int brDistance = (int)(Math.sin(radians) * distance);
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+        while(data.getMotorCurrentPosition(0) < flDistance && data.getMotorCurrentPosition(1) < frDistance &&
+                data.getMotorCurrentPosition(2) < blDistance && data.getMotorCurrentPosition(3) < brDistance){
+            hub.clearBulkCache();
+            data = hub.getBulkData();
+            setVelocity(vec, 0);
+
+
+        }
+    }
+    public void driveColorSensor(double pow){
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        boolean detectedElement = false;
+        while(!detectedElement){
+            arm.lowerLinkage();
+            arm.intakeDumb(1.0);
+            NormalizedRGBA colors = sensor.getNormalizedColors();
+            double green = colors.green;
+            if (green > 0.9) {
+                detectedElement = true;
+            } else {
+                detectedElement = false;
+            }
+            setPower(pow, pow, pow, pow);
+        }
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+        int posAvg = 0;
+        for(int i = 0; i < 4; i++){
+            int pos = data.getMotorCurrentPosition(i);
+            posAvg += pos;
+        }
+        posAvg = posAvg / 4;
+        moveDistanceDEVelocity(-(posAvg), 0, 6);
+        strafeDistanceSensor(0.3, 0);
+    }
+
+    public void semiDumbVisionDriving(double pow){
+        while(!somethingInThePartition()){ //add the  conditional with something in the partition
+            setStrafe(pow);
+        }
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        boolean detectedElement = false;
+        while(!detectedElement){
+            arm.lowerLinkage();
+            arm.intakeDumb(1.0);
+            NormalizedRGBA colors = sensor.getNormalizedColors();
+            double green = colors.green;
+            if (green > 0.9) {
+                detectedElement = true;
+            } else {
+                detectedElement = false;
+            }
+            setPower(pow, pow, pow, pow);
+        }
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+        int posAvg = 0;
+        for(int i = 0; i < 4; i++){
+            int pos = data.getMotorCurrentPosition(i);
+            posAvg += pos;
+        }
+        posAvg = posAvg / 4;
+        moveDistanceDEVelocity(-posAvg, 0, 6);
+        strafeDistanceSensor(0.3, 0);
+    }
+    private boolean somethingInThePartition(){
+        //replace this with something that actually works Mason
+        return true;
+    }
+    public void SmartVisionDriving(double pow, Object pipeline){
+        double theta = 0;
+        pipeline.getClass(); //getThetaValue()
+        int tics = inchesToTics();
+        theta += Math.toRadians(5);
+        moveDistanceDE(tics, theta, pow, 0);
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        boolean detectedElement = false;
+        while(!detectedElement){
+            arm.lowerLinkage();
+            arm.intakeDumb(1.0);
+            NormalizedRGBA colors = sensor.getNormalizedColors();
+            double green = colors.green;
+            if (green > 0.9) {
+                detectedElement = true;
+            } else {
+                detectedElement = false;
+            }
+            setPower(pow, pow, pow, pow);
+        }
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+        int posAvg = 0;
+        for(int i = 0; i < 4; i++){
+            int pos = data.getMotorCurrentPosition(i);
+            posAvg += pos;
+        }
+        posAvg = posAvg / 4;
+        double secondDistance = tics * Math.cos(theta);
+        moveDistanceDEVelocity(-(int)(posAvg + secondDistance), 0, 6);
+        strafeDistanceSensor(0.3, 0);
+    }
+    private int inchesToTics(){
+        return 0;
+        //TODO import this from localizer
+    }
+
+
+
 
     public synchronized void moveDistanceDENoErrorCorrection(int distance, double degrees, double power){
         double radians = Math.toRadians(degrees);
@@ -504,19 +653,12 @@ public class MecanumDriveTrain {
         AbstractOpMode.currentOpMode().telemetry.clear();
         while(distanceFront.getDistance(DistanceUnit.INCH) > distanceFrontThreshold && distanceBack.getDistance(DistanceUnit.INCH) > distanceBackThreshold){
 
-            Utils.sleep(500);
+            Utils.sleep(100);
 
             Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0), power);
             //Vector2D passedVector = new Vector2D(passedX, passedY);
-            AbstractOpMode.currentOpMode().telemetry.addData("front", distanceFront.getDistance(DistanceUnit.INCH));
-            AbstractOpMode.currentOpMode().telemetry.addData("back", distanceBack.getDistance(DistanceUnit.INCH));
-            AbstractOpMode.currentOpMode().telemetry.addData("front", distanceFront);
-            AbstractOpMode.currentOpMode().telemetry.addData("back", distanceBack);
-            AbstractOpMode.currentOpMode().telemetry.addData("front", lowMagnitudeFrontReading);
-            AbstractOpMode.currentOpMode().telemetry.addData("back", lowMagnitudeBackReading);
 
-            AbstractOpMode.currentOpMode().telemetry.update();
-            setPower(vec, 0);
+             setPower(vec, 0);
 
             // previousVelocity.mult
 

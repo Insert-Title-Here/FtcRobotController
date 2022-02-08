@@ -41,7 +41,6 @@ public class ArmSystem {
 
     private ExpansionHubMotor intake, winchMotor, winchEncoder, conveyorMotor;
     private Servo house, linkage;
-    private NormalizedColorSensor sensor;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
 
@@ -56,8 +55,6 @@ public class ArmSystem {
         linkage = hardwareMap.servo.get("Linkage");
         //carousel = hardwareMap.get(CRServo.class, "Carousel");
 
-        sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
-        sensor.setGain(280); //325 is tested value but i think I trust this one more
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         winchEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         winchEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -78,9 +75,6 @@ public class ArmSystem {
 
     }
 
-    public double getGreen(){
-        return sensor.getNormalizedColors().green;
-    }
 
 
 
@@ -117,19 +111,6 @@ public class ArmSystem {
 
         if(stage == stage.INTAKING || stage == Stage.IDLE) {
             boolean detectedElement = false;
-            NormalizedRGBA colors = sensor.getNormalizedColors();
-            double green = colors.green;
-            double blue = colors.blue;
-
-            if (green > 0.9) {
-                if (blue > 0.9) {
-                    detectedElement = true;
-                } else {
-                    detectedElement = true;
-                }
-            } else {
-                detectedElement = false;
-            }
 
             intakeDumb(intakePower);
             stage = Stage.INTAKING;
@@ -147,19 +128,6 @@ public class ArmSystem {
         long start = System.currentTimeMillis();
         while(!detectedElement){
             long current = System.currentTimeMillis();
-            NormalizedRGBA colors = sensor.getNormalizedColors();
-            double green = colors.green;
-            double blue = colors.blue;
-
-            if (green > 0.9) {
-                if (blue > 0.9) {
-                    detectedElement = true;
-                } else {
-                    detectedElement = true;
-                }
-            } else {
-                detectedElement = false;
-            }
 
             intakeDumb(intakePower);
             if(detectedElement) {

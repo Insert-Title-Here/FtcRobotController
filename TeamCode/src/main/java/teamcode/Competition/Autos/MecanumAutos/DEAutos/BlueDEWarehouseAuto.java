@@ -32,8 +32,8 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         system = new EndgameSystems(hardwareMap, false);
-        drive = new MecanumDriveTrain(hardwareMap, true, system);
         arm = new ArmSystem(hardwareMap, false);
+        drive = new MecanumDriveTrain(hardwareMap, true, system, arm);
         Debug.log("here");
         flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread(){
@@ -120,11 +120,10 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
         sleep(1000);
         drive.rotateDistanceDE(90, 0.3);
         sleep(1000);
-//<<<<<<< Updated upstream
         drive.moveDistanceDE(1700, -90, 0.6, 0);
-//=======
         drive.moveDistanceDE(1700, -90, 0.3, 0);
-//>>>>>>> Stashed changes
+        drive.moveDistanceDE(1700, -90, 0.6, 0);
+        drive.moveDistanceDE(1700, -90, 0.3, 0);
         sleep(1000);
         drive.moveDistanceDE(1200, 0, 0.3, 0);
 
