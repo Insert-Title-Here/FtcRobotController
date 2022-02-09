@@ -42,7 +42,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
 
     //static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
 
-    Thread armMovementThread;
+    //Thread armMovementThread;
     private volatile boolean moveArm;
 
 
@@ -112,13 +112,17 @@ public class WarehouseFreightRed extends OpModeWrapper {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         moveArm = false;
-        armMovementThread = new Thread(){
+        /*armMovementThread = new Thread(){
             @Override
             public void run(){
                 while(!moveArm);
-                capArm.goToPosition(0);
+
+
             }
         };
+
+
+         */
 
         while(!opModeIsActive()){
             telemetry.addData("pos", bPipeline.getPos());
@@ -132,7 +136,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
 
     @Override
     protected void onStart() {
-        armMovementThread.start();
+        //armMovementThread.start();
         capstonePos = bPipeline.getPos();
         //sleep(15000);
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -192,15 +196,21 @@ public class WarehouseFreightRed extends OpModeWrapper {
             capArm.toggleGrab();
 
             drive.driveAuto(0.3, 150, MecanumDriveTrain.MovementType.STRAIGHT);
-            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAFE);
+            drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAFE);
 
 
             //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
-        moveArm = true;
+        //moveArm = true;
 
-        drive.driveAuto(0.3, 2050, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 150, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        capArm.goToPosition(0);
+
+        drive.driveAuto(0.3, -220, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        drive.driveAuto(0.3, 2100, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1300, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.STRAIGHT);
