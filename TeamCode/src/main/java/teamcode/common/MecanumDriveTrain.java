@@ -128,6 +128,7 @@ public class MecanumDriveTrain {
         String frontDistance = "FrontDistanceSensor";
         String backDistance = "BackDistanceSensor";
         if(!isRed){
+            Debug.log("here");
             frontDistance += "Red";
             backDistance += "Red";
         }else{
@@ -139,10 +140,9 @@ public class MecanumDriveTrain {
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
-        Debug.log(fl.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        Debug.log(fr.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        Debug.log(bl.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        Debug.log(br.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        setPIDFCoefficients(new PIDFCoefficients(1, 0.5, 1.0, 0));
+
+
     }
 
     public synchronized void rotateDistanceDERadian(double radians, double power){
@@ -274,7 +274,6 @@ public class MecanumDriveTrain {
         double radians = Math.toRadians(degrees);
         velocity *= getSign(distance);
         Vector2D vec = Vector2D.fromAngleMagnitude(radians, velocity);
-        double globalHeading = imu.getAngularOrientation().firstAngle;
         radians = radians + (Math.PI / 4.0) ; //45deg + globalHeading
         int flDistance = (int)(Math.sin(radians) * distance);
         int frDistance = (int)(Math.cos(radians) * distance);
@@ -284,18 +283,28 @@ public class MecanumDriveTrain {
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
-        while(data.getMotorCurrentPosition(0) < flDistance && data.getMotorCurrentPosition(1) < frDistance &&
-                data.getMotorCurrentPosition(2) < blDistance && data.getMotorCurrentPosition(3) < brDistance){
+        while(Math.abs(data.getMotorCurrentPosition(0))< Math.abs(flDistance) && Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance) &&
+                Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance)){
             hub.clearBulkCache();
             data = hub.getBulkData();
+            AbstractOpMode.currentOpMode().telemetry.addData("fl",data.getMotorCurrentPosition(0));
+            //AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+            //AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
+            //AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+            //AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
+            AbstractOpMode.currentOpMode().telemetry.update();
+
             setVelocity(vec, 0);
-
-
         }
+        brake();
     }
     public void driveColorSensor(double pow){
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         boolean detectedElement = false;
         while(!detectedElement){
             arm.lowerLinkage();
@@ -311,14 +320,17 @@ public class MecanumDriveTrain {
         }
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
-        int posAvg = 0;
+        double posAvg = 0;
         for(int i = 0; i < 4; i++){
-            int pos = data.getMotorCurrentPosition(i);
+            int pos = Math.abs(data.getMotorCurrentPosition(i));
+            Debug.log(pos);
             posAvg += pos;
         }
-        posAvg = posAvg / 4;
-        moveDistanceDEVelocity(-(posAvg), 0, 6);
-        strafeDistanceSensor(0.3, 0);
+        posAvg = posAvg / (4.0 * 0.707); //4 cos 45
+        arm.intakeDumb(-1.0);
+        arm.preScore();
+        moveDistanceDEVelocity((int)(posAvg), 180, 6);
+
     }
 
     public void semiDumbVisionDriving(double pow){
@@ -654,13 +666,12 @@ public class MecanumDriveTrain {
         while(distanceFront.getDistance(DistanceUnit.INCH) > distanceFrontThreshold && distanceBack.getDistance(DistanceUnit.INCH) > distanceBackThreshold){
 
             Utils.sleep(100);
+            AbstractOpMode.currentOpMode().telemetry.addData("front", distanceFront.getDistance(DistanceUnit.INCH));
+            AbstractOpMode.currentOpMode().telemetry.addData("back", distanceBack.getDistance(DistanceUnit.INCH));
+            AbstractOpMode.currentOpMode().telemetry.update();
 
             Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0), power);
-            //Vector2D passedVector = new Vector2D(passedX, passedY);
-
              setPower(vec, 0);
-
-            // previousVelocity.mult
 
         }
         brake();

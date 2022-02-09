@@ -33,8 +33,8 @@ public class BlueDEDuckAuto extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         system = new EndgameSystems(hardwareMap, true);
-        drive = new MecanumDriveTrain(hardwareMap, false, system);
         arm = new ArmSystem(hardwareMap, false);
+        drive = new MecanumDriveTrain(hardwareMap, false, system, arm);
         Debug.log("here");
         flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread(){

@@ -147,11 +147,12 @@ public class ArmSystem {
 
     //will be merged into intake() later
     public void preScore(){
-        intakeDumb(0);
         house.setPosition(HOUSING_POSITION);
         Utils.sleep(250);
         linkage.setPosition(LINKAGE_HOUSED);
         stage = Stage.HOUSED;
+        intakeDumb(0);
+
         //Debug.log("finish");
 
 

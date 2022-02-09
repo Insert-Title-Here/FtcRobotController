@@ -15,7 +15,7 @@ public class AngularFreightTest extends AbstractOpMode{
 
     @Override
     protected void onInitialize() {
-        drive = new MecanumDriveTrain(hardwareMap, true, null);
+        drive = new MecanumDriveTrain(hardwareMap, true, null, null);
         Debug.log("Initializing");
     }
 
