@@ -8,11 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.units.qual.C;
-
-@Autonomous(name = "wheeeeeeeeeee", group = "Linear Opmode")
+@Autonomous(name = "Underscore", group = "Linear Opmode")
 //@Disabled
-public class BaseDrive extends LinearOpMode  {
+public class BaseDriveSolomon extends LinearOpMode  {
 
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -22,35 +20,42 @@ public class BaseDrive extends LinearOpMode  {
     DcMotor frontLeft;
     DcMotor frontRight;
 
-    DcMotor carousel;
-
     double power = 0.5;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        DriveTrainTester driveTrain =  new DriveTrainTester(hardwareMap);
-        Carousel carousel = new Carousel(hardwareMap);
+        DriveTrainTester myDriveTrain =  new DriveTrainTester(hardwareMap);
+
 
         waitForStart();
 
-        driveTrain.move(1);
+        myDriveTrain.strafe(.5);
         sleep(1000);
-        driveTrain.stopMoving();
-        carousel.spin(1);
+        myDriveTrain.stopMoving();
+
+        myDriveTrain.strafe(-.5);
         sleep(1000);
-        carousel.stop();
-        driveTrain.strafe(1);
-        sleep(500);
-        driveTrain.stopMoving();
-        sleep(100);
-        driveTrain.move(-1);
-        sleep(1000);
-        driveTrain.stopMoving();
-        sleep(100);
-        driveTrain.strafe(-1);
-        sleep(500);
-        driveTrain.stopMoving();
-  
+        myDriveTrain.stopMoving();
+
+        myDriveTrain.driveEncoders(1400,.5);
+
+/*
+
+       myDriveTrain.move(.5);
+
+       sleep(1000);
+
+       myDriveTrain.stopMoving();
+
+       myDriveTrain.rotate(1);
+
+       sleep(1000);
+
+       myDriveTrain.stopMoving();
+
+
+*/
+
     }
 
 }
