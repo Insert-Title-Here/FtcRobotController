@@ -131,6 +131,8 @@ public class MagneticArm {
         //} else {
             //magneticExtension.setPower(0);
         //}
+
+        magneticExtension.setPower(power);
     }
 
     public double[] getTelemetry() {

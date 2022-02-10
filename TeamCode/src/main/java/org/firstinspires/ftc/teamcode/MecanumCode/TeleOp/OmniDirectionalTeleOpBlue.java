@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
 @TeleOp(name="MecanumOpMode Blue")
 public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
-    MagneticArm arm;
+    MagneticArm arm;  
     MecanumDriveTrain drive;
     Carousel carousel;
     CapstoneArm capArm;
