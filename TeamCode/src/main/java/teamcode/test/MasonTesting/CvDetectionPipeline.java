@@ -64,7 +64,6 @@ public class CvDetectionPipeline extends OpenCvPipeline {
         Mat mask = new Mat();
         Mat binary = new Mat();
         ArrayList<MatOfPoint> contours = new ArrayList<>();
-
         // change src mat to be frame param
 
         // apply blur, change color, get range
@@ -167,11 +166,6 @@ public class CvDetectionPipeline extends OpenCvPipeline {
         blurred.release();
         mask.release();
         binary.release();
-
-        Debug.log("------------");
-        for (int val : height.keySet()) {
-            Debug.log("px: " + val + " | d: " + height.get(val) + "in");
-        }
 
         height.clear();
 

@@ -1,6 +1,7 @@
 package teamcode.Competition.Autos.MecanumAutos.DEAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -28,7 +29,6 @@ public class BlueDEDuckAuto extends AbstractOpMode {
 
     OpenCvWebcam webcam;
     MecanumBarcodePipeline.BarcodePosition position;
-
 
     @Override
     protected void onInitialize() {
