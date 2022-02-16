@@ -73,8 +73,6 @@ public class MecanumBarcodePipeline extends OpenCvPipeline {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(39, 85);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(190, 85);
         }
-        input.get(1, 1, new byte[1]);
-        Imgproc.watershed(new Mat(), new Mat());
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
                 REGION1_TOPLEFT_ANCHOR_POINT.y);
@@ -135,6 +133,12 @@ public class MecanumBarcodePipeline extends OpenCvPipeline {
         AbstractOpMode.currentOpMode().telemetry.update();
         return input;
     }
+
+    /*
+    input.get(1, 1, new byte[1]);
+        Imgproc.watershed(new Mat(), new Mat());
+
+     */
 
     public BarcodePosition getPos() {
         return position;

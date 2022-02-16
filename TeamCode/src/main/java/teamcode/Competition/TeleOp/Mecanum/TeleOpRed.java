@@ -147,8 +147,10 @@ public class TeleOpRed extends AbstractOpMode {
 
             }
         } else if(gamepad1.b) {
+            arm.intakeDumb(-1.0);
             arm.preScore();
             linkageState = LinkageState.RAISED;
+            arm.intakeDumb(0);
         } else if (gamepad1.dpad_up) {
             // set to full
             arm.setWinchPower(1);

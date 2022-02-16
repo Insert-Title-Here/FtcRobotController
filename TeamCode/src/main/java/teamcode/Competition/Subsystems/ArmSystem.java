@@ -87,7 +87,6 @@ public class ArmSystem {
     public void runConveyorPos(double power, int position){
         linkage.setPosition(LINKAGE_SCORE);
         house.setPosition(SCORING_POSITION);
-        Utils.sleep(500);
         conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         conveyorMotor.setTargetPosition(position);
         conveyorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -151,7 +150,6 @@ public class ArmSystem {
         Utils.sleep(250);
         linkage.setPosition(LINKAGE_HOUSED);
         stage = Stage.HOUSED;
-        intakeDumb(0);
 
         //Debug.log("finish");
 
