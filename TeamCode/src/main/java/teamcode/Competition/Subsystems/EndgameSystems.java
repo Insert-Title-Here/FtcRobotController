@@ -32,6 +32,8 @@ public class EndgameSystems {
     private DcMotor carouselEncoderBlue, carouselEncoderRed;
     private boolean isBlue;
 
+    public double xCapSpeed = 0.00018;
+    public double yCapSpeed = 0.00102;
 
     public void runCarousel(double power) {
 
@@ -84,8 +86,8 @@ public class EndgameSystems {
     }
 
     public void zeroCap() {
-        xCap.setPosition(0);
-        yCap.setPosition(1);
+        xCap.setPosition(0.141);
+        yCap.setPosition(0.793);
     }
 
     public void scoreDuck() {

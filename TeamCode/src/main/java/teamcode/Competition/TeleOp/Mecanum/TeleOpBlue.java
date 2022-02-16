@@ -26,7 +26,6 @@ public class TeleOpBlue extends AbstractOpMode {
     private PulleyState pulleyState;
     private LinkageState linkageState;
     private long scoredSampleTime;
-    private double yCapSpeed, xCapSpeed;
 
     @Override
     protected void onInitialize() {
@@ -56,8 +55,6 @@ public class TeleOpBlue extends AbstractOpMode {
         };
 
         systems.zeroCap();
-        yCapSpeed = 0.001;
-        xCapSpeed = 0.0005;
         previousLeft = false;
         previousRight = false;
         previousUp = false;
@@ -75,7 +72,6 @@ public class TeleOpBlue extends AbstractOpMode {
     boolean capping = false;
     boolean previousLeft, previousRight, previousUp, previousDown;
     private void capUpdate() {
-
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
             double val = gamepad2.right_trigger - gamepad2.left_trigger;
             systems.setCapstoneExtensionPower(-val);
@@ -85,19 +81,19 @@ public class TeleOpBlue extends AbstractOpMode {
 
         double xPos = systems.getXCapPosition();
         double yPos = systems.getYCapPosition();
-        systems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -xCapSpeed, xCapSpeed))));
-        systems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -yCapSpeed, yCapSpeed));
+        systems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -systems.xCapSpeed, systems.xCapSpeed))));
+        systems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -systems.yCapSpeed, systems.yCapSpeed));
 
         if (gamepad2.y) {
             systems.zeroCap();
         } else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
-            xCapSpeed += 0.0002;
+            systems.xCapSpeed += 0.00004;
         } else if (gamepad2.dpad_left && previousLeft != gamepad2.dpad_left) {
-            xCapSpeed -= 0.0002;
+            systems.xCapSpeed -= 0.00004;
         } else if (gamepad2.dpad_up && previousUp != gamepad2.dpad_up) {
-            yCapSpeed += 0.0002;
+            systems.yCapSpeed += 0.001;
         } else if (gamepad2.dpad_down && previousDown != gamepad2.dpad_down) {
-            yCapSpeed -= 0.0002;
+            systems.yCapSpeed -= 0.001;
         }
         previousLeft = gamepad2.dpad_left;
         previousRight = gamepad2.dpad_right;
