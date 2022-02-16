@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,6 +31,8 @@ public class MecanumDriveTrain {
      */
 
     public DcMotor fl, fr, bl, br;
+    BNO055IMU imu;
+
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
     String loggingString;
 
@@ -50,6 +54,21 @@ public class MecanumDriveTrain {
         bl = hardwareMap.dcMotor.get("BackLeftDrive");
         br = hardwareMap.dcMotor.get("BackRightDrive");
         correctMotors();
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
 
     }
 
@@ -347,6 +366,21 @@ public class MecanumDriveTrain {
         }catch(FileNotFoundException e){
             e.printStackTrace();
         }
+    }
+
+
+    public void tankRotate(double radians, double power){
+
+        if(getSign(radians) == -1){
+            power *= -1;
+        }
+
+        double position = radians + imu.getAngularOrientation().firstAngle;
+
+        while(Math.abs(imu.getAngularOrientation().firstAngle - position) < 10){
+            setPowerAuto(power, MovementType.ROTATE);
+        }
+
     }
 
 
