@@ -994,6 +994,48 @@ public class MecanumDriveTrain {
         }
     }
 
+    private static final double WHEELBASE_X = 0;
+    private static final double WHEELBASE_Y = 0;
+
+    /**
+     * arcs in auto
+     * @param motion the angle of the chord and the magnitude of the velocity
+     * @param omega rotational velocity to be applied, should be at a 1:1 with velocity magnitude for
+     *              circular arcs
+     * @param arclength median arclength between the wheelbases
+     * @param dAngle angle of the arc in degrees
+     */
+
+    public void ArcDriving(Vector2D motion, double omega, int arclength, double dAngle){
+        dAngle = Math.toRadians(dAngle);
+        double[][] inverseKinematicModelArr = new double[][]{
+                {1,-1, -(WHEELBASE_X + WHEELBASE_Y)},
+                {1,1, (WHEELBASE_X + WHEELBASE_Y)},
+                {1,1, -(WHEELBASE_X + WHEELBASE_Y)},
+                {1,-1, (WHEELBASE_X + WHEELBASE_Y)}};
+        double[][] motionModelArr = new double[][]{{motion.getX()}, {motion.getY()}, {omega}};
+        Matrix inverseKinematicModel = new Matrix(inverseKinematicModelArr);
+        Matrix motionModel = new Matrix(motionModelArr);
+        Matrix wheelMotions = inverseKinematicModel.multiply(motionModel);
+        wheelMotions.multiply(1.0 / WHEEL_RADIUS_IN);
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double minArcLength = arclength - WHEELBASE_X * dAngle;
+        double maxArcLength = arclength + WHEELBASE_X * dAngle;
+
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+
+        while(data.getMotorCurrentPosition(0) < minArcLength || data.getMotorCurrentPosition(1) < maxArcLength ||
+                data.getMotorCurrentPosition(2) < minArcLength || data.getMotorCurrentPosition(3) < maxArcLength) {
+            hub.clearBulkCache();
+            data = hub.getBulkData();
+            setMotorVelocity(wheelMotions.getValue(0, 0), wheelMotions.getValue(1, 0),
+                    wheelMotions.getValue(2, 0), wheelMotions.getValue(3, 0));
+        }
+        brake();
+    }
+
     public void setEnvironmentalTerminate(boolean val){
         environmentalTerminate = val;
     }
