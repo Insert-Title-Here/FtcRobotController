@@ -29,7 +29,7 @@ public class BaseDrive extends LinearOpMode  {
     @Override
     public void runOpMode() throws InterruptedException {
         DriveTrainTester driveTrain =  new DriveTrainTester(hardwareMap);
-        Carousel carousel = new Carousel(hardwareMap);
+        CarouselTest carousel = new CarouselTest(hardwareMap);
 
         waitForStart();
 

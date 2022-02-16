@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.NewMecanumCode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Carousel {
+public class CarouselTest {
     DcMotor carousel;
 
-    public Carousel(HardwareMap hardwareMap) {
+    public CarouselTest(HardwareMap hardwareMap) {
         carousel = hardwareMap.dcMotor.get("Carousel");
 
         carousel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
