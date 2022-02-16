@@ -137,10 +137,11 @@ public class MecanumDriveTrain {
 
     public synchronized void rotateDistanceDERadian(double radians, double omega){
         double deltaRadians = radians - imu.getAngularOrientation().firstAngle;
+        double startAngle = imu.getAngularOrientation().firstAngle;
         omega *= -getSign(deltaRadians);
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while(Math.abs(imu.getAngularOrientation().firstAngle - radians) < deltaRadians){
+        while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians)){
             setMotorVelocity(omega, -omega, omega, -omega);
         }
         brake();
