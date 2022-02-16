@@ -140,7 +140,7 @@ public class MecanumDriveTrain {
         omega *= -getSign(deltaRadians);
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while(Math.abs(imu.getAngularOrientation().firstAngle - radians) > 0.05){
+        while(Math.abs(imu.getAngularOrientation().firstAngle - radians) < deltaRadians){
             setMotorVelocity(omega, -omega, omega, -omega);
         }
         brake();
