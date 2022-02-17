@@ -383,6 +383,9 @@ public class MecanumDriveTrain {
 
     }
 
+    public void tankSetPower(double linear, double rotate){
+        setPower(linear + rotate, linear - rotate, linear + rotate, linear - rotate);
+    }
 
 
 
