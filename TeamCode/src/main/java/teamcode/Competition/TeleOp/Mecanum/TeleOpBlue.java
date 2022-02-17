@@ -2,6 +2,7 @@ package teamcode.Competition.TeleOp.Mecanum;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -99,11 +100,13 @@ public class TeleOpBlue extends AbstractOpMode {
         previousRight = gamepad2.dpad_right;
         previousUp = gamepad2.dpad_up;
         previousDown = gamepad2.dpad_down;
+        isCarousel = false;
     }
 
     double startTime;
     double previousExtensionTime;
     int iterator;
+    volatile boolean isCarousel = false, isEndgame = false;
     private void armUpdate() {
         if(gamepad1.right_trigger > 0.3){
             startTime = AbstractOpMode.currentOpMode().time;
@@ -113,7 +116,11 @@ public class TeleOpBlue extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 }else{
-                    arm.intakeDumb(1.0);
+                    if(!isCarousel) {
+                        arm.intakeDumb(1.0);
+                    }else{
+                        arm.intakeDumb(-1.0);
+                    }
                 }
 
             }
@@ -177,13 +184,19 @@ public class TeleOpBlue extends AbstractOpMode {
             while(gamepad1.left_bumper) {
                 systems.runCarousel(-1);
             }
-        }else if(gamepad1.right_bumper){
-            systems.scoreDuck();
         }else {
+            if(isEndgame){
+                NormalizedRGBA rgba = drive.getSensorRGBA();
+                if(rgba.red > 0.9){
+                    arm.runConveyorPos(1, 2000);
+                    arm.idleServos();
+                }
+            }
             arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);
         }
+
 
 
 //        telemetry.addData("slide pos", arm.getLinearSlidePosition());
@@ -197,6 +210,12 @@ public class TeleOpBlue extends AbstractOpMode {
         armThread.start();
         capThread.start();
         while(opModeIsActive()){
+            if(gamepad1.right_bumper){
+                isEndgame = true;
+                isCarousel = true;
+                systems.scoreDuck();
+                isCarousel = false;
+            }
             drive.setPower(new Vector2D(-gamepad1.left_stick_y, gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
         }
     }

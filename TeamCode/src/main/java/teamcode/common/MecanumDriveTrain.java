@@ -1108,4 +1108,8 @@ public class MecanumDriveTrain {
     public void seteStop(boolean val){
         eStop = val;
     }
+
+    public NormalizedRGBA getSensorRGBA(){
+        return sensor.getNormalizedColors();
+    }
 }

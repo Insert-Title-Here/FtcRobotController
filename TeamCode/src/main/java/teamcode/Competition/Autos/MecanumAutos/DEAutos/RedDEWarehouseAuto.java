@@ -138,8 +138,11 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
             //drive.moveDistanceDEVelocity(200, 0, VELOCITY);
             drive.strafeDistanceSensor(VELOCITY,0);
             Utils.sleep(200);
-            drive.moveDistanceDEVelocity(200, 180, VELOCITY);
-
+            if(i == 0) {
+                drive.moveDistanceDEVelocity(200, 180, VELOCITY);
+            }else{
+                drive.moveDistanceDEVelocity(400, 180, VELOCITY);
+            }
             drive.rotateDistanceDE(-135, 6);
 
             Utils.sleep(100);
