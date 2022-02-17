@@ -1,4 +1,4 @@
-package teamcode.common;
+ package teamcode.common;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
+
+import java.util.ArrayList;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
@@ -108,7 +110,7 @@ public class MecanumDriveTrain {
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
         br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
-        sensor.setGain(1100); //325 is tested value but i think I trust this one more //280
+        sensor.setGain(1000); //325 is tested value but i think I trust this one more //280
         this.arm = arm;
 
         frontRed = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensorRed");
@@ -130,7 +132,7 @@ public class MecanumDriveTrain {
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
-        setPIDFCoefficients(new PIDFCoefficients(1, 0.5, 1.0, 0));
+        setPIDFCoefficients(new PIDFCoefficients(2.5, 0.5, 1.0, 0));
 
 
     }
@@ -341,16 +343,23 @@ public class MecanumDriveTrain {
             posAvg += pos;
         }
         posAvg = posAvg / (4.0 * 0.707); //4 cos 45
-        arm.preScore();
+        arm.preScoreAuto();
         arm.intakeDumb(-1.0);
-        posAvg -= 400;
-        if(posAvg < 400){
-            posAvg = 0;
-        }
+//        posAvg -= 600;
+//        if(posAvg < 600){
+//            posAvg = 0;
+//        }
 
-        moveDistanceDEVelocity(200, 180, 3);
+        ArrayList<Movement> spline = new ArrayList<>();
+
+        moveDistanceDEVelocity(200, 180, 9);
         strafeDistanceSensor(6, 0);
-        moveDistanceDEVelocity((int)(posAvg), 180, 3);
+        moveDistanceDEVelocity((int)((posAvg) / Math.cos(Math.toRadians(10))), 170, 9);
+//        spline.add(new Movement(200, 3,180));
+//        spline.add(new Movement((int)(posAvg / Math.cos(10)), 3, 170));
+//        splicedMovement(spline);
+        Debug.log("val" + (int)((posAvg) / Math.cos(Math.toRadians(10))));
+
         arm.intakeDumb(0);
     }
 
@@ -995,8 +1004,8 @@ public class MecanumDriveTrain {
         }
     }
 
-    private static final double WHEELBASE_X = 0;
-    private static final double WHEELBASE_Y = 0;
+    private static final double WHEELBASE_X = 10.5;
+    private static final double WHEELBASE_Y = 13.25;
 
     /**
      * arcs in auto
@@ -1007,7 +1016,7 @@ public class MecanumDriveTrain {
      * @param dAngle angle of the arc in degrees
      */
 
-    public void ArcDriving(Vector2D motion, double omega, int arclength, double dAngle){
+    public void arcDriving(Vector2D motion, double omega, int arclength, double dAngle){
         dAngle = Math.toRadians(dAngle);
         double[][] inverseKinematicModelArr = new double[][]{
                 {1,-1, -(WHEELBASE_X + WHEELBASE_Y)},
@@ -1015,14 +1024,19 @@ public class MecanumDriveTrain {
                 {1,1, -(WHEELBASE_X + WHEELBASE_Y)},
                 {1,-1, (WHEELBASE_X + WHEELBASE_Y)}};
         double[][] motionModelArr = new double[][]{{motion.getX()}, {motion.getY()}, {omega}};
+
         Matrix inverseKinematicModel = new Matrix(inverseKinematicModelArr);
         Matrix motionModel = new Matrix(motionModelArr);
+
         Matrix wheelMotions = inverseKinematicModel.multiply(motionModel);
+
         wheelMotions.multiply(1.0 / WHEEL_RADIUS_IN);
+
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        double minArcLength = arclength - WHEELBASE_X * dAngle;
-        double maxArcLength = arclength + WHEELBASE_X * dAngle;
+
+        double minArcLength = arclength - (WHEELBASE_X / 2.0) * dAngle;
+        double maxArcLength = arclength + (WHEELBASE_X / 2.0) * dAngle;
 
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
@@ -1033,6 +1047,56 @@ public class MecanumDriveTrain {
             data = hub.getBulkData();
             setMotorVelocity(wheelMotions.getValue(0, 0), wheelMotions.getValue(1, 0),
                     wheelMotions.getValue(2, 0), wheelMotions.getValue(3, 0));
+        }
+        brake();
+    }
+
+
+
+    public synchronized void splicedMovement(ArrayList<Movement> movements){
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        for(int i = 0; i < movements.size(); i++){
+            Movement curr = movements.get(i);
+            if(curr.getMovement() == Movement.MovementType.TRANSLATION) {
+                double distance = curr.getDistance();
+                double radians = curr.getRadians();
+                int flDistance = (int) (Math.sin(radians) * distance);
+                int frDistance = (int) (Math.cos(radians) * distance);
+                int blDistance = (int) (Math.cos(radians) * distance);
+                int brDistance = (int) (Math.sin(radians) * distance);
+
+                hub.clearBulkCache();
+                data = hub.getBulkData();
+                int flInit = data.getMotorCurrentPosition(0);
+                int frInit = data.getMotorCurrentPosition(1);
+                int blInit = data.getMotorCurrentPosition(2);
+                int brInit = data.getMotorCurrentPosition(3);
+                Vector2D vec = Vector2D.fromAngleMagnitude(radians, curr.getVelocity());
+
+                while (Math.abs(data.getMotorCurrentPosition(0) - flInit) < flDistance ||
+                        Math.abs(data.getMotorCurrentPosition(1) - frInit) < frDistance ||
+                        Math.abs(data.getMotorCurrentPosition(2) - blInit) < blDistance ||
+                        Math.abs(data.getMotorCurrentPosition(3) - brInit) < brDistance){
+
+                    hub.clearBulkCache();
+                    data = hub.getBulkData();
+
+                    setVelocity(vec, 0);
+                }
+            }else if(curr.getMovement() == Movement.MovementType.ROTATION){
+                double omega = curr.getOmega();
+                double deltaRadians = curr.getRotation() - imu.getAngularOrientation().firstAngle;
+                double startAngle = imu.getAngularOrientation().firstAngle;
+                omega *= -getSign(deltaRadians);
+                while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians)){
+                    setMotorVelocity(omega, -omega, omega, -omega);
+                }
+            }else{
+                Utils.sleep(curr.getMillis());
+            }
         }
         brake();
     }

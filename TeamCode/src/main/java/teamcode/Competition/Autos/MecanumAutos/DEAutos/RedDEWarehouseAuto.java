@@ -8,6 +8,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.ArrayList;
+
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
@@ -15,6 +17,7 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
+import teamcode.common.Movement;
 import teamcode.common.Utils;
 
 
@@ -104,12 +107,21 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
     }
 
     private final double  VELOCITY = 10; //10
+
+    /*
+    example of how to use spliced movement, keep in mind 2 nums is rotate and 3 nums is translate
+    ArrayList<Movement> spline = new ArrayList<>();
+        spline.add(new Movement(500, 10, 45));
+        spline.add(new Movement(-90, 6));
+        drive.splicedMovement(spline);
+     */
     @Override
     protected void onStart() {
+
+
         webcam.stopStreaming();
         armCommands.start();
-       // 1300, -45
-        drive.moveDistanceDEVelocity(1000, -45, VELOCITY);
+        drive.moveDistanceDEVelocity(875, -45, VELOCITY);
         Utils.sleep(100);
         drive.rotateDistanceDE(160, 6);
         flags[0] = true;
@@ -117,19 +129,31 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
         for(int i = 0; i < FREIGHT; i++) {
             drive.rotateDistanceDE(-90, 6);
             drive.strafeDistanceSensor(VELOCITY, 0);
-            drive.driveColorSensor(2);
-            drive.moveDistanceDEVelocity(200, 0, VELOCITY);
+            if(i == 0) {
+                drive.moveDistanceDEVelocity(1100, 0, VELOCITY);
+            }else{
+                drive.moveDistanceDEVelocity(1100, 0,VELOCITY);
+            }
+            drive.driveColorSensor(1);
+            //drive.moveDistanceDEVelocity(200, 0, VELOCITY);
             drive.strafeDistanceSensor(VELOCITY,0);
-            Utils.sleep(100);
+            Utils.sleep(200);
+            drive.moveDistanceDEVelocity(200, 180, VELOCITY);
 
             drive.rotateDistanceDE(-135, 6);
+
+            Utils.sleep(100);
             flags[1] = true;
-            drive.moveDistanceDEVelocity(550, 180, VELOCITY);
+            drive.moveDistanceDEVelocity(600, 180, VELOCITY);
             flags[2] = true;
             Utils.sleep(200);
         }
+        drive.rotateDistanceDE(-90, 6);
+        drive.strafeDistanceSensor(VELOCITY, 0);
+        drive.moveDistanceDEVelocity(800, 0, VELOCITY);
 
-        while(opModeIsActive());
+
+            while(opModeIsActive());
 
 
     }

@@ -156,6 +156,19 @@ public class ArmSystem {
 
 
     }
+    public void preScoreAuto(){
+        house.setPosition(HOUSING_POSITION);
+        Utils.sleep(250);
+        linkage.setPosition(LINKAGE_HOUSED);
+        intakeDumb(-1.0);
+
+        stage = Stage.HOUSED;
+
+        //Debug.log("finish");
+
+
+    }
+
     public void preScoreDuck(){
         house.setPosition(HOUSING_POSITION + 0.02 );
         Utils.sleep(250);
@@ -170,9 +183,7 @@ public class ArmSystem {
 
 
     public synchronized void raise(double position) {
-        if(linkage.getPosition() != LINKAGE_HOUSED){
-            preScore();
-        }
+
         linkage.setPosition(LINKAGE_SCORE);
         moveSlide(SLIDE_POWER, (int) position);
 
