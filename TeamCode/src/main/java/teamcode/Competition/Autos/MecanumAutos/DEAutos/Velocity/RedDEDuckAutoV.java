@@ -1,7 +1,8 @@
-package teamcode.Competition.Autos.MecanumAutos.DEAutos;
+package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -18,58 +19,59 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 
-@Autonomous(name="Blue DE Duck")
-public class BlueDEDuckAuto extends AbstractOpMode {
 
-    MecanumDriveTrain drive;
-    ArmSystem arm;
-    EndgameSystems system;
-    volatile boolean[] flags;
-    Thread armCommands;
+@Autonomous(name = "red DE Duck")
+public class RedDEDuckAutoV extends AbstractOpMode {
 
-    OpenCvWebcam webcam;
-    MecanumBarcodePipeline.BarcodePosition position;
+    /*TODO much like alot of the code in this codebase this was written at 2:30 am and after a lot of caffiene,
+    TODO has not been field tested as of Friday morning
+
+     */
+    private OpenCvWebcam webcam;
+
+    private EndgameSystems system;
+    private MecanumDriveTrain drive;
+    private ArmSystem arm;
+
+    private volatile boolean[] flags;
+
+    private Thread armCommands;
+
+    private MecanumBarcodePipeline.BarcodePosition position;
+
+    private PIDFCoefficients coefficients = new PIDFCoefficients(2,0.5,1.0,0.1);
 
     @Override
     protected void onInitialize() {
-        system = new EndgameSystems(hardwareMap, true);
+        system = new EndgameSystems(hardwareMap, false);
         arm = new ArmSystem(hardwareMap, false);
-        drive = new MecanumDriveTrain(hardwareMap, false, system, arm);
-        Debug.log("here");
+        drive = new MecanumDriveTrain(hardwareMap, true, system, arm, coefficients);
         flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread(){
             public void run(){
-
-                while(!flags[0]);
+                Utils.sleep(500);
                 if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
-                    arm.raise( Constants.BOTTOM_POSITION);
-
+                    arm.raise(Constants.BOTTOM_POSITION);
                 }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
-                    arm.raise( Constants.MEDIUM_POSITION + 1500);
-                }else {
-                    arm.raise( Constants.TOP_POSITION +1000);
+                    arm.raise(Constants.MEDIUM_POSITION + 1000);
+                }else{
+                    arm.raise(Constants.TOP_POSITION + 1000);
                 }
-                while(!flags[1]);
+                while (!flags[0]);
                 if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
-                    arm.runConveyorPos(0.8, 2000);
-                }else {
+                    arm.runConveyorPos(0.8, 1000);
+                }else{
+                    Debug.log("her");
                     arm.score();
                 }
-                try {
-                    Thread.currentThread().sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                    arm.retract();
-                while(!flags[2]);
+                Utils.sleep(250);
+                arm.retract();
+
+                while(!flags[1]);
                 arm.raise(Constants.TOP_POSITION);
-                while(!flags[3]);
+                while(!flags[2]);
                 arm.score();
-                try {
-                    Thread.currentThread().sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                Utils.sleep(250);
                 arm.retract();
                 while(opModeIsActive());
             }
@@ -81,7 +83,7 @@ public class BlueDEDuckAuto extends AbstractOpMode {
         // W/ or W/ out live preview
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
-        pipeline.setSide(MecanumBarcodePipeline.Side.BLUE);
+        pipeline.setSide(MecanumBarcodePipeline.Side.RED);
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -101,62 +103,56 @@ public class BlueDEDuckAuto extends AbstractOpMode {
             telemetry.addData("", position);
             telemetry.update();
         }
+
     }
 
+    private final double VELOCITY = 10;
     @Override
     protected void onStart() {
         webcam.stopStreaming();
         armCommands.start();
-        //arm.idleServos();
-        drive.moveDistanceDE(400, 0, 0.3, 0);
-        drive.rotateDistanceDE(-75, 0.3);
-        Utils.sleep(500);
-        drive.moveDistanceDE(1400, -90, 0.3, 0.2);
-        //drive.moveDistanceDE(200, -90, 0.3, 0.2);
-        flags[0] = true;
-        Utils.sleep(500);
-        drive.moveDistanceDE(350, -180, 0.3, 0.2);
-        flags[1] =true;
-        Utils.sleep(500);
-        drive.moveDistanceDE(250, 0, 0.3, 0.2);
-        drive.moveDistanceDE(2100, 70, 0.3, 0.2);
-        drive.rotateDistanceDE(-75, 0.2);
-        drive.moveDistanceDENoErrorCorrection(100, 90, 0.2);
 
-        //drive.setStrafe(-0.01);
-        drive.spinDuck(true);
-        drive.moveDistanceDE(100, -90, 0.3, 0.2);
-        drive.rotateDistanceDE(-165, 0.3);
-        arm.lowerLinkage();
-        Utils.sleep(500);
-        drive.moveDistanceDE(200, 0, 0.2, 0.2);
-        //drive.setPower(0.2,0.2,0.2,0.2);
-        arm.intakeDumb(1.0);
-        drive.moveDistanceDENoErrorCorrection(1000, 90, 0.2);
-        drive.moveDistanceDENoErrorCorrection(800, -90, 0.2);
-        drive.brake();
-        arm.preScoreDuck();
-        arm.intakeDumb(0);
-        drive.rotateDistanceDE(-95, 0.3);
+
+        //score the preload
+        drive.moveDistanceDEVelocity(400, 0, VELOCITY);
         Utils.sleep(200);
+        drive.rotateDistanceDE(75, 4);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(1400, 90, VELOCITY);
+        drive.moveDistanceDEVelocity(500, 0, VELOCITY);
+        flags[0] = true;
 
-        drive.moveDistanceDE(2100, -90, 0.3,0.2);
+        //move away from hub and to carousel
+        drive.moveDistanceDEVelocity(500, 180, VELOCITY);
+        drive.rotateDistanceDE(180, 4);
+        drive.moveDistanceDEVelocity(1400, -30, VELOCITY); //calculated angle is 30
+
+        //spin duck and run intake
+        arm.lowerLinkage();
+        arm.intakeDumb(1.0);
+        system.scoreDuckAuto();
+        Utils.sleep(500);
+        arm.preScore();
+
+        //score the duck
+        drive.rotateDistanceDE(75, 4);
+        arm.intakeDumb(0);
+
+        drive.moveDistanceDEVelocity(1200, 90, VELOCITY);
+        flags[1] = true;
+        drive.moveDistanceDEVelocity(700, 0, VELOCITY);
         flags[2] = true;
-        drive.moveDistanceDENoErrorCorrection(650, 180, 0.3);
-        //drive.rotateDistanceDE(-90, 0.3);
-        flags[3] = true;
-        drive.moveDistanceDE(620, 0, 0.3,0.2);
 
+        //park, go for partial because full is near impossible lmao,
+        // could add a strafe and attempt it if extra time?
+        drive.moveDistanceDEVelocity(900, 180, VELOCITY);
 
-
-        //drive.smartDuck(true);
         while(opModeIsActive());
-
     }
 
     @Override
     protected void onStop() {
+        drive.brake();
         drive.cleanup();
-
     }
 }

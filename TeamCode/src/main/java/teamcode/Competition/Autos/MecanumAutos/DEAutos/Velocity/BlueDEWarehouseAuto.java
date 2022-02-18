@@ -1,14 +1,13 @@
-package teamcode.Competition.Autos.MecanumAutos.DEAutos;
+package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
-
-import java.util.ArrayList;
 
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
@@ -17,12 +16,11 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
-import teamcode.common.Movement;
 import teamcode.common.Utils;
 
 
-@Autonomous(name="Red DE Warehouse")
-public class RedDEWarehouseAuto extends AbstractOpMode {
+@Autonomous(name="Blue DE Warehouse")
+public class BlueDEWarehouseAuto extends AbstractOpMode {
 
     private static final int FREIGHT = 2;
     MecanumDriveTrain drive;
@@ -32,13 +30,15 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
     Thread armCommands;
     OpenCvWebcam webcam;
     MecanumBarcodePipeline.BarcodePosition position;
+    PIDFCoefficients coefficients = new PIDFCoefficients(2.5, 0.5, 1.0, 0);
+
 
 
     @Override
     protected void onInitialize() {
         system = new EndgameSystems(hardwareMap, false);
         arm = new ArmSystem(hardwareMap, false);
-        drive = new MecanumDriveTrain(hardwareMap, true, system, arm);
+        drive = new MecanumDriveTrain(hardwareMap, true, system, arm, coefficients);
         Debug.log("here");
         flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread(){
@@ -84,7 +84,7 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
         // W/ or W/ out live preview
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
-        pipeline.setSide(MecanumBarcodePipeline.Side.RED );
+        pipeline.setSide(MecanumBarcodePipeline.Side.BLUE);
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -121,13 +121,13 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
 
         webcam.stopStreaming();
         armCommands.start();
-        drive.moveDistanceDEVelocity(875, -45, VELOCITY);
+        drive.moveDistanceDEVelocity(875, 45, VELOCITY);
         Utils.sleep(100);
-        drive.rotateDistanceDE(160, 6);
+        drive.rotateDistanceDE(-160, 6);
         flags[0] = true;
         Utils.sleep(200);
         for(int i = 0; i < FREIGHT; i++) {
-            drive.rotateDistanceDE(-90, 6);
+            drive.rotateDistanceDE(90, 6);
             drive.strafeDistanceSensor(VELOCITY, 0);
             if(i == 0) {
                 drive.moveDistanceDEVelocity(1100, 0, VELOCITY);
@@ -156,7 +156,7 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
         drive.moveDistanceDEVelocity(800, 0, VELOCITY);
 
 
-            while(opModeIsActive());
+        while(opModeIsActive());
 
 
     }
@@ -219,6 +219,8 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
 
     @Override
     protected void onStop() {
+        drive.brake();
+        drive.cleanup();
 
     }
 }

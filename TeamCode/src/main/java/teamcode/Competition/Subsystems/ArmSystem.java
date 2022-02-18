@@ -21,7 +21,7 @@ import teamcode.common.Utils;
 public class ArmSystem {
 
     //House Servo values
-    private static final double INTAKE_POSITION = 0.04;
+    private static final double INTAKE_POSITION = 0.0;
     private static final double HOUSING_POSITION = 0.15 ; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.5;
 

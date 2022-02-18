@@ -150,7 +150,7 @@ public class EndgameSystems {
         carouselEncoderBlue.setMode(mode);
     }
 
-    public void scoreDuckAuto() {
+    public synchronized void scoreDuckAuto() {
         Debug.log("here");
         carouselEncoderRed.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int pose = -25000;

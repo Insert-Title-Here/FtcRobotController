@@ -89,9 +89,9 @@ public class MecanumDriveTrain {
     }
 
     /**
-     * drive encoder constructor
+     * drive encoder constructor with Modular PIDF controller constants, for seperate opModes
      */
-    public MecanumDriveTrain(HardwareMap hardwareMap, boolean isRed, EndgameSystems systems, ArmSystem arm){
+    public MecanumDriveTrain(HardwareMap hardwareMap, boolean isRed, EndgameSystems systems, ArmSystem arm, PIDFCoefficients coefficients){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -132,10 +132,16 @@ public class MecanumDriveTrain {
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
         correctMotors();
-        setPIDFCoefficients(new PIDFCoefficients(2.5, 0.5, 1.0, 0));
+        setPIDFCoefficients(coefficients);
 
 
     }
+
+    public MecanumDriveTrain(HardwareMap hardwareMap, boolean isRed, EndgameSystems systems, ArmSystem arm){
+        this(hardwareMap, isRed, systems, arm, new PIDFCoefficients(2.5, 0.5, 1.0, 0));
+
+    }
+
 
     public synchronized void rotateDistanceDERadian(double radians, double omega){
         double deltaRadians = radians - imu.getAngularOrientation().firstAngle;
@@ -263,7 +269,24 @@ public class MecanumDriveTrain {
         br.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coefficients);
     }
 
+    /**
+     * movement in any translational direction reaching any desired velocity
+     * @param distance is measured in rotational encoder tics,
+     * this is to simplify the method implementation
+     *
+     * @param degrees the angle the robot should be travelling at in DEGREES,
+     * this parameter should be passed [-180, 180]
+     * KEY FOR THIS PARAMETER
+     * 0, Drive straight
+     * 90, strafe right
+     * 180, drive backwards
+     * -90, strafe left
+     * any number in between is a diagonal in that quadrant.
+     *
+     * @param velocity the linear velocity in inches per second that the robot should travel
+     */
     public synchronized void moveDistanceDEVelocity(int distance, double degrees, double velocity){
+        Debug.log(distance);
         double radians = Math.toRadians(degrees);
         velocity *= getSign(distance);
         Vector2D vec = Vector2D.fromAngleMagnitude(radians, velocity);
@@ -300,6 +323,7 @@ public class MecanumDriveTrain {
         arm.lowerLinkage();
         arm.intakeDumb(1.0);
         boolean detectedElement = false;
+        Utils.sleep(100);
         setMotorVelocity(pow,pow,pow,pow);
         Utils.sleep(250);
         while(!detectedElement){
@@ -351,10 +375,14 @@ public class MecanumDriveTrain {
 //        }
 
         ArrayList<Movement> spline = new ArrayList<>();
+        double sign = 1;
+        if(!isRed){
+            sign = -1;
+        }
 
         moveDistanceDEVelocity(200, 180, 9);
         strafeDistanceSensor(6, 0);
-        moveDistanceDEVelocity((int)((posAvg) / Math.cos(Math.toRadians(10))), 170, 9);
+        moveDistanceDEVelocity((int)((posAvg) / Math.cos(Math.toRadians(10))), 170 * sign, 9);
 //        spline.add(new Movement(200, 3,180));
 //        spline.add(new Movement((int)(posAvg / Math.cos(10)), 3, 170));
 //        splicedMovement(spline);

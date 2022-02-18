@@ -1,7 +1,8 @@
-package teamcode.Competition.Autos.MecanumAutos.DEAutos;
+package teamcode.Competition.Autos.MecanumAutos.DEAutos.VoltageDraw;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -18,7 +19,8 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 
-@Autonomous(name="Red DE Duck")
+@Disabled
+@Autonomous(name="Red DE ")
 public class RedDEDuckAuto extends AbstractOpMode {
 
     MecanumDriveTrain drive;
