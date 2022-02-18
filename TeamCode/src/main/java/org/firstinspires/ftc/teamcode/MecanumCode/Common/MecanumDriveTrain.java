@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
@@ -67,6 +70,7 @@ public class MecanumDriveTrain {
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+
         imu.initialize(parameters);
 
 
@@ -348,6 +352,10 @@ public class MecanumDriveTrain {
         return power;
     }
 
+    public double getAngle(){
+        return imu.getAngularOrientation().firstAngle;
+    }
+
 
 
     private int getSign(double num){
@@ -371,13 +379,18 @@ public class MecanumDriveTrain {
 
     public void tankRotate(double radians, double power){
 
-        if(getSign(radians) == -1){
+        //double changeRads = Math.abs(radians) - Math.PI;
+
+        radians = -radians;
+
+        if(getSign(radians) == 1){
             power *= -1;
         }
 
         double position = radians + imu.getAngularOrientation().firstAngle;
 
-        while(Math.abs(imu.getAngularOrientation().firstAngle - position) < 10){
+
+        while(Math.abs(imu.getAngularOrientation().firstAngle - position) >  (Math.PI/32)){
             setPowerAuto(power, MovementType.ROTATE);
         }
 

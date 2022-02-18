@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.Auto.NewTank;
 
+import android.view.animation.RotateAnimation;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -38,6 +40,7 @@ public class Testing extends OpModeWrapper {
     OpenCvCamera camera;
 
     Thread armMovementThread;
+    Thread telemetryThread;
     private volatile boolean moveArm;
 
 
@@ -97,10 +100,29 @@ public class Testing extends OpModeWrapper {
             }
         };
 
+        telemetryThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    telemetry.addData("angle", drive.getAngle());
+                    telemetry.addData("degrees", (drive.getAngle() * 180)/Math.PI);
+
+                    telemetry.addData("Pos", Math.PI/2);
+
+                    telemetry.update();
+                }
+            }
+        };
+
         while(!opModeIsActive()){
             telemetry.addData("pos", bPipeline.getPos());
             telemetry.update();
         }
+
+        /*while(opModeIsActive()){
+            telemetry.addData("angle", drive.getAngle());
+            telemetry.update();
+        }*/
 
 
 
@@ -110,7 +132,10 @@ public class Testing extends OpModeWrapper {
     protected void onStart() {
         capstonePos = bPipeline.getPos();
         armMovementThread.start();
+        telemetryThread.start();
         camera.stopStreaming();
+
+        //telemetry.addData("hi", "hi");
 
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
@@ -121,8 +146,10 @@ public class Testing extends OpModeWrapper {
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
 
-        drive.tankRotate(Math.PI/2,0.5 );
 
+        //drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.setPowerAuto(0.3, MecanumDriveTrain.MovementType.ROTATE);
+        sleep(3000);
         /*
         drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.STRAIGHT);

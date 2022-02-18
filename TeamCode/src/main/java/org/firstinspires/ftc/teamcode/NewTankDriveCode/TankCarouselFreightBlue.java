@@ -137,14 +137,20 @@ public class TankCarouselFreightBlue extends OpModeWrapper {
 
         drive.tankRotate(Math.PI/2, 0.3); // was 1050 tics
 
-        drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -300, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        drive.tankRotate(Math.PI/4, 0.3);
         carousel.spinCarousel(-5000, this, Carousel.CarouselMode.AUTO);
 
-        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 2100, MecanumDriveTrain.MovementType.ROTATE);
+        //drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAFE);
+        //drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.tankRotate( -Math.PI/2, 0.3);
+        drive.tankRotate(-Math.PI/4, 0.3);
+        drive.driveAuto(0.3, -450, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.tankRotate(Math.PI/2, 0.3);
+        //drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -500, MecanumDriveTrain.MovementType.STRAIGHT);
+        //drive.driveAuto(0.3, 2100, MecanumDriveTrain.MovementType.ROTATE);
         //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             drive.driveAuto(0.3, -510, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -186,7 +192,9 @@ public class TankCarouselFreightBlue extends OpModeWrapper {
         sleep(1000);
 
         drive.driveAuto(0.3, 1200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 800, MecanumDriveTrain.MovementType.STRAFE);
+        //drive.driveAuto(0.3, 800, MecanumDriveTrain.MovementType.STRAFE);
+        drive.tankRotate(-Math.PI/2, 0.3);
+        drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.driveAuto(0.5, 1832, MecanumDriveTrain.MovementType.ROTATE);
         //drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, 880, MecanumDriveTrain.MovementType.STRAIGHT);
