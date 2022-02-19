@@ -51,7 +51,7 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
         flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread() {
             public void run() {
-                Utils.sleep(500);
+                while(!flags[3]);
                 if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
                     arm.raise(Constants.BOTTOM_POSITION);
                 } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
@@ -121,15 +121,18 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
         Utils.sleep(200);
         drive.rotateDistanceDE(-75, 4);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(1400, -90, VELOCITY);
+        drive.moveDistanceDEVelocity(1200, -90, VELOCITY);
+        flags[3] = true;
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(500, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(220, 180, VELOCITY / 2.0);
         flags[0] = true;
 
         //move away from hub and to carousel
         drive.moveDistanceDEVelocity(500, 0, VELOCITY);
-        drive.rotateDistanceDE(160, 4);
-        drive.moveDistanceDEVelocity(1400, -30, VELOCITY); //calculated angle is 30
+        Utils.sleep(200);
+        drive.rotateDistanceDE(75, -4);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(1400, 0, VELOCITY); //calculated angle is 30
 
         //spin duck and run intake
         arm.lowerLinkage();

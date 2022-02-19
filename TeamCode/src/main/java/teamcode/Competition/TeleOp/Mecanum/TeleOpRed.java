@@ -173,10 +173,12 @@ public class TeleOpRed extends AbstractOpMode {
             pulleyState = PulleyState.RETRACTED;
         }else if(gamepad1.dpad_left){
             arm.resetWinchEncoder();
-        }if(gamepad1.left_bumper){
-            while(gamepad1.left_bumper) {
+        }if(gamepad1.left_bumper) {
+            while (gamepad1.left_bumper) {
                 systems.runCarousel(-1);
             }
+        }else if(gamepad1.right_bumper){
+            systems.scoreDuck();
         }else {
 
             systems.runCarousel(0);
@@ -197,9 +199,9 @@ public class TeleOpRed extends AbstractOpMode {
         armThread.start();
         capThread.start();
         while(opModeIsActive()){
-            if(gamepad1.right_bumper){
-                systems.scoreDuck();
-            }
+//            if(gamepad1.right_bumper){
+//                systems.scoreDuck();
+//            }
             drive.setPower(new Vector2D(-gamepad1.left_stick_y, gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
         }
     }
