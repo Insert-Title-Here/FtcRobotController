@@ -135,12 +135,14 @@ public class TankCarouselFreightBlue extends OpModeWrapper {
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
 
-        drive.tankRotate(Math.PI/2, 0.3); // was 1050 tics
+        drive.tankRotate(33*Math.PI/60, 0.3); // was 1050 tics
 
         drive.driveAuto(0.3, -300, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        drive.tankRotate(Math.PI/4, 0.3);
+        drive.tankRotate(-33*Math.PI/60, 0.3);
         carousel.spinCarousel(-5000, this, Carousel.CarouselMode.AUTO);
+
+        //change
 
         //drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);

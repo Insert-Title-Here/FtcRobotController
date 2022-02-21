@@ -148,7 +148,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
         //drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.RDIAGONAL);
+        drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.RDIAGONAL);
         sleep(500);
         drive.driveAuto(0.3, -900, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);

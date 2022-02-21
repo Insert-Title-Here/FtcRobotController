@@ -176,7 +176,7 @@ public class WarehouseFreightBlue extends OpModeWrapper {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
             capArm.toggleGrab();
-            sleep(1000);
+            sleep(2000);
             capArm.toggleGrab();
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
             //drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -210,7 +210,7 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         sleep(1000);
 
         //drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1700, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1300, MecanumDriveTrain.MovementType.STRAFE);
         magArm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
         //drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAIGHT);
