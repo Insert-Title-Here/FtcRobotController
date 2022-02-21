@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import teamcode.Competition.Subsystems.ArmSystem;
+import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.MecanumDriveTrain;
@@ -21,6 +22,7 @@ import teamcode.common.Vector2D;
 @Autonomous(name="DistanceSensor")
 public class DistanceSensorTest extends AbstractOpMode {
     MecanumDriveTrain drive;
+    EndgameSystems system;
     private ArmSystem arm;
     NormalizedColorSensor frontSensor, backSensor;
     private int FRONT_GAIN  = 100, BACK_GAIN = 420;
@@ -31,8 +33,9 @@ public class DistanceSensorTest extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         arm = new ArmSystem(hardwareMap, false);
-        drive = new MecanumDriveTrain(hardwareMap, false, null, arm);
-//        frontSensor = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensor");
+        drive = new MecanumDriveTrain(hardwareMap, false, system, arm);
+        system = new EndgameSystems(hardwareMap, true);
+          //frontSensor = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensor");
 //        backSensor = hardwareMap.get(NormalizedColorSensor.class, "BackColorSensor");
 //        frontSensor.setGain(FRONT_GAIN);
 //        backSensor.setGain(BACK_GAIN);
@@ -46,7 +49,8 @@ public class DistanceSensorTest extends AbstractOpMode {
     @Override
     protected void onStart() {
 
-        drive.arcDriving(Vector2D.fromAngleMagnitude(Math.toRadians(45), 6), 6, 500, 45);
+        system.scoreDuck();
+        //drive.arcDriving(Vector2D.fromAngleMagnitude(Math.toRadians(45), 6), 6, 500, 45);
         while(opModeIsActive()){
 //            NormalizedRGBA frontRGBA = frontSensor.getNormalizedColors();
 //            NormalizedRGBA backRGBA = backSensor.getNormalizedColors();

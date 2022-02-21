@@ -25,7 +25,7 @@ import teamcode.common.Utils;
 @Autonomous(name="Red DE Warehouse")
 public class RedDEWarehouseAuto extends AbstractOpMode {
 
-    private static final int FREIGHT = 3;
+    private static final int FREIGHT = 2;
     MecanumDriveTrain drive;
     ArmSystem arm;
     EndgameSystems system;
@@ -49,18 +49,12 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
                 if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
                     arm.raise(Constants.BOTTOM_POSITION);
                 }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
-                    arm.raise(Constants.MEDIUM_POSITION + 2000);
+                    arm.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
                     arm.raise(Constants.TOP_POSITION + 1000);
                 }
                 while (!flags[0]);
-                if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
-                    arm.runConveyorPos(0.8, 1000);
-                }else{
-                    Debug.log("her");
-                    arm.score();
-                }
-                Utils.sleep(250);
+
                 arm.retract();
                 for(int i = 0; i < FREIGHT; i++) {
                     while (!flags[1]) ;
@@ -126,6 +120,13 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
         drive.moveDistanceDEVelocity(900, -45, VELOCITY);
         Utils.sleep(100);
         drive.rotateDistanceDE(160, 6);
+        if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
+            Debug.log("here");
+            arm.runConveyorPos(1.0, 1500);
+        }else{
+            arm.score();
+        }
+        Utils.sleep(250);
         flags[0] = true;
         Utils.sleep(200);
         for(int i = 0; i < FREIGHT; i++) {
@@ -141,19 +142,21 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
             drive.strafeDistanceSensor(VELOCITY,0);
             Utils.sleep(200);
 
-            drive.moveDistanceDEVelocity(200, 180, VELOCITY);
+            drive.moveDistanceDEVelocity(200 + (100 * i), 180, VELOCITY);
             flags[1] = true;
             drive.moveDistanceDEVelocity(150, -90, VELOCITY);
             drive.rotateDistanceDE(-135 + (5 * i), 6);
             Utils.sleep(100);
-            drive.moveDistanceDEVelocity(600, 180, VELOCITY / 2.0);
+            drive.moveDistanceDEVelocity(630, 180, VELOCITY / 2.0);
             Utils.sleep(300);
             flags[2] = true;
             Utils.sleep(200);
         }
         drive.rotateDistanceDE(-90, 6);
         drive.strafeDistanceSensor(VELOCITY, 0);
+        arm.intakeDumb(-1.0);
         drive.moveDistanceDEVelocity(800, 0, VELOCITY);
+
 
 
             while(opModeIsActive());

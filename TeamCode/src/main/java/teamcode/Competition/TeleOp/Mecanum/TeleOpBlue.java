@@ -211,10 +211,7 @@ public class TeleOpBlue extends AbstractOpMode {
         capThread.start();
         while(opModeIsActive()){
             if(gamepad1.right_bumper){
-                isEndgame = true;
-                isCarousel = true;
                 systems.scoreDuck();
-                isCarousel = false;
             }
             drive.setPower(new Vector2D(-gamepad1.left_stick_y, gamepad1.left_stick_x),  0.7 * gamepad1.right_stick_x);
         }
