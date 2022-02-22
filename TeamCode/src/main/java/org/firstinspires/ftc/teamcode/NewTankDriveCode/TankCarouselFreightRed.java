@@ -176,6 +176,7 @@ public class TankCarouselFreightRed extends OpModeWrapper {
 
         carouselThread.start();
 
+        //TODO need to fix this power part
         drive.bl.setPower(0.5);
 
         sleep(5000);
