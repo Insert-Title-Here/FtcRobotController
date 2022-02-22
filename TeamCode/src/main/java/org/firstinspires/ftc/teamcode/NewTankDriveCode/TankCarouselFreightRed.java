@@ -41,6 +41,8 @@ public class TankCarouselFreightRed extends OpModeWrapper {
     //static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
 
     Thread armMovementThread;
+    Thread telemetryThread;
+    Thread carouselThread;
     private volatile boolean moveArm;
 
 
@@ -116,6 +118,27 @@ public class TankCarouselFreightRed extends OpModeWrapper {
             }
         };
 
+        telemetryThread = new Thread(){
+            @Override
+            public void run() {
+                while (true) {
+                    telemetry.addData("angle",drive.getAngle());
+                    telemetry.addData("calculation: ", drive.getAngle() - (5*Math.PI/8));
+                    telemetry.addData("pi/32: ", Math.PI/32);
+                    telemetry.update();
+                }
+            }
+        };
+
+        carouselThread = new Thread(){
+            @Override
+            public void run() {
+                carousel.spinCarousel(5000, currentOpMode(), Carousel.CarouselMode.AUTO);
+
+
+            }
+        };
+
         while(!opModeIsActive()){
             telemetry.addData("pos", bPipeline.getPos());
             telemetry.update();
@@ -130,6 +153,7 @@ public class TankCarouselFreightRed extends OpModeWrapper {
     protected void onStart() {
         armMovementThread.start();
         capstonePos = bPipeline.getPos();
+        //telemetryThread.start();
         //sleep(15000);
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
@@ -139,63 +163,90 @@ public class TankCarouselFreightRed extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
-        drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1350, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, -1450, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -250, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.2, -50, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.4, -450, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        drive.tankRotate(31*Math.PI / 48, 0.3);
+
+
+        drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAIGHT);
+        //sleep(5000);
+
+        drive.tankRotate(34*Math.PI / 48, 0.3);
+        //sleep(5000);
+
+        carouselThread.start();
+
+        drive.bl.setPower(0.5);
+
+        sleep(5000);
+
+
+
+        //drive.driveAuto(0.2, -50, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.setPower(-0.1, -0.1, -0.1, -0.1);
-        carousel.spinCarousel(5000, this, Carousel.CarouselMode.AUTO);
-        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1400, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, 450, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1250, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, -700, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        capArm.setGrabberPosition(0.85);
+        //sleep(1000);
+        drive.driveAuto(0.4, 500, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        sleep(500);
+        //sleep(5000);
 
-        //capstonePos = BarcodePipelineRed.BarcodePosition.CENTER;
+        drive.tankRotate(0, 0.3);
+
+        drive.driveAuto(0.3, -1700, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        drive.tankRotate(-12*Math.PI/24, 0.3);
+
+
 
         if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
-            drive.driveAuto(0.3, -440, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -750, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
-            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -40, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
 
             sleep(500);
             capArm.toggleGrab();
 
+            drive.driveAuto(0.3, 790, MecanumDriveTrain.MovementType.STRAIGHT);
+
+
         } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
-            drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -830, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
-            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -40, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
 
 
+            drive.driveAuto(0.3, 870, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
         } else {
-            drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -1050, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
 
-            drive.driveAuto(0.3, 250, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 1050, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
         moveArm = true;
 
-        drive.driveAuto(0.3, 1200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -550, MecanumDriveTrain.MovementType.STRAFE);
+        drive.tankRotate(-Math.PI/4, 0.3);
+
+
+        drive.driveAuto(0.3, 600, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        drive.tankRotate(-Math.PI/2, 0.25  );
+
+
 
         }
 

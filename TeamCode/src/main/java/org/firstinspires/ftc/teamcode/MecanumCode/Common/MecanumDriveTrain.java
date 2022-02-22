@@ -383,18 +383,26 @@ public class MecanumDriveTrain {
 
 
 
-        if(getSign(radians) == 1){
+        if(radians > imu.getAngularOrientation().firstAngle){
             power *= -1;
         }
 
-        double position = Math.abs(radians + imu.getAngularOrientation().firstAngle);
+        //double position = Math.abs(radians + imu.getAngularOrientation().firstAngle);
 
 
-        while(Math.abs(imu.getAngularOrientation().firstAngle) - position >  (Math.PI/32)){
+        while(Math.abs(imu.getAngularOrientation().firstAngle - radians) >  (Math.PI/32)){
             setPowerAuto(power, MovementType.ROTATE);
+
         }
 
+        brake();
+
     }
+
+    public void tinyRotate(){
+        bl.setPower(0.2);
+    }
+
 
     public void tankSetPower(double linear, double rotate){
         setPower(linear + rotate, linear - rotate, linear + rotate, linear - rotate);
