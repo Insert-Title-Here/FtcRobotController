@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.FileNotFoundException;
 
+@Disabled
 @TeleOp(name="NewOpMode Red")
 public class TeleOpRed extends LinearOpMode {
 
@@ -115,7 +117,7 @@ public class TeleOpRed extends LinearOpMode {
         if(gamepad1.a) {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
-            arm.setArmPosition(Constants.MAGARM_EXTENDED);
+            arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
             while(gamepad1.a) {
 
             }
@@ -142,14 +144,18 @@ public class TeleOpRed extends LinearOpMode {
 
         if (gamepad1.left_trigger > 0.1) {
             //arm.setExtensionSMPower(gamepad1.left_trigger);
-            arm.setExtensionPower(gamepad1.left_trigger);
+            arm.manualExtension(true);
         } else if (gamepad1.right_trigger > 0.1) {
             //arm.setExtensionSMPower(-gamepad1.right_trigger);
-            arm.setExtensionPower(-gamepad1.right_trigger);
-        } else {
+            arm.manualExtension(false);
+        }
+
+        /*else {
             //arm.setExtensionSMPower(0);
             arm.setExtensionPower(0);
         }
+
+         */
 
 
         if(gamepad1.start && !previousStartState) {
@@ -161,7 +167,7 @@ public class TeleOpRed extends LinearOpMode {
         }
 
 
-        telemetry.addData("Arm Tics", arm.getEncoderTics());
+        telemetry.addData("Arm Tics", arm.getArmPosition());
         telemetry.addData("Level Position: ", arm.getTelemetry()[0]);
         telemetry.addData("Level Position Actual", arm.getTelemetry()[1]);
         telemetry.addData("Magnet Position", arm.getTelemetry()[2]);

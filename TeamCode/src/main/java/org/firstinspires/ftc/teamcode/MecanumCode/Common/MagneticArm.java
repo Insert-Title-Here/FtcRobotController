@@ -5,35 +5,46 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 public class MagneticArm {
+
+    public final double MAX = 0.68;
+    public final double MIN = 0.985;
+
+    private final double ARM_SPEED = 0.01;
+
+    private double armPosition;
+
 
     public enum magnetState {
         OPEN,
         GRABBING
     }
 
-    DcMotor magneticExtension, magneticExtensionEncoder;
-    CRServo magneticExtensionSM;
+    //DcMotor magneticExtension, magneticExtensionEncoder;
+    //CRServo magneticExtensionSM;
+    Servo magneticExtension;
 
     Servo magnet;
     Servo level;
 
-    double levelPosition;
-    double extensionPower;
+    public double levelPosition;
+    //double extensionPower;
 
     public MagneticArm(HardwareMap hardwareMap) {
-        magneticExtension = hardwareMap.get(DcMotor.class, "MagneticArm");
+        magneticExtension = hardwareMap.get(Servo.class, "MagneticArm");
 
         magnet = hardwareMap.get(Servo.class, "Magnet");
         level = hardwareMap.get(Servo.class, "Level");
-        magneticExtension.setDirection(DcMotor.Direction.FORWARD);
-        magneticExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //magneticExtension.setDirection(DcMotor.Direction.FORWARD);
+        //magneticExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //magneticExtensionEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
-        magneticExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //magneticExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //magneticExtensionSM = hardwareMap.crservo.get("MagExtension");
         magnet.setPosition(0.97);
+        magneticExtension.setPosition(MIN);
 
         levelPosition = 0.9;
         level.setPosition(levelPosition);
@@ -58,11 +69,15 @@ public class MagneticArm {
         level.setPosition(levelPosition);
     }
 
-
+/*
     /**
      * same code using a sparkMini
      * @param armPosition
      */
+
+    /*
+
+
     public void setArmPositionSM(int armPosition, LinearOpMode currentOpMode){
         magneticExtensionEncoder.setTargetPosition(armPosition);
 
@@ -82,8 +97,24 @@ public class MagneticArm {
 
     }
 
+
     public void setExtensionSMPower(double power) {
         magneticExtensionSM.setPower(power);
+    }
+
+     */
+
+    public void manualExtension(boolean positive){
+        if(positive){
+            armPosition -= ARM_SPEED;
+        }else{
+            armPosition += ARM_SPEED;
+        }
+
+        armPosition = Range.clip(armPosition, MAX, MIN);
+        magneticExtension.setPosition(armPosition);
+
+
     }
 
 
@@ -100,7 +131,15 @@ public class MagneticArm {
         }
     }
 
-    public void setArmPosition(int armPosition) {
+    public double getArmPosition(){
+        return armPosition;
+    }
+
+    public void setArmPosition(double armPosition) {
+
+        magneticExtension.setPosition(armPosition);
+        this.armPosition = armPosition;
+        /*
         magneticExtension.setTargetPosition(armPosition);
 
         magneticExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -115,8 +154,11 @@ public class MagneticArm {
 
         magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+         */
+
     }
 
+    /*
     // 0.55 fully retracted, 0.45 fully extended
     public double getLevelPosition() {
         if(magneticExtension.getCurrentPosition() < 0 && magneticExtension.getCurrentPosition() > -276 ) {
@@ -125,6 +167,7 @@ public class MagneticArm {
             return 0.45;
         }
     }
+
 
     public void setExtensionPower(double power) {
         //if(-220 < magneticExtension.getCurrentPosition() && magneticExtension.getCurrentPosition() < -50) {magneticExtension.setPower(power);
@@ -135,13 +178,21 @@ public class MagneticArm {
         magneticExtension.setPower(power);
     }
 
+
+     */
     public double[] getTelemetry() {
         return new double[]{levelPosition, level.getPosition(), magnet.getPosition()};
     }
 
+    /*
+
     public int getEncoderTics() {
         return magneticExtension.getCurrentPosition();
     }
+
+     */
+
+
 
 
 }

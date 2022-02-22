@@ -153,7 +153,9 @@ public class TankCarouselFreightRed extends OpModeWrapper {
     protected void onStart() {
         armMovementThread.start();
         capstonePos = bPipeline.getPos();
-        //telemetryThread.start();
+
+
+              //telemetryThread.start();
         //sleep(15000);
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
@@ -168,18 +170,24 @@ public class TankCarouselFreightRed extends OpModeWrapper {
         drive.tankRotate(31*Math.PI / 48, 0.3);
 
 
-        drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1700, MecanumDriveTrain.MovementType.STRAIGHT);
         //sleep(5000);
 
-        drive.tankRotate(34*Math.PI / 48, 0.3);
+        //drive.tankRotate(34*Math.PI / 48, 0.3);
         //sleep(5000);
 
         carouselThread.start();
 
         //TODO need to fix this power part
-        drive.bl.setPower(0.5);
+        while(drive.getAngle() < Math.PI - (Math.PI/32)) {
+            drive.tinyRotate(MecanumDriveTrain.rotatePower.Positive);
+            telemetry.addData("angle", drive.getAngle());
+            telemetry.addData("pi", Math.PI);
+            telemetry.update();
+        }
 
-        sleep(5000);
+        //sleep(5000);
+
 
 
 
@@ -191,9 +199,9 @@ public class TankCarouselFreightRed extends OpModeWrapper {
 
         //sleep(5000);
 
-        drive.tankRotate(0, 0.3);
+        drive.tankRotate(-2*Math.PI/24, 0.3);
 
-        drive.driveAuto(0.3, -1700, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1400, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.STRAIGHT);
 
         drive.tankRotate(-12*Math.PI/24, 0.3);
@@ -203,7 +211,7 @@ public class TankCarouselFreightRed extends OpModeWrapper {
         if (capstonePos == BarcodePipelineRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
-            drive.driveAuto(0.3, -750, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -950, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
             drive.driveAuto(0.3, -40, MecanumDriveTrain.MovementType.STRAIGHT);
 
@@ -211,41 +219,50 @@ public class TankCarouselFreightRed extends OpModeWrapper {
 
             sleep(500);
             capArm.toggleGrab();
+            sleep(1000);
+            moveArm = true;
 
-            drive.driveAuto(0.3, 790, MecanumDriveTrain.MovementType.STRAIGHT);
+
+            drive.driveAuto(0.3, 990, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
         } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
-            drive.driveAuto(0.3, -830, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -1000, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
             drive.driveAuto(0.3, -40, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
+            sleep(1000);
+            moveArm = true;
 
 
-            drive.driveAuto(0.3, 870, MecanumDriveTrain.MovementType.STRAIGHT);
+
+            drive.driveAuto(0.3, 1040, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
         } else {
-            drive.driveAuto(0.3, -1050, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -1165, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
+            sleep(1000);
+            moveArm = true;
 
-            drive.driveAuto(0.3, 1050, MecanumDriveTrain.MovementType.STRAIGHT);
+
+            drive.driveAuto(0.3, 1165, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
-        moveArm = true;
+
 
         drive.tankRotate(-Math.PI/4, 0.3);
 
 
-        drive.driveAuto(0.3, 600, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        drive.tankRotate(-Math.PI/2, 0.25  );
+        //drive.tankRotate(-Math.PI/2, 0.25  );
 
 
 

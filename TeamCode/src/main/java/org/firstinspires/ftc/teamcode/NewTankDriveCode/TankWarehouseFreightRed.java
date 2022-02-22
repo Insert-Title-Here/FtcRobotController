@@ -40,7 +40,7 @@ public class TankWarehouseFreightRed extends OpModeWrapper {
 
     //static final BarcodePipeline.AutoSide side = BarcodePipeline.AutoSide.RED;
 
-    //Thread armMovementThread;
+    Thread armMovementThread;
     private volatile boolean moveArm;
 
 
@@ -110,17 +110,19 @@ public class TankWarehouseFreightRed extends OpModeWrapper {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         moveArm = false;
-        /*armMovementThread = new Thread(){
+        armMovementThread = new Thread(){
             @Override
             public void run(){
                 while(!moveArm);
+                capArm.goToPosition(0);
+
 
 
             }
         };
 
 
-         */
+
 
         while(!opModeIsActive()){
             telemetry.addData("pos", bPipeline.getPos());
@@ -134,89 +136,68 @@ public class TankWarehouseFreightRed extends OpModeWrapper {
 
     @Override
     protected void onStart() {
-        //armMovementThread.start();
+        armMovementThread.start();
         capstonePos = bPipeline.getPos();
-        //sleep(15000);
-        /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.ROTATE);
+        drive.tankRotate(-Math.PI/2, 0.3);
+        drive.driveAuto(0.3,1200, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.tankRotate(0, 0.3);
 
-         */
-        // Forward: 1 ft 540.3 tics (5403 for 10 ft)
-        // Rotation: 360 degrees 3665 tics
-        // Strafe: 590 tics/ft - = Left, + = Right
-        //drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.RDIAGONAL);
-        sleep(500);
-        drive.driveAuto(0.3, -900, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
-        //drive.driveAuto(0.3, -250, MecanumDriveTrain.MovementType.ROTATE);
-        //drive.driveAuto(0.2, -50, MecanumDriveTrain.MovementType.STRAIGHT);
-        //drive.setPower(-0.1, -0.1, -0.1, -0.1);
-
-        capArm.setGrabberPosition(0.85);
-
-        sleep(500);
-
-        //capstonePos = BarcodePipelineWarehouseRed.BarcodePosition.CENTER;
 
         if (capstonePos == BarcodePipelineWarehouseRed.BarcodePosition.RIGHT) {
             //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
             //capArm.goToPosition(300);
             //drive.driveAuto(0.3, -160, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
-            drive.driveAuto(0.3, -60, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -650, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
 
             sleep(500);
             capArm.toggleGrab();
+
+            drive.driveAuto(0.3, 650, MecanumDriveTrain.MovementType.STRAIGHT);
 
         } else if (capstonePos == BarcodePipelineWarehouseRed.BarcodePosition.CENTER) {
             //drive.driveAuto(0.3, -180, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
-            drive.driveAuto(0.3, -50, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -700, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
             sleep(500);
             capArm.toggleGrab();
 
+            drive.driveAuto(0.3, 700, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
 
         } else {
-            drive.driveAuto(0.3, -150, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -750, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
             capArm.toggleGrab();
             sleep(500);
             capArm.toggleGrab();
 
-            drive.driveAuto(0.3, 150, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 750, MecanumDriveTrain.MovementType.STRAIGHT);
             //drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAFE);
 
 
             //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
-        //moveArm = true;
 
-        drive.driveAuto(0.3, 150, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        capArm.goToPosition(0);
+        moveArm = true;
 
-        drive.driveAuto(0.3, -220, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 300, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        drive.driveAuto(0.3, 2130, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1300, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.tankRotate(-15*Math.PI/24, 0.3);
 
+        drive.driveAuto(0.3, -2400, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.tankRotate(0, 0.5);
+        drive.driveAuto(0.3, -1000, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.tankRotate(Math.PI/4, 0.3);
 
     }
-
-
     @Override
     protected void onStop() {
 

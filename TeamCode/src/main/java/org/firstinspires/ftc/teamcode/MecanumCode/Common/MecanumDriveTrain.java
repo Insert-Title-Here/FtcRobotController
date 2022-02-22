@@ -399,8 +399,39 @@ public class MecanumDriveTrain {
 
     }
 
-    public void tinyRotate(){
-        bl.setPower(0.2);
+    public void tinyRotate(rotatePower power) {
+        if (power == rotatePower.Negative) {
+            br.setPower(-0.3);
+            //fl.setPower(0);
+            fl.setPower(-0.6);
+            bl.setPower(0);
+        }else{
+            //br.setPower(0.3);
+            //fr.setPower(0);
+            fl.setPower(0.5);
+            fr.setPower(-0.5);
+            bl.setPower(0);
+        }
+
+
+    }
+
+    public void bothRotate(rotatePower power) {
+        if (power == rotatePower.Negative) {
+            bl.setPower(-0.3);
+            br.setPower(0.3);
+            fr.setPower(0.3);
+        }else{
+            bl.setPower(0.3);
+            br.setPower(0.3);
+            fr.setPower(-0.3);
+        }
+
+
+    }
+
+    public enum rotatePower{
+        Positive, Negative
     }
 
 

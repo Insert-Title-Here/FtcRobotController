@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 
 @TeleOp(name="Tank Drive Blue")
 public class NewTankTeleOpBlue extends LinearOpMode {
+    //Go from 0 to 0.2
 
     MagneticArm arm;  
     MecanumDriveTrain drive;
@@ -89,7 +90,8 @@ public class NewTankTeleOpBlue extends LinearOpMode {
         armThread.start();
         capArmThread.start();
         capArm.goToPosition(100);
-        arm.setArmPosition(Constants.MAGARM_RETRACTED);
+
+        //arm.setArmPosition(0.5);
         while(opModeIsActive());
     }
 
@@ -107,10 +109,8 @@ public class NewTankTeleOpBlue extends LinearOpMode {
         if(gamepad1.a) {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
-            arm.setArmPosition(Constants.MAGARM_EXTENDED);
-            while(gamepad1.a) {
+            arm.setArmPosition(Constants.MAGARM_FREIGHT);
 
-            }
         }
 
         if(gamepad1.b) {
@@ -121,6 +121,12 @@ public class NewTankTeleOpBlue extends LinearOpMode {
 
         if(gamepad1.y) {
             // Raise level
+
+
+            if(arm.levelPosition == Constants.LEVEL_UP_POS) {
+                arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
+            }
+
             arm.setLevelPosition(Constants.LEVEL_UP_POS);
         }
 
@@ -130,18 +136,19 @@ public class NewTankTeleOpBlue extends LinearOpMode {
             sleep(1000);
             arm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
             //arm.setArmPositionSM(0, OmniDirectionalTeleOp.this);
+            arm.setArmPosition(Constants.MAGARM_FREIGHT);
         }
 
         if (gamepad1.left_trigger > 0.1) {
             //arm.setExtensionSMPower(gamepad1.left_trigger);
-            arm.setExtensionPower(gamepad1.left_trigger);
+            arm.manualExtension(true);
         } else if (gamepad1.right_trigger > 0.1) {
             //arm.setExtensionSMPower(-gamepad1.right_trigger);
-            arm.setExtensionPower(-gamepad1.right_trigger);
-        } else {
-            //arm.setExtensionSMPower(0);
-            arm.setExtensionPower(0);
+            arm.manualExtension(false);
         }
+
+
+
 
 
         if(gamepad1.start && !previousStartState) {
@@ -153,13 +160,14 @@ public class NewTankTeleOpBlue extends LinearOpMode {
         }
 
 
-        telemetry.addData("Arm Tics", arm.getEncoderTics());
+        telemetry.addData("Arm Tics", arm.getArmPosition());
         telemetry.addData("Level Position: ", arm.getTelemetry()[0]);
         telemetry.addData("Level Position Actual", arm.getTelemetry()[1]);
         telemetry.addData("Magnet Position", arm.getTelemetry()[2]);
 
         telemetry.addData("Capstone Arm Tics: ", capArm.getTelemetry()[0]);
         telemetry.addData("Capstone Servo Position: ", capArm.getTelemetry()[1]);
+
 
         telemetry.addData("FL Tics", drive.fl.getCurrentPosition());
         telemetry.addData("FR Tics", drive.fr.getCurrentPosition());
