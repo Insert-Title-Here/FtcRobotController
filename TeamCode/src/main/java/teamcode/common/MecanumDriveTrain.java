@@ -40,7 +40,7 @@ public class MecanumDriveTrain {
     Vector2D previousVelocity;
     Vector2D previousError;
     double previousOmegaError;
-    private NormalizedColorSensor sensor;
+    private NormalizedColorSensor sensor, warehouse;
     ArmSystem arm;
 
     NormalizedColorSensor frontRed, backRed, frontBlue, backBlue;
@@ -51,6 +51,7 @@ public class MecanumDriveTrain {
 
     private boolean environmentalTerminate, eStop;
     private boolean isRed;
+    private volatile boolean[] flags;
 
 
     /**
@@ -109,20 +110,23 @@ public class MecanumDriveTrain {
         fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
         br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
-        sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
-        sensor.setGain(1000); //325 is tested value but i think I trust this one more //280
         this.arm = arm;
 
         frontRed = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensorRed");
         backRed = hardwareMap.get(NormalizedColorSensor.class, "BackColorSensorRed");
         frontBlue = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensorBlue");
         backBlue = hardwareMap.get(NormalizedColorSensor.class, "BackColorSensorBlue");
+        warehouse = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
+        sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
+        warehouse.setGain(600);
         frontRed.setGain(100);
         backRed.setGain(420);
-        //todo blue
+        frontBlue.setGain(600);
+        backBlue.setGain(300);
+        sensor.setGain(950); //325 is tested value but i think I trust this one more //280
 
-
+        flags = new boolean[]{false, false, false, false, false};
 
 
         hub = hardwareMap.get(LynxModule.class, "Control Hub");
@@ -158,6 +162,17 @@ public class MecanumDriveTrain {
     public synchronized void rotateDistanceDE(double degrees, double omega){
         double radians = Math.toRadians(degrees);
         rotateDistanceDERadian(radians, omega);
+    }
+
+    public void driveColorSensorWarehouse(double velocity){
+        NormalizedRGBA rgba = warehouse.getNormalizedColors();
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        while(rgba.red < 0.9){
+            rgba = warehouse.getNormalizedColors();
+            setMotorVelocity(velocity,velocity,velocity,velocity);
+        }
+        brake();
     }
 
 
@@ -286,7 +301,6 @@ public class MecanumDriveTrain {
      * @param velocity the linear velocity in inches per second that the robot should travel
      */
     public synchronized void moveDistanceDEVelocity(int distance, double degrees, double velocity){
-        Debug.log(distance);
         double radians = Math.toRadians(degrees);
         velocity *= getSign(distance);
         Vector2D vec = Vector2D.fromAngleMagnitude(radians, velocity);
@@ -295,6 +309,7 @@ public class MecanumDriveTrain {
         int frDistance = (int)(Math.cos(radians) * distance);
         int blDistance = (int)(Math.cos(radians) * distance);
         int brDistance = (int)(Math.sin(radians) * distance);
+
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hub.clearBulkCache();
@@ -303,20 +318,22 @@ public class MecanumDriveTrain {
                 Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) || Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance)){
             hub.clearBulkCache();
             data = hub.getBulkData();
-//            AbstractOpMode.currentOpMode().telemetry.addData("fl",data.getMotorCurrentPosition(0));
-//            //AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
-//            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
-//            //AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
-//            AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
-//            //AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
-//            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
-//            //AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
-//            AbstractOpMode.currentOpMode().telemetry.update();
+            AbstractOpMode.currentOpMode().telemetry.addData("fl",data.getMotorCurrentPosition(0));
+            AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+            AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
+            AbstractOpMode.currentOpMode().telemetry.update();
 
             setVelocity(vec, 0);
         }
         brake();
     }
+
+
     public synchronized void driveColorSensor(double pow){
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -379,14 +396,80 @@ public class MecanumDriveTrain {
         if(!isRed){
             sign = -1;
         }
-
         moveDistanceDEVelocity(200, 180, 9);
         strafeDistanceSensor(6, 0);
-        moveDistanceDEVelocity((int)((posAvg) / Math.cos(Math.toRadians(10))), 170 * sign, 9);
+        driveColorSensorWarehouse(-9);
+        moveDistanceDEVelocity(300, 180,9);
+        //moveDistanceDEVelocity((int)((posAvg) / Math.cos(Math.toRadians(10))), 170 * sign, 9);
 //        spline.add(new Movement(200, 3,180));
 //        spline.add(new Movement((int)(posAvg / Math.cos(10)), 3, 170));
 //        splicedMovement(spline);
-        Debug.log("val" + (int)((posAvg) / Math.cos(Math.toRadians(10))));
+        //Debug.log("val" + (int)((posAvg) / Math.cos(Math.toRadians(10))));
+
+        arm.intakeDumb(0);
+    }
+    public synchronized void driveColorSensorSpliced(double pow){
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.lowerLinkage();
+        arm.intakeDumb(1.0);
+        boolean detectedElement = false;
+        Utils.sleep(100);
+        setMotorVelocity(pow,pow,pow,pow);
+        Utils.sleep(250);
+        while(!detectedElement){
+//            Vector2D vec = Vector2D.fromAngleMagnitude(0, pow);
+//            setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            hub.clearBulkCache();
+//            LynxModule.BulkData data = hub.getBulkData();
+//            while(Math.abs(data.getMotorCurrentPosition(0))< Math.abs(200) || Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(200) ||
+//                    Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(200) || Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(200)){
+//                hub.clearBulkCache();
+//                data = hub.getBulkData();
+            setMotorVelocity(pow,pow,pow,pow);
+            NormalizedRGBA colors = sensor.getNormalizedColors();
+            double red = colors.red;
+            double blue = colors.blue;
+            double green = colors.green;
+            AbstractOpMode.currentOpMode().telemetry.addData("green", green);
+            AbstractOpMode.currentOpMode().telemetry.addData("red", red);
+            AbstractOpMode.currentOpMode().telemetry.addData("blue", blue);
+            AbstractOpMode.currentOpMode().telemetry.update();
+
+            if (red > 0.9) {
+                detectedElement = true;
+                break;
+            } else {
+                detectedElement = false;
+            }
+            //setVelocity(vec, 0);
+            //}
+        }
+        brake();
+        AbstractOpMode.currentOpMode().telemetry.clear();
+        Debug.log("grabbed");
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+        double posAvg = 0;
+        for(int i = 0; i < 4; i++){
+            int pos = Math.abs(data.getMotorCurrentPosition(i));
+            Debug.log(pos);
+            posAvg += pos;
+        }
+        posAvg = posAvg / (4.0 * 0.707); //4 cos 45
+        arm.preScoreAuto();
+        arm.intakeDumb(-1.0);
+//        posAvg -= 600;
+//        if(posAvg < 600){
+//            posAvg = 0;
+//        }
+
+        ArrayList<Movement> spline = new ArrayList<>();
+        double sign = 1;
+        if(!isRed){
+            sign = -1;
+        }
 
         arm.intakeDumb(0);
     }
@@ -702,8 +785,11 @@ public class MecanumDriveTrain {
 
     }
 
-
     public synchronized void strafeDistanceSensor(double omega, double radians){
+        strafeDistanceSensor(omega, radians, true);
+    }
+
+    public synchronized void strafeDistanceSensor(double omega, double radians, boolean isBrake){
 
 
         environmentalTerminate = false;
@@ -738,12 +824,21 @@ public class MecanumDriveTrain {
                 AbstractOpMode.currentOpMode().telemetry.addData("BGreen", backRGBA.green);
                 AbstractOpMode.currentOpMode().telemetry.update();
 
-                Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0), omega);
+                double angle;
+                if(isRed){
+                    angle = 0;
+                }else{
+                    angle = Math.PI;
+                }
+
+                Vector2D vec = Vector2D.fromAngleMagnitude(radians + (Math.PI / 2.0) + angle, omega);
                 setVelocity(vec, 0);
                 Utils.sleep(100);
 
             }
-        brake();
+        if(isBrake) {
+            brake();
+        }
 
 
 
@@ -1080,7 +1175,14 @@ public class MecanumDriveTrain {
     }
 
 
-
+    /**
+     * types of movement I need to splice
+     * linear
+     * rotation
+     * color sensor localization
+     * warehouse color sensor movement.
+     * @param movements
+     */
     public synchronized void splicedMovement(ArrayList<Movement> movements){
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
@@ -1122,11 +1224,28 @@ public class MecanumDriveTrain {
                 while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians)){
                     setMotorVelocity(omega, -omega, omega, -omega);
                 }
-            }else{
+            }else if(curr.getMovement() == Movement.MovementType.PAUSE){
+                brake();
                 Utils.sleep(curr.getMillis());
+            }else if(curr.getMovement() == Movement.MovementType.WALL_LOCALIZATION){
+                strafeDistanceSensor(curr.getVelocity(), curr.getRadians(), true);
+            }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_LOCALIZATION){
+                driveColorSensorWarehouse(curr.getVelocity());
+            }else if(curr.getMovement() == Movement.MovementType.MODIFY_FLAG){
+                flags[curr.getIndex()] = curr.getVal();
+            }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_OPERATION){
+                driveColorSensorSpliced(curr.getVelocity());
             }
         }
         brake();
+    }
+
+    public synchronized boolean getFlagIndex(int index){
+        return flags[index];
+    }
+
+    public synchronized void setFlagIndex(int index, boolean val){
+        flags[index] = val;
     }
 
     public void setEnvironmentalTerminate(boolean val){

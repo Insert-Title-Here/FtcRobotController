@@ -20,29 +20,55 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Movement;
 import teamcode.common.Utils;
+import teamcode.common.Vector2D;
 
-
-@Autonomous(name="Red DE 3 freight")
-public class RedDEWarehouseAuto extends AbstractOpMode {
-
-    private static final int FREIGHT = 2;
+@Autonomous(name="4 freight red")
+public class RedDEFourFreight extends AbstractOpMode {
+    private static final int FREIGHT = 3;
     MecanumDriveTrain drive;
     ArmSystem arm;
     EndgameSystems system;
-    volatile boolean[] flags;
+
     Thread armCommands;
     OpenCvWebcam webcam;
     MecanumBarcodePipeline.BarcodePosition position;
-    PIDFCoefficients coefficients = new PIDFCoefficients(5, 0.5, 1.0, 0); //2.5
+    PIDFCoefficients coefficients = new PIDFCoefficients(5, 0.5, 1.0, 0.02); //2.5
+
+    ArrayList<Movement> warehouseSplice;
+
 
 
     @Override
     protected void onInitialize() {
+        warehouseSplice = new ArrayList<>();
+        //movement in
+        warehouseSplice.add(new Movement(-105, 6));
+        warehouseSplice.add(new Movement(15, Movement.MovementType.WALL_LOCALIZATION));
+        warehouseSplice.add(new Movement(1300, VELOCITY, 0));
+
+        //intake and back out
+        warehouseSplice.add(new Movement(1, Movement.MovementType.WAREHOUSE_OPERATION));
+        warehouseSplice.add(new Movement(200, 9, 180));
+        warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
+        warehouseSplice.add(new Movement(-9, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+        warehouseSplice.add(new Movement(300, 9, 180));
+
+        //approach and score
+        warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
+        warehouseSplice.add(new Movement(200));
+        warehouseSplice.add(new Movement(200, VELOCITY, 180));
+        warehouseSplice.add(new Movement(1, true));
+        warehouseSplice.add(new Movement(150, VELOCITY, 90));
+        warehouseSplice.add(new Movement(-135, 6));
+        warehouseSplice.add(new Movement(100));
+        warehouseSplice.add(new Movement(630, VELOCITY / 2.0, 180));
+        warehouseSplice.add(new Movement(2, true));
+        warehouseSplice.add(new Movement(200));
+
         system = new EndgameSystems(hardwareMap, false);
         arm = new ArmSystem(hardwareMap, false);
         drive = new MecanumDriveTrain(hardwareMap, true, system, arm, coefficients);
         Debug.log("here");
-        flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread(){
             public void run() {
                 Utils.sleep(250);
@@ -53,18 +79,18 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
                 }else{
                     arm.raise(Constants.TOP_POSITION + 1000);
                 }
-                while (!flags[0]);
+                while (!drive.getFlagIndex(0));
 
                 arm.retract();
                 for(int i = 0; i < FREIGHT; i++) {
-                    while (!flags[1]) ;
+                    while (!drive.getFlagIndex(1)) ;
                     arm.raise(Constants.TOP_POSITION + 1000);
-                    flags[1] = false;
-                    while (!flags[2]) ;
+                    drive.setFlagIndex(1, false);
+                    while (!drive.getFlagIndex(2)) ;
                     arm.score();
                     Utils.sleep(500);
                     arm.retract();
-                    flags[2] = false;
+                    drive.setFlagIndex(2, false);
                 }
 
 
@@ -127,31 +153,14 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
             arm.score();
         }
         Utils.sleep(250);
-        flags[0] = true;
+        drive.setFlagIndex(0, true);
         Utils.sleep(200);
         for(int i = 0; i < FREIGHT; i++) {
-            drive.rotateDistanceDE(-105, 6);
-            drive.strafeDistanceSensor(VELOCITY, 0);
-            if(i == 0) {
-                drive.moveDistanceDEVelocity(1300, 0, VELOCITY);
-            }else{
-                drive.moveDistanceDEVelocity(1300, 0,VELOCITY);
-            }
-            drive.driveColorSensor(1);
-            //drive.moveDistanceDEVelocity(200, 0, VELOCITY);
-            drive.strafeDistanceSensor(VELOCITY,0);
-            Utils.sleep(200);
 
-            drive.moveDistanceDEVelocity(200 , 180, VELOCITY); //+ (100 * i)
-            flags[1] = true;
-            drive.moveDistanceDEVelocity(150, 90, VELOCITY);
-            drive.rotateDistanceDE(-135, 6);
-            Utils.sleep(100);
-            drive.moveDistanceDEVelocity(630, 180, VELOCITY / 2.0);
-            flags[2] = true;
-            Utils.sleep(200);
+            drive.splicedMovement(warehouseSplice);
+
         }
-        drive.rotateDistanceDE(-90, 6);
+        drive.rotateDistanceDE(-105, 6);
         drive.strafeDistanceSensor(VELOCITY, 0);
         arm.lowerLinkage();
         arm.intakeDumb(1.0);
@@ -159,7 +168,7 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
 
 
 
-            while(opModeIsActive());
+        while(opModeIsActive());
 
 
     }

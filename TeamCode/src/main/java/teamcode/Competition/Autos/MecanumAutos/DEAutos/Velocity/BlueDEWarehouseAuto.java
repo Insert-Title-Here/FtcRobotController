@@ -9,6 +9,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.ArrayList;
+
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
@@ -16,10 +18,11 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
+import teamcode.common.Movement;
 import teamcode.common.Utils;
 
 
-@Autonomous(name="Blue DE Warehouse")
+@Autonomous(name="Blue DE 3 freight")
 public class BlueDEWarehouseAuto extends AbstractOpMode {
 
     private static final int FREIGHT = 2;
@@ -30,43 +33,36 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
     Thread armCommands;
     OpenCvWebcam webcam;
     MecanumBarcodePipeline.BarcodePosition position;
-    PIDFCoefficients coefficients = new PIDFCoefficients(2.5, 0.5, 1.0, 0);
-
+    PIDFCoefficients coefficients = new PIDFCoefficients(5, 0.5, 1.0, 0); //2.5
 
 
     @Override
     protected void onInitialize() {
-        system = new EndgameSystems(hardwareMap, false);
+        system = new EndgameSystems(hardwareMap, true);
         arm = new ArmSystem(hardwareMap, false);
-        drive = new MecanumDriveTrain(hardwareMap, true, system, arm, coefficients);
+        drive = new MecanumDriveTrain(hardwareMap, false, system, arm, coefficients);
         Debug.log("here");
         flags = new boolean[]{false, false, false, false, false};
         armCommands = new Thread(){
             public void run() {
-                Utils.sleep(500);
+                Utils.sleep(250);
                 if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
                     arm.raise(Constants.BOTTOM_POSITION);
                 }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
-                    arm.raise(Constants.MEDIUM_POSITION + 1000);
+                    arm.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
                     arm.raise(Constants.TOP_POSITION + 1000);
                 }
-                while (!flags[0]);
-                if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
-                    arm.runConveyorPos(0.8, 1000);
-                }else{
-                    Debug.log("her");
-                    arm.score();
-                }
-                Utils.sleep(250);
+                while(!flags[0]);
+
                 arm.retract();
                 for(int i = 0; i < FREIGHT; i++) {
                     while (!flags[1]) ;
                     arm.raise(Constants.TOP_POSITION + 1000);
                     flags[1] = false;
-                    while (!flags[2]) ;
+                    while(!flags[2]) ;
                     arm.score();
-                    Utils.sleep(250);
+                    Utils.sleep(500);
                     arm.retract();
                     flags[2] = false;
                 }
@@ -121,39 +117,46 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
 
         webcam.stopStreaming();
         armCommands.start();
-        drive.moveDistanceDEVelocity(875, 45, VELOCITY);
+        drive.moveDistanceDEVelocity(870, 45, VELOCITY); // 900 -45
         Utils.sleep(100);
         drive.rotateDistanceDE(-160, 6);
+        if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
+            Debug.log("here");
+            arm.runConveyorPos(1.0, 1500);
+        }else{
+            arm.score();
+        }
+        Utils.sleep(250);
         flags[0] = true;
         Utils.sleep(200);
         for(int i = 0; i < FREIGHT; i++) {
-            drive.rotateDistanceDE(90, 6);
+            drive.rotateDistanceDE(105, 6);
             drive.strafeDistanceSensor(VELOCITY, 0);
             if(i == 0) {
-                drive.moveDistanceDEVelocity(1100, 0, VELOCITY);
+                drive.moveDistanceDEVelocity(1300, 0, VELOCITY);
             }else{
-                drive.moveDistanceDEVelocity(1100, 0,VELOCITY);
+                drive.moveDistanceDEVelocity(1300, 0,VELOCITY);
             }
             drive.driveColorSensor(1);
             //drive.moveDistanceDEVelocity(200, 0, VELOCITY);
             drive.strafeDistanceSensor(VELOCITY,0);
             Utils.sleep(200);
-            if(i == 0) {
-                drive.moveDistanceDEVelocity(200, 180, VELOCITY);
-            }else{
-                drive.moveDistanceDEVelocity(400, 180, VELOCITY);
-            }
-            drive.rotateDistanceDE(-135, 6);
 
-            Utils.sleep(100);
+            drive.moveDistanceDEVelocity(200 , 180, VELOCITY); //+ (100 * i)
             flags[1] = true;
-            drive.moveDistanceDEVelocity(600, 180, VELOCITY);
+            drive.moveDistanceDEVelocity(150, 90, VELOCITY);
+            drive.rotateDistanceDE(135, 6);
+            Utils.sleep(100);
+            drive.moveDistanceDEVelocity(650, 180, VELOCITY / 2.0);
             flags[2] = true;
             Utils.sleep(200);
         }
-        drive.rotateDistanceDE(-90, 6);
+        drive.rotateDistanceDE(90, 6);
         drive.strafeDistanceSensor(VELOCITY, 0);
-        drive.moveDistanceDEVelocity(800, 0, VELOCITY);
+        //arm.lowerLinkage();
+        //arm.intakeDumb(1.0);
+        drive.moveDistanceDEVelocity(1200, 0, VELOCITY);
+
 
 
         while(opModeIsActive());
