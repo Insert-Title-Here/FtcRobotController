@@ -401,9 +401,8 @@ public class MecanumDriveTrain {
 
     public void tinyRotate(rotatePower power) {
         if (power == rotatePower.Negative) {
-            br.setPower(-0.3);
-            //fl.setPower(0);
-            fl.setPower(-0.6);
+            fl.setPower(-0.5);
+            fr.setPower(0.5);
             bl.setPower(0);
         }else{
             //br.setPower(0.3);
