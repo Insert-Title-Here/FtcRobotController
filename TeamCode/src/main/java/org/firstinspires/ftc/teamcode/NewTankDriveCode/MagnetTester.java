@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.MecanumCode.TeleOp;
+package org.firstinspires.ftc.teamcode.NewTankDriveCode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,15 +9,14 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Constants;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.FileNotFoundException;
 
+@TeleOp(name="Magnet Tester")
+public class MagnetTester extends LinearOpMode {
+    //Go from 0 to 0.2
 
-@TeleOp(name="MecanumOpMode Red")
-public class OmniDirectionalTeleOpRed extends LinearOpMode {
-
-    MagneticArm arm;
+    MagneticArm arm;  
     MecanumDriveTrain drive;
     Carousel carousel;
     CapstoneArm capArm;
@@ -86,21 +85,29 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     }
 
     private void startOpMode() {
+        /*
         driveThread.start();
-        armThread.start();
         capArmThread.start();
         capArm.goToPosition(100);
-        //arm.setArmPosition(Constants.MAGARM_RETRACTED);
+
+        //arm.setArmPosition(0.5);
+
+        */
+
+        armThread.start();
+
+
+
         while(opModeIsActive());
+
+
     }
 
     private void armUpdate() {
-        /**
-         * Kevin go implement this
-         */
 
-        if(gamepad1.left_bumper) {
-            carousel.spinCarousel(4000, this, Carousel.CarouselMode.TELEOP);
+
+        /*if(gamepad1.left_bumper) {
+            carousel.spinCarousel(-4000, this, Carousel.CarouselMode.TELEOP);
         }
 
 
@@ -114,7 +121,6 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
 
         if(gamepad1.b) {
             // Lower level to cube height
-            arm.setArmPosition(Constants.MAGARM_FREIGHT);
             arm.setLevelPosition(Constants.LEVEL_DOWN_POS);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
@@ -123,13 +129,11 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             // Raise level
 
 
-            if(arm.levelPosition == Constants.LEVEL_HALF_POS) {
+            if(arm.levelPosition == Constants.LEVEL_UP_POS) {
                 arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
-                arm.setLevelPosition(Constants.LEVEL_UP_POS);
-            }else{
-                arm.setLevelPosition(Constants.LEVEL_HALF_POS);
             }
 
+            arm.setLevelPosition(Constants.LEVEL_UP_POS);
         }
 
         if(gamepad1.x) {
@@ -143,11 +147,12 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
 
         if (gamepad1.left_trigger > 0.1) {
             //arm.setExtensionSMPower(gamepad1.left_trigger);
-            arm.manualExtension(false);
+            arm.manualExtension(true);
         } else if (gamepad1.right_trigger > 0.1) {
             //arm.setExtensionSMPower(-gamepad1.right_trigger);
-            arm.manualExtension(true);
+            arm.manualExtension(false);
         }
+
 
 
 
@@ -160,6 +165,19 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             previousStartState = false;
         }
 
+         */
+
+
+
+        if(gamepad1.dpad_up){
+            arm.manualMagnetPosition(true);
+        }else if (gamepad1.dpad_down){
+            arm.manualMagnetPosition(false);
+        }
+
+
+
+
 
         telemetry.addData("Arm Tics", arm.getArmPosition());
         telemetry.addData("Level Position: ", arm.getTelemetry()[0]);
@@ -169,12 +187,15 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         telemetry.addData("Capstone Arm Tics: ", capArm.getTelemetry()[0]);
         telemetry.addData("Capstone Servo Position: ", capArm.getTelemetry()[1]);
 
+
         telemetry.addData("FL Tics", drive.fl.getCurrentPosition());
         telemetry.addData("FR Tics", drive.fr.getCurrentPosition());
         telemetry.addData("BL Tics", drive.bl.getCurrentPosition());
         telemetry.addData("BR Tics", drive.br.getCurrentPosition());
 
         telemetry.update();
+
+
     }
 
     private void driveUpdate() {
@@ -188,18 +209,17 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         }
 
 
-
         if(driveSwapped) {
             if (gamepad1.right_bumper) { // replace this with a button for sprint
-                drive.setPower(new Vector2D(-gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, -gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.tankSetPower(gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER, gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER);
             } else {
-                drive.setPower(new Vector2D(-gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, -gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.tankSetPower(gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER, gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER);
             }
         } else {
             if (gamepad1.right_bumper) { // replace this with a button for sprint
-                drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.tankSetPower(-gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER, gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER);
             } else {
-                drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.tankSetPower(-gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER, gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER);
             }
         }
 
@@ -232,6 +252,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         }else{
             capArm.setPower(0);
         }
+
 
 
         //capArm.setPower(gamepad2.left_stick_y / 2);

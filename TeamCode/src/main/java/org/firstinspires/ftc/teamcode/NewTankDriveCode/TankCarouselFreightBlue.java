@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Carousel Freight Red Tank")
+@Autonomous(name="Carousel Freight Blue Tank")
 public class TankCarouselFreightBlue extends OpModeWrapper {
 
     MecanumDriveTrain drive;

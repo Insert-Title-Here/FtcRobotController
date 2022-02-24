@@ -9,12 +9,14 @@ import com.qualcomm.robotcore.util.Range;
 
 public class MagneticArm {
 
-    public final double MAX = 0.68;
+    public final double MAX = 0.67;
     public final double MIN = 0.985;
 
     private final double ARM_SPEED = 0.01;
 
+
     private double armPosition;
+    private double magnetPosition;
 
 
     public enum magnetState {
@@ -43,8 +45,11 @@ public class MagneticArm {
         //magneticExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //magneticExtensionSM = hardwareMap.crservo.get("MagExtension");
-        magnet.setPosition(0.97);
+        magnet.setPosition(Constants.MAGARM_FREIGHT);
         magneticExtension.setPosition(MIN);
+        armPosition = 1;
+        magnetPosition = 0.95;
+        magnet.setPosition(magnetPosition);
 
         levelPosition = 0.9;
         level.setPosition(levelPosition);
@@ -125,10 +130,23 @@ public class MagneticArm {
 
     public void setMagnetPosition(magnetState position) {
         if(position == magnetState.GRABBING) {
-            magnet.setPosition(0.97);
+            magnet.setPosition(0.95);
         } else if(position == magnetState.OPEN) {
-            magnet.setPosition(0.5);
+            magnet.setPosition(0.82);
         }
+    }
+
+    public void manualMagnetPosition(boolean positive){
+        if(positive){
+            magnetPosition += ARM_SPEED;
+        }else{
+            magnetPosition -= ARM_SPEED;
+        }
+
+        magnetPosition = Range.clip(magnetPosition, 0, 1);
+        magnet.setPosition(magnetPosition);
+
+
     }
 
     public double getArmPosition(){

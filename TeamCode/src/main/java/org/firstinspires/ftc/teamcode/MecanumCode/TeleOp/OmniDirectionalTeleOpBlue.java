@@ -113,6 +113,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
         if(gamepad1.b) {
             // Lower level to cube height
+            arm.setArmPosition(Constants.MAGARM_FREIGHT);
             arm.setLevelPosition(Constants.LEVEL_DOWN_POS);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
@@ -121,11 +122,13 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             // Raise level
 
 
-            if(arm.levelPosition == Constants.LEVEL_UP_POS) {
+            if(arm.levelPosition == Constants.LEVEL_HALF_POS) {
                 arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
+                arm.setLevelPosition(Constants.LEVEL_UP_POS);
+            }else{
+                arm.setLevelPosition(Constants.LEVEL_HALF_POS);
             }
 
-            arm.setLevelPosition(Constants.LEVEL_UP_POS);
         }
 
         if(gamepad1.x) {
@@ -139,10 +142,10 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
         if (gamepad1.left_trigger > 0.1) {
             //arm.setExtensionSMPower(gamepad1.left_trigger);
-            arm.manualExtension(true);
+            arm.manualExtension(false);
         } else if (gamepad1.right_trigger > 0.1) {
             //arm.setExtensionSMPower(-gamepad1.right_trigger);
-            arm.manualExtension(false);
+            arm.manualExtension(true);
         }
 
 
