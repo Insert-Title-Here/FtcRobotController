@@ -137,7 +137,7 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
         //spin duck and run intake
         arm.lowerLinkage();
         arm.intakeDumb(1.0);
-        system.scoreDuckAuto();
+        drive.spinDuck(false);
         Utils.sleep(500);
         arm.preScore();
 

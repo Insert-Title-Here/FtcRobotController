@@ -123,29 +123,32 @@ public class RedDEDuckAutoV extends AbstractOpMode {
             arm.score();
         }
         Utils.sleep(250);
-        flags[0] = true;
 
         //move away from hub and to carousel
-        drive.moveDistanceDEVelocity(500, 0, VELOCITY);
+        drive.moveDistanceDEVelocity(850, 0, 3.0);
+        flags[0] = true;
+        Utils.sleep(100);
         drive.rotateDistanceDE(160, 4);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(1400, 0, VELOCITY / 2.0); //calculated angle is 30
-
+        drive.moveDistanceDEVelocity(1600, 0, VELOCITY / 2.0); //calculated angle is 30
+        drive.moveDistanceDEVelocity(100, 90, 5.0);
         //spin duck and run intake
         arm.lowerLinkage();
         arm.intakeDumb(1.0);
-        system.scoreDuckAuto();
+        drive.spinDuck(false);
         Utils.sleep(1500);
-        arm.preScore();
+        arm.preScoreDuck();
 
         //score the duck
-        drive.rotateDistanceDE(105, 4);
+        drive.rotateDistanceDE(90, 4);
         arm.intakeDumb(0);
         Utils.sleep(200);
 
-        drive.moveDistanceDEVelocity(1400, 90, VELOCITY);
+        drive.moveDistanceDEVelocity(1600, 90, VELOCITY);
+
         flags[1] = true;
-        drive.moveDistanceDEVelocity(750, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(800, 180, VELOCITY / 2.0);
+        Utils.sleep(200);
         flags[2] = true;
 
         //park, go for partial because full is near impossible lmao,

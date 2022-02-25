@@ -176,6 +176,8 @@ public class ArmSystem {
         stage = Stage.HOUSED;
     }
 
+
+
     public boolean isLinkageInPreScore(){
         return linkage.getPosition() != LINKAGE_SCORE;
     }

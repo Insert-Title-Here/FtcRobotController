@@ -98,7 +98,8 @@ public class Movement {
 
 
     public enum MovementType{
-        TRANSLATION, ROTATION,
+        TRANSLATION,
+        ROTATION,
         PAUSE,
         WALL_LOCALIZATION,
         WAREHOUSE_LOCALIZATION,
