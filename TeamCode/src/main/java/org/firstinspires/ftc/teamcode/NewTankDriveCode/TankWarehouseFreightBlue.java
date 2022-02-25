@@ -198,13 +198,18 @@ public class TankWarehouseFreightBlue extends OpModeWrapper {
         drive.tankRotate(-Math.PI/4, 0.3);
 
         //Freight Pickup
+        //Freight Pickup
         magArm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
+        drive.tankRotate(Math.PI/4, 0.3);
+        magArm.setArmPosition(Constants.MAGARM_FREIGHT);
         drive.driveAuto(0.3, 600, MecanumDriveTrain.MovementType.STRAIGHT);
         magArm.setLevelPosition(Constants.LEVEL_DOWN_POS);
-        sleep(-2000);
-        magArm.setLevelPosition(Constants.LEVEL_UP_POS);
-        drive.tankRotate(-3*Math.PI/4, 0.3);
-        //magArm.setArmPosition(Constants.MAGARM_EXTENDED);
+        sleep(2000);
+        while(opModeIsActive()){
+            drive.tankRotate(Math.PI/6, 0.3);
+            sleep(500);
+            drive.tankRotate(Math.PI/3, 0.3);
+        }
 
 
     }

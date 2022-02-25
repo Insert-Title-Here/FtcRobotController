@@ -13,6 +13,9 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.FileNotFoundException;
 
+
+
+
 @TeleOp(name="Tank Drive Blue")
 public class NewTankTeleOpBlue extends LinearOpMode {
     //Go from 0 to 0.2
@@ -43,7 +46,7 @@ public class NewTankTeleOpBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        arm = new MagneticArm(hardwareMap);
+        arm = new MagneticArm(hardwareMap, MagneticArm.OpMode.TeleOp);
         carousel = new Carousel(hardwareMap);
         capArm = new CapstoneArm(hardwareMap);
 
@@ -109,7 +112,7 @@ public class NewTankTeleOpBlue extends LinearOpMode {
         if(gamepad1.a) {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
-            arm.setArmPosition(Constants.MAGARM_FREIGHT);
+            arm.setArmPosition(0.985);
 
         }
 
@@ -128,7 +131,7 @@ public class NewTankTeleOpBlue extends LinearOpMode {
             if(arm.levelPosition == Constants.LEVEL_HALF_POS) {
                 arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
                 arm.setLevelPosition(Constants.LEVEL_UP_POS);
-            }else{
+            }else if(arm.levelPosition != Constants.LEVEL_HALF_POS && arm.levelPosition != Constants.LEVEL_UP_POS){
                 arm.setLevelPosition(Constants.LEVEL_HALF_POS);
             }
 

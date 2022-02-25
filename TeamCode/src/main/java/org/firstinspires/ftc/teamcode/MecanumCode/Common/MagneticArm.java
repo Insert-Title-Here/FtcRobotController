@@ -14,7 +14,7 @@ public class MagneticArm {
     //Arm Constants
     public final double MAX = 0.67;
     public final double MIN = 0.985;
-    private final double ARM_SPEED = 0.01;
+    private final double ARM_SPEED = 0.02;
 
 
     //Positions
@@ -58,6 +58,8 @@ public class MagneticArm {
 
         //Arm Position (5 turn servo)
         setArmPosition(MIN);
+        //armPosition = 0.985;
+        //magneticExtension.setPosition(0.985);
 
         //Magnet Grabber Position (Grabbing)
         setMagnetPosition(magnetState.GRABBING);
@@ -94,7 +96,7 @@ public class MagneticArm {
 
             //levelPosition = 0.9;
             //level.setPosition(levelPosition);
-            setLevelPosition(0.9);
+            setLevelPosition(Constants.LEVEL_HALF_POS);
 
         }
 

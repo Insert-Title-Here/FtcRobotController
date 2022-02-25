@@ -43,7 +43,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        arm = new MagneticArm(hardwareMap);
+        arm = new MagneticArm(hardwareMap, MagneticArm.OpMode.TeleOp);
         carousel = new Carousel(hardwareMap);
         capArm = new CapstoneArm(hardwareMap);
 
@@ -108,7 +108,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         if(gamepad1.a) {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
-            arm.setArmPosition(Constants.MAGARM_FREIGHT);
+            arm.setArmPosition(0.985);
 
         }
 
@@ -126,7 +126,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             if(arm.levelPosition == Constants.LEVEL_HALF_POS) {
                 arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
                 arm.setLevelPosition(Constants.LEVEL_UP_POS);
-            }else{
+            }else if(arm.levelPosition != Constants.LEVEL_HALF_POS && arm.levelPosition != Constants.LEVEL_UP_POS){
                 arm.setLevelPosition(Constants.LEVEL_HALF_POS);
             }
 

@@ -44,6 +44,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
 
     //Thread armMovementThread;
     private volatile boolean moveArm;
+    Thread armMovementThread;
 
 
     // global obj
@@ -129,14 +130,24 @@ public class WarehouseFreightRed extends OpModeWrapper {
             telemetry.update();
         }
 
-        capArm.setGrabberPosition(0.8);
+        moveArm = false;
+        armMovementThread = new Thread(){
+            @Override
+            public void run(){
+                while(!moveArm);
+                capArm.goToPosition(0);
+            }
+        };
+
+
+        //capArm.setGrabberPosition(0.85);
 
 
     }
 
     @Override
     protected void onStart() {
-        //armMovementThread.start();
+        armMovementThread.start();
         capstonePos = bPipeline.getPos();
         //sleep(15000);
         /*drive.driveAuto(120, 240, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -148,17 +159,25 @@ public class WarehouseFreightRed extends OpModeWrapper {
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
         //drive.driveAuto(0.3, -800, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.RDIAGONAL);
+        drive.driveAuto(0.4, -600, MecanumDriveTrain.MovementType.RDIAGONAL);
         sleep(500);
-        drive.driveAuto(0.3, -900, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.4, -900, MecanumDriveTrain.MovementType.ROTATE);
+        drive.driveAuto(0.4, -100, MecanumDriveTrain.MovementType.STRAIGHT);
+        //drive.driveAuto(0.3, -1000, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -1650, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.4, 100, MecanumDriveTrain.MovementType.STRAIGHT);
+
+        /*while(opModeIsActive()){
+            telemetry.addData("Straight", "yes");
+            telemetry.update();
+        }
+
+         */
         //drive.driveAuto(0.3, -250, MecanumDriveTrain.MovementType.ROTATE);
         //drive.driveAuto(0.2, -50, MecanumDriveTrain.MovementType.STRAIGHT);
         //drive.setPower(-0.1, -0.1, -0.1, -0.1);
 
-        capArm.setGrabberPosition(0.85);
+        //capArm.setGrabberPosition(0.85);
 
         sleep(500);
 
@@ -202,28 +221,38 @@ public class WarehouseFreightRed extends OpModeWrapper {
             //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
-        //moveArm = true;
+        moveArm = true;
 
-        drive.driveAuto(0.3, 150, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.4, 150, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        capArm.goToPosition(0);
+        //capArm.goToPosition(0);
 
-        drive.driveAuto(0.3, -220, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.4, -220, MecanumDriveTrain.MovementType.STRAIGHT);
 
-        drive.driveAuto(0.3, 2130, MecanumDriveTrain.MovementType.STRAFE);
-        drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 2100, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.4, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1300, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.STRAIGHT);
 
         //Freight Pickup
         magArm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
-        drive.tankRotate(Math.PI/4, 0.3);
+        drive.tankRotate(Math.PI/4, 0.4);
         magArm.setArmPosition(Constants.MAGARM_FREIGHT);
-        drive.driveAuto(0.3, 400, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 700, MecanumDriveTrain.MovementType.STRAIGHT);
         magArm.setLevelPosition(Constants.LEVEL_DOWN_POS);
         sleep(2000);
-        magArm.setLevelPosition(Constants.LEVEL_UP_POS);
+
+        while(opModeIsActive()){
+            drive.tankRotate(Math.PI/6, 0.3);
+            sleep(500);
+            drive.tankRotate(Math.PI/3, 0.3);
+        }
+        /*magArm.setLevelPosition(Constants.LEVEL_UP_POS);
+        sleep(1000);
+        drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.tankRotate(3*Math.PI/4, 0.3);
+
+         */
         //drive.driveAuto(0.3, -150, MecanumDriveTrain.MovementType.STRAIGHT);
         //magArm.setArmPosition(Constants.MAGARM_EXTENDED);
 
