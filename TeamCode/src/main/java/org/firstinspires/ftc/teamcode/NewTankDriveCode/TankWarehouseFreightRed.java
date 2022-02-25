@@ -203,9 +203,9 @@ public class TankWarehouseFreightRed extends OpModeWrapper {
         magArm.setArmPosition(Constants.MAGARM_FREIGHT);
         drive.driveAuto(0.3, 600, MecanumDriveTrain.MovementType.STRAIGHT);
         magArm.setLevelPosition(Constants.LEVEL_DOWN_POS);
-        //sleep(500);
-        //magArm.setLevelPosition(Constants.LEVEL_UP_POS);
-        //drive.driveAuto(0.3, -300, MecanumDriveTrain.MovementType.STRAIGHT);
+        sleep(-2000);
+        magArm.setLevelPosition(Constants.LEVEL_UP_POS);
+        drive.tankRotate(3*Math.PI/4, 0.3);
         //magArm.setArmPosition(Constants.MAGARM_EXTENDED);
 
     }

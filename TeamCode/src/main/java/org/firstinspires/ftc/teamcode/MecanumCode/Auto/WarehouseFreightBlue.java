@@ -215,15 +215,14 @@ public class WarehouseFreightBlue extends OpModeWrapper {
 
         //Freight Pickup
         magArm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
-        drive.tankRotate(Math.PI/4, 0.4);
+        drive.tankRotate(Math.PI/4, 0.3);
         magArm.setArmPosition(Constants.MAGARM_FREIGHT);
         drive.driveAuto(0.3, 400, MecanumDriveTrain.MovementType.STRAIGHT);
         magArm.setLevelPosition(Constants.LEVEL_DOWN_POS);
-        //sleep(500);
-        //magArm.setLevelPosition(Constants.LEVEL_UP_POS);
+        sleep(2000);
+        magArm.setLevelPosition(Constants.LEVEL_UP_POS);
         //drive.driveAuto(0.3, -150, MecanumDriveTrain.MovementType.STRAIGHT);
-        //magArm.setArmPosition(Constants.MAGARM_EXTENDED);
-
+        drive.tankRotate(-3* Math.PI/4, 0.3);
 
 
         //drive.driveAuto(0.3, 2500, MecanumDriveTrain.MovementType.STRAIGHT);

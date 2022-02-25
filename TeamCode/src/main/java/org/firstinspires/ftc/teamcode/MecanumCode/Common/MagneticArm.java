@@ -7,54 +7,99 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import java.time.chrono.MinguoChronology;
+
 public class MagneticArm {
 
+    //Arm Constants
     public final double MAX = 0.67;
     public final double MIN = 0.985;
-
     private final double ARM_SPEED = 0.01;
 
 
+    //Positions
     private double armPosition;
     private double magnetPosition;
+    public double levelPosition;
 
 
+    //Magnet Enum
     public enum magnetState {
         OPEN,
         GRABBING
     }
 
+    //Constructor Enum (for 2nd constructor if using Enum)
+    public enum OpMode{
+        Auto, TeleOp;
+    }
+
+
     //DcMotor magneticExtension, magneticExtensionEncoder;
     //CRServo magneticExtensionSM;
+
+    //Arm (Extend and retract)
     Servo magneticExtension;
 
+    //Magnet (Grab and release)
     Servo magnet;
+
+    //Level (Up/Down)
     Servo level;
 
-    public double levelPosition;
-    //double extensionPower;
+
+
 
     public MagneticArm(HardwareMap hardwareMap) {
+        //Initialization
         magneticExtension = hardwareMap.get(Servo.class, "MagneticArm");
-
         magnet = hardwareMap.get(Servo.class, "Magnet");
         level = hardwareMap.get(Servo.class, "Level");
-        //magneticExtension.setDirection(DcMotor.Direction.FORWARD);
-        //magneticExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //magneticExtensionEncoder = hardwareMap.dcMotor.get("FrontLeftDrive");
-        //magneticExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //magneticExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //magneticExtensionSM = hardwareMap.crservo.get("MagExtension");
-        magnet.setPosition(Constants.MAGARM_FREIGHT);
-        magneticExtension.setPosition(MIN);
-        armPosition = 1;
-        magnetPosition = 0.95;
-        magnet.setPosition(magnetPosition);
 
-        levelPosition = 0.9;
-        level.setPosition(levelPosition);
-        //magneticExtensionSM.setPower(0);
+        //Arm Position (5 turn servo)
+        setArmPosition(MIN);
+
+        //Magnet Grabber Position (Grabbing)
+        setMagnetPosition(magnetState.GRABBING);
+
+        //Level Position(raised)
+        setLevelPosition(0.9);
     }
+
+    public MagneticArm(HardwareMap hardwareMap, OpMode opmode) {
+
+        magneticExtension = hardwareMap.get(Servo.class, "MagneticArm");
+        magnet = hardwareMap.get(Servo.class, "Magnet");
+        level = hardwareMap.get(Servo.class, "Level");
+
+        if(opmode == OpMode.Auto){
+            setArmPosition(MIN);
+            //armPosition = 0.985;
+
+            //magnetPosition = 0.95;
+            //magnet.setPosition(magnetPosition);
+            setMagnetPosition(magnetState.GRABBING);
+
+            setLevelPosition(0.9);
+            //levelPosition = 0.9;
+            //level.setPosition(levelPosition);
+
+        }else{
+            //magneticExtension.setPosition(Constants.MAGARM_FREIGHT);
+            setArmPosition(Constants.MAGARM_FREIGHT);
+            //armPosition = Constants.MAGARM_FREIGHT;
+
+            //magnetPosition = 0.95;
+            setMagnetPosition(magnetState.GRABBING);
+
+            //levelPosition = 0.9;
+            //level.setPosition(levelPosition);
+            setLevelPosition(0.9);
+
+        }
+
+    }
+
 
     public void increaseLevelPosition(double increment) {
         if (levelPosition + increment < 0.9) {
@@ -131,8 +176,10 @@ public class MagneticArm {
     public void setMagnetPosition(magnetState position) {
         if(position == magnetState.GRABBING) {
             magnet.setPosition(0.95);
+            magnetPosition = 0.95;
         } else if(position == magnetState.OPEN) {
             magnet.setPosition(0.82);
+            magnetPosition = 0.82;
         }
     }
 
