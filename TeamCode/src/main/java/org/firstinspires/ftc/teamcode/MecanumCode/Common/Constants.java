@@ -9,8 +9,9 @@ public class Constants {
     public static final int MAX_MANUAL_CAP = -4200;
 
     public static final int MAGARM_EXTENDED = -275;
-    public static final double NEW_MAGARM_EXTENDED = 0.68;
-    public static final double MAGARM_FREIGHT = 0.75;
+    public static final double NEW_MAGARM_EXTENDED = 0.515;
+    public static final double MAGARM_FREIGHT = 0.635;
+    public static final double NEW_MAGARM_RETRACTED = 0.82;
     public static final int MAGARM_RETRACTED = -100;
 
     public static final double LEVEL_DOWN_POS = 0;

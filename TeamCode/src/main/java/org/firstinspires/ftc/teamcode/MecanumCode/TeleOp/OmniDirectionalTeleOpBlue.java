@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.MecanumCode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
@@ -20,6 +21,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     MecanumDriveTrain drive;
     Carousel carousel;
     CapstoneArm capArm;
+    ElapsedTime timer;
 
     Thread driveThread;
     Thread armThread;
@@ -28,6 +30,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     Boolean driveSwapped = false;
     Boolean previousBackState = false;
     Boolean previousStartState = false;
+    Boolean previousYState = false;
 
 
     /**
@@ -45,6 +48,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         arm = new MagneticArm(hardwareMap, MagneticArm.OpMode.TeleOp);
         carousel = new Carousel(hardwareMap);
         capArm = new CapstoneArm(hardwareMap);
+        timer = new ElapsedTime();
 
         try {
             drive = new MecanumDriveTrain(hardwareMap);
@@ -74,6 +78,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         capArmThread = new Thread(){
             @Override
             public void run(){
+                capArm.goToPosition(-150);
                 while(opModeIsActive()){
                     capArmUpdate();
                 }
@@ -88,8 +93,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         driveThread.start();
         armThread.start();
         capArmThread.start();
-        capArm.goToPosition(100);
-        //arm.setArmPosition(Constants.MAGARM_RETRACTED);
+        arm.setArmPosition(Constants.NEW_MAGARM_RETRACTED);
         while(opModeIsActive());
     }
 
@@ -99,7 +103,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
          */
 
         if(gamepad1.left_bumper) {
-            carousel.spinCarousel(-4000, this, Carousel.CarouselMode.TELEOP);
+            carousel.spinCarousel(-3000, this, Carousel.CarouselMode.TELEOP);
         }
 
 
@@ -107,7 +111,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         if(gamepad1.a) {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
-            arm.setArmPosition(0.985);
+            arm.setArmPosition(Constants.NEW_MAGARM_RETRACTED);
 
         }
 
@@ -118,7 +122,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
-        if(gamepad1.y) {
+        if(gamepad1.y && !previousYState) {
             // Raise level
 
 
@@ -128,8 +132,16 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             }else if(arm.levelPosition == Constants.LEVEL_DOWN_POS){
                 arm.setLevelPosition(Constants.LEVEL_HALF_POS);
             }
-
+            previousYState = true;
+            timer.reset();
         }
+
+        if(timer.milliseconds() > 500 && gamepad1.y) {
+            arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
+            arm.setLevelPosition(Constants.LEVEL_UP_POS);
+        }
+
+        previousYState = gamepad1.y;
 
         if(gamepad1.x) {
             // Drop cube and retract arm
@@ -217,7 +229,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         if(gamepad1.dpad_up) {
             capArm.goToPosition(Constants.CAPPING_POS);
         } else if(gamepad1.dpad_down) {
-            capArm.goToPosition(0);
+            capArm.goToPosition(-50);
         }
 
         if(gamepad1.dpad_right && capArm.getTelemetry()[0] > Constants.MAX_MANUAL_CAP) {

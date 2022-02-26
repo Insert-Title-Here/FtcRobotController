@@ -18,6 +18,7 @@ public class Carousel {
         carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carousel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         carousel.setDirection(DcMotor.Direction.FORWARD);
+        carousel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -37,8 +38,14 @@ public class Carousel {
 
             }
         } else {
-            carousel.setPower(0.7);
-            while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
+            while(Math.abs(carousel.getCurrentPosition()) < Math.abs(carousel.getTargetPosition())) {
+                if(carousel.getCurrentPosition() < 1000) {
+                    carousel.setPower(0.7);
+                } else {
+                    carousel.setPower(1);
+                }
+            }
+            /*while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
                 power = 2 * (1- (Math.abs(carousel.getCurrentPosition() - carousel.getTargetPosition()) / 4000.0));
                 if (power < 0.7) {
                     carousel.setPower(0.7);
@@ -47,7 +54,12 @@ public class Carousel {
                 } else {
                     carousel.setPower(power);
                 }
+
+
             }
+
+             */
+
         }
 
         carousel.setPower(0);

@@ -13,7 +13,7 @@ public class MagneticArm {
 
     //Arm Constants
     public final double MAX = 0.67;
-    public final double MIN = 0.985;
+    public final double MIN = 1; // was 0.985
     private final double ARM_SPEED = 0.02;
 
 
@@ -88,7 +88,7 @@ public class MagneticArm {
 
         }else{
             //magneticExtension.setPosition(Constants.MAGARM_FREIGHT);
-            setArmPosition(Constants.MAGARM_FREIGHT);
+            setArmPosition(Constants.NEW_MAGARM_RETRACTED); // was MAGARM_FREIHGT
             //armPosition = Constants.MAGARM_FREIGHT;
 
             //magnetPosition = 0.95;
