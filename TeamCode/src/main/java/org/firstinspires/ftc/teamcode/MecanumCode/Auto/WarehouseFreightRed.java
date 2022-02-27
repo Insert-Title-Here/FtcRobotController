@@ -230,8 +230,10 @@ public class WarehouseFreightRed extends OpModeWrapper {
         drive.driveAuto(0.4, -220, MecanumDriveTrain.MovementType.STRAIGHT);
 
         drive.driveAuto(0.3, 2100, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.ROTATE);
+
         drive.driveAuto(0.4, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -1300, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -1450, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.STRAIGHT);
 
         //Freight Pickup
@@ -242,11 +244,18 @@ public class WarehouseFreightRed extends OpModeWrapper {
         magArm.setLevelPosition(Constants.LEVEL_DOWN_POS);
         sleep(2000);
 
-        while(opModeIsActive()){
+        for (int i = 0; i < 2; i++) {
             drive.tankRotate(Math.PI/6, 0.3);
             sleep(500);
             drive.tankRotate(Math.PI/3, 0.3);
         }
+        sleep(1000);
+
+        magArm.setLevelPosition(Constants.LEVEL_HALF_POS);
+        sleep(1000);
+        drive.driveAuto(0.3, -500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.tankRotate(Math.PI, 0.3);
+
         /*magArm.setLevelPosition(Constants.LEVEL_UP_POS);
         sleep(1000);
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);

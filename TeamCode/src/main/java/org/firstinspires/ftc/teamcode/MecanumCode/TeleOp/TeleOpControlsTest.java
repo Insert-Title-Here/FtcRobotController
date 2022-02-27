@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 import java.io.FileNotFoundException;
 
 
-@TeleOp(name="MecanumOpMode Red")
-public class OmniDirectionalTeleOpRed extends LinearOpMode {
+@TeleOp(name="Controls Test")
+public class TeleOpControlsTest extends LinearOpMode {
 
     MagneticArm arm;
     MecanumDriveTrain drive;
@@ -31,7 +31,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     Boolean driveSwapped = false;
     Boolean previousBackState = false;
     Boolean previousStartState = false;
-    Boolean previousLBState = false;
+    Boolean previousBState = false;
 
     /**
      * calibrate all these values kevin
@@ -104,14 +104,14 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
          * Kevin go implement this
          */
 
-        if(gamepad1.left_bumper && !previousLBState) {
+        if(gamepad1.left_bumper && !previousBState) {
             if (arm.levelPosition == Constants.LEVEL_HALF_POS) {
                 arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
                 arm.setLevelPosition(Constants.LEVEL_UP_POS);
             } else if (arm.levelPosition != Constants.LEVEL_HALF_POS && arm.levelPosition != Constants.LEVEL_UP_POS) {
                 arm.setLevelPosition(Constants.LEVEL_HALF_POS);
             }
-            previousLBState = true;
+            previousBState = true;
             timerLB.reset();
         }
 
@@ -121,7 +121,6 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
             arm.setArmPosition(Constants.NEW_MAGARM_RETRACTED);
-            arm.setLevelPosition(Constants.LEVEL_UP_POS);
 
         }
 
@@ -131,7 +130,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
-        if(gamepad1.y && !previousLBState) {
+        if(gamepad1.y && !previousBState) {
             // Raise level
 
 
@@ -143,7 +142,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             arm.setLevelPosition(Constants.LEVEL_UP_POS);
         }
 
-        previousLBState = gamepad1.left_bumper;
+        previousBState = gamepad1.left_bumper;
 
 
 

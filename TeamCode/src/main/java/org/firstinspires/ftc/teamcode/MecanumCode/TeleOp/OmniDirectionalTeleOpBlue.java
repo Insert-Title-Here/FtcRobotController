@@ -14,14 +14,15 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.FileNotFoundException;
 
+
 @TeleOp(name="MecanumOpMode Blue")
 public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
-    MagneticArm arm;  
+    MagneticArm arm;
     MecanumDriveTrain drive;
     Carousel carousel;
     CapstoneArm capArm;
-    ElapsedTime timer;
+    ElapsedTime timerLB;
 
     Thread driveThread;
     Thread armThread;
@@ -30,8 +31,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     Boolean driveSwapped = false;
     Boolean previousBackState = false;
     Boolean previousStartState = false;
-    Boolean previousYState = false;
-
+    Boolean previousLBState = false;
 
     /**
      * calibrate all these values kevin
@@ -48,7 +48,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         arm = new MagneticArm(hardwareMap, MagneticArm.OpMode.TeleOp);
         carousel = new Carousel(hardwareMap);
         capArm = new CapstoneArm(hardwareMap);
-        timer = new ElapsedTime();
+        timerLB = new ElapsedTime();
 
         try {
             drive = new MecanumDriveTrain(hardwareMap);
@@ -85,6 +85,8 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             }
         };
 
+        arm.setLevelPosition(Constants.LEVEL_UP_POS);
+
         waitForStart();
         startOpMode();
     }
@@ -102,8 +104,15 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
          * Kevin go implement this
          */
 
-        if(gamepad1.left_bumper) {
-            carousel.spinCarousel(-3000, this, Carousel.CarouselMode.TELEOP);
+        if(gamepad1.left_bumper && !previousLBState) {
+            if (arm.levelPosition == Constants.LEVEL_HALF_POS) {
+                arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
+                arm.setLevelPosition(Constants.LEVEL_UP_POS);
+            } else if (arm.levelPosition != Constants.LEVEL_HALF_POS && arm.levelPosition != Constants.LEVEL_UP_POS) {
+                arm.setLevelPosition(Constants.LEVEL_HALF_POS);
+            }
+            previousLBState = true;
+            timerLB.reset();
         }
 
 
@@ -112,36 +121,31 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             // Fully extend arm
             //arm.setArmPositionSM(350, OmniDirectionalTeleOp.this);
             arm.setArmPosition(Constants.NEW_MAGARM_RETRACTED);
+            arm.setLevelPosition(Constants.LEVEL_UP_POS);
 
         }
 
         if(gamepad1.b) {
             // Lower level to cube height
-            arm.setArmPosition(Constants.MAGARM_FREIGHT);
-            arm.setLevelPosition(Constants.LEVEL_DOWN_POS);
+            carousel.spinCarousel(-3000, this, Carousel.CarouselMode.TELEOP);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
-        if(gamepad1.y && !previousYState) {
+        if(gamepad1.y && !previousLBState) {
             // Raise level
 
 
-            if(arm.levelPosition == Constants.LEVEL_HALF_POS) {
-                arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
-                arm.setLevelPosition(Constants.LEVEL_UP_POS);
-            }else if(arm.levelPosition == Constants.LEVEL_DOWN_POS){
-                arm.setLevelPosition(Constants.LEVEL_HALF_POS);
-            }
-            previousYState = true;
-            timer.reset();
+
         }
 
-        if(timer.milliseconds() > 500 && gamepad1.y) {
+        if(timerLB.milliseconds() > 500 && gamepad1.left_bumper) {
             arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
             arm.setLevelPosition(Constants.LEVEL_UP_POS);
         }
 
-        previousYState = gamepad1.y;
+        previousLBState = gamepad1.left_bumper;
+
+
 
         if(gamepad1.x) {
             // Drop cube and retract arm
@@ -154,21 +158,19 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
         if (gamepad1.left_trigger > 0.1) {
             //arm.setExtensionSMPower(gamepad1.left_trigger);
-            arm.manualExtension(false);
+            //arm.manualExtension(false);
+            //arm.decreaseLevelPosition(0.01);
+            //sleep(100);
+            arm.setArmPosition(Constants.MAGARM_FREIGHT);
+            arm.setLevelPosition(Constants.LEVEL_DOWN_POS);
         } else if (gamepad1.right_trigger > 0.1) {
             //arm.setExtensionSMPower(-gamepad1.right_trigger);
-            arm.manualExtension(true);
+            //arm.manualExtension(true);
+            //arm.increaseLevelPosition(0.01);
+            //sleep(100);
+            arm.setArmPosition(arm.MAX);
         }
 
-
-
-        if(gamepad1.start && !previousStartState) {
-            capArm.toggleGrab();
-            previousStartState = true;
-        }
-        if(!gamepad1.start) {
-            previousStartState = false;
-        }
 
 
         telemetry.addData("Arm Tics", arm.getArmPosition());
@@ -196,6 +198,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         if(!gamepad1.back) {
             previousBackState = false;
         }
+
 
 
         if(driveSwapped) {
@@ -226,6 +229,15 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
     private void capArmUpdate() {
 
+        if(gamepad1.start && !previousStartState) {
+            capArm.toggleGrab();
+            previousStartState = true;
+        }
+        if(!gamepad1.start) {
+            previousStartState = false;
+        }
+
+
         if(gamepad1.dpad_up) {
             capArm.goToPosition(Constants.CAPPING_POS);
         } else if(gamepad1.dpad_down) {
@@ -241,7 +253,6 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         }else{
             capArm.setPower(0);
         }
-
 
 
         //capArm.setPower(gamepad2.left_stick_y / 2);

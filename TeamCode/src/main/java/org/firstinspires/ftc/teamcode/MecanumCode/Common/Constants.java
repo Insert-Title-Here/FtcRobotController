@@ -9,13 +9,13 @@ public class Constants {
     public static final int MAX_MANUAL_CAP = -4200;
 
     public static final int MAGARM_EXTENDED = -275;
-    public static final double NEW_MAGARM_EXTENDED = 0.515;
-    public static final double MAGARM_FREIGHT = 0.635;
-    public static final double NEW_MAGARM_RETRACTED = 0.82;
+    public static final double NEW_MAGARM_EXTENDED = 0.475;
+    public static final double MAGARM_FREIGHT = 0.565;
+    public static final double NEW_MAGARM_RETRACTED = 0.755;
     public static final int MAGARM_RETRACTED = -100;
 
-    public static final double LEVEL_DOWN_POS = 0;
-    public static final double LEVEL_HALF_POS = 0.5;
+    public static final double LEVEL_DOWN_POS = 0.2;
+    public static final double LEVEL_HALF_POS = 0.71;
     public static final double LEVEL_UP_POS = 1;
 
 
