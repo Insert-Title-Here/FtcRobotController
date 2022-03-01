@@ -11,6 +11,9 @@ public class CapstoneArm {
 
     boolean isGrabbing = false;
 
+    public static final double CAP_SERVO_OPEN = 0.85;
+    public static final double CAP_SERVO_CLOSED = 1;
+
     public CapstoneArm(HardwareMap hardwareMap) {
         capExtension = hardwareMap.get(DcMotor.class, "CapExtension");
         capExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -18,6 +21,7 @@ public class CapstoneArm {
         capExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         grabber = hardwareMap.get(Servo.class, "CapstoneGrabber");
+        goToPosition(0);
         grabber.setPosition(0.85);
 
     }
@@ -29,11 +33,15 @@ public class CapstoneArm {
     public void goToPosition(int armPosition) {
         capExtension.setTargetPosition(armPosition);
         capExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        /*
         if(armPosition == 0) {
             capExtension.setPower(0.3);
         } else {
-            capExtension.setPower(0.5);
+            capExtension.setPower(0.8);
         }
+
+         */
+        capExtension.setPower(1);
         while (capExtension.isBusy()) {
 
         }
@@ -43,14 +51,19 @@ public class CapstoneArm {
 
     public void setGrabberPosition(double position) {
         grabber.setPosition(position);
+        if (position == CAP_SERVO_OPEN) {
+            isGrabbing = false;
+        } else if (position == CAP_SERVO_CLOSED) {
+            isGrabbing = true;
+        }
     }
 
     public synchronized void toggleGrab() {
         if(isGrabbing) {
-            setGrabberPosition(0.85);
+            setGrabberPosition(CAP_SERVO_OPEN);
             isGrabbing = false;
         } else {
-            setGrabberPosition(1);
+            setGrabberPosition(CAP_SERVO_CLOSED);
             isGrabbing = true;
         }
     }

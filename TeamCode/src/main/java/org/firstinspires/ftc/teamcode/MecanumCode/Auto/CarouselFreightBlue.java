@@ -134,7 +134,8 @@ public class CarouselFreightBlue extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
-        drive.driveAuto(0.3, 1050, MecanumDriveTrain.MovementType.ROTATE);
+        //drive.driveAuto(0.3, 1050, MecanumDriveTrain.MovementType.ROTATE);
+        drive.tankRotate(-Math.PI/2, 0.3);
         drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.STRAIGHT);
         carousel.spinCarousel(-5000, this, Carousel.CarouselMode.AUTO);
 
@@ -142,7 +143,8 @@ public class CarouselFreightBlue extends OpModeWrapper {
         drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, 500, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 2000, MecanumDriveTrain.MovementType.ROTATE);
+        //drive.driveAuto(0.3, 2000, MecanumDriveTrain.MovementType.ROTATE);
+        drive.tankRotate(Math.PI/2, 0.3);
         //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             drive.driveAuto(0.3, -510, MecanumDriveTrain.MovementType.STRAIGHT);

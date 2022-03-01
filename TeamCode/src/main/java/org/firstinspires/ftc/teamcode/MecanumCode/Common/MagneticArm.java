@@ -13,7 +13,7 @@ public class MagneticArm {
 
     //Arm Constants
     public final double MAX = 0.335;
-    public final double MIN = 0.795; // was 0.985
+    public final double MIN = 0.735; // was 0.985
     private final double ARM_SPEED = 0.01;
 
 

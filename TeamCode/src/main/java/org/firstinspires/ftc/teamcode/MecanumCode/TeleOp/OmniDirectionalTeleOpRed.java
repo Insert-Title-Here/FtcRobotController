@@ -78,7 +78,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         capArmThread = new Thread(){
             @Override
             public void run(){
-                capArm.goToPosition(-150);
+                capArm.goToPosition(-300);
                 while(opModeIsActive()){
                     capArmUpdate();
                 }
@@ -131,16 +131,11 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
-        if(gamepad1.y && !previousLBState) {
-            // Raise level
 
-
-
-        }
 
         if(timerLB.milliseconds() > 500 && gamepad1.left_bumper) {
-            arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
             arm.setLevelPosition(Constants.LEVEL_UP_POS);
+            arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
         }
 
         previousLBState = gamepad1.left_bumper;
@@ -235,6 +230,11 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         }
         if(!gamepad1.start) {
             previousStartState = false;
+        }
+
+        if(gamepad1.y) {
+            capArm.goToPosition(0);
+            capArm.setGrabberPosition(CapstoneArm.CAP_SERVO_CLOSED);
         }
 
 
