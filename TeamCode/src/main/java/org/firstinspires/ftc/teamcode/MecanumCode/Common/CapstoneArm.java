@@ -42,7 +42,7 @@ public class CapstoneArm {
 
          */
         capExtension.setPower(1);
-        while (capExtension.isBusy()) {
+        while (Math.abs(getTelemetry()[0] - armPosition) > 20) {
 
         }
         capExtension.setPower(0);

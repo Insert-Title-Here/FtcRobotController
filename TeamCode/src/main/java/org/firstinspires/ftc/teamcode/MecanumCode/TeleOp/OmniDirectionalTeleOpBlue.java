@@ -23,6 +23,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     Carousel carousel;
     CapstoneArm capArm;
     ElapsedTime timerLB;
+    ElapsedTime timerY;
 
     Thread driveThread;
     Thread armThread;
@@ -32,6 +33,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     Boolean previousBackState = false;
     Boolean previousStartState = false;
     Boolean previousLBState = false;
+    Boolean previousUpState = false;
 
     /**
      * calibrate all these values kevin
@@ -49,6 +51,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
         carousel = new Carousel(hardwareMap);
         capArm = new CapstoneArm(hardwareMap);
         timerLB = new ElapsedTime();
+        timerY = new ElapsedTime();
 
         try {
             drive = new MecanumDriveTrain(hardwareMap);
@@ -80,7 +83,11 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             public void run(){
                 capArm.goToPosition(-300);
                 while(opModeIsActive()){
-                    capArmUpdate();
+                    try {
+                        capArmUpdate();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -130,6 +137,8 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             carousel.spinCarousel(-3000, this, Carousel.CarouselMode.TELEOP);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
+
+
 
         if(timerLB.milliseconds() > 500 && gamepad1.left_bumper) {
             arm.setLevelPosition(Constants.LEVEL_UP_POS);
@@ -220,12 +229,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
          */
     }
 
-    private void capArmUpdate() {
-
-        if(gamepad1.y) {
-            capArm.goToPosition(0);
-            capArm.setGrabberPosition(CapstoneArm.CAP_SERVO_CLOSED);
-        }
+    private void capArmUpdate() throws InterruptedException {
 
         if(gamepad1.start && !previousStartState) {
             capArm.toggleGrab();
@@ -235,12 +239,51 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             previousStartState = false;
         }
 
+        if(gamepad1.y) {
+            //timerY.reset();
+            capArm.goToPosition(0);
+            capArm.setGrabberPosition(CapstoneArm.CAP_SERVO_CLOSED);
+            Thread.sleep(1000);
+            capArm.goToPosition(Constants.CAPPING_POS);
 
-        if(gamepad1.dpad_up) {
+
+
+        }
+
+
+
+
+
+        /*if(gamepad1.dpad_up) {
             capArm.goToPosition(Constants.CAPPING_POS);
         } else if(gamepad1.dpad_down) {
             capArm.goToPosition(-50);
         }
+
+         */
+
+        if(gamepad1.dpad_up && !previousUpState) {
+            if (Math.abs(capArm.getTelemetry()[0] - Constants.CAPPING_POS) < 40) {
+                //telemetry.addData("lift", "yeah");
+                capArm.goToPosition(Constants.NEW_CAPPING_POS);
+
+            }else if(capArm.getTelemetry()[0] != Constants.CAPPING_POS && capArm.getTelemetry()[0] != Constants.NEW_CAPPING_POS) {
+                //telemetry.addData("smalllift", "yeasdfasdf");
+
+                capArm.goToPosition(Constants.CAPPING_POS);
+            }
+            previousUpState = true;
+            //timerUp.reset();
+
+
+
+        }else if (gamepad1.dpad_down){
+            capArm.goToPosition(-300);
+        }
+
+
+        previousUpState = gamepad1.dpad_up;
+
 
         if(gamepad1.dpad_right && capArm.getTelemetry()[0] > Constants.MAX_MANUAL_CAP) {
             //driveSwapped = true;

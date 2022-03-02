@@ -23,6 +23,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     Carousel carousel;
     CapstoneArm capArm;
     ElapsedTime timerLB;
+    ElapsedTime timerY;
 
     Thread driveThread;
     Thread armThread;
@@ -32,6 +33,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     Boolean previousBackState = false;
     Boolean previousStartState = false;
     Boolean previousLBState = false;
+    Boolean previousUpState = false;
 
     /**
      * calibrate all these values kevin
@@ -49,6 +51,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         carousel = new Carousel(hardwareMap);
         capArm = new CapstoneArm(hardwareMap);
         timerLB = new ElapsedTime();
+        timerY = new ElapsedTime();
 
         try {
             drive = new MecanumDriveTrain(hardwareMap);
@@ -80,7 +83,11 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             public void run(){
                 capArm.goToPosition(-300);
                 while(opModeIsActive()){
-                    capArmUpdate();
+                    try {
+                        capArmUpdate();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -222,7 +229,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
          */
     }
 
-    private void capArmUpdate() {
+    private void capArmUpdate() throws InterruptedException {
 
         if(gamepad1.start && !previousStartState) {
             capArm.toggleGrab();
@@ -233,16 +240,47 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         }
 
         if(gamepad1.y) {
+            timerY.reset();
             capArm.goToPosition(0);
             capArm.setGrabberPosition(CapstoneArm.CAP_SERVO_CLOSED);
+            Thread.sleep(1000);
+            capArm.goToPosition(Constants.CAPPING_POS);
+
+
+
         }
 
 
-        if(gamepad1.dpad_up) {
+
+
+
+        /*if(gamepad1.dpad_up) {
             capArm.goToPosition(Constants.CAPPING_POS);
         } else if(gamepad1.dpad_down) {
             capArm.goToPosition(-50);
         }
+
+         */
+
+        if(gamepad1.dpad_up && !previousUpState) {
+            if (Math.abs(capArm.getTelemetry()[0] - Constants.CAPPING_POS) < 40) {
+                //arm.setArmPosition(Constants.NEW_MAGARM_EXTENDED);
+                //arm.setLevelPosition(Constants.LEVEL_UP_POS);
+                capArm.goToPosition(Constants.NEW_CAPPING_POS);
+
+            }else if(capArm.getTelemetry()[0] != Constants.CAPPING_POS && capArm.getTelemetry()[0] != Constants.NEW_CAPPING_POS) {
+                capArm.goToPosition(Constants.CAPPING_POS);
+            }
+            previousUpState = true;
+            //timerUp.reset();
+        }else if (gamepad1.dpad_down){
+            capArm.goToPosition(-300);
+        }
+
+
+        previousUpState = gamepad1.dpad_up;
+
+
 
         if(gamepad1.dpad_right && capArm.getTelemetry()[0] > Constants.MAX_MANUAL_CAP) {
             //driveSwapped = true;
