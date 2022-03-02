@@ -244,7 +244,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             capArm.goToPosition(0);
             capArm.setGrabberPosition(CapstoneArm.CAP_SERVO_CLOSED);
             Thread.sleep(1000);
-            capArm.goToPosition(Constants.CAPPING_POS);
+            capArm.goToPosition(Constants.NEW_CAPPING_POS);
 
 
 
