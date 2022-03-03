@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.TeleOp;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.FileNotFoundException;
-
+@Disabled
 @TeleOp(name="Pit TeleOp Mode")
 public class PitTeleOpMode extends LinearOpMode {
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Testing.TalonsMecanumDriveTrain;
 
 import java.io.FileNotFoundException;
 
-
+@Disabled
 @Autonomous(name="Test Auto")
 public class TestAuto extends OpModeWrapper {
 

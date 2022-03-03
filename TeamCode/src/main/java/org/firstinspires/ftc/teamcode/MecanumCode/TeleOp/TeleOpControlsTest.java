@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.TeleOp;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.FileNotFoundException;
 
-
+@Disabled
 @TeleOp(name="Controls Test")
 public class TeleOpControlsTest extends LinearOpMode {
 

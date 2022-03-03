@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -20,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.io.FileNotFoundException;
 
-
+@Disabled
 @Autonomous(name="Freight Blue Confirmation")
 public class FrieghtBlueNoCarousel extends OpModeWrapper {
 

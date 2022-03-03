@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 
 import java.io.FileNotFoundException;
 
-
+@Disabled
 @Autonomous(name="Freight Park Red")
 public class FreightParkRed extends OpModeWrapper {
 
