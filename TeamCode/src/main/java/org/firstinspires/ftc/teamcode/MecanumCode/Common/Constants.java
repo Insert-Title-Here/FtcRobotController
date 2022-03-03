@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 public class Constants {
     // Game Constants
     public static final int TOP_GOAL_POS = -1840;
-    public static final int MID_GOAL_POS = -1050;
+    public static final int MID_GOAL_POS = -760;
     public static final int BOTTOM_GOAL_POS = -140;
     public static final int CAPPING_POS = -2860;
     public static final int NEW_CAPPING_POS = -3000;

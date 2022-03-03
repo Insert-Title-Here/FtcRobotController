@@ -193,6 +193,11 @@ public class WarehouseFreightRed extends OpModeWrapper {
             sleep(500);
             capArm.toggleGrab();
 
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
+            moveArm = true;
+            sleep(500);
+            drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
+
         } else if (capstonePos == BarcodePipelineWarehouseRed.BarcodePosition.CENTER) {
             //drive.driveAuto(0.3, -180, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
@@ -202,7 +207,8 @@ public class WarehouseFreightRed extends OpModeWrapper {
             sleep(500);
             capArm.toggleGrab();
 
-
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
+            moveArm = true;
 
 
         } else {
@@ -212,16 +218,16 @@ public class WarehouseFreightRed extends OpModeWrapper {
             sleep(500);
             capArm.toggleGrab();
 
-            drive.driveAuto(0.3, 150, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 50, MecanumDriveTrain.MovementType.STRAIGHT);
             //drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAFE);
 
 
             //drive.driveAuto(0.3, 40, MecanumDriveTrain.MovementType.STRAIGHT);
+            moveArm = true;
         }
 
-        moveArm = true;
 
-        drive.driveAuto(0.4,50, MecanumDriveTrain.MovementType.STRAIGHT);
+        //drive.driveAuto(0.4,50, MecanumDriveTrain.MovementType.STRAIGHT);
 
         //capArm.goToPosition(0);
 
@@ -230,7 +236,7 @@ public class WarehouseFreightRed extends OpModeWrapper {
         drive.driveAuto(0.3, 2100, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.ROTATE);
 
-        drive.driveAuto(0.4, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.4, 1550, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -1450, MecanumDriveTrain.MovementType.STRAFE);
         //drive.driveAuto(0.3, 1000, MecanumDriveTrain.MovementType.STRAIGHT);
 
@@ -253,6 +259,8 @@ public class WarehouseFreightRed extends OpModeWrapper {
         sleep(1000);
         drive.driveAuto(0.3, -500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.tankRotate(Math.PI, 0.3);
+        magArm.setLevelPosition(Constants.LEVEL_DOWN_POS);
+        sleep(1000);
 
         /*magArm.setLevelPosition(Constants.LEVEL_UP_POS);
         sleep(1000);

@@ -128,6 +128,7 @@ public class CarouselFreightRed extends OpModeWrapper {
 
     @Override
     protected void onStart() {
+        sleep(2000);
         armMovementThread.start();
         capstonePos = bPipeline.getPos();
 
@@ -193,7 +194,8 @@ public class CarouselFreightRed extends OpModeWrapper {
             drive.driveAuto(0.3, 250, MecanumDriveTrain.MovementType.STRAIGHT);
         }
 
-        moveArm = true;
+        //moveArm = true;
+        capArm.goToPosition(0);
 
         drive.driveAuto(0.3, 1200, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, -550, MecanumDriveTrain.MovementType.STRAFE);
