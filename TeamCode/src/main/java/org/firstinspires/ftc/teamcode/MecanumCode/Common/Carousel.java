@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -8,7 +9,8 @@ public class Carousel {
 
     public enum CarouselMode {
         AUTO,
-        TELEOP
+        TELEOP,
+        CONSTANT,
     }
 
     DcMotor carousel;
@@ -32,12 +34,18 @@ public class Carousel {
 
         double power;
 
-        if(mode == CarouselMode.AUTO) {
+        if (mode == CarouselMode.AUTO) {
             setPower(0.3);
             while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
 
             }
-        } else {
+        }else if (mode == CarouselMode.CONSTANT){
+            setPower(0.7);
+            while(carousel.isBusy() && currentOpMode.opModeIsActive()){
+
+            }
+
+        }else {
             while(Math.abs(carousel.getCurrentPosition()) < Math.abs(carousel.getTargetPosition())) {
                 if(carousel.getCurrentPosition() < 1000) {
                     carousel.setPower(0.7);

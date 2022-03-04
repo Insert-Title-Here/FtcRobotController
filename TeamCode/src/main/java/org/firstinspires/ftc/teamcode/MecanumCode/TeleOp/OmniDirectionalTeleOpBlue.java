@@ -34,6 +34,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
     Boolean previousStartState = false;
     Boolean previousLBState = false;
     Boolean previousUpState = false;
+    Boolean previousLSState = false;
 
 
 
@@ -142,12 +143,16 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
-        if(gamepad1.left_stick_button){
+        if(gamepad1.left_stick_button && !previousLSState){
             if(carouselSpeed == Carousel.CarouselMode.TELEOP){
-                carouselSpeed = Carousel.CarouselMode.AUTO;
+                carouselSpeed = Carousel.CarouselMode.CONSTANT;
             }else{
                 carouselSpeed = Carousel.CarouselMode.TELEOP;
             }
+            previousLSState = true;
+        }
+        if(!gamepad1.left_stick_button) {
+            previousLSState = false;
         }
 
 

@@ -34,6 +34,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     Boolean previousStartState = false;
     Boolean previousLBState = false;
     Boolean previousUpState = false;
+    Boolean previousLSState = false;
 
     /**
      * calibrate all these values kevin
@@ -136,17 +137,21 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
 
         if(gamepad1.b) {
             // Lower level to cube height
-            carousel.spinCarousel(3000, this, Carousel.CarouselMode.TELEOP);
+            carousel.spinCarousel(3000, this, carouselSpeed);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
 
-        if(gamepad1.left_stick_button){
+        if(gamepad1.left_stick_button && !previousLSState){
             if(carouselSpeed == Carousel.CarouselMode.TELEOP){
-                carouselSpeed = Carousel.CarouselMode.AUTO;
+                carouselSpeed = Carousel.CarouselMode.CONSTANT;
             }else{
                 carouselSpeed = Carousel.CarouselMode.TELEOP;
             }
+            previousLSState = true;
+        }
+        if(!gamepad1.left_stick_button) {
+            previousLSState = false;
         }
 
 
