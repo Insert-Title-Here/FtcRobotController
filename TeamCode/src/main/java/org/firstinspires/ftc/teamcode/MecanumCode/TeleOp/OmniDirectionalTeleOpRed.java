@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.FileNotFoundException;
 
+//TODO: button to toggle carousel speed
 
 @TeleOp(name="MecanumOpMode Red")
 public class OmniDirectionalTeleOpRed extends LinearOpMode {
@@ -34,6 +35,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     Boolean previousStartState = false;
     Boolean previousLBState = false;
     Boolean previousUpState = false;
+    Boolean previousLSState = false;
 
     /**
      * calibrate all these values kevin
@@ -43,6 +45,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
+    private Carousel.CarouselMode carouselSpeed = Carousel.CarouselMode.TELEOP;
 
 
     @Override
@@ -138,6 +141,18 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
+        if(gamepad1.left_stick_button && !previousLSState) {
+            if(carouselSpeed == Carousel.CarouselMode.TELEOP) {
+                carouselSpeed = Carousel.CarouselMode.CONSTANT;
+            } else {
+                carouselSpeed = Carousel.CarouselMode.TELEOP;
+            }
+            previousLSState = true;
+        }
+
+        if(!gamepad1.left_stick_button) {
+            previousLSState = false;
+        }
 
 
         if(timerLB.milliseconds() > 500 && gamepad1.left_bumper) {

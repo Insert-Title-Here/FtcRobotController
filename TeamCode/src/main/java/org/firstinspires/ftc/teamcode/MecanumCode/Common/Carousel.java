@@ -8,7 +8,8 @@ public class Carousel {
 
     public enum CarouselMode {
         AUTO,
-        TELEOP
+        TELEOP,
+        CONSTANT
     }
 
     DcMotor carousel;
@@ -34,6 +35,11 @@ public class Carousel {
 
         if(mode == CarouselMode.AUTO) {
             setPower(0.3);
+            while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
+
+            }
+        } else if(mode == CarouselMode.CONSTANT) {
+            setPower(0.7);
             while (carousel.isBusy() && currentOpMode.opModeIsActive()) {
 
             }
