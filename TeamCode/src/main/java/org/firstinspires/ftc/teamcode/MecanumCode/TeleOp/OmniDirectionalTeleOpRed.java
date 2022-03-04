@@ -43,6 +43,8 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
+    private Carousel.CarouselMode carouselSpeed = Carousel.CarouselMode.TELEOP;
+
 
 
     @Override
@@ -136,6 +138,15 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
             // Lower level to cube height
             carousel.spinCarousel(3000, this, Carousel.CarouselMode.TELEOP);
             //arm.setLevelPosition(arm.getLevelPosition());
+        }
+
+
+        if(gamepad1.left_stick_button){
+            if(carouselSpeed == Carousel.CarouselMode.TELEOP){
+                carouselSpeed = Carousel.CarouselMode.AUTO;
+            }else{
+                carouselSpeed = Carousel.CarouselMode.TELEOP;
+            }
         }
 
 

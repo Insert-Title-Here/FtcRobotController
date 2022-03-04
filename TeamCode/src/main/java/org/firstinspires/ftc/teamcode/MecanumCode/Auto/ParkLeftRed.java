@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.MecanumCode.Common.OpModeWrapper;
 import java.io.FileNotFoundException;
 
 
-@Autonomous(name="Straight Park Auto (Webcam in front?)")
+@Autonomous(name="Straight Park Auto (Magnet in front)")
 public class ParkLeftRed extends OpModeWrapper {
 
     MecanumDriveTrain drive;
