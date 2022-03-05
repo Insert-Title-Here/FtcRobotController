@@ -173,7 +173,7 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         // capstonePos = BarcodePipelineBlue.BarcodePosition.LEFT;
 
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
-            //drive.driveAuto(0.3, -520, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
             capArm.toggleGrab();
             sleep(2000);
@@ -205,26 +205,27 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         drive.driveAuto(0.3, -1000, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1070, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, -340, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -240, MecanumDriveTrain.MovementType.STRAFE);
+        drive.tankRotate(-11 * Math.PI / 24, 0.3);
 
         sleep(1000);
 
         //drive.driveAuto(0.3, 200, MecanumDriveTrain.MovementType.ROTATE);
-        drive.driveAuto(0.3, 1700, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 1400, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1300, MecanumDriveTrain.MovementType.STRAFE);
 
         //Freight Pickup
         magArm.setMagnetPosition(MagneticArm.magnetState.GRABBING);
         drive.tankRotate(-Math.PI/4, 0.3);
         magArm.setArmPosition(Constants.MAGARM_FREIGHT);
-        drive.driveAuto(0.3, 600, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, 400, MecanumDriveTrain.MovementType.STRAIGHT);
         magArm.setLevelPosition(Constants.LEVEL_DOWN_POS);
         sleep(2000);
-        for (int i = 0; i < 2; i++){
-            drive.tankRotate(-Math.PI/6, 0.3);
-            sleep(500);
-            drive.tankRotate(-Math.PI/3, 0.3);
-        }
+
+        drive.tankRotate(0, 0.3);
+        sleep(500);
+        drive.tankRotate(-Math.PI/2, 0.3);
+
         sleep(1000);
         magArm.setLevelPosition(Constants.LEVEL_HALF_POS);
         sleep(1000);
