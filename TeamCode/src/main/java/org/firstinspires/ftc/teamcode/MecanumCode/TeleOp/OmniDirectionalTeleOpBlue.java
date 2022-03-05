@@ -136,7 +136,7 @@ public class OmniDirectionalTeleOpBlue extends LinearOpMode {
 
         if(gamepad1.b) {
             // Lower level to cube height
-            carousel.spinCarousel(-3000, this, Carousel.CarouselMode.TELEOP);
+            carousel.spinCarousel(-3000, this, carouselSpeed);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 

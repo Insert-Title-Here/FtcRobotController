@@ -136,7 +136,7 @@ public class JudgingTeleOp extends LinearOpMode {
 
         if(gamepad1.b) {
             // Lower level to cube height
-            carousel.spinCarousel(-3000, this, Carousel.CarouselMode.TELEOP);
+            carousel.spinCarousel(-3000, this, carouselSpeed);
             //arm.setLevelPosition(arm.getLevelPosition());
         }
 
@@ -200,6 +200,7 @@ public class JudgingTeleOp extends LinearOpMode {
         telemetry.addData("FR Tics", drive.fr.getCurrentPosition());
         telemetry.addData("BL Tics", drive.bl.getCurrentPosition());
         telemetry.addData("BR Tics", drive.br.getCurrentPosition());
+        telemetry.addData("mode", carouselSpeed);
 
         telemetry.update();
     }
