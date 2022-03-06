@@ -206,7 +206,7 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1070, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, -240, MecanumDriveTrain.MovementType.STRAFE);
-        drive.tankRotate(-11 * Math.PI / 24, 0.3);
+        drive.tankRotate(-5 * Math.PI / 12, 0.3);
 
         sleep(1000);
 

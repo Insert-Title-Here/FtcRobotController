@@ -210,6 +210,8 @@ public class WarehouseFreightRed extends OpModeWrapper {
 
             drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
             moveArm = true;
+            sleep(500);
+            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
         } else {
