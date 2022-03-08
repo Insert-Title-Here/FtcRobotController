@@ -54,27 +54,18 @@ public class DuckCamera extends AbstractOpMode {
         });
     }
 
+    double multiplier = 0.5;
     @Override
     protected void onStart() {
         // camera.stopStreaming();
 
-//        drive.moveDistanceDEVelocity(300, 90, VELOCITY);
-//        Utils.sleep(1000);
-//        drive.moveDistanceDEVelocity(600, -90, VELOCITY);
-//        Utils.sleep(1000);
-//        drive.moveDistanceDEVelocity(300, 90, VELOCITY);
-//
-//        Utils.sleep(3000);
-        //drive.strafeDuck(duckPip.direction());
-
-        // TODO : Add Movement Implementation
-        // duckPip.direction();
-        // duckPip.isCentered();
         while (!duckPip.isCentered()) {
             telemetry.addData("DIR: ", duckPip.direction());
             telemetry.update();
-            drive.setStrafe(duckPip.direction());
+            drive.setStrafe(duckPip.direction() * multiplier);
         }
+        drive.brake();
+
     }
 
     @Override
