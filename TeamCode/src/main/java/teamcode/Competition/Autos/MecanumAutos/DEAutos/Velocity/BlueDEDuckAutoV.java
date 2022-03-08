@@ -24,11 +24,9 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
 
 
     /*TODO much like alot of the code in this codebase this was written at 2:30 am and after a lot of caffiene,
-    TODO has not been field tested as of Friday morning
+        TODO has not been field tested as of Friday morning
 
-
-
-     */
+         */
     private OpenCvWebcam webcam;
 
     private EndgameSystems system;
@@ -41,7 +39,7 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
 
     private MecanumBarcodePipeline.BarcodePosition position;
 
-    private PIDFCoefficients coefficients = new PIDFCoefficients(2, 0.5, 1.0, 0);
+    private PIDFCoefficients coefficients = new PIDFCoefficients(2,0.5,1.0,0);
 
     @Override
     protected void onInitialize() {
@@ -49,33 +47,27 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
         arm = new ArmSystem(hardwareMap, false);
         drive = new MecanumDriveTrain(hardwareMap, false, system, arm, coefficients);
         flags = new boolean[]{false, false, false, false, false};
-        armCommands = new Thread() {
-            public void run() {
+        armCommands = new Thread(){
+            public void run(){
                 while(!flags[3]);
-                if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+                if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
                     arm.raise(Constants.BOTTOM_POSITION);
-                } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
+                }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
                     arm.raise(Constants.MEDIUM_POSITION + 1000);
-                } else {
-                    arm.raise(Constants.TOP_POSITION + 1000);
+                }else{
+                    arm.raise(Constants.TOP_POSITION );
                 }
-                while (!flags[0]) ;
-                if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-                    arm.runConveyorPos(0.8, 1000);
-                } else {
-                    Debug.log("her");
-                    arm.score();
-                }
-                Utils.sleep(250);
+                while (!flags[0]);
+
                 arm.retract();
 
-                while (!flags[1]) ;
+                while(!flags[1]);
                 arm.raise(Constants.TOP_POSITION);
-                while (!flags[2]) ;
+                while(!flags[2]);
                 arm.score();
                 Utils.sleep(250);
                 arm.retract();
-                while (opModeIsActive()) ;
+                while(opModeIsActive());
             }
         };
 
@@ -100,7 +92,7 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
                 telemetry.update();
             }
         });
-        while (!opModeIsActive()) {
+        while(!opModeIsActive()){
             position = pipeline.getPos();
             telemetry.addData("", position);
             telemetry.update();
@@ -109,7 +101,6 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
     }
 
     private final double VELOCITY = 10;
-
     @Override
     protected void onStart() {
         webcam.stopStreaming();
@@ -118,42 +109,66 @@ public class BlueDEDuckAutoV extends AbstractOpMode {
 
         //score the preload
         drive.moveDistanceDEVelocity(400, 0, VELOCITY);
-        Utils.sleep(200);
+        Utils.sleep(100);
         drive.rotateDistanceDE(-75, 4);
-        Utils.sleep(200);
-        drive.moveDistanceDEVelocity(1200, -90, VELOCITY);
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(1500, -90, VELOCITY / 2.0);
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(400, 90, VELOCITY /2.0);
+
         flags[3] = true;
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
+        if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
+            arm.runConveyorPos(0.8, 2000);
+        }else{
+            Debug.log("her");
+            arm.score();
+        }
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(220, 180, VELOCITY / 2.0);
-        flags[0] = true;
 
         //move away from hub and to carousel
-        drive.moveDistanceDEVelocity(500, 0, VELOCITY);
-        Utils.sleep(200);
-        drive.rotateDistanceDE(75, -4);
-        Utils.sleep(200);
-        drive.moveDistanceDEVelocity(1400, 0, VELOCITY); //calculated angle is 30
-
+        drive.moveDistanceDEVelocity(880, 0, VELOCITY);
+        flags[0] = true;
+        Utils.sleep(100);
+        drive.rotateDistanceDE(160, -4);
+        Utils.sleep(100);
+        drive.strafeDistanceSensor(VELOCITY, 0);
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(400,  90, VELOCITY / 2.0);
+        Utils.sleep(100);
+        //drive.driveColorSensorBlue(2);
+        drive.moveDistanceDEVelocity(400, 0, 4.0); //calculated angle is 30
+        drive.driveColorSensorBlue(2);
+        Debug.log("second");
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(350, 0, 2.0); //calculated angle is 30
+        Debug.log("move");
+        //drive.moveDistanceDEVelocity(100, 90, 5.0);
         //spin duck and run intake
         arm.lowerLinkage();
         arm.intakeDumb(1.0);
-        drive.spinDuck(false);
+        system.scoreDuckAuto();
         Utils.sleep(500);
-        arm.preScore();
+        arm.preScoreDuck();
 
         //score the duck
-        drive.rotateDistanceDE(75, 4);
+        drive.rotateDistanceDE(-105, 4);
         arm.intakeDumb(0);
-        drive.moveDistanceDEVelocity(1200, -90, VELOCITY);
+        Utils.sleep(100);
+
+        drive.moveDistanceDEVelocity(1600, -90, VELOCITY);
+
         flags[1] = true;
-        drive.moveDistanceDEVelocity(700, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(700, 180, VELOCITY / 2.0);
+        Utils.sleep(100);
         flags[2] = true;
 
         //park, go for partial because full is near impossible lmao,
         // could add a strafe and attempt it if extra time?
         drive.moveDistanceDEVelocity(900, 0, VELOCITY);
 
-        while (opModeIsActive()) ;
+        while(opModeIsActive());
     }
 
     @Override

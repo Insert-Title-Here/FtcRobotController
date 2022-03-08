@@ -30,6 +30,12 @@ public class MotorTest extends AbstractOpMode {
         motor1.setPower(1);
         motor2.setPower(-1);
 
+        boolean previousA = false;
+        if(gamepad1.a && !previousA){
+
+        }
+        previousA = gamepad1.a;
+
 
         while(opModeIsActive()) {
         }

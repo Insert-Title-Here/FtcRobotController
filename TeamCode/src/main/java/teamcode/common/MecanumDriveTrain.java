@@ -24,7 +24,9 @@ import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.test.MasonTesting.CvDetectionPipeline;
 
-public class MecanumDriveTrain {
+import static java.lang.Math.PI;
+
+ public class MecanumDriveTrain {
     private static final double ANGULAR_TOLERANCE = 0.05;
     final double COUNTS_PER_INCH = 920.111004;
 
@@ -120,9 +122,9 @@ public class MecanumDriveTrain {
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
         warehouse.setGain(600);
-        frontRed.setGain(100);
-        backRed.setGain(420);
-        frontBlue.setGain(600);
+        frontRed.setGain(200);
+        backRed.setGain(520);
+        frontBlue.setGain(100);
         backBlue.setGain(300);
         sensor.setGain(950); //325 is tested value but i think I trust this one more //280
 
@@ -164,7 +166,7 @@ public class MecanumDriveTrain {
         rotateDistanceDERadian(radians, omega);
     }
 
-    public void driveColorSensorWarehouse(double velocity){
+    public synchronized void driveColorSensorWarehouse(double velocity){
         NormalizedRGBA rgba = warehouse.getNormalizedColors();
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -172,6 +174,19 @@ public class MecanumDriveTrain {
             rgba = warehouse.getNormalizedColors();
             setMotorVelocity(velocity,velocity,velocity,velocity);
         }
+        brake();
+    }
+
+    public synchronized void driveColorSensorBlue(double velocity){
+        warehouse.setGain(400);
+        NormalizedRGBA rgba = warehouse.getNormalizedColors();
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        while(rgba.blue < 0.9){
+            rgba = warehouse.getNormalizedColors();
+            setMotorVelocity(velocity,velocity,velocity,velocity);
+        }
+        warehouse.setGain(600);
         brake();
     }
 
@@ -318,15 +333,15 @@ public class MecanumDriveTrain {
                 Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) || Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance)){
             hub.clearBulkCache();
             data = hub.getBulkData();
-            AbstractOpMode.currentOpMode().telemetry.addData("fl",data.getMotorCurrentPosition(0));
-            AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
-            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
-            AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
-            AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
-            AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
-            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
-            AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
-            AbstractOpMode.currentOpMode().telemetry.update();
+//            AbstractOpMode.currentOpMode().telemetry.addData("fl",data.getMotorCurrentPosition(0));
+//            AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
+//            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+//            AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
+//            AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
+//            AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
+//            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+//            AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
+//            AbstractOpMode.currentOpMode().telemetry.update();
 
             setVelocity(vec, 0);
         }
@@ -335,6 +350,7 @@ public class MecanumDriveTrain {
 
 
     public synchronized void driveColorSensor(double pow){
+        warehouse.setGain(700);
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.lowerLinkage();
@@ -343,6 +359,8 @@ public class MecanumDriveTrain {
         Utils.sleep(100);
         setMotorVelocity(pow,pow,pow,pow);
         Utils.sleep(250);
+        double amps = arm.getMilliAmps();
+        boolean isAmp = false;
         while(!detectedElement){
 //            Vector2D vec = Vector2D.fromAngleMagnitude(0, pow);
 //            setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -363,7 +381,12 @@ public class MecanumDriveTrain {
                 AbstractOpMode.currentOpMode().telemetry.addData("blue", blue);
                 AbstractOpMode.currentOpMode().telemetry.update();
 
-                if (red > 0.9) {
+                amps = arm.getMilliAmps();
+                if(amps > 3000){
+                    isAmp = true;
+                }
+
+                if (red > 0.9 && isAmp) {
                     detectedElement = true;
                     break;
                 } else {
@@ -384,7 +407,7 @@ public class MecanumDriveTrain {
             posAvg += pos;
         }
         posAvg = posAvg / (4.0 * 0.707); //4 cos 45
-        arm.preScoreAuto();
+            arm.preScoreAuto();
         arm.intakeDumb(-1.0);
 //        posAvg -= 600;
 //        if(posAvg < 600){
@@ -397,8 +420,9 @@ public class MecanumDriveTrain {
             sign = -1;
         }
         moveDistanceDEVelocity(200, 180, 9);
+
         strafeDistanceSensor(6, 0);
-        driveColorSensorWarehouse(-9);
+        driveColorSensorWarehouse(-6);
         moveDistanceDEVelocity(300, 180,9);
         //moveDistanceDEVelocity((int)((posAvg) / Math.cos(Math.toRadians(10))), 170 * sign, 9);
 //        spline.add(new Movement(200, 3,180));
@@ -408,6 +432,89 @@ public class MecanumDriveTrain {
 
         arm.intakeDumb(0);
     }
+
+    public synchronized void driveColorSensorNoWarehouse(double pow){
+        warehouse.setGain(800);
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.lowerLinkage();
+        arm.intakeDumb(1.0);
+        boolean detectedElement = false;
+        Utils.sleep(100);
+        setMotorVelocity(pow,pow,pow,pow);
+        Utils.sleep(250);
+        double amps = arm.getMilliAmps();
+        boolean isAmp = false;
+        while(!detectedElement){
+//            Vector2D vec = Vector2D.fromAngleMagnitude(0, pow);
+//            setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            hub.clearBulkCache();
+//            LynxModule.BulkData data = hub.getBulkData();
+//            while(Math.abs(data.getMotorCurrentPosition(0))< Math.abs(200) || Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(200) ||
+//                    Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(200) || Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(200)){
+//                hub.clearBulkCache();
+//                data = hub.getBulkData();
+            setMotorVelocity(pow,pow,pow,pow);
+            NormalizedRGBA colors = sensor.getNormalizedColors();
+            double red = colors.red;
+            double blue = colors.blue;
+            double green = colors.green;
+            AbstractOpMode.currentOpMode().telemetry.addData("green", green);
+            AbstractOpMode.currentOpMode().telemetry.addData("red", red);
+            AbstractOpMode.currentOpMode().telemetry.addData("blue", blue);
+            AbstractOpMode.currentOpMode().telemetry.update();
+
+
+
+            if (red > 0.9) {
+                detectedElement = true;
+                break;
+            } else {
+                detectedElement = false;
+            }
+            //setVelocity(vec, 0);
+            //}
+        }
+        brake();
+        AbstractOpMode.currentOpMode().telemetry.clear();
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+        double posAvg = 0;
+        for(int i = 0; i < 4; i++){
+            int pos = Math.abs(data.getMotorCurrentPosition(i));
+            Debug.log(pos);
+            posAvg += pos;
+        }
+        Debug.log("posavg" + posAvg);
+        posAvg = posAvg / (4.0 * 0.707); //4 cos 45
+        arm.preScoreAuto();
+        arm.intakeDumb(-1.0);
+//        posAvg -= 600;
+//        if(posAvg < 600){
+//            posAvg = 0;
+//        }
+
+        ArrayList<Movement> spline = new ArrayList<>();
+        double sign = 1;
+        if(!isRed){
+            sign = -1;
+        }
+        posAvg = posAvg - 650;
+        if(posAvg < 0){
+            posAvg = 0;
+        }
+
+        strafeDistanceSensorOpposite(6, 0);
+//        moveDistanceDEVelocity((int)posAvg, 180, 6);
+//        spline.add(new Movement(200, 3,180));
+//        spline.add(new Movement((int)(posAvg / Math.cos(10)), 3, 170));
+//        splicedMovement(spline);
+        //Debug.log("val" + (int)((posAvg) / Math.cos(Math.toRadians(10))));
+        //moveDistanceDEVelocity(200, 180, 6);
+        arm.intakeDumb(0);
+    }
+
     public synchronized void driveColorSensorSpliced(double pow){
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -786,10 +893,13 @@ public class MecanumDriveTrain {
     }
 
     public synchronized void strafeDistanceSensor(double omega, double radians){
-        strafeDistanceSensor(omega, radians, true);
+        strafeDistanceSensor(omega, radians, true, isRed);
+    }
+    public synchronized void strafeDistanceSensorOpposite(double omega, double radians){
+        strafeDistanceSensor(omega, radians, true,!isRed);
     }
 
-    public synchronized void strafeDistanceSensor(double omega, double radians, boolean isBrake){
+    public synchronized void strafeDistanceSensor(double omega, double radians, boolean isBrake, boolean isRed){
 
 
         environmentalTerminate = false;
@@ -807,9 +917,11 @@ public class MecanumDriveTrain {
             if(isRed) {
                 frontRGBA = frontRed.getNormalizedColors();
                 backRGBA = backRed.getNormalizedColors();
+                Debug.log("red");
             }else{
                 frontRGBA = frontBlue.getNormalizedColors();
                 backRGBA = backBlue.getNormalizedColors();
+                Debug.log("blue");
             }
             while (frontRGBA.green < distanceFrontThreshold && backRGBA.green < distanceBackThreshold){
 
@@ -1000,6 +1112,13 @@ public class MecanumDriveTrain {
         br.setVelocity(brVelocity * WHEEL_RADIUS_IN, AngleUnit.RADIANS);
     }
 
+     public void setMotorVelocityNew(double flVelocity, double frVelocity, double blVelocity, double brVelocity){
+
+         fl.setVelocity(flVelocity, AngleUnit.RADIANS);
+         fr.setVelocity(frVelocity , AngleUnit.RADIANS);
+         bl.setVelocity(blVelocity , AngleUnit.RADIANS);
+         br.setVelocity(brVelocity, AngleUnit.RADIANS);
+     }
 
     double previousOmega;
     double pRotation;
@@ -1158,21 +1277,46 @@ public class MecanumDriveTrain {
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double minArcLength = arclength - (WHEELBASE_X / 2.0) * dAngle;
-        double maxArcLength = arclength + (WHEELBASE_X / 2.0) * dAngle;
+        double minArcLength = arclength - inchesToEncoderTicks((WHEELBASE_X / 2.0) * dAngle);
+        double maxArcLength = arclength + inchesToEncoderTicks((WHEELBASE_X / 2.0) * dAngle);
 
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
 
-        while(data.getMotorCurrentPosition(0) < minArcLength || data.getMotorCurrentPosition(1) < maxArcLength ||
-                data.getMotorCurrentPosition(2) < minArcLength || data.getMotorCurrentPosition(3) < maxArcLength) {
+        while(Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(minArcLength) ||
+                Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(maxArcLength) ||
+                Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(minArcLength) ||
+                Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(maxArcLength)) {
+
+            AbstractOpMode.currentOpMode().telemetry.addData("fl", data.getMotorCurrentPosition(0));
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
+            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+
+            AbstractOpMode.currentOpMode().telemetry.addData("fl", minArcLength);
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", maxArcLength);
+
+            AbstractOpMode.currentOpMode().telemetry.addData("fl", wheelMotions.getValue(0,0));
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", wheelMotions.getValue(1,0));
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", wheelMotions.getValue(2,0));
+            AbstractOpMode.currentOpMode().telemetry.addData("br", wheelMotions.getValue(3,0));
+
+            AbstractOpMode.currentOpMode().telemetry.update();
+
             hub.clearBulkCache();
             data = hub.getBulkData();
-            setMotorVelocity(wheelMotions.getValue(0, 0), wheelMotions.getValue(1, 0),
+            setMotorVelocityNew(wheelMotions.getValue(0, 0), wheelMotions.getValue(1, 0),
                     wheelMotions.getValue(2, 0), wheelMotions.getValue(3, 0));
         }
         brake();
     }
+
+    private final double TICKS_PER_REV = 384.5;
+     private static final double WHEEL_DIAMETER = 3.78;
+
+     public int inchesToEncoderTicks(double inches){
+         return (int)((TICKS_PER_REV / (WHEEL_DIAMETER  * PI)) * inches);
+     }
 
 
     /**
@@ -1228,7 +1372,7 @@ public class MecanumDriveTrain {
                 brake();
                 Utils.sleep(curr.getMillis());
             }else if(curr.getMovement() == Movement.MovementType.WALL_LOCALIZATION){
-                strafeDistanceSensor(curr.getVelocity(), curr.getRadians(), true);
+                strafeDistanceSensor(curr.getVelocity(), curr.getRadians(), true, isRed);
             }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_LOCALIZATION){
                 driveColorSensorWarehouse(curr.getVelocity());
             }else if(curr.getMovement() == Movement.MovementType.MODIFY_FLAG){

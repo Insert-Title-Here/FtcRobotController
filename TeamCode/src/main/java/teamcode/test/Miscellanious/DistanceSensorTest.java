@@ -25,7 +25,7 @@ public class DistanceSensorTest extends AbstractOpMode {
     EndgameSystems system;
     private ArmSystem arm;
     NormalizedColorSensor frontSensor, backSensor;
-    private int FRONT_GAIN  = 700, BACK_GAIN = 400;
+    private int FRONT_GAIN  = 900, BACK_GAIN = 1100;
     ColorSensor front, back;
 
     private boolean previousDpadDown1, previousDpadUp1, previousDpadDown2, previousDpadUp2;
@@ -35,7 +35,7 @@ public class DistanceSensorTest extends AbstractOpMode {
 //        arm = new ArmSystem(hardwareMap, false);
 //        drive = new MecanumDriveTrain(hardwareMap, false, system, arm);
 //        system = new EndgameSystems(hardwareMap, true);
-          frontSensor = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensorBlue");
+        frontSensor = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensorBlue");
         backSensor = hardwareMap.get(NormalizedColorSensor.class, "BackColorSensorBlue");
         frontSensor.setGain(FRONT_GAIN);
         backSensor.setGain(BACK_GAIN);

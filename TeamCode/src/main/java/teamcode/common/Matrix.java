@@ -11,6 +11,14 @@ public class Matrix implements Cloneable{
         matrix = new double[rows][columns];
     }
 
+    public int getColumns() {
+        return columns;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
     public Matrix(double[][] matrix){
         this.matrix = matrix;
         rows = matrix.length;
@@ -85,11 +93,13 @@ public class Matrix implements Cloneable{
             throw new RuntimeException("Illegal matrix dimensions.");
         }
         Matrix product = new Matrix(rows, other.columns);
-        for (int i = 0; i < product.rows; i++) {
-            for (int j = 0; j < product.columns; j++) {
-                for (int k = 0; k < rows; k++) {
-                    product.matrix[i][j] += (matrix[i][k] * other.matrix[k][j]);
+        for(int i = 0; i < product.rows; i++){
+            for(int j = 0; j < product.columns; j++){
+                double val = 0;
+                for(int k = 0; k < other.rows; k++){
+                    val += getValue(i, k) * other.getValue(k,j);
                 }
+                product.matrix[i][j] = val;
             }
         }
         return product;

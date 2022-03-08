@@ -164,7 +164,7 @@ public class EndgameSystems {
         carouselEncoderRed.setTargetPosition(pose);
         carouselEncoderRed.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs(carouselEncoderRed.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive()){
-            if(Math.abs(carouselEncoderRed.getCurrentPosition()) < 15000){
+            if(Math.abs(carouselEncoderRed.getCurrentPosition()) < 12000){
                 carouselRed.setPower(.15 * direction);
                 carouselBlue.setPower(.15 * direction);
 

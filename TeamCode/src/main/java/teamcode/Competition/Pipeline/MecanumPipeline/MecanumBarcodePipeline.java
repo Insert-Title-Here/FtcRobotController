@@ -70,8 +70,8 @@ public class MecanumBarcodePipeline extends OpenCvPipeline {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(108, 85);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(270, 85);
         } else {
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(39, 85);
-            REGION2_TOPLEFT_ANCHOR_POINT = new Point(190, 85);
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 85);
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(151, 85);
         }
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,

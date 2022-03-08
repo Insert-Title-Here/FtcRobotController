@@ -39,7 +39,7 @@ public class RedDEDuckAutoV extends AbstractOpMode {
 
     private MecanumBarcodePipeline.BarcodePosition position;
 
-    private PIDFCoefficients coefficients = new PIDFCoefficients(2,0.5,1.0,0.1);
+    private PIDFCoefficients coefficients = new PIDFCoefficients(2,0.5,1.0,0);
 
     @Override
     protected void onInitialize() {
@@ -55,7 +55,7 @@ public class RedDEDuckAutoV extends AbstractOpMode {
                 }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
                     arm.raise(Constants.MEDIUM_POSITION + 1000);
                 }else{
-                    arm.raise(Constants.TOP_POSITION + 1000);
+                    arm.raise(Constants.TOP_POSITION );
                 }
                 while (!flags[0]);
 
@@ -108,52 +108,63 @@ public class RedDEDuckAutoV extends AbstractOpMode {
 
 
         //score the preload
-        drive.moveDistanceDEVelocity(400, 0, VELOCITY);
-        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(300, 0, VELOCITY);
+        Utils.sleep(100);
         drive.rotateDistanceDE(75, 4);
-        Utils.sleep(200);
-        drive.moveDistanceDEVelocity(1200, 90, VELOCITY);
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(1300, 90, VELOCITY / 2.0);
+        Utils.sleep(100);
+
         flags[3] = true;
-        Utils.sleep(200);
-        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(200, 180, VELOCITY);
         if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
             arm.runConveyorPos(0.8, 1000);
         }else{
             Debug.log("her");
             arm.score();
         }
-        Utils.sleep(250);
+        Utils.sleep(200);
 
         //move away from hub and to carousel
-        drive.moveDistanceDEVelocity(850, 0, 3.0);
+        drive.moveDistanceDEVelocity(850 , 0, VELOCITY);
         flags[0] = true;
         Utils.sleep(100);
         drive.rotateDistanceDE(160, 4);
+        Utils.sleep(100);
+        drive.strafeDistanceSensor(VELOCITY, 0);
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(100, -90, VELOCITY / 2.0);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(1600, 0, VELOCITY / 2.0); //calculated angle is 30
-        drive.moveDistanceDEVelocity(100, 90, 5.0);
+        drive.driveColorSensorWarehouse(2);
+        drive.moveDistanceDEVelocity(300, 0, 4.0); //calculated angle is 30
+        drive.driveColorSensorWarehouse(2);
+        Utils.sleep(100);
+         drive.moveDistanceDEVelocity(220, 0, 2.0); //calculated angle is 30
+        //drive.moveDistanceDEVelocity(100, 90, 5.0);
         //spin duck and run intake
         arm.lowerLinkage();
         arm.intakeDumb(1.0);
         drive.spinDuck(false);
-        Utils.sleep(1500);
+        Utils.sleep(500);
         arm.preScoreDuck();
+        drive.moveDistanceDEVelocity(400, 180, VELOCITY / 2.0);
 
         //score the duck
-        drive.rotateDistanceDE(90, 4);
-        arm.intakeDumb(0);
-        Utils.sleep(200);
+//        drive.rotateDistanceDE(90, 4);
+//        arm.intakeDumb(0);
+//        Utils.sleep(100);
+//
+//        drive.moveDistanceDEVelocity(1000, 90, VELOCITY);
 
-        drive.moveDistanceDEVelocity(1600, 90, VELOCITY);
-
-        flags[1] = true;
-        drive.moveDistanceDEVelocity(800, 180, VELOCITY / 2.0);
-        Utils.sleep(200);
-        flags[2] = true;
+//        flags[1] = true;
+//        drive.moveDistanceDEVelocity(970, 180, VELOCITY / 2.0);
+//        Utils.sleep(100);
+//        flags[2] = true;
 
         //park, go for partial because full is near impossible lmao,
         // could add a strafe and attempt it if extra time?
-        drive.moveDistanceDEVelocity(900, 0, VELOCITY);
+//        drive.moveDistanceDEVelocity(900, 0, VELOCITY);
 
         while(opModeIsActive());
     }

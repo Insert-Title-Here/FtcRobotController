@@ -49,7 +49,7 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
                 if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
                     arm.raise(Constants.BOTTOM_POSITION);
                 }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
-                    arm.raise(Constants.MEDIUM_POSITION + 3000);
+                    arm.raise(Constants.MEDIUM_POSITION + 4500);
                 }else{
                     arm.raise(Constants.TOP_POSITION + 1000);
                 }
@@ -117,12 +117,12 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
 
         webcam.stopStreaming();
         armCommands.start();
-        drive.moveDistanceDEVelocity(870, 45, VELOCITY); // 900 -45
+        drive.moveDistanceDEVelocity(900, 45, VELOCITY); // 900 -45
         Utils.sleep(100);
         drive.rotateDistanceDE(-160, 6);
         if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
             Debug.log("here");
-            arm.runConveyorPos(1.0, 1500);
+            arm.runConveyorPos(0.5, 1500);
         }else{
             arm.score();
         }
@@ -142,12 +142,12 @@ public class BlueDEWarehouseAuto extends AbstractOpMode {
             drive.strafeDistanceSensor(VELOCITY,0);
             Utils.sleep(200);
 
-            drive.moveDistanceDEVelocity(200 , 180, VELOCITY); //+ (100 * i)
+            drive.moveDistanceDEVelocity(250 , 180, VELOCITY); //+ (100 * i)
             flags[1] = true;
             drive.moveDistanceDEVelocity(150, 90, VELOCITY);
             drive.rotateDistanceDE(135, 6);
             Utils.sleep(100);
-            drive.moveDistanceDEVelocity(650, 180, VELOCITY / 2.0);
+            drive.moveDistanceDEVelocity(700, 180, VELOCITY / 2.0);
             flags[2] = true;
             Utils.sleep(200);
         }

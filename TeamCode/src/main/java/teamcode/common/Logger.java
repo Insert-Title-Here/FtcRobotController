@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class Logger {
 
-    ArrayList<File> loggerFiles;
-    ArrayList<String> loggerStrings;
+    ArrayList<File> loggerFiles = new ArrayList<>();
+    ArrayList<String> loggerStrings = new ArrayList<>();
     public Logger(String[] names){
         for(int i = 0; i < names.length; i++){
             createLogFile(names[i]);

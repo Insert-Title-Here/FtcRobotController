@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
 import teamcode.common.AbstractOpMode;
@@ -25,7 +27,7 @@ public class ArmSystem {
     private static final double HOUSING_POSITION = 0.12 ; //these values are great, the scoring one MAYBE move up a lil but no more than 0.66 because it grinds at that point
     private static final double SCORING_POSITION = 0.5;
 
-    private static final double LINKAGE_DOWN = 0.26; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
+    private static final double LINKAGE_DOWN = 0.18; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.6;
     private static final double LINKAGE_SCORE = 0.8;
 
@@ -39,14 +41,15 @@ public class ArmSystem {
     private static final double SLIDE_POWER = 1.0;
     private static final long TIMEOUT_MILLIS = 5000;
 
-    private ExpansionHubMotor intake, winchMotor, winchEncoder, conveyorMotor;
+    private ExpansionHubMotor winchMotor, winchEncoder, conveyorMotor;
+    private DcMotorEx intake;
     private Servo house, linkage;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
 
 
     public ArmSystem(HardwareMap hardwareMap, boolean isTeleOp){
-        intake = (ExpansionHubMotor) hardwareMap.dcMotor.get("Intake");
+        intake = hardwareMap.get(DcMotorEx.class,"Intake");
         winchMotor = (ExpansionHubMotor) hardwareMap.dcMotor.get("Winch");
         winchEncoder = (ExpansionHubMotor) hardwareMap.dcMotor.get("WinchEncoder"); //TANK FrontLeftDrive MECANUM Winch
         conveyorMotor = (ExpansionHubMotor) hardwareMap.dcMotor.get("Ramp");
@@ -66,7 +69,7 @@ public class ArmSystem {
         }else{
             house.setPosition(HOUSING_POSITION);
         }
-        linkage.setPosition(LINKAGE_HOUSED);
+        linkage.setPosition(LINKAGE_HOUSED - 0.2);
         stage = Stage.IDLE;
     }
 
@@ -75,6 +78,10 @@ public class ArmSystem {
 
     }
 
+
+    public double getMilliAmps(){
+        return intake.getCurrent(CurrentUnit.MILLIAMPS);
+    }
 
 
 
@@ -170,8 +177,8 @@ public class ArmSystem {
     }
 
     public void preScoreDuck(){
-        house.setPosition(HOUSING_POSITION + 0.02 );
-        Utils.sleep(250);
+        house.setPosition(HOUSING_POSITION +0.12);
+        Utils.sleep(500);
         linkage.setPosition(LINKAGE_HOUSED);
         stage = Stage.HOUSED;
     }

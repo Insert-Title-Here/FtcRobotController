@@ -122,7 +122,7 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
         drive.rotateDistanceDE(160, 6);
         if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
             Debug.log("here");
-            arm.runConveyorPos(1.0, 1500);
+            arm.runConveyorPos(0.5, 1500);
         }else{
             arm.score();
         }
@@ -142,9 +142,9 @@ public class RedDEWarehouseAuto extends AbstractOpMode {
             drive.strafeDistanceSensor(VELOCITY,0);
             Utils.sleep(200);
 
-            drive.moveDistanceDEVelocity(200 , 180, VELOCITY); //+ (100 * i)
+            drive.moveDistanceDEVelocity(400 , 180, VELOCITY); //+ (100 * i)
             flags[1] = true;
-            drive.moveDistanceDEVelocity(150, 90, VELOCITY);
+            drive.moveDistanceDEVelocity(150, -90, VELOCITY);
             drive.rotateDistanceDE(-135, 6);
             Utils.sleep(100);
             drive.moveDistanceDEVelocity(630, 180, VELOCITY / 2.0);
