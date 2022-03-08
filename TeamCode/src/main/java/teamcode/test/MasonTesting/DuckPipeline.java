@@ -1,115 +1,108 @@
-//package teamcode.test.MasonTesting;
-//
-//import org.opencv.core.Core;
-//import org.opencv.core.Mat;
-//import org.opencv.core.MatOfPoint;
-//import org.opencv.core.Point;
-//import org.opencv.core.Scalar;
-//import org.opencv.core.Size;
-//import org.opencv.imgproc.Imgproc;
-//import org.opencv.utils.Converters;
-//import org.openftc.easyopencv.OpenCvPipeline;
-//
-//import java.util.ArrayList;
-//
-//import teamcode.common.MecanumDriveTrain;
-//
-//public class DuckPipeline extends OpenCvPipeline {
-//    Mat frameHSV, frameBlurred, frameMasked, frameBinary;
-//    ArrayList<MatOfPoint> contours, subContours;
-//    ArrayList<Integer> xList, yList;
-//    double duckX;
-//    int xMin, xMax;
-//
-//    private final Scalar lowerYellow = new Scalar(13, 130, 100);
-//    private final Scalar upperYellow = new Scalar(29, 255, 255);
-//
-//    private final int deviation = 5;
-//
-//    @Override
-//    public Mat processFrame(Mat frame) {
-//        Mat frameHSV = new Mat();
-//        Mat frameBlurred = new Mat();
-//        Mat frameMasked = new Mat();
-//        Mat frameBinary = new Mat();
-//        contours = new ArrayList<>();
-//        subContours = new ArrayList<>();
-//        xMin = Integer.MAX_VALUE;
-//        xMax = Integer.MIN_VALUE;
-//
-//        /*
-//        1. Blur the image
-//        2. Change the color space
-//        3. Get the mask of the image
-//        4. Add erosion and dilation for noise reduction
-//        5. Get the binary of the image
-//        6. Get the contours and create subdivided contour lists based on arc length
-//        7. Get x and y cords in frame
-//        8. Determine whether the robot should strafe -x or x amt
-//        9. Get the duck
-//         */
-//
-//        // 1
-//        Imgproc.GaussianBlur(frame, frameBlurred, new Size(7, 7), 0);
-//
-//        // 2 + 3
-//        Imgproc.cvtColor(frameBlurred, frameHSV, Imgproc.COLOR_RGB2HSV);
-//        Core.inRange(frameHSV, lowerYellow, upperYellow, frameMasked);
-//
-//        // 4
-//        Imgproc.erode(frameMasked, frameMasked, new Mat(), new Point(-1, -1), 2);
-//        Imgproc.dilate(frameMasked, frameMasked, new Mat(), new Point(-1, -1), 2);
-//
-//        // 5
-//        Imgproc.threshold(frameMasked, frameBinary, 100, 255, Imgproc.THRESH_BINARY_INV);
-//
-//        // 6 (needs are length implementation)
-//        Imgproc.findContours(frameMasked, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-//
-//        // 7
-//        if (contours == null) {
-//            return null;
-//        }
-//
-//
-//        double centerMin, centerMax;
-//        centerMin = frame.width() / 2 - deviation;
-//        centerMax = frame.width() / 2 + deviation;
-//
-//        // strafe thing?
-//
-//
-//        do {
-//            xCord();
-//            // strafe either left or right using modulus based on what duck x is
-//            // like in relation to centerMin and centerMax
-//        } while (duckX < centerMin || duckX > centerMax);
-//
-//        // go forward to get duck
-//
-//
-//        return null;
-//    }
-//
-////    public void xCord(ArrayList<MatOfPoint> ) {
-////        ArrayList<Point> pointList = new ArrayList<>();
-////        Converters.Mat_to_vector_Point(contours.get(0), pointList);
-////        xList = new ArrayList<>();
-////        yList = new ArrayList<>();
-////
-////        xList.add((int) pointList.get(0).x);
-////
-////
-////        for (int val : xList) {
-////            if (val < xMin) {
-////                xMin = val;
-////            }
-////
-////            if (val > xMax) {
-////                xMax = val;
-////            }
-////        }
-////
-////        duckX = xMin + Math.abs((xMax - xMin) / 2);
-////    }
-//}
+package teamcode.test.MasonTesting;
+
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.checkerframework.checker.units.qual.A;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.utils.Converters;
+import org.opencv.videoio.VideoCapture;
+import org.openftc.easyopencv.OpenCvPipeline;
+
+import teamcode.common.Debug;
+
+public class DuckPipeline extends OpenCvPipeline {
+
+    private int direction;
+    private boolean duckCentered;
+    private ArrayList<MatOfPoint> contours, contourLengths;
+    private ArrayList<Integer> xList, yList;
+
+    private double xCenterMin, xCenterMax;
+    private final double deviation = 5;
+
+    private final Scalar lowerYellow = new Scalar(13, 130, 100);
+    private final Scalar upperYellow = new Scalar(29, 255, 255);
+
+    private final int blurSize = 7;
+
+    @Override
+    public Mat processFrame(Mat input) {
+        Mat frameHSV = new Mat();
+        Mat frameBlurred = new Mat();
+        Mat frameMasked = new Mat();
+        Mat frameBinary = new Mat();
+        contours = new ArrayList<>();
+        contourLengths = new ArrayList<>();
+
+        xCenterMin = input.width() / 2 - deviation;
+        xCenterMax = input.width() / 2 + deviation;
+
+        // blur the image
+        Imgproc.GaussianBlur(input, frameBlurred, new Size(blurSize, blurSize), 0);
+
+        // color space and masking
+        Imgproc.cvtColor(frameBlurred, frameHSV, Imgproc.COLOR_BGR2HSV);
+
+        // erosion and dilation for noise reduction
+        Imgproc.erode(frameMasked, frameMasked, new Mat(), new Point(-1, -1), 2);
+        Imgproc.dilate(frameMasked, frameMasked, new Mat(), new Point(-1, -1), 2);
+
+        // get the binarys of the image
+        Imgproc.threshold(frameMasked, frameBinary, 100, 255, Imgproc.THRESH_BINARY_INV);
+
+        // get contours and arc length
+        Imgproc.findContours(frameMasked, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        for (int i = 0; i < contours.size(); i++) {
+            double indexedLength = Imgproc.arcLength(new MatOfPoint2f(contours.get(i).toArray()), true);
+            if (indexedLength > 20) {
+                Debug.log("Current Length: " + indexedLength);
+                contourLengths.add(contours.get(i));
+            }
+        }
+
+        Imgproc.drawContours(input, contourLengths, -1, new Scalar(255, 255, 255), 1, Imgproc.LINE_8);
+
+        frameHSV.release();
+        frameBlurred.release();
+        frameMasked.release();
+        frameBinary.release();
+        contours.clear();
+        contourLengths.clear();
+        return input;
+    }
+
+    public boolean isCentered() {
+        return duckCentered;
+    }
+
+    public double direction() {
+        return direction;
+    }
+
+    private void setDirection(int dir) {
+        direction = dir;
+    }
+
+    private void setCentered(boolean state) {
+        duckCentered = state;
+    }
+}
