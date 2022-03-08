@@ -18,7 +18,7 @@ public class ArcTest extends AbstractOpMode {
     ArmSystem systems;
     Thread armThread;
     boolean[] flags = new boolean[]{false, false, false};
-    private final int FREIGHT = 3;
+    private final int FREIGHT = 1;
     @Override
     protected void onInitialize() {
         systems = new ArmSystem(hardwareMap, false);
@@ -47,13 +47,13 @@ public class ArcTest extends AbstractOpMode {
         systems.intakeDumb(1.0);
         //drive.spinDuck(false);
         for(int i = 0; i < FREIGHT; i++) {
-            flags[0] = true;
-            drive.arcDriving(new Vector2D(-9, 0), -0.55, 500, 90);
-            drive.moveDistanceDEVelocity(300, 180, 10);
-            flags[1] = true;
-            Utils.sleep(250);
-            drive.moveDistanceDEVelocity(300, 0, 10);
-            drive.arcDriving(new Vector2D(9, 0), 0.55, 500, 90);
+            //flags[0] = true;
+            drive.arcDriving(new Vector2D(-9, 0), -0.67, 500, 90);
+            //drive.moveDistanceDEVelocity(300, 180, 10);
+            //flags[1] = true;
+            //Utils.sleep(250);
+            //drive.moveDistanceDEVelocity(300, 0, 10);
+            //drive.arcDriving(new Vector2D(9, 0), 0.55, 500, 90);
 
         }
         while(opModeIsActive());

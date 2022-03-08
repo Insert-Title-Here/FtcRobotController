@@ -41,8 +41,12 @@ public class EndgameSystems {
         carouselBlue.setPower(power);
     }
 
-    public double getCarouselPos(){
-        return carouselEncoderRed.getCurrentPosition();
+    public int getCarouselPos(){
+        if(!isBlue){
+            return carouselEncoderBlue.getCurrentPosition();
+        }else {
+            return carouselEncoderRed.getCurrentPosition();
+        }
     }
 
 

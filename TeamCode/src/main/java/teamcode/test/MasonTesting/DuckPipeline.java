@@ -32,11 +32,12 @@ public class DuckPipeline extends OpenCvPipeline {
 
     private int direction;
     private boolean duckCentered = false;
+    private boolean duckInFrame = false;
     private ArrayList<MatOfPoint> contours, contourLengths;
     private ArrayList<Integer> xList, yList;
 
     private double xCenterMin, xCenterMax;
-    private final double deviation = 5;
+    private final double deviation = 25;
 
     private final Scalar lowerYellow = new Scalar(13, 130, 100);
     private final Scalar upperYellow = new Scalar(29, 255, 255);
@@ -84,6 +85,7 @@ public class DuckPipeline extends OpenCvPipeline {
 
         xList.clear();
         yList.clear();
+
         for (int i = 0; i < contourLengths.size(); i++) {
             ArrayList<Point> pointList = new ArrayList<>();
             Converters.Mat_to_vector_Point(contourLengths.get(i), pointList);
@@ -105,6 +107,8 @@ public class DuckPipeline extends OpenCvPipeline {
             }
 
             double xCord = xMin + Math.abs((xMax - xMin) / 2);
+
+
             if (xCord < xCenterMin) {
                 setDirection(-1);
             } else if (xCord > xCenterMax) {

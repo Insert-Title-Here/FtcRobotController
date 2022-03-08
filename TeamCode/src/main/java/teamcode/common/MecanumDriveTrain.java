@@ -1,8 +1,11 @@
  package teamcode.common;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -45,7 +48,7 @@ import static java.lang.Math.PI;
     private NormalizedColorSensor sensor, warehouse;
     ArmSystem arm;
 
-    NormalizedColorSensor frontRed, backRed, frontBlue, backBlue;
+    ColorRangeSensor frontRed, backRed, frontBlue, backBlue;
 
 
     LynxModule hub;
@@ -98,7 +101,7 @@ import static java.lang.Math.PI;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
@@ -114,10 +117,10 @@ import static java.lang.Math.PI;
         br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
         this.arm = arm;
 
-        frontRed = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensorRed");
-        backRed = hardwareMap.get(NormalizedColorSensor.class, "BackColorSensorRed");
-        frontBlue = hardwareMap.get(NormalizedColorSensor.class, "FrontColorSensorBlue");
-        backBlue = hardwareMap.get(NormalizedColorSensor.class, "BackColorSensorBlue");
+        frontRed = hardwareMap.get(ColorRangeSensor.class, "FrontColorSensorRed");
+        backRed = hardwareMap.get(ColorRangeSensor.class, "BackColorSensorRed");
+        frontBlue = hardwareMap.get(ColorRangeSensor.class, "FrontColorSensorBlue");
+        backBlue = hardwareMap.get(ColorRangeSensor.class, "BackColorSensorBlue");
         warehouse = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
@@ -139,7 +142,7 @@ import static java.lang.Math.PI;
         previousOmega = 0;
         correctMotors();
         setPIDFCoefficients(coefficients);
-
+        Debug.log("here");
 
     }
 
@@ -155,8 +158,22 @@ import static java.lang.Math.PI;
         omega *= -getSign(deltaRadians);
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians)){
-            setMotorVelocity(omega, -omega, omega, -omega);
+            double angularDistance = Math.abs(startAngle - imu.getAngularOrientation().firstAngle);
+            double radialDistance = Math.abs(deltaRadians);
+            double ratio = (radialDistance - angularDistance) / angularDistance;
+            if(ratio < 0.2){
+                ratio = 0.2;
+            }else if(ratio > 1.0){
+                ratio = 1.0;
+            }
+            AbstractOpMode.currentOpMode().telemetry.addData("ratio", ratio);
+            AbstractOpMode.currentOpMode().telemetry.addData("angular", angularDistance);
+            AbstractOpMode.currentOpMode().telemetry.update();
+            setMotorVelocity(omega * ratio, -omega * ratio, omega * ratio, -omega * ratio);
+
+
         }
         brake();
     }
@@ -176,6 +193,17 @@ import static java.lang.Math.PI;
         }
         brake();
     }
+
+     public synchronized void strafeColorSensorWarehouse(double velocity){
+         NormalizedRGBA rgba = warehouse.getNormalizedColors();
+         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+         while(rgba.red < 0.9){
+             rgba = warehouse.getNormalizedColors();
+             setMotorVelocity(velocity,-velocity,-velocity,velocity);
+         }
+         brake();
+     }
 
     public synchronized void driveColorSensorBlue(double velocity){
         warehouse.setGain(400);
@@ -914,26 +942,40 @@ import static java.lang.Math.PI;
 
         NormalizedRGBA frontRGBA;
         NormalizedRGBA backRGBA;
+        double distanceFront, distanceBack;
             if(isRed) {
+                distanceFrontThreshold = 2.9;
+                distanceBackThreshold = 1.4;
+                distanceFront = frontRed.getDistance(DistanceUnit.INCH);
+                distanceBack = backRed.getDistance(DistanceUnit.INCH);
+
                 frontRGBA = frontRed.getNormalizedColors();
                 backRGBA = backRed.getNormalizedColors();
                 Debug.log("red");
             }else{
+                distanceFront = frontBlue.getDistance(DistanceUnit.INCH);
+                distanceBack = backBlue.getDistance(DistanceUnit.INCH);
+
                 frontRGBA = frontBlue.getNormalizedColors();
                 backRGBA = backBlue.getNormalizedColors();
                 Debug.log("blue");
             }
-            while (frontRGBA.green < distanceFrontThreshold && backRGBA.green < distanceBackThreshold){
+
+            while (distanceFront > distanceFrontThreshold  && distanceBack > distanceBackThreshold){
 
                 if(isRed) {
                     frontRGBA = frontRed.getNormalizedColors();
                     backRGBA = backRed.getNormalizedColors();
+                    distanceFront = frontRed.getDistance(DistanceUnit.INCH);
+                    distanceBack = backRed.getDistance(DistanceUnit.INCH);
                 }else{
                     frontRGBA = frontBlue.getNormalizedColors();
                     backRGBA = backBlue.getNormalizedColors();
+                    distanceFront = frontBlue.getDistance(DistanceUnit.INCH);
+                    distanceBack = backBlue.getDistance(DistanceUnit.INCH);
                 }
-                AbstractOpMode.currentOpMode().telemetry.addData("FGreen", frontRGBA.green);
-                AbstractOpMode.currentOpMode().telemetry.addData("BGreen", backRGBA.green);
+                AbstractOpMode.currentOpMode().telemetry.addData("F", distanceFront);
+                AbstractOpMode.currentOpMode().telemetry.addData("B", distanceBack);
                 AbstractOpMode.currentOpMode().telemetry.update();
 
                 double angle;
@@ -953,6 +995,37 @@ import static java.lang.Math.PI;
         }
 
 
+
+    }
+
+    public synchronized void duck(){
+        double multiplier;
+        if(isRed){
+            multiplier = 1;
+        }else{
+            multiplier = -1;
+        }
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setMotorVelocity(1,1,1,1);
+
+        systems.runCarousel(0.2);
+        double previousTics = systems.getCarouselPos();
+        double deltaTics = 10;
+        lowMagnitudeHardwareCycles = 0;
+        double startTime = AbstractOpMode.currentOpMode().time;
+        double deltaTime = AbstractOpMode.currentOpMode().time - startTime;
+        while((Math.abs(deltaTics) > 10 ||  deltaTime < 2.0) && AbstractOpMode.currentOpMode().opModeIsActive()){
+            int currentTics = systems.getCarouselPos();
+            deltaTics = currentTics - previousTics;
+            previousTics = currentTics;
+            deltaTime = AbstractOpMode.currentOpMode().time - startTime;
+
+            AbstractOpMode.currentOpMode().telemetry.addData("delta", deltaTics);
+            AbstractOpMode.currentOpMode().telemetry.addData("time", deltaTime);
+            AbstractOpMode.currentOpMode().telemetry.update();
+        }
+        brake();
 
     }
 
