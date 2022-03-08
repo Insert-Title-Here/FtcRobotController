@@ -31,7 +31,7 @@ import teamcode.common.Debug;
 public class DuckPipeline extends OpenCvPipeline {
 
     private int direction;
-    private boolean duckCentered;
+    private boolean duckCentered = false;
     private ArrayList<MatOfPoint> contours, contourLengths;
     private ArrayList<Integer> xList, yList;
 
@@ -45,6 +45,9 @@ public class DuckPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        xList = new ArrayList<>();
+        yList = new ArrayList<>();
+
         Mat frameHSV = new Mat();
         Mat frameBlurred = new Mat();
         Mat frameMasked = new Mat();
@@ -59,7 +62,8 @@ public class DuckPipeline extends OpenCvPipeline {
         Imgproc.GaussianBlur(input, frameBlurred, new Size(blurSize, blurSize), 0);
 
         // color space and masking
-        Imgproc.cvtColor(frameBlurred, frameHSV, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(frameBlurred, frameHSV, Imgproc.COLOR_RGB2HSV);
+        Core.inRange(frameHSV, lowerYellow, upperYellow, frameMasked);
 
         // erosion and dilation for noise reduction
         Imgproc.erode(frameMasked, frameMasked, new Mat(), new Point(-1, -1), 2);
@@ -73,12 +77,43 @@ public class DuckPipeline extends OpenCvPipeline {
 
         for (int i = 0; i < contours.size(); i++) {
             double indexedLength = Imgproc.arcLength(new MatOfPoint2f(contours.get(i).toArray()), true);
-            if (indexedLength > 20) {
-                Debug.log("Current Length: " + indexedLength);
+            if (indexedLength >= 30 && indexedLength <= 220) {
                 contourLengths.add(contours.get(i));
             }
         }
 
+        xList.clear();
+        yList.clear();
+        for (int i = 0; i < contourLengths.size(); i++) {
+            ArrayList<Point> pointList = new ArrayList<>();
+            Converters.Mat_to_vector_Point(contourLengths.get(i), pointList);
+
+            for (Point p : pointList) {
+                xList.add((int) p.x);
+                yList.add((int) p.y);
+            }
+
+            int xMin = Integer.MAX_VALUE;
+            int xMax = Integer.MIN_VALUE;
+            for (int num : xList) {
+                if (num < xMin) {
+                    xMin = num;
+                }
+                if (num > xMax) {
+                    xMax = num;
+                }
+            }
+
+            double xCord = xMin + Math.abs((xMax - xMin) / 2);
+            if (xCord < xCenterMin) {
+                setDirection(-1);
+            } else if (xCord > xCenterMax) {
+                setDirection(1);
+            } else {
+                setCentered(true);
+                setDirection(0);
+            }
+        }
         Imgproc.drawContours(input, contourLengths, -1, new Scalar(255, 255, 255), 1, Imgproc.LINE_8);
 
         frameHSV.release();
@@ -87,6 +122,8 @@ public class DuckPipeline extends OpenCvPipeline {
         frameBinary.release();
         contours.clear();
         contourLengths.clear();
+        xList.clear();
+        yList.clear();
         return input;
     }
 
@@ -104,5 +141,6 @@ public class DuckPipeline extends OpenCvPipeline {
 
     private void setCentered(boolean state) {
         duckCentered = state;
+
     }
 }
