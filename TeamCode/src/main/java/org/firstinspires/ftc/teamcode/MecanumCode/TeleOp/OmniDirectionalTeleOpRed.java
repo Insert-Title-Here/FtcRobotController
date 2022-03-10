@@ -45,7 +45,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
-    private Carousel.CarouselMode carouselSpeed = Carousel.CarouselMode.CONSTANT;
+    private Carousel.CarouselMode carouselSpeed = Carousel.CarouselMode.TELEOP;
 
 
     @Override
@@ -300,7 +300,7 @@ public class OmniDirectionalTeleOpRed extends LinearOpMode {
         if(gamepad1.dpad_right && capArm.getTelemetry()[0] > Constants.MAX_MANUAL_CAP) {
             //driveSwapped = true;
             capArm.setPower(-0.3);
-        }else if(gamepad1.dpad_left /*&& capArm.getTelemetry()[0] < 0*/) {
+        }else if(gamepad1.dpad_left && capArm.getTelemetry()[0] < 0) {
             //driveSwapped = false;
             capArm.setPower(0.3);
         }else{

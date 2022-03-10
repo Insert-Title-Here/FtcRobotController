@@ -11,7 +11,7 @@ public class CapstoneArm {
 
     boolean isGrabbing = false;
 
-    public static final double CAP_SERVO_OPEN = 0.75;
+    public static final double CAP_SERVO_OPEN = 0.85;
     public static final double CAP_SERVO_CLOSED = 1;
 
     public CapstoneArm(HardwareMap hardwareMap) {
