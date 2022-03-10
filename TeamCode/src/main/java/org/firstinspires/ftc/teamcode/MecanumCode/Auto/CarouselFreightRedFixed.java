@@ -129,7 +129,7 @@ public class CarouselFreightRedFixed extends OpModeWrapper {
 
     @Override
     protected void onStart() {
-        //sleep(2000);
+        sleep(2000);
         armMovementThread.start();
         capstonePos = bPipeline.getPos();
 
@@ -142,19 +142,18 @@ public class CarouselFreightRedFixed extends OpModeWrapper {
         // Forward: 1 ft 540.3 tics (5403 for 10 ft)
         // Rotation: 360 degrees 3665 tics
         // Strafe: 590 tics/ft - = Left, + = Right
-        drive.driveAuto(0.3, -300, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.tankRotate(Math.PI/2, 0.3);
-        drive.driveAuto(0.3, -1200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.tankRotate(5 * Math.PI / 6, 0.3);
-        drive.driveAuto(0.3, -220, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.1, -70, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -1000, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.tankRotate((2 * Math.PI) / 3, 0.3);
+        drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.1, -60, MecanumDriveTrain.MovementType.STRAIGHT);
         carousel.spinCarousel(5000, this, Carousel.CarouselMode.AUTO);
         drive.tankRotate(Math.PI / 2, 0.3);
 
         drive.driveAuto(0.3, -500, MecanumDriveTrain.MovementType.STRAFE);
         drive.tankRotate(-Math.PI / 2, 0.3);
         drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, 1250, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, 1350, MecanumDriveTrain.MovementType.STRAFE);
         drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.tankRotate(-Math.PI / 2, 0.3);
 
@@ -179,12 +178,12 @@ public class CarouselFreightRedFixed extends OpModeWrapper {
         } else if (capstonePos == BarcodePipelineRed.BarcodePosition.CENTER) {
             drive.driveAuto(0.3, -620, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
-            drive.driveAuto(0.3, -70, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
 
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
-            drive.driveAuto(0.3, 70, MecanumDriveTrain.MovementType.STRAIGHT);
+
 
 
 
@@ -201,7 +200,7 @@ public class CarouselFreightRedFixed extends OpModeWrapper {
         moveArm = true;
 
         drive.driveAuto(0.3, 1200, MecanumDriveTrain.MovementType.STRAIGHT);
-        drive.driveAuto(0.3, -750, MecanumDriveTrain.MovementType.STRAFE);
+        drive.driveAuto(0.3, -550, MecanumDriveTrain.MovementType.STRAFE);
 
         }
 
