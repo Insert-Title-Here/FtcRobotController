@@ -183,7 +183,13 @@ import static java.lang.Math.PI;
         rotateDistanceDERadian(radians, omega);
     }
 
+
+
     public synchronized void driveColorSensorWarehouse(double velocity){
+        driveColorSensorWarehouse(velocity, true);
+    }
+
+    public synchronized void driveColorSensorWarehouse(double velocity, boolean isBrake){
         NormalizedRGBA rgba = warehouse.getNormalizedColors();
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -191,7 +197,9 @@ import static java.lang.Math.PI;
             rgba = warehouse.getNormalizedColors();
             setMotorVelocity(velocity,velocity,velocity,velocity);
         }
-        brake();
+        if(isBrake) {
+            brake();
+        }
     }
 
      public synchronized void strafeColorSensorWarehouse(double velocity){
@@ -542,6 +550,7 @@ import static java.lang.Math.PI;
         //moveDistanceDEVelocity(200, 180, 6);
         arm.intakeDumb(0);
     }
+
 
     public synchronized void driveColorSensorSpliced(double pow){
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1384,6 +1393,59 @@ import static java.lang.Math.PI;
         brake();
     }
 
+    public synchronized void setOmniMovement(double theta, double tics, double velocity){
+        setOmniMovement(theta, tics, velocity, true);
+    }
+
+    public synchronized void setOmniMovement(double theta, double tics, double velocity, boolean isBrake){
+        double k2 = (1 - Math.tan(theta)) / (Math.tan(theta) + 1);
+        double k1 = (k2 * ((Math.tan(theta) + 1) / (1 - Math.tan(theta)))) * getSign(k2);
+
+        if(Math.abs(k1) > 1.0){
+            k2 = k2 / k1 ;
+            k1 = 1.0 ;
+        }
+        if(Math.abs(k2) > 1.0){
+            k1 = k1 / k2 ;
+            k2 = 1.0 ;
+        }
+        int tics1 = (int)(k1 * tics);
+        int tics2 = (int)(k2 * tics);
+        double v1 = k1 * velocity;
+        double v2 = k2 * velocity;
+
+//        if(Math.abs(tics1) > Math.abs(tics)){
+//            tics1 = (int)tics;
+//        }
+//        if(Math.abs(tics2) > Math.abs(tics)){
+//            tics2 = (int)tics;
+//        }
+//
+//        if(Math.abs(v1) > Math.abs(velocity)){
+//            v1 = velocity;
+//        }
+//        if(Math.abs(v2) > Math.abs(velocity)){
+//            v2 = velocity;
+//        }
+
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hub.clearBulkCache();
+        LynxModule.BulkData data = hub.getBulkData();
+        while(Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(tics1) ||
+        Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(tics2) ||
+        Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(tics1) ||
+        Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(tics2)){
+            hub.clearBulkCache();
+            data = hub.getBulkData();
+            setMotorVelocity(v1,v2,v1,v2);
+        }
+        if(isBrake) {
+            brake();
+        }
+
+    }
+
     private final double TICKS_PER_REV = 384.5;
      private static final double WHEEL_DIAMETER = 3.78;
 
@@ -1445,13 +1507,15 @@ import static java.lang.Math.PI;
                 brake();
                 Utils.sleep(curr.getMillis());
             }else if(curr.getMovement() == Movement.MovementType.WALL_LOCALIZATION){
-                strafeDistanceSensor(curr.getVelocity(), curr.getRadians(), true, isRed);
+                strafeDistanceSensor(curr.getVelocity(), curr.getRadians(), false, isRed);
             }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_LOCALIZATION){
-                driveColorSensorWarehouse(curr.getVelocity());
+                driveColorSensorWarehouse(curr.getVelocity(), false);
             }else if(curr.getMovement() == Movement.MovementType.MODIFY_FLAG){
                 flags[curr.getIndex()] = curr.getVal();
             }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_OPERATION){
                 driveColorSensorSpliced(curr.getVelocity());
+            }else if(curr.getMovement() == Movement.MovementType.ARC_MOVEMENT){
+                setOmniMovement(curr.getRadians(), curr.getDistance(), curr.getVelocity(), false);
             }
         }
         brake();

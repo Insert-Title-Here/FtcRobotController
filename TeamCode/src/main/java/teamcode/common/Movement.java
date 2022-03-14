@@ -7,6 +7,7 @@ public class Movement {
     /***
      * CONSTRUCTOR GUIDE FOR THIS CLASS
      * linear movement: int double double
+     * arc movement: double int double
      * Rotational movement: double double
      * Wall or Warehouse Localization or intake driving function: double MovementType
      * Wall localization = WALL_LOCALIZATION
@@ -15,6 +16,7 @@ public class Movement {
      * Sleep: long
      * flag modification: int boolean
      * to input a brake command, you can call a pause constructor with a parameter of 0
+     *
      */
 
 
@@ -49,6 +51,13 @@ public class Movement {
         this.velocity = velocity;
         this.radians = Math.toRadians(degrees);
         movement = MovementType.TRANSLATION;
+    }
+
+    public Movement(double degrees, double velocity, int dPosition){
+        distance = dPosition;
+        this.velocity = velocity;
+        this.radians = Math.toRadians(degrees);
+        movement = MovementType.ARC_MOVEMENT;
     }
 
     /**
@@ -104,7 +113,8 @@ public class Movement {
         WALL_LOCALIZATION,
         WAREHOUSE_LOCALIZATION,
         MODIFY_FLAG,
-        WAREHOUSE_OPERATION
+        WAREHOUSE_OPERATION,
+        ARC_MOVEMENT
     }
 
 

@@ -24,7 +24,7 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.06; //0
-    private static final double HOUSING_POSITION = 0.18 ; //0.12
+    private static final double HOUSING_POSITION = 0.22 ; //0.12
     private static final double SCORING_POSITION = 0.56; //0.5
 
     private static final double LINKAGE_DOWN = 0.18; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.

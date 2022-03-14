@@ -18,6 +18,7 @@ import teamcode.common.Vector2D;
 
 @TeleOp(name="Tele Op Blue")
 public class TeleOpBlue extends AbstractOpMode {
+
     MecanumDriveTrain drive;
     ArmSystem arm;
     Thread armThread, capThread;
@@ -74,17 +75,21 @@ public class TeleOpBlue extends AbstractOpMode {
     // Flag variable for keeping every servo frozen until game start
     boolean capping = false;
     boolean previousLeft, previousRight, previousUp, previousDown;
+    private static final double X_CAP_MULTIPLIER = 1.0;
     private void capUpdate() {
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
             double val = gamepad2.right_trigger - gamepad2.left_trigger;
+            systems.setCapstoneExtensionMOTORPower(-val);
             systems.setCapstoneExtensionPower(-val);
         }else{
+            systems.setCapstoneExtensionMOTORPower(0);
             systems.setCapstoneExtensionPower(0);
         }
 
-        double xPos = systems.getXCapPosition();
+        //double xPos = systems.getXCapPosition();
         double yPos = systems.getYCapPosition();
-        systems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -systems.xCapSpeed, systems.xCapSpeed))));
+        systems.setXCapPower(gamepad2.left_stick_x * X_CAP_MULTIPLIER);
+        //systems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -systems.xCapSpeed, systems.xCapSpeed))));
         systems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -systems.yCapSpeed, systems.yCapSpeed));
 
         if (gamepad2.y) {
