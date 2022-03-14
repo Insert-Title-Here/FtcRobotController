@@ -107,28 +107,23 @@ public class TeleOpBlue extends AbstractOpMode {
         previousRight = gamepad2.dpad_right;
         previousUp = gamepad2.dpad_up;
         previousDown = gamepad2.dpad_down;
-        isCarousel = false;
     }
 
     double startTime;
     double previousExtensionTime;
     int iterator;
     boolean isExtended, previousStart;
-    volatile boolean isCarousel = false, isEndgame = false;
+    volatile boolean  isEndgame = false;
     private void armUpdate() {
         if (gamepad1.right_trigger > 0.3) {
             startTime = AbstractOpMode.currentOpMode().time;
             while (gamepad1.right_trigger > 0.3) {
                 double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
-                if (elapsedTime < 0.5 || linkageState == linkageState.RAISED) {
+                if (elapsedTime < 0.5 && linkageState == linkageState.RAISED) {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 } else {
-                    if (!isCarousel) {
-                        arm.intakeDumb(1.0);
-                    } else {
-                        arm.intakeDumb(-1.0);
-                    }
+                    arm.intakeDumb(1.0);
                 }
 
             }
@@ -198,7 +193,16 @@ public class TeleOpBlue extends AbstractOpMode {
                 systems.runCarousel(-1);
             }
         } else if (gamepad1.right_bumper) {
+            arm.intakeDumb(1.0);
             systems.scoreDuck();
+            NormalizedRGBA rgba = drive.getSensorRGBA();
+            double green = rgba.green;
+            while(green < 0.9) {
+                rgba = drive.getSensorRGBA();
+                green = rgba.green;
+            }
+            arm.preScore();
+            arm.runConveyorPos(1.0, 2000);
         } else if (gamepad1.start && !previousStart){
             isExtended = !isExtended;
         }else {
