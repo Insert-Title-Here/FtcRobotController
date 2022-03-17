@@ -24,12 +24,13 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.06; //0
+    private static final double HOUSING_POSITION_DUCK = 0.3; //0.12
     private static final double HOUSING_POSITION = 0.22 ; //0.12
     private static final double SCORING_POSITION = 0.56; //0.5
 
     private static final double LINKAGE_DOWN = 0.18; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.6;
-    private static final double LINKAGE_SCORE = 0.8;
+    private static final double LINKAGE_SCORE = 0.7;
 
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -43,9 +44,10 @@ public class ArmSystem {
 
     private ExpansionHubMotor winchMotor, winchEncoder, conveyorMotor;
     private DcMotorEx intake;
-    private Servo house, linkage;
+    private Servo house, linkage, rampWinch;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
+    private boolean isDuck;
 
 
     public ArmSystem(HardwareMap hardwareMap, boolean isTeleOp){
@@ -56,6 +58,7 @@ public class ArmSystem {
 
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
+        rampWinch = hardwareMap.servo.get("RampWinch");
         //carousel = hardwareMap.get(CRServo.class, "Carousel");
 
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -64,6 +67,7 @@ public class ArmSystem {
         winchEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
         //carousel.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
         if(isTeleOp){
             house.setPosition(INTAKE_POSITION);
         }else{
@@ -71,6 +75,7 @@ public class ArmSystem {
         }
         linkage.setPosition(LINKAGE_HOUSED - 0.2);
         stage = Stage.IDLE;
+        isDuck = false;
     }
 
     public void intakeDumb(double power){
@@ -126,6 +131,20 @@ public class ArmSystem {
             }
         }
     }
+    private final double LOW_POS = 0;
+    private final double RETRACTED_POS = 0.2;
+    private final double TIPPING_POS = 0.15;
+    public void setRampWinchLow(){
+        rampWinch.setPosition(LOW_POS);
+    }
+    public void setRampWinchTipped(){
+        rampWinch.setPosition(TIPPING_POS);
+    }
+
+    public void setRampWinchRetracted(){
+        rampWinch.setPosition(RETRACTED_POS);
+    }
+
 
     public boolean intakeAuto(double intakePower){
         lowerLinkage();
@@ -153,10 +172,14 @@ public class ArmSystem {
 
     //will be merged into intake() later
     public void preScore(){
-        house.setPosition(HOUSING_POSITION);
-        Utils.sleep(250);
-        intakeDumb(-1.0);
+        if(isDuck){
+            house.setPosition(HOUSING_POSITION_DUCK);
+        }else {
+            house.setPosition(HOUSING_POSITION);
+        }
         linkage.setPosition(LINKAGE_HOUSED);
+        Utils.sleep(550);
+        intakeDumb(-1.0);
         stage = Stage.HOUSED;
 
         //Debug.log("finish");
@@ -164,8 +187,12 @@ public class ArmSystem {
 
     }
     public void preScoreAuto(){
-        house.setPosition(HOUSING_POSITION);
-        Utils.sleep(250);
+        if(isDuck){
+            house.setPosition(HOUSING_POSITION_DUCK);
+        }else {
+            house.setPosition(HOUSING_POSITION);
+        }
+        Utils.sleep(550);
         linkage.setPosition(LINKAGE_HOUSED);
         intakeDumb(-1.0);
 
@@ -176,6 +203,7 @@ public class ArmSystem {
 
     }
 
+    @Deprecated
     public void preScoreDuck(){
         house.setPosition(HOUSING_POSITION +0.12);
         Utils.sleep(500);
@@ -241,6 +269,10 @@ public class ArmSystem {
     public void lowerLinkage() {
         house.setPosition(INTAKE_POSITION);
         linkage.setPosition(LINKAGE_DOWN);
+    }
+
+    public void setIsDuck(boolean isDuck) {
+        this.isDuck = isDuck;
     }
 
     private enum Stage{

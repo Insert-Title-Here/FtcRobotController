@@ -39,7 +39,7 @@ public class CapstoneOpMode extends AbstractOpMode {
         telemetry.addData("rt", gamepad2.right_trigger);
         telemetry.update();
 
-        endgameSystems.setXCapPosition(gamepad2.left_stick_x);
+        //endgameSystems.setXCapPosition(gamepad2.left_stick_x);
         endgameSystems.setYCapPosition(gamepad2.right_stick_y);
         iterator++;
     }

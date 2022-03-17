@@ -27,8 +27,8 @@ public class EndgameSystems {
      * 1xEncoder
      */
 
-    private CRServo carouselBlue, carouselRed, capstoneExtension, xCap;
-    private Servo  yCap;
+    private CRServo carouselBlue, carouselRed, capstoneExtension;
+    private Servo  xCap, yCap;
     private DcMotor carouselEncoderBlue, carouselEncoderRed, capstoneExtensionMOTOR;
     private boolean isBlue;
 
@@ -57,10 +57,10 @@ public class EndgameSystems {
         carouselEncoderBlue = hardwareMap.dcMotor.get("Intake");
         carouselRed = hardwareMap.crservo.get("CarouselRed");
         carouselEncoderRed = hardwareMap.dcMotor.get("Winch");
-        xCap = hardwareMap.crservo.get("xCap");
+        xCap = hardwareMap.servo.get("xCap");
         yCap = hardwareMap.servo.get("yCap");
         capstoneExtension = hardwareMap.crservo.get("capExtension");
-        capstoneExtensionMOTOR = hardwareMap.dcMotor.get("capExtension");
+        //capstoneExtensionMOTOR = hardwareMap.dcMotor.get("capExtension");
 
         //carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -70,25 +70,25 @@ public class EndgameSystems {
 
     }
 
-//    public void setXCapPosition(double pos){
-//        xCap.setPosition(pos);
+    public void setXCapPosition(double pos){
+        xCap.setPosition(pos);
+    }
+
+    public double getXCapPosition() {
+        return xCap.getPosition();
+    }
+
+//    public void setXCapPower(double pow){
+//        xCap.setPower(pow);
 //    }
 //
-//    public double getXCapPosition() {
-//        return xCap.getPosition();
+//    public double getXCapPower(){
+//        return xCap.getPower();
 //    }
 
-    public void setXCapPower(double pow){
-        xCap.setPower(pow);
-    }
-
-    public double getXCapPower(){
-        return xCap.getPower();
-    }
-
-    public void setCapstoneExtensionMOTORPower(double power) {
-        capstoneExtensionMOTOR.setPower(power);
-    }
+//    public void setCapstoneExtensionMOTORPower(double power) {
+//        capstoneExtensionMOTOR.setPower(power);
+//    }
 
     public void setCapstoneExtensionPower(double pow){
         capstoneExtension.setPower(pow);

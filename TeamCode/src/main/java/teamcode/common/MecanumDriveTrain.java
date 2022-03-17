@@ -1240,7 +1240,7 @@ import static java.lang.Math.PI;
 
     }
 
-    public void brake() {
+    public synchronized void brake() {
         fl.setPower(0);
         fr.setPower(0);
         bl.setPower(0);

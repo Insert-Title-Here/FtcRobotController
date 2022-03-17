@@ -161,7 +161,7 @@ public class RedDEFourFreight extends AbstractOpMode {
         for(int i = 0; i < FREIGHT; i++) {
             drive.splicedMovement(warehouseSplice);
         }
-        
+
         drive.rotateDistanceDE(-105, 6);
         drive.strafeDistanceSensor(VELOCITY, 0);
         arm.lowerLinkage();

@@ -28,6 +28,7 @@ public class TeleOpBlue extends AbstractOpMode {
     private PulleyState pulleyState;
     private LinkageState linkageState;
     private long scoredSampleTime;
+    private boolean isDuck;
 
     @Override
     protected void onInitialize() {
@@ -65,6 +66,9 @@ public class TeleOpBlue extends AbstractOpMode {
         previousExtensionTime = 0;
         iterator = 0;
         isExtended = false;
+        isDuck = false;
+        arm.setIsDuck(isDuck);
+        arm.setRampWinchRetracted();
     }
 
     // For changing ranges of given variable
@@ -79,16 +83,16 @@ public class TeleOpBlue extends AbstractOpMode {
     private void capUpdate() {
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
             double val = gamepad2.right_trigger - gamepad2.left_trigger;
-            systems.setCapstoneExtensionMOTORPower(-val);
+            //systems.setCapstoneExtensionMOTORPower(-val);
             systems.setCapstoneExtensionPower(-val);
         }else{
-            systems.setCapstoneExtensionMOTORPower(0);
+            //systems.setCapstoneExtensionMOTORPower(0);
             systems.setCapstoneExtensionPower(0);
         }
 
         //double xPos = systems.getXCapPosition();
         double yPos = systems.getYCapPosition();
-        systems.setXCapPower(gamepad2.left_stick_x * X_CAP_MULTIPLIER);
+        //systems.setXCapPower(gamepad2.left_stick_x * X_CAP_MULTIPLIER);
         //systems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -systems.xCapSpeed, systems.xCapSpeed))));
         systems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -systems.yCapSpeed, systems.yCapSpeed));
 
@@ -102,6 +106,10 @@ public class TeleOpBlue extends AbstractOpMode {
             systems.yCapSpeed += 0.001;
         } else if (gamepad2.dpad_down && previousDown != gamepad2.dpad_down) {
             systems.yCapSpeed -= 0.001;
+        }else if(gamepad2.left_bumper){
+            arm.setRampWinchLow();
+        }else if(gamepad2.right_bumper){
+            arm.setRampWinchTipped();
         }
         previousLeft = gamepad2.dpad_left;
         previousRight = gamepad2.dpad_right;
@@ -112,7 +120,7 @@ public class TeleOpBlue extends AbstractOpMode {
     double startTime;
     double previousExtensionTime;
     int iterator;
-    boolean isExtended, previousStart;
+    boolean isExtended, previousStart, previousOptions;
     volatile boolean  isEndgame = false;
     private void armUpdate() {
         if (gamepad1.right_trigger > 0.3) {
@@ -205,16 +213,21 @@ public class TeleOpBlue extends AbstractOpMode {
             arm.runConveyorPos(1.0, 2000);
         } else if (gamepad1.start && !previousStart){
             isExtended = !isExtended;
-        }else {
+        }else if(gamepad1.share && !previousOptions){
+            isDuck = !isDuck;
+            arm.setIsDuck(isDuck);
+
+        } else{
 
             arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);
         }
-
+        previousOptions = gamepad1.share;
         previousStart = gamepad1.start;
         telemetry.addData("isExtended", isExtended);
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
+        telemetry.addData("isDuck:", isDuck);
         telemetry.update();
 
 
