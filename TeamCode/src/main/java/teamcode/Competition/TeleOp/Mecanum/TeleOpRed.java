@@ -90,13 +90,14 @@ public class TeleOpRed extends AbstractOpMode {
 
         //double xPos = systems.getXCapPosition();
         double yPos = systems.getYCapPosition();
+        systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
         //systems.setXCapPower(gamepad2.left_stick_x * X_CAP_MULTIPLIER);
         //systems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -systems.xCapSpeed, systems.xCapSpeed))));
         systems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -systems.yCapSpeed, systems.yCapSpeed));
 
         if (gamepad2.y) {
             systems.zeroCap();
-        } else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
+        } /*else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
             systems.xCapSpeed += 0.00004;
         } else if (gamepad2.dpad_left && previousLeft != gamepad2.dpad_left) {
             systems.xCapSpeed -= 0.00004;
@@ -104,7 +105,8 @@ public class TeleOpRed extends AbstractOpMode {
             systems.yCapSpeed += 0.001;
         } else if (gamepad2.dpad_down && previousDown != gamepad2.dpad_down) {
             systems.yCapSpeed -= 0.001;
-        }
+        }*/
+
         previousLeft = gamepad2.dpad_left;
         previousRight = gamepad2.dpad_right;
         previousUp = gamepad2.dpad_up;

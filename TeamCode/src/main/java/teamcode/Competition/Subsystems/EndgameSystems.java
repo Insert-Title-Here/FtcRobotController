@@ -27,9 +27,9 @@ public class EndgameSystems {
      * 1xEncoder
      */
 
-    private CRServo carouselBlue, carouselRed, capstoneExtension;
-    private Servo  xCap, yCap;
-    private DcMotor carouselEncoderBlue, carouselEncoderRed, capstoneExtensionMOTOR;
+    private CRServo carouselBlue, carouselRed, xCap;
+    private Servo  yCap;
+    private DcMotor carouselEncoderBlue, carouselEncoderRed, capstoneExtension;
     private boolean isBlue;
 
     public double xCapSpeed = 0.00018;
@@ -49,18 +49,15 @@ public class EndgameSystems {
         }
     }
 
-
-
-
     public EndgameSystems(HardwareMap hardwareMap, boolean isBlue){
         carouselBlue = hardwareMap.crservo.get("CarouselBlue");
         carouselEncoderBlue = hardwareMap.dcMotor.get("Intake");
         carouselRed = hardwareMap.crservo.get("CarouselRed");
         carouselEncoderRed = hardwareMap.dcMotor.get("Winch");
-        xCap = hardwareMap.servo.get("xCap");
+        xCap = hardwareMap.crservo.get("xCap");
         yCap = hardwareMap.servo.get("yCap");
-        capstoneExtension = hardwareMap.crservo.get("capExtension");
-        //capstoneExtensionMOTOR = hardwareMap.dcMotor.get("capExtension");
+        //capstoneExtension = hardwareMap.crservo.get("capExtension");
+        capstoneExtension = hardwareMap.dcMotor.get("capExtension");
 
         //carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -68,14 +65,6 @@ public class EndgameSystems {
         this.isBlue = isBlue;
         zeroCap();
 
-    }
-
-    public void setXCapPosition(double pos){
-        xCap.setPosition(pos);
-    }
-
-    public double getXCapPosition() {
-        return xCap.getPosition();
     }
 
 //    public void setXCapPower(double pow){
@@ -92,6 +81,10 @@ public class EndgameSystems {
 
     public void setCapstoneExtensionPower(double pow){
         capstoneExtension.setPower(pow);
+    }
+
+    public void setXCapstoneRotatePower(double pow) {
+        xCap.setPower(pow);
     }
 
     public void setYCapPosition(double pos){
