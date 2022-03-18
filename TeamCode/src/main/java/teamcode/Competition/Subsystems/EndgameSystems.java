@@ -55,7 +55,6 @@ public class EndgameSystems {
         carouselEncoderRed = hardwareMap.dcMotor.get("Winch");
         xCap = hardwareMap.crservo.get("xCap");
         yCap = hardwareMap.servo.get("yCap");
-        //capstoneExtension = hardwareMap.crservo.get("capExtension");
         capstoneExtension = hardwareMap.dcMotor.get("WinchEncoder");
 
         //carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

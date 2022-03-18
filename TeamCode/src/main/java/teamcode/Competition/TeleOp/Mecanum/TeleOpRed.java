@@ -73,7 +73,6 @@ public class TeleOpRed extends AbstractOpMode {
     // Flag variable for keeping every servo frozen until game start
     boolean capping = false;
     boolean previousLeft, previousRight, previousUp, previousDown;
-    private static final double X_CAP_MULTIPLIER = 1.0;
     private void capUpdate() {
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
             double val = gamepad2.right_trigger - gamepad2.left_trigger;
