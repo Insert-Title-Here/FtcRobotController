@@ -86,7 +86,7 @@ public class TeleOpRed extends AbstractOpMode {
         systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
         systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.00035, 0.00035));
 
-        if (gamepad2.y) {
+        if (gamepad2.x) {
             systems.zeroCap();
         } else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
             systems.setXCapSpeedDivisor(7);
