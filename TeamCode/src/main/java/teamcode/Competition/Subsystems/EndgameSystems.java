@@ -32,8 +32,7 @@ public class EndgameSystems {
     private DcMotor carouselEncoderBlue, carouselEncoderRed, capstoneExtension;
     private boolean isBlue;
 
-    public double xCapSpeed = 0.00018;
-    public double yCapSpeed = 0.00102;
+    public double xCapSpeedDiv = 7;
 
     public void runCarousel(double power) {
 
@@ -67,24 +66,16 @@ public class EndgameSystems {
 
     }
 
-//    public void setXCapPower(double pow){
-//        xCap.setPower(pow);
-//    }
-//
-//    public double getXCapPower(){
-//        return xCap.getPower();
-//    }
-
-//    public void setCapstoneExtensionMOTORPower(double power) {
-//        capstoneExtensionMOTOR.setPower(power);
-//    }
-
     public void setCapstoneExtensionPower(double pow){
-        capstoneExtension.setPower(pow);
+        capstoneExtension.setPower(-pow);
+    }
+
+    public void setXCapSpeedDivisor(double div) {
+        xCapSpeedDiv = div;
     }
 
     public void setXCapstoneRotatePower(double pow) {
-        xCap.setPower(pow);
+        xCap.setPower(-pow / xCapSpeedDiv);
     }
 
     public void setYCapPosition(double pos){
@@ -96,8 +87,12 @@ public class EndgameSystems {
     }
 
     public void zeroCap() {
-        //xCap.setPosition(0.141);
-        yCap.setPosition(0.793);
+        // TODO - get the x position to set the x zero pos (not fully necessary, might be nice to have)
+        yCap.setPosition(0.12);
+    }
+
+    public double map(double val, double in_min, double in_max, double out_min, double out_max) {
+        return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
     public void scoreDuck() {

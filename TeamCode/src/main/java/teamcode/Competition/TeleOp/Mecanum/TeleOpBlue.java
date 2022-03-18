@@ -71,11 +71,6 @@ public class TeleOpBlue extends AbstractOpMode {
         arm.setRampWinchRetracted();
     }
 
-    // For changing ranges of given variable
-    private double map(double val, double in_min, double in_max, double out_min, double out_max) {
-        return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-    }
-
     // Flag variable for keeping every servo frozen until game start
     boolean capping = false;
     boolean previousLeft, previousRight, previousUp, previousDown;
@@ -83,34 +78,23 @@ public class TeleOpBlue extends AbstractOpMode {
     private void capUpdate() {
         if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
             double val = gamepad2.right_trigger - gamepad2.left_trigger;
-            //systems.setCapstoneExtensionMOTORPower(-val);
             systems.setCapstoneExtensionPower(-val);
         }else{
-            //systems.setCapstoneExtensionMOTORPower(0);
             systems.setCapstoneExtensionPower(0);
         }
 
-        //double xPos = systems.getXCapPosition();
         double yPos = systems.getYCapPosition();
-        //systems.setXCapPower(gamepad2.left_stick_x * X_CAP_MULTIPLIER);
-        //systems.setXCapPosition((xPos - (map(gamepad2.left_stick_x, -1, 1, -systems.xCapSpeed, systems.xCapSpeed))));
-        systems.setYCapPosition((yPos) + map(gamepad2.right_stick_y, -1, 1, -systems.yCapSpeed, systems.yCapSpeed));
+        systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
+        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.00035, 0.00035));
 
         if (gamepad2.y) {
             systems.zeroCap();
         } else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
-            systems.xCapSpeed += 0.00004;
+            systems.setXCapSpeedDivisor(7);
         } else if (gamepad2.dpad_left && previousLeft != gamepad2.dpad_left) {
-            systems.xCapSpeed -= 0.00004;
-        } else if (gamepad2.dpad_up && previousUp != gamepad2.dpad_up) {
-            systems.yCapSpeed += 0.001;
-        } else if (gamepad2.dpad_down && previousDown != gamepad2.dpad_down) {
-            systems.yCapSpeed -= 0.001;
-        }else if(gamepad2.left_bumper){
-            arm.setRampWinchLow();
-        }else if(gamepad2.right_bumper){
-            arm.setRampWinchTipped();
+            systems.setXCapSpeedDivisor(5);
         }
+
         previousLeft = gamepad2.dpad_left;
         previousRight = gamepad2.dpad_right;
         previousUp = gamepad2.dpad_up;
