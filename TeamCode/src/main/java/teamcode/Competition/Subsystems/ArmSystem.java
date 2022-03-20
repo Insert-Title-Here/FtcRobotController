@@ -222,6 +222,7 @@ public class ArmSystem {
     public synchronized void raise(double position) {
 
         linkage.setPosition(LINKAGE_SCORE);
+        Utils.sleep(200);
         moveSlide(SLIDE_POWER, (int) position);
 
         stage = stage.EXTENDED;

@@ -524,7 +524,7 @@ import static java.lang.Math.PI;
         }
         Debug.log("posavg" + posAvg);
         posAvg = posAvg / (4.0 * 0.707); //4 cos 45
-        arm.preScoreAuto();
+        arm.preScore();
         arm.intakeDumb(-1.0);
 //        posAvg -= 600;
 //        if(posAvg < 600){
@@ -541,7 +541,7 @@ import static java.lang.Math.PI;
             posAvg = 0;
         }
 
-        strafeDistanceSensorOpposite(6, 0);
+        //strafeDistanceSensorOpposite(6, 0);
 //        moveDistanceDEVelocity((int)posAvg, 180, 6);
 //        spline.add(new Movement(200, 3,180));
 //        spline.add(new Movement((int)(posAvg / Math.cos(10)), 3, 170));
@@ -953,8 +953,8 @@ import static java.lang.Math.PI;
         NormalizedRGBA backRGBA;
         double distanceFront, distanceBack;
             if(isRed) {
-                distanceFrontThreshold = 2.9;
-                distanceBackThreshold = 1.4;
+                distanceFrontThreshold = 3.4; //2.9
+                distanceBackThreshold = 1.9; //1.4
                 distanceFront = frontRed.getDistance(DistanceUnit.INCH);
                 distanceBack = backRed.getDistance(DistanceUnit.INCH);
 

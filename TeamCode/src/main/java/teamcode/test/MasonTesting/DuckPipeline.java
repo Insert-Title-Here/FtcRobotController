@@ -37,7 +37,7 @@ public class DuckPipeline extends OpenCvPipeline {
     private ArrayList<Integer> xList, yList;
 
     private double xCenterMin, xCenterMax;
-    private final double deviation = 25;
+    private final double deviation = 10;
 
     private final Scalar lowerYellow = new Scalar(13, 130, 100);
     private final Scalar upperYellow = new Scalar(29, 255, 255);

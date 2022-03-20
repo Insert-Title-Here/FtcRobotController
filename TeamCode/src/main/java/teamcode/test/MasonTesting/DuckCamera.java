@@ -68,7 +68,7 @@ public class DuckCamera extends AbstractOpMode {
         Utils.sleep(2000);
         arm.lowerLinkage();
         arm.intakeDumb(1.0);
-        drive.moveDistanceDEVelocity(800, 0, VELOCITY);
+        drive.moveDistanceDEVelocity(800, 0, VELOCITY / 2.0);
     }
 
     @Override

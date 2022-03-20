@@ -1,10 +1,8 @@
-package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity.WorldsAuto;
+package teamcode.test.MecanumChassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -15,24 +13,19 @@ import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
-import teamcode.common.Constants;
 import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
-import teamcode.common.Vector2D;
 import teamcode.test.MasonTesting.DuckPipeline;
 
-@Autonomous(name="dook")
-public class IntakeDuckNew extends AbstractOpMode {
+@Autonomous(name="duck auto tuning ")
+public class DuckAutoTuning extends AbstractOpMode {
+
     MecanumDriveTrain drive;
     ArmSystem system;
     EndgameSystems systems;
     DuckPipeline duck;
     private OpenCvWebcam webcam;
-    private MecanumBarcodePipeline.BarcodePosition position;
-    Thread armThread;
-    volatile boolean[] flags = new boolean[]{false, false, false, false};
-
     @Override
     protected void onInitialize() {
         duck = new DuckPipeline();
@@ -44,10 +37,7 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         // W/ or W/ out live preview
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
-        MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
-        pipeline.setSide(MecanumBarcodePipeline.Side.RED);
-        webcam.setPipeline(pipeline);
-
+        webcam.setPipeline(duck);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -60,54 +50,11 @@ public class IntakeDuckNew extends AbstractOpMode {
                 telemetry.update();
             }
         });
-        armThread = new Thread(){
-            @Override
-            public void run(){
-                while(!flags[0]);
-
-                Debug.log("EXTEND");
-                system.raise(Constants.TOP_POSITION);
-                while(!flags[1]);
-
-
-                system.retract();
-                while(!flags[2]);
-                system.raise(Constants.TOP_POSITION);
-
-            }
-        };
-        while(!opModeIsActive()){
-            position = pipeline.getPos();
-            telemetry.addData("", position);
-            telemetry.update();
-        }
     }
 
-    private final double VELOCITY = 10;
+    private double VELOCITY = 10;
     @Override
     protected void onStart() {
-        armThread.start();
-        webcam.setPipeline(duck);
-        drive.moveDistanceDEVelocity(1200, -45, VELOCITY);
-        //Utils.sleep(200);
-
-        Utils.sleep(200);
-        //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(450, 0, VELOCITY / 2.0);
-        Utils.sleep(200);
-        drive.rotateDistanceDE(75, 4);
-
-        //extend
-        flags[0] = true;
-        Utils.sleep(200);
-        drive.moveDistanceDEVelocity(700, 180, VELOCITY);
-        //score
-        system.score();
-        Utils.sleep(200);
-
-        drive.rotateDistanceDE(160, 4);
-        flags[1] = true;
-        //Utils.sleep(200);
         drive.strafeDistanceSensor(6, 0);
         system.setIsDuck(true);
         Utils.sleep(200);
@@ -123,62 +70,35 @@ public class IntakeDuckNew extends AbstractOpMode {
         system.intakeDumb(1.0);
 
         systems.scoreDuckAuto();
+        Utils.sleep(1000);
+        drive.moveDistanceDEVelocity(400, 180, VELOCITY / 2.0);
         Utils.sleep(500);
-        //drive.moveDistanceDEVelocity(400, 180, VELOCITY / 2.0);
-        //Utils.sleep(200);
-        drive.moveDistanceDEVelocity(800, -90, VELOCITY / 2.0); //400
 
         NormalizedRGBA rgba = drive.getSensorRGBA();
-
             double direction = duck.direction();
             while (!duck.isCentered()) {
                 telemetry.addData("DIR: ", duck.direction());
                 telemetry.addData("is", duck.isCentered());
                 telemetry.update();
                 direction = duck.direction();
-                drive.setStrafe(direction * 0.3);
+                drive.setStrafe(direction * 0.5);
             }
 
             drive.brake();
-            Utils.sleep(200);
+            Utils.sleep(2000);
             //drive.moveDistanceDEVelocity(100, -90, VELOCITY / 2.0);
 
-            //drive.moveDistanceDEVelocity(420, 0, VELOCITY / 2.0);
-            Utils.sleep(500);
+            drive.driveColorSensorNoWarehouse(1);
             telemetry.clear();
             Debug.log("intook");
-            //Utils.sleep(500);
-            system.preScore();
 
-            drive.moveDistanceDEVelocity(300, 180, VELOCITY);
-            Utils.sleep(200);
-            system.intakeDumb(0);
-            drive.moveDistanceDEVelocity(1000, 90, VELOCITY); //400
-            Utils.sleep(200);
-            drive.moveDistanceDEVelocity(600, 180, VELOCITY);
-            drive.rotateDistanceDE(90, 4);
-
-            //extend
-            flags[2] = true;
-            drive.moveDistanceDEVelocity(900, 180, VELOCITY);
-            //score
-            system.score();
-            Utils.sleep(200);
-
-            drive.rotateDistanceDE(160, 4);
-            drive.strafeDistanceSensor(6,0);
-            system.retract();
-
-
+           drive.moveDistanceDEVelocity(400, 180, VELOCITY);
         }
-
-        //drive.strafeDistanceSensor(6,0);
-
-
-
 
     @Override
     protected void onStop() {
 
     }
+
+
 }

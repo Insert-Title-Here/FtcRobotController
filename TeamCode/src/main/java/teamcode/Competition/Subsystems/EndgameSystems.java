@@ -157,7 +157,8 @@ public class EndgameSystems {
     public synchronized void scoreDuckAuto() {
         Debug.log("here");
         carouselEncoderRed.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        int pose = -25000;
+        carouselEncoderRed.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int pose = -11000;
         double direction;
         if(isBlue){
             direction = -1;
@@ -165,16 +166,15 @@ public class EndgameSystems {
             direction = 1;
         }
         pose *= direction;
-        carouselEncoderRed.setTargetPosition(pose);
-        carouselEncoderRed.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs(carouselEncoderRed.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive()){
-            if(Math.abs(carouselEncoderRed.getCurrentPosition()) < 12000){
+
+        while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs(pose) && AbstractOpMode.currentOpMode().opModeIsActive()){
+            if(Math.abs(carouselEncoderRed.getCurrentPosition()) < 25000){
                 carouselRed.setPower(.15 * direction);
                 carouselBlue.setPower(.15 * direction);
 
             }else{
-                carouselRed.setPower(1 * direction);
-                carouselBlue.setPower(1 * direction);
+                carouselRed.setPower(0.6 * direction);
+                carouselBlue.setPower(0.6 * direction);
 
             }
             AbstractOpMode.currentOpMode().telemetry.addData("curr", carouselEncoderRed.getCurrentPosition());
@@ -183,7 +183,17 @@ public class EndgameSystems {
 
         }
         carouselRed.setPower(0);
-        carouselBlue.setPower(0.1 * direction);
+        carouselBlue.setPower(0);
+        Utils.sleep(500);
+        while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs((pose - 5000)) && AbstractOpMode.currentOpMode().opModeIsActive()){
+            Debug.log("here");
+            carouselRed.setPower(1 * direction);
+            carouselBlue.setPower(1 * direction);
+
+
+        }
+        carouselRed.setPower(0);
+        carouselBlue.setPower(0);
         carouselEncoderRed.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
