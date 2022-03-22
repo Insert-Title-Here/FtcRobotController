@@ -159,7 +159,7 @@ import static java.lang.Math.PI;
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians)){
+        while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians) && opModeIsRunning()){
             double angularDistance = Math.abs(startAngle - imu.getAngularOrientation().firstAngle);
             double radialDistance = Math.abs(deltaRadians);
             double ratio = (radialDistance - angularDistance) / angularDistance;
@@ -193,7 +193,7 @@ import static java.lang.Math.PI;
         NormalizedRGBA rgba = warehouse.getNormalizedColors();
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while(rgba.red < 0.9){
+        while(rgba.red < 0.9 && opModeIsRunning()){
             rgba = warehouse.getNormalizedColors();
             setMotorVelocity(velocity,velocity,velocity,velocity);
         }
@@ -206,7 +206,7 @@ import static java.lang.Math.PI;
          NormalizedRGBA rgba = warehouse.getNormalizedColors();
          setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
          setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
-         while(rgba.red < 0.9){
+         while(rgba.red < 0.9 && opModeIsRunning()){
              rgba = warehouse.getNormalizedColors();
              setMotorVelocity(velocity,-velocity,-velocity,velocity);
          }
@@ -218,7 +218,7 @@ import static java.lang.Math.PI;
         NormalizedRGBA rgba = warehouse.getNormalizedColors();
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while(rgba.blue < 0.9){
+        while(rgba.blue < 0.9 && opModeIsRunning()){
             rgba = warehouse.getNormalizedColors();
             setMotorVelocity(velocity,velocity,velocity,velocity);
         }
@@ -245,7 +245,7 @@ import static java.lang.Math.PI;
 
         carouselEncoder.setTargetPosition(pose);
         carouselEncoder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(Math.abs(carouselEncoder.getCurrentPosition()) < Math.abs(carouselEncoder.getTargetPosition()) && AbstractOpMode.currentOpMode().opModeIsActive()){
+        while(Math.abs(carouselEncoder.getCurrentPosition()) < Math.abs(carouselEncoder.getTargetPosition()) && opModeIsRunning()){
             if(Math.abs(carouselEncoder.getCurrentPosition()) < 100) {
             setStrafe(0.02);
             }else{
@@ -309,7 +309,8 @@ import static java.lang.Math.PI;
         AbstractOpMode.currentOpMode().telemetry.update();
 
         while((Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(flDistance) && Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance)
-        && Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance))){
+        && Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance))
+        && opModeIsRunning()){
             hub.clearBulkCache();
             data = hub.getBulkData();
             AbstractOpMode.currentOpMode().telemetry.addData("fl",- data.getMotorCurrentPosition(0));
@@ -365,8 +366,8 @@ import static java.lang.Math.PI;
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
-        while(Math.abs(data.getMotorCurrentPosition(0))< Math.abs(flDistance) || Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance) ||
-                Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) || Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance)){
+        while((Math.abs(data.getMotorCurrentPosition(0))< Math.abs(flDistance) || Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance) ||
+                Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) || Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance)) && opModeIsRunning()){
             hub.clearBulkCache();
             data = hub.getBulkData();
 //            AbstractOpMode.currentOpMode().telemetry.addData("fl",data.getMotorCurrentPosition(0));
@@ -384,6 +385,10 @@ import static java.lang.Math.PI;
         brake();
     }
 
+    private boolean opModeIsRunning(){
+        return AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested();
+    }
+
 
     public synchronized void driveColorSensor(double pow){
         warehouse.setGain(700);
@@ -397,7 +402,7 @@ import static java.lang.Math.PI;
         Utils.sleep(250);
         double amps = arm.getMilliAmps();
         boolean isAmp = false;
-        while(!detectedElement){
+        while(!detectedElement && opModeIsRunning()){
 //            Vector2D vec = Vector2D.fromAngleMagnitude(0, pow);
 //            setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //            setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -481,7 +486,7 @@ import static java.lang.Math.PI;
         Utils.sleep(250);
         double amps = arm.getMilliAmps();
         boolean isAmp = false;
-        while(!detectedElement){
+        while(!detectedElement && opModeIsRunning()){
 //            Vector2D vec = Vector2D.fromAngleMagnitude(0, pow);
 //            setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //            setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -561,7 +566,7 @@ import static java.lang.Math.PI;
         Utils.sleep(100);
         setMotorVelocity(pow,pow,pow,pow);
         Utils.sleep(250);
-        while(!detectedElement){
+        while(!detectedElement && opModeIsRunning()){
 //            Vector2D vec = Vector2D.fromAngleMagnitude(0, pow);
 //            setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //            setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -625,7 +630,7 @@ import static java.lang.Math.PI;
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         boolean detectedElement = false;
-        while(!detectedElement){
+        while(!detectedElement && opModeIsRunning()){
             arm.lowerLinkage();
             arm.intakeDumb(1.0);
             NormalizedRGBA colors = sensor.getNormalizedColors();
@@ -661,7 +666,7 @@ import static java.lang.Math.PI;
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         boolean detectedElement = false;
-        while(!detectedElement){
+        while(!detectedElement && opModeIsRunning()){
             arm.lowerLinkage();
             arm.intakeDumb(1.0);
             NormalizedRGBA colors = sensor.getNormalizedColors();
@@ -720,7 +725,7 @@ import static java.lang.Math.PI;
         AbstractOpMode.currentOpMode().telemetry.update();
 
         while((Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(flDistance) && Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(frDistance)
-                && Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance))){
+                && Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) && Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance)) && opModeIsRunning()){
             hub.clearBulkCache();
             data = hub.getBulkData();
             AbstractOpMode.currentOpMode().telemetry.addData("fl",- data.getMotorCurrentPosition(0));
@@ -793,7 +798,7 @@ import static java.lang.Math.PI;
         Utils.sleep(100);
         double currentTicks = systems.getCarouselPos();
         double previousTicks = 0;
-        while(Math.abs(currentTicks - previousTicks) > 50){
+        while(Math.abs(currentTicks - previousTicks) > 50 && opModeIsRunning()){
             currentTicks = systems.getCarouselPos();
             setStrafe(0.2 * direction);
             previousTicks = currentTicks;
@@ -803,7 +808,7 @@ import static java.lang.Math.PI;
         }
         Utils.sleep(250);
         setStrafe(0);
-        while(Math.abs(currentTicks - previousTicks) < 50){
+        while(Math.abs(currentTicks - previousTicks) < 50 && opModeIsRunning()){
             previousTicks = currentTicks;
             currentTicks = systems.getCarouselPos();
             setStrafe(-0.2 * direction);
@@ -832,7 +837,7 @@ import static java.lang.Math.PI;
         seekCubesRotate(desiredRotate);
         Vector2D desiredPosition;
         environmentalTerminate = false;
-        while(pipeline.yPointList().get(0) < 5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate) { //todo ask mason how to ensure I am tracking the same cube every time here
+        while(pipeline.yPointList().get(0) < 5 && opModeIsRunning() && !eStop && !environmentalTerminate && opModeIsRunning()) { //todo ask mason how to ensure I am tracking the same cube every time here
             //todo idea about above, write a method that traverses the stack by placing it in an arrayList, calculating the smallest deviation from the originally stored value and assuming that is the target,
             //this would dynamically adapt to the closest cube in the frame may cause some oscillation especially during the rotational phase.
             currentState = localizer.getCurrentState();
@@ -910,7 +915,7 @@ import static java.lang.Math.PI;
         double xPartitionDeviation = pipeline.xPointList().get(0);
         previousOmega = 0;
         environmentalTerminate = false;
-        while(xPartitionDeviation > 5 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+        while(xPartitionDeviation > 5 && opModeIsRunning() && !eStop && !environmentalTerminate && opModeIsRunning()){
             xPartitionDeviation = pipeline.xPointList().get(0);
             double recordedOmega = localizer.getCurrentState().getAngularVelocity();
             double omegaError = desiredOmega - recordedOmega;
@@ -970,7 +975,7 @@ import static java.lang.Math.PI;
                 Debug.log("blue");
             }
 
-            while (distanceFront > distanceFrontThreshold  && distanceBack > distanceBackThreshold){
+            while (distanceFront > distanceFrontThreshold  && distanceBack > distanceBackThreshold && opModeIsRunning()){
 
                 if(isRed) {
                     frontRGBA = frontRed.getNormalizedColors();
@@ -1024,7 +1029,7 @@ import static java.lang.Math.PI;
         lowMagnitudeHardwareCycles = 0;
         double startTime = AbstractOpMode.currentOpMode().time;
         double deltaTime = AbstractOpMode.currentOpMode().time - startTime;
-        while((Math.abs(deltaTics) > 10 ||  deltaTime < 1.0) && AbstractOpMode.currentOpMode().opModeIsActive()){
+        while((Math.abs(deltaTics) > 10 ||  deltaTime < 1.0) && opModeIsRunning()){
             int currentTics = systems.getCarouselPos();
             deltaTics = currentTics - previousTics;
             previousTics = currentTics;
@@ -1090,7 +1095,7 @@ import static java.lang.Math.PI;
         lowMagnitudeHardwareCycles = 0;
         previousPosition = currentState.getPosition();
 
-        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+        while((Math.abs(newDesiredPosition.subtract(currentState.getPosition()).magnitude()) > 5.0) && opModeIsRunning() && !eStop && !environmentalTerminate){
 
             currentState = localizer.getCurrentState();
             Vector2D position = currentState.getPosition();
@@ -1211,7 +1216,7 @@ import static java.lang.Math.PI;
         RobotPositionStateUpdater.RobotPositionState state = localizer.getCurrentState();
         previousOmega = 0;
         environmentalTerminate = false;
-        while(Math.abs(desiredRotation - state.getRotation()) > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !eStop && !environmentalTerminate){
+        while(Math.abs(desiredRotation - state.getRotation()) > 0.05 && opModeIsRunning() && !eStop && !environmentalTerminate){
             state = localizer.getCurrentState();
             double recordedOmega = state.getAngularVelocity();
             double omegaError = omega - recordedOmega;
@@ -1229,7 +1234,7 @@ import static java.lang.Math.PI;
 
         environmentalTerminate = false;
 
-        while(Math.abs((state.getRotation() - radians))  > 0.05 && AbstractOpMode.currentOpMode().opModeIsActive() && !environmentalTerminate && !eStop){
+        while(Math.abs((state.getRotation() - radians))  > 0.05 && opModeIsRunning() && !environmentalTerminate && !eStop){
             state = localizer.getCurrentState();
 //            AbstractOpMode.currentOpMode().telemetry.addData("", state);
 //            AbstractOpMode.currentOpMode().telemetry.update();
@@ -1370,10 +1375,10 @@ import static java.lang.Math.PI;
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
 
-        while(Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(minArcLength) ||
+        while((Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(minArcLength) ||
                 Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(maxArcLength) ||
                 Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(minArcLength) ||
-                Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(maxArcLength)) {
+                Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(maxArcLength)) && opModeIsRunning()) {
 
             AbstractOpMode.currentOpMode().telemetry.addData("fl", data.getMotorCurrentPosition(0));
             AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
@@ -1437,10 +1442,10 @@ import static java.lang.Math.PI;
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
-        while(Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(tics1) ||
+        while((Math.abs(data.getMotorCurrentPosition(0)) < Math.abs(tics1) ||
         Math.abs(data.getMotorCurrentPosition(1)) < Math.abs(tics2) ||
         Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(tics1) ||
-        Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(tics2)){
+        Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(tics2)) && opModeIsRunning()){
             hub.clearBulkCache();
             data = hub.getBulkData();
             setMotorVelocity(v1,v2,v1,v2);
