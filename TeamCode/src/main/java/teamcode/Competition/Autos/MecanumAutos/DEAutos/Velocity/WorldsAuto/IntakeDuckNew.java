@@ -22,7 +22,7 @@ import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 import teamcode.test.MasonTesting.DuckPipeline;
 
-@Autonomous(name="dook")
+@Autonomous(name="dook red")
 public class IntakeDuckNew extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem system;

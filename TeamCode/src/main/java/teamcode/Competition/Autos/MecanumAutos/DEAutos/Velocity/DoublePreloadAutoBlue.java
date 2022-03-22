@@ -1,6 +1,7 @@
 package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,6 +19,7 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 
+@Disabled
 @Autonomous(name="double Preload Blue")
 public class DoublePreloadAutoBlue extends AbstractOpMode {
     private static final double VELOCITY = 10;

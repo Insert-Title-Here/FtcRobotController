@@ -1,5 +1,6 @@
 package teamcode.Competition.Pipeline.Calibrators;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -11,6 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @TeleOp(name = "Mecanum Webcam Calibration")
 public class MecanumAutoPosition extends AbstractOpMode{
 

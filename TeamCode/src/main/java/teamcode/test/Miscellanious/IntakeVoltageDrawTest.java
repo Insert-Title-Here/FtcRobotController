@@ -1,6 +1,7 @@
 package teamcode.test.Miscellanious;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -12,6 +13,7 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Logger;
 import teamcode.common.MecanumDriveTrain;
 
+@Disabled
 @Autonomous(name="voltage")
 public class IntakeVoltageDrawTest extends AbstractOpMode {
     MecanumDriveTrain drive;

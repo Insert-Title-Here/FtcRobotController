@@ -3,6 +3,7 @@ package teamcode.test.Miscellanious;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -19,6 +20,7 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
+@Disabled
 @Autonomous(name="DistanceSensor")
 public class DistanceSensorTest extends AbstractOpMode {
     MecanumDriveTrain drive;

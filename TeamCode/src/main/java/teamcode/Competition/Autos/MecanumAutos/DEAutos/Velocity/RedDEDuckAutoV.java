@@ -2,6 +2,7 @@ package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,7 +20,7 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 
-
+@Disabled
 @Autonomous(name = "red DE Duck")
 public class RedDEDuckAutoV extends AbstractOpMode {
 

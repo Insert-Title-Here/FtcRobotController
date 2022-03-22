@@ -1,6 +1,7 @@
 package teamcode.test.Miscellanious;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import teamcode.Competition.Subsystems.ArmSystem;
@@ -11,6 +12,7 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
+@Disabled
 @Autonomous(name="Arc")
 public class ArcTest extends AbstractOpMode {
     MecanumDriveTrain drive;

@@ -1,11 +1,13 @@
 package teamcode.test.Miscellanious;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.MecanumDriveTrain;
 
+@Disabled
 @Autonomous(name="omni")
 public class omniMovementEXO extends AbstractOpMode {
     MecanumDriveTrain drive;

@@ -1,6 +1,7 @@
 package teamcode.test.Miscellanious;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.checkerframework.checker.units.qual.A;
 
@@ -9,6 +10,7 @@ import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.MecanumDriveTrain;
 
+@Disabled
 @Autonomous(name="duck")
 public class DuckTest extends AbstractOpMode {
     EndgameSystems systems;
