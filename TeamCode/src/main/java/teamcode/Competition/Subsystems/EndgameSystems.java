@@ -156,45 +156,41 @@ public class EndgameSystems {
 
     public synchronized void scoreDuckAuto() {
         Debug.log("here");
-        carouselEncoderRed.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        carouselEncoderRed.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        DcMotor encoder;
         int pose = -11000;
         double direction;
         if(isBlue){
+            encoder = carouselEncoderRed;
             direction = -1;
         }else {
+            encoder = carouselEncoderBlue;
             direction = 1;
         }
         pose *= direction;
+        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs(pose) && AbstractOpMode.currentOpMode().opModeIsActive()){
-            if(Math.abs(carouselEncoderRed.getCurrentPosition()) < 25000){
-                carouselRed.setPower(.15 * direction);
-                carouselBlue.setPower(.15 * direction);
-
-            }else{
-                carouselRed.setPower(0.6 * direction);
-                carouselBlue.setPower(0.6 * direction);
-
-            }
+        while(Math.abs(encoder.getCurrentPosition()) < Math.abs(pose) && AbstractOpMode.currentOpMode().opModeIsActive()){
+            carouselRed.setPower(.15 * direction);
+            carouselBlue.setPower(.15 * direction);
             AbstractOpMode.currentOpMode().telemetry.addData("curr", carouselEncoderRed.getCurrentPosition());
-            AbstractOpMode.currentOpMode().telemetry.addData("tar", carouselEncoderRed.getTargetPosition());
+            AbstractOpMode.currentOpMode().telemetry.addData("tar", pose);
             AbstractOpMode.currentOpMode().telemetry.update();
 
         }
         carouselRed.setPower(0);
         carouselBlue.setPower(0);
         Utils.sleep(500);
-        while(Math.abs(carouselEncoderRed.getCurrentPosition()) < Math.abs((pose - 5000)) && AbstractOpMode.currentOpMode().opModeIsActive()){
+        while(Math.abs(encoder.getCurrentPosition()) < Math.abs((pose - 5000)) && AbstractOpMode.currentOpMode().opModeIsActive()){
             Debug.log("here");
-            carouselRed.setPower(1 * direction);
-            carouselBlue.setPower(1 * direction);
+            carouselRed.setPower(1.0 * direction);
+            carouselBlue.setPower(1.0 * direction);
 
 
         }
         carouselRed.setPower(0);
         carouselBlue.setPower(0);
-        carouselEncoderRed.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public DcMotor getBlueCarouselEncoder() {

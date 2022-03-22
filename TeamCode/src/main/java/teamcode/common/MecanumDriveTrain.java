@@ -1018,13 +1018,13 @@ import static java.lang.Math.PI;
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setMotorVelocity(1,1,1,1);
 
-        systems.runCarousel(0.2);
+        systems.runCarousel(-0.2);
         double previousTics = systems.getCarouselPos();
         double deltaTics = 10;
         lowMagnitudeHardwareCycles = 0;
         double startTime = AbstractOpMode.currentOpMode().time;
         double deltaTime = AbstractOpMode.currentOpMode().time - startTime;
-        while((Math.abs(deltaTics) > 10 ||  deltaTime < 2.0) && AbstractOpMode.currentOpMode().opModeIsActive()){
+        while((Math.abs(deltaTics) > 10 ||  deltaTime < 1.0) && AbstractOpMode.currentOpMode().opModeIsActive()){
             int currentTics = systems.getCarouselPos();
             deltaTics = currentTics - previousTics;
             previousTics = currentTics;
@@ -1241,10 +1241,15 @@ import static java.lang.Math.PI;
     }
 
     public synchronized void brake() {
-        fl.setPower(0);
-        fr.setPower(0);
-        bl.setPower(0);
-        br.setPower(0);
+        fl.setVelocity(0);
+        fr.setVelocity(0);
+        bl.setVelocity(0);
+        br.setVelocity(0);
+
+//        fl.setPower(0);
+//        fr.setPower(0);
+//        bl.setPower(0);
+//        br.setPower(0);
         previousVelocity = new Vector2D(0,0);
     }
 

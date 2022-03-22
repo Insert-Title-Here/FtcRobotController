@@ -24,7 +24,7 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.06; //0
-    private static final double HOUSING_POSITION_DUCK = 0.3; //0.12
+    private static final double HOUSING_POSITION_DUCK = 0.26; //0.12
     private static final double HOUSING_POSITION = 0.22 ; //0.12
     private static final double SCORING_POSITION = 0.56; //0.5
 
@@ -48,6 +48,7 @@ public class ArmSystem {
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
     private boolean isDuck;
+    private boolean isTeleOp;
 
 
     public ArmSystem(HardwareMap hardwareMap, boolean isTeleOp){
@@ -76,6 +77,7 @@ public class ArmSystem {
         linkage.setPosition(LINKAGE_HOUSED - 0.2);
         stage = Stage.IDLE;
         isDuck = false;
+        this.isTeleOp = isTeleOp;
     }
 
     public void intakeDumb(double power){
@@ -177,9 +179,12 @@ public class ArmSystem {
         }else {
             house.setPosition(HOUSING_POSITION);
         }
+
         linkage.setPosition(LINKAGE_HOUSED);
         Utils.sleep(550);
-        intakeDumb(-1.0);
+        if(isTeleOp) {
+            intakeDumb(-1.0);
+        }
         stage = Stage.HOUSED;
 
         //Debug.log("finish");

@@ -32,13 +32,15 @@ public class IntakeDuckNew extends AbstractOpMode {
     private MecanumBarcodePipeline.BarcodePosition position;
     Thread armThread;
     volatile boolean[] flags = new boolean[]{false, false, false, false};
+    private PIDFCoefficients coefficients = new PIDFCoefficients(5,0.5,1.0,0);
+
 
     @Override
     protected void onInitialize() {
         duck = new DuckPipeline();
         system = new ArmSystem(hardwareMap, false);
         systems = new EndgameSystems(hardwareMap, false);
-        drive = new MecanumDriveTrain(hardwareMap, true, systems, system);
+        drive = new MecanumDriveTrain(hardwareMap, true, systems, system, coefficients);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
 
@@ -64,15 +66,23 @@ public class IntakeDuckNew extends AbstractOpMode {
             @Override
             public void run(){
                 while(!flags[0]);
-
-                Debug.log("EXTEND");
-                system.raise(Constants.TOP_POSITION);
+                if(position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+                    system.raise(Constants.BOTTOM_POSITION);
+                }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
+                    system.raise(Constants.MEDIUM_POSITION + 4000);
+                }else{
+                    system.raise(Constants.TOP_POSITION);
+                }
                 while(!flags[1]);
 
 
                 system.retract();
                 while(!flags[2]);
-                system.raise(Constants.TOP_POSITION);
+                system.raise(Constants.TOP_POSITION + 3000);
+                while(!flags[3]);
+
+                Utils.sleep(200);
+                system.retract();
 
             }
         };
@@ -86,77 +96,75 @@ public class IntakeDuckNew extends AbstractOpMode {
     private final double VELOCITY = 10;
     @Override
     protected void onStart() {
+        webcam.stopStreaming();
         armThread.start();
-        webcam.setPipeline(duck);
-        drive.moveDistanceDEVelocity(1200, -45, VELOCITY);
+        drive.moveDistanceDEVelocity(1200, -45, 2 * VELOCITY);
         //Utils.sleep(200);
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(450, 0, VELOCITY / 2.0);
+        drive.moveDistanceDEVelocity(450, 0, VELOCITY);
         Utils.sleep(200);
-        drive.rotateDistanceDE(75, 4);
+        drive.rotateDistanceDE(75, 6);
 
         //extend
         flags[0] = true;
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(700, 180, VELOCITY);
         //score
-        system.score();
+        if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
+            system.runConveyorPos(0.5, 2000);
+        }else {
+            system.score();
+        }
         Utils.sleep(200);
+        drive.moveDistanceDEVelocity(200, 90, VELOCITY ); //400
 
-        drive.rotateDistanceDE(160, 4);
+
+        drive.rotateDistanceDE(140, 24);
         flags[1] = true;
         //Utils.sleep(200);
-        drive.strafeDistanceSensor(6, 0);
+        drive.strafeDistanceSensor(30, -Math.PI / 6.0);
         system.setIsDuck(true);
         Utils.sleep(200);
         //drive.moveDistanceDEVelocity(300, 180, VELOCITY);
 
-        drive.moveDistanceDEVelocity(350, -90, VELOCITY);
+        drive.moveDistanceDEVelocity(300, -90, VELOCITY);
         Utils.sleep(200);
 
-        drive.moveDistanceDEVelocity(600, 0, VELOCITY / 2.0);//
-        drive.driveColorSensorWarehouse(4);
+        drive.moveDistanceDEVelocity(600, 0, VELOCITY);//
+        //drive.driveColorSensorWarehouse(4);
+        drive.moveDistanceDEVelocity(400, 0, VELOCITY / 2.0);
+        Utils.sleep(200);
+
         drive.duck();
         system.lowerLinkage();
         system.intakeDumb(1.0);
 
         systems.scoreDuckAuto();
-        Utils.sleep(500);
-        //drive.moveDistanceDEVelocity(400, 180, VELOCITY / 2.0);
-        //Utils.sleep(200);
+        Utils.sleep(250);
+        drive.moveDistanceDEVelocity(200, -90, VELOCITY / 2.0);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(100, 0, VELOCITY / 2.0);
+        Utils.sleep(200);
         drive.moveDistanceDEVelocity(800, -90, VELOCITY / 2.0); //400
 
-        NormalizedRGBA rgba = drive.getSensorRGBA();
 
-            double direction = duck.direction();
-            while (!duck.isCentered()) {
-                telemetry.addData("DIR: ", duck.direction());
-                telemetry.addData("is", duck.isCentered());
-                telemetry.update();
-                direction = duck.direction();
-                drive.setStrafe(direction * 0.3);
-            }
-
-            drive.brake();
-            Utils.sleep(200);
+            Utils.sleep(500);
             //drive.moveDistanceDEVelocity(100, -90, VELOCITY / 2.0);
 
             //drive.moveDistanceDEVelocity(420, 0, VELOCITY / 2.0);
-            Utils.sleep(500);
-            telemetry.clear();
-            Debug.log("intook");
             //Utils.sleep(500);
             system.preScore();
 
             drive.moveDistanceDEVelocity(300, 180, VELOCITY);
             Utils.sleep(200);
             system.intakeDumb(0);
-            drive.moveDistanceDEVelocity(1000, 90, VELOCITY); //400
+            drive.moveDistanceDEVelocity(1200, 90, 2 * VELOCITY); //400
             Utils.sleep(200);
-            drive.moveDistanceDEVelocity(600, 180, VELOCITY);
-            drive.rotateDistanceDE(90, 4);
+            drive.moveDistanceDEVelocity(550, 180,  VELOCITY);
+            drive.rotateDistanceDE(90, 6);
+            Utils.sleep(200);
 
             //extend
             flags[2] = true;
@@ -164,13 +172,14 @@ public class IntakeDuckNew extends AbstractOpMode {
             //score
             system.score();
             Utils.sleep(200);
+            flags[3] = true;
 
-            drive.rotateDistanceDE(160, 4);
-            drive.strafeDistanceSensor(6,0);
-            system.retract();
+        drive.moveDistanceDEVelocity(1000, 0, VELOCITY);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(400, -90, VELOCITY ); //400
 
 
-        }
+    }
 
         //drive.strafeDistanceSensor(6,0);
 
