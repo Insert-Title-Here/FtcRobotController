@@ -181,8 +181,8 @@ public class ArmSystem {
         }
 
         linkage.setPosition(LINKAGE_HOUSED);
-        Utils.sleep(550);
         if(isTeleOp) {
+            Utils.sleep(550);
             intakeDumb(-1.0);
         }
         stage = Stage.HOUSED;

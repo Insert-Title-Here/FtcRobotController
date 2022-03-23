@@ -4,59 +4,79 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import java.util.ArrayList;
+
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.MecanumDriveTrain;
+import teamcode.common.Movement;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
-@Disabled
 @Autonomous(name="Arc")
 public class ArcTest extends AbstractOpMode {
     MecanumDriveTrain drive;
     EndgameSystems system;
-    ArmSystem systems;
+    ArmSystem arm;
     Thread armThread;
-    boolean[] flags = new boolean[]{false, false, false};
-    private final int FREIGHT = 1;
+    private final int FREIGHT = 4;
+    private ArrayList<Movement> warehouseSplice;
+    private final double VELOCITY = 10;
+    PIDFCoefficients coefficients = new PIDFCoefficients(5, 0.5, 1.0, 0.0); //2.5
+
+
     @Override
     protected void onInitialize() {
-        systems = new ArmSystem(hardwareMap, false);
+        warehouseSplice = new ArrayList<>();
         system = new EndgameSystems(hardwareMap, false);
+        arm = new ArmSystem(hardwareMap, false);
+        drive = new MecanumDriveTrain(hardwareMap, true, system, arm, coefficients);
+
+        //intake and back out
+        warehouseSplice.add(new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)); //increase this?
+        warehouseSplice.add(new Movement(200, 9, 180.0));
+        warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
+        warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+        warehouseSplice.add(new Movement(300, 9, 180.0));
+//
+//        //approach and score
+        warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
+        warehouseSplice.add(new Movement(200));
+        warehouseSplice.add(new Movement(300, VELOCITY, -90.0));
+        warehouseSplice.add(new Movement(0, true));
+        warehouseSplice.add(new Movement(118.5, -6,1600));
+////        warehouseSplice.add(new Movement(150, VELOCITY, -90.0));
+//        warehouseSplice.add(new Movement(-135, 6));
+        warehouseSplice.add(new Movement(200));
+        //warehouseSplice.add(new Movement(200, VELOCITY, 180.0));
+        //  warehouseSplice.add(new Movement(200));
+        warehouseSplice.add(new Movement(1, true));
+        warehouseSplice.add(new Movement(117.0, 6,1200));
         armThread = new Thread(){
             public void run(){
                 for(int i = 0; i < FREIGHT; i++) {
-                    while (!flags[0]) ;
-                    systems.raise(Constants.TOP_POSITION);
-                    flags[0] = true;
-                    while (!flags[1]);
-                    systems.score();
+                    while (!drive.getFlagIndex(0)) ;
+                    arm.raise(Constants.TOP_POSITION);
+                    drive.setFlagIndex(0, false);
+                    while (!drive.getFlagIndex(1));
+                    arm.score();
                     Utils.sleep(250);
-                    systems.retract();
-                    flags[1] = true;
+                    arm.retract();
+                    drive.setFlagIndex(1, false);
                 }
 
             }
         };
-        drive = new MecanumDriveTrain(hardwareMap, true, system, null, new PIDFCoefficients(5, 0.5, 1.0, 0));
+        //drive = new MecanumDriveTrain(hardwareMap, true, system, null, new PIDFCoefficients(5, 0.5, 1.0, 0));
     }
 
     @Override
     protected void onStart() {
         armThread.start();
-        systems.intakeDumb(1.0);
-        //drive.spinDuck(false);
         for(int i = 0; i < FREIGHT; i++) {
-            //flags[0] = true;
-            drive.arcDriving(new Vector2D(-9, 0), -0.67, 500, 90);
-            //drive.moveDistanceDEVelocity(300, 180, 10);
-            //flags[1] = true;
-            //Utils.sleep(250);
-            //drive.moveDistanceDEVelocity(300, 0, 10);
-            //drive.arcDriving(new Vector2D(9, 0), 0.55, 500, 90);
-
+            drive.splicedMovement(warehouseSplice);
         }
         while(opModeIsActive());
     }

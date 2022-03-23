@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.MecanumDriveTrain;
 
-@Disabled
+
 @Autonomous(name="omni")
 public class omniMovementEXO extends AbstractOpMode {
     MecanumDriveTrain drive;

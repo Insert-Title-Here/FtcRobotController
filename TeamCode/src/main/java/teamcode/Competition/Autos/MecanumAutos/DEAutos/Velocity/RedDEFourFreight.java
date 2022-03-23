@@ -45,7 +45,7 @@ public class RedDEFourFreight extends AbstractOpMode {
 
 
         //intake and back out
-        warehouseSplice.add(new Movement(1, Movement.MovementType.WAREHOUSE_OPERATION)); //increase this?
+        warehouseSplice.add(new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)); //increase this?
         warehouseSplice.add(new Movement(200, 9, 180.0));
         warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
         warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
@@ -143,7 +143,7 @@ public class RedDEFourFreight extends AbstractOpMode {
 
         webcam.stopStreaming();
         armCommands.start();
-        drive.moveDistanceDEVelocity(900, -45, VELOCITY); // 900 -45
+        drive.moveDistanceDEVelocity(1200, -45, 2 * VELOCITY); // 900 -45
         Utils.sleep(100);
         drive.rotateDistanceDE(160, 6);
         if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
@@ -155,8 +155,8 @@ public class RedDEFourFreight extends AbstractOpMode {
         Utils.sleep(250);
         drive.setFlagIndex(0, true);
         Utils.sleep(200);
-        drive.rotateDistanceDE(-105, 6);
-        drive.strafeDistanceSensor(10, 0);
+        drive.rotateDistanceDE(-75, 6);
+        drive.strafeDistanceSensor(30, 0);
         drive.driveColorSensorWarehouse(6); //alternatively make this 1000 tics
         for(int i = 0; i < FREIGHT; i++) {
             drive.splicedMovement(warehouseSplice);

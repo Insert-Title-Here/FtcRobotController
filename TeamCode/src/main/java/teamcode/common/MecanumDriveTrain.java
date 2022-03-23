@@ -124,12 +124,12 @@ import static java.lang.Math.PI;
         warehouse = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
-        warehouse.setGain(600);
+        warehouse.setGain(540);
         frontRed.setGain(200);
         backRed.setGain(520);
         frontBlue.setGain(100);
         backBlue.setGain(300);
-        sensor.setGain(950); //325 is tested value but i think I trust this one more //280
+        sensor.setGain(490); //325 is tested value but i think I trust this one more //280
 
         flags = new boolean[]{false, false, false, false, false};
 
@@ -1472,7 +1472,7 @@ import static java.lang.Math.PI;
      * warehouse color sensor movement.
      * @param movements
      */
-    public synchronized void splicedMovement(ArrayList<Movement> movements){
+    public void splicedMovement(ArrayList<Movement> movements){
         hub.clearBulkCache();
         LynxModule.BulkData data = hub.getBulkData();
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1521,21 +1521,23 @@ import static java.lang.Math.PI;
             }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_LOCALIZATION){
                 driveColorSensorWarehouse(curr.getVelocity(), false);
             }else if(curr.getMovement() == Movement.MovementType.MODIFY_FLAG){
+                Debug.log("flag flipping");
                 flags[curr.getIndex()] = curr.getVal();
             }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_OPERATION){
                 driveColorSensorSpliced(curr.getVelocity());
             }else if(curr.getMovement() == Movement.MovementType.ARC_MOVEMENT){
+
                 setOmniMovement(curr.getRadians(), curr.getDistance(), curr.getVelocity(), false);
             }
         }
         brake();
     }
 
-    public synchronized boolean getFlagIndex(int index){
+    public boolean getFlagIndex(int index){
         return flags[index];
     }
 
-    public synchronized void setFlagIndex(int index, boolean val){
+    public void setFlagIndex(int index, boolean val){
         flags[index] = val;
     }
 

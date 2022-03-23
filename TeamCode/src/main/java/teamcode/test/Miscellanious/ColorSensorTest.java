@@ -5,25 +5,40 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 
-@Disabled
+
 @Autonomous(name="Color")
 public class ColorSensorTest extends AbstractOpMode {
 
     NormalizedColorSensor sensor;
     DetectedElement element;
+    ArmSystem arm;
 
     @Override
     protected void onInitialize() {
-        sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
+        sensor = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
         element = DetectedElement.NONE;
+        arm = new ArmSystem(hardwareMap, true);
     }
 
     @Override
     protected void onStart() {
-        sensor.setGain(640);
+        sensor.setGain(480);
         while(opModeIsActive()){
+            if(gamepad1.b){
+                arm.preScore();
+            }else if(gamepad1.a){
+                arm.lowerLinkage();
+            }
+            if(gamepad1.right_trigger > 0.3){
+                arm.intakeDumb(1.0);
+            }else if(gamepad1.left_trigger > 0.3){
+                arm.intakeDumb(-1.0);
+            }else{
+                arm.intakeDumb(0);
+            }
             NormalizedRGBA colors = sensor.getNormalizedColors();
             double red = colors.red;
             double green = colors.green;
