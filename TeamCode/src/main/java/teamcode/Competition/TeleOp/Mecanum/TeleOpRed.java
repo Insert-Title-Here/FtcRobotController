@@ -74,14 +74,19 @@ public class TeleOpRed extends AbstractOpMode {
     boolean capping = false;
     boolean previousLeft, previousRight, previousUp, previousDown;
     private void capUpdate() {
-        if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
+        if(gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
             double val = gamepad2.right_trigger - gamepad2.left_trigger;
-            systems.setCapstoneExtensionPower(-val);
-        }else{
+            systems.setCapstoneExtensionPower(val);
+        } else if (gamepad2.right_bumper) {
+            systems.setCapstoneExtensionPower(0.5);
+        } else if (gamepad2.left_bumper) {
+            systems.setCapstoneExtensionPower(-0.5);
+        } else{
             systems.setCapstoneExtensionPower(0);
         }
 
-        double yPos = systems.getYCapPosition();
+
+    double yPos = systems.getYCapPosition();
         systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
         systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.00035, 0.00035));
 

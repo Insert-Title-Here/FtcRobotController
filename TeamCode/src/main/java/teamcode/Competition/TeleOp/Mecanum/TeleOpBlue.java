@@ -75,10 +75,14 @@ public class TeleOpBlue extends AbstractOpMode {
     boolean capping = false;
     boolean previousLeft, previousRight, previousUp, previousDown;
     private void capUpdate() {
-        if(gamepad2.right_trigger > 0.3 || gamepad2.left_trigger > 0.3) {
+        if(gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
             double val = gamepad2.right_trigger - gamepad2.left_trigger;
-            systems.setCapstoneExtensionPower(-val);
-        }else{
+            systems.setCapstoneExtensionPower(val);
+        } else if (gamepad2.right_bumper) {
+            systems.setCapstoneExtensionPower(0.5);
+        } else if (gamepad2.left_bumper) {
+            systems.setCapstoneExtensionPower(-0.5);
+        } else{
             systems.setCapstoneExtensionPower(0);
         }
 
