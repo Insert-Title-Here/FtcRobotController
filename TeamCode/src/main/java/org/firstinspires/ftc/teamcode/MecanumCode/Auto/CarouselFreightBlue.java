@@ -149,7 +149,7 @@ public class CarouselFreightBlue extends OpModeWrapper {
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             drive.driveAuto(0.3, -660, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
-            drive.driveAuto(0.3, -20, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -70, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
             capArm.toggleGrab();
@@ -161,7 +161,7 @@ public class CarouselFreightBlue extends OpModeWrapper {
 
 
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.CENTER){
-            drive.driveAuto(0.3, -700, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -750, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
             drive.driveAuto(0.3, -70, MecanumDriveTrain.MovementType.STRAIGHT);
 
@@ -174,14 +174,14 @@ public class CarouselFreightBlue extends OpModeWrapper {
 
 
         }else{
-            drive.driveAuto(0.3, -870, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -890, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
 
             capArm.toggleGrab();
 
             sleep(1000);
             capArm.toggleGrab();
-            drive.driveAuto(0.3, 50, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
 
         }
         //capArm.goToPosition(300);
