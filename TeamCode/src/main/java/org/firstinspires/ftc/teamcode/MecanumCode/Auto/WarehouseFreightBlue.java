@@ -155,8 +155,8 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         // Strafe: 590 tics/ft - = Left, + = Right
 
 
-        drive.driveAuto(0.3, -450, MecanumDriveTrain.MovementType.RDIAGONAL);
-        sleep(2000);
+        drive.driveAuto(0.3, -600, MecanumDriveTrain.MovementType.RDIAGONAL);
+        sleep(500);
         drive.driveAuto(0.3, -1250, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.4, 1000, MecanumDriveTrain.MovementType.ROTATE);
 
@@ -173,21 +173,22 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         // capstonePos = BarcodePipelineBlue.BarcodePosition.LEFT;
 
         if(capstonePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
-            drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, 138, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.TOP_GOAL_POS);
             capArm.toggleGrab();
             sleep(2000);
+
             capArm.toggleGrab();
         }else if(capstonePos == BarcodePipelineBlue.BarcodePosition.LEFT){
             //drive.driveAuto(0.3, -480, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.BOTTOM_GOAL_POS);
-            drive.driveAuto(0.3, -100, MecanumDriveTrain.MovementType.STRAIGHT);
+            drive.driveAuto(0.3, -70, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.toggleGrab();
             sleep(1000);
             capArm.toggleGrab();
             drive.driveAuto(0.3, 100, MecanumDriveTrain.MovementType.STRAIGHT);
         }else{
-            //drive.driveAuto(0.3, -460, MecanumDriveTrain.MovementType.STRAIGHT);
+           drive.driveAuto(0.3, -50, MecanumDriveTrain.MovementType.STRAIGHT);
             capArm.goToPosition(Constants.MID_GOAL_POS);
             //drive.driveAuto(0.3, -200, MecanumDriveTrain.MovementType.ROTATE);
             //drive.driveAuto(0.3, -50, MecanumDriveTrain.MovementType.STRAIGHT);
@@ -198,11 +199,12 @@ public class WarehouseFreightBlue extends OpModeWrapper {
             //drive.driveAuto(0.3, 70, MecanumDriveTrain.MovementType.ROTATE);
         }
 
-        moveArm = true;
 
         // Instead of -2200 strafe:
 
         drive.driveAuto(0.3, -1000, MecanumDriveTrain.MovementType.ROTATE);
+        moveArm = true;
+
         drive.driveAuto(0.3, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
         drive.driveAuto(0.3, 1070, MecanumDriveTrain.MovementType.ROTATE);
         drive.driveAuto(0.3, -240, MecanumDriveTrain.MovementType.STRAFE);
@@ -229,7 +231,7 @@ public class WarehouseFreightBlue extends OpModeWrapper {
         sleep(1000);
         magArm.setLevelPosition(Constants.LEVEL_HALF_POS);
         sleep(1000);
-        drive.driveAuto(0.3, -500, MecanumDriveTrain.MovementType.STRAIGHT);
+        drive.driveAuto(0.3, -400, MecanumDriveTrain.MovementType.STRAIGHT);
         magArm.setLevelPosition(Constants.LEVEL_DOWN_POS);
         sleep(1000);
 
