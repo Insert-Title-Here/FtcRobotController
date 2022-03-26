@@ -1,5 +1,6 @@
 package teamcode.common;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.UserConfigurationType;
 
 public class Movement {
@@ -21,7 +22,7 @@ public class Movement {
 
 
     //translational params
-    private int distance;
+    private double distance;
     private double velocity, radians;
 
     //rotational params
@@ -35,8 +36,12 @@ public class Movement {
     private int index;
     private boolean val;
 
+    private double power;
+
     //indicator
     private MovementType movement;
+
+    private DcMotor.ZeroPowerBehavior behavior;
 
     //please note when using this class, as with MecanumDriveTrain, all angles are in RADIANS and parameters in Degrees
 
@@ -81,6 +86,12 @@ public class Movement {
         this.velocity = velocity;
     }
 
+    public Movement(double velocity, double distance, boolean coast){
+        this.velocity = velocity;
+        this.distance = distance;
+        movement = MovementType.COAST_MOVEMENT;
+    }
+
     /**
      * sleep constructor
      * @param millis time to sleep
@@ -88,6 +99,13 @@ public class Movement {
     public Movement(long millis){
         this.millis = millis;
         movement = MovementType.PAUSE;
+    }
+
+    public Movement(double velocity, long millis, double power){
+        this.velocity = velocity;
+        this.millis = millis;
+        this.power = power;
+        movement = MovementType.COAST_MOVEMENT;
     }
 
     /**
@@ -104,6 +122,17 @@ public class Movement {
         movement = MovementType.MODIFY_FLAG;
     }
 
+    public Movement(double power){
+        this.power = power;
+        movement = MovementType.MODULATE_INTAKE;
+    }
+
+    public Movement(DcMotor.ZeroPowerBehavior behavior){
+        this.behavior = behavior;
+        movement = MovementType.MODIFY_ZEROPOWER;
+    }
+
+
 
 
     public enum MovementType{
@@ -114,7 +143,10 @@ public class Movement {
         WAREHOUSE_LOCALIZATION,
         MODIFY_FLAG,
         WAREHOUSE_OPERATION,
-        ARC_MOVEMENT
+        ARC_MOVEMENT,
+        MODULATE_INTAKE,
+        COAST_MOVEMENT,
+        MODIFY_ZEROPOWER
     }
 
 
@@ -130,7 +162,7 @@ public class Movement {
         return velocity;
     }
 
-    public int getDistance() {
+    public double getDistance() {
         return distance;
     }
 
@@ -192,5 +224,21 @@ public class Movement {
 
     public void setVal(boolean val) {
         this.val = val;
+    }
+
+    public void setPower(double power) {
+        this.power = power;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public void setBehavior(DcMotor.ZeroPowerBehavior behavior) {
+        this.behavior = behavior;
+    }
+
+    public DcMotor.ZeroPowerBehavior getBehavior() {
+        return behavior;
     }
 }

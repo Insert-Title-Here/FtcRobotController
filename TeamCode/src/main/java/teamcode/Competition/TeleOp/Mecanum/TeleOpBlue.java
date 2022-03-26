@@ -18,7 +18,6 @@ import teamcode.common.Vector2D;
 
 @TeleOp(name="Tele Op Blue")
 public class TeleOpBlue extends AbstractOpMode {
-
     MecanumDriveTrain drive;
     ArmSystem arm;
     Thread armThread, capThread;
@@ -34,7 +33,7 @@ public class TeleOpBlue extends AbstractOpMode {
     protected void onInitialize() {
         drive = new MecanumDriveTrain(hardwareMap);
         arm = new ArmSystem(hardwareMap, true);
-        systems = new EndgameSystems(hardwareMap, true);
+        systems = new EndgameSystems(hardwareMap, false);
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
@@ -108,7 +107,7 @@ public class TeleOpBlue extends AbstractOpMode {
     double previousExtensionTime;
     int iterator;
     boolean isExtended, previousStart, previousOptions;
-    volatile boolean  isEndgame = false;
+    volatile boolean isEndgame = false;
     private void armUpdate() {
         if (gamepad1.right_trigger > 0.3) {
             startTime = AbstractOpMode.currentOpMode().time;
@@ -118,7 +117,7 @@ public class TeleOpBlue extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 } else {
-                    arm.intakeDumb(1.0);
+                    arm.intakeDumb(0.3 * Math.sin(.10 * elapsedTime) + 0.7);
                 }
 
             }
@@ -128,7 +127,7 @@ public class TeleOpBlue extends AbstractOpMode {
             while (gamepad1.a) {
                 arm.intakeDumb(-1.0);
             }
-        } else if (gamepad1.x) {
+        } else if (gamepad1.left_stick_button) {
             long currentSampleTime = System.currentTimeMillis();
             if (currentSampleTime - scoredSampleTime > 200) {
                 if (pulleyState != PulleyState.RETRACTED) {
@@ -147,11 +146,6 @@ public class TeleOpBlue extends AbstractOpMode {
                 }
 
             }
-        } else if (gamepad1.b) {
-            arm.preScore();
-            linkageState = LinkageState.RAISED;
-            Utils.sleep(250);
-            arm.intakeDumb(0);
         } else if (gamepad1.dpad_up) {
             // set to full
             arm.setWinchPower(1);
@@ -185,38 +179,31 @@ public class TeleOpBlue extends AbstractOpMode {
         }
         if (gamepad1.left_bumper) {
             while (gamepad1.left_bumper) {
-                systems.runCarousel(-1);
+                systems.runCarousel( 1);
             }
-        } else if (gamepad1.right_bumper) {
-            arm.intakeDumb(1.0);
-            systems.scoreDuck();
-            NormalizedRGBA rgba = drive.getSensorRGBA();
-            double green = rgba.green;
-            while(green < 0.9) {
-                rgba = drive.getSensorRGBA();
-                green = rgba.green;
-            }
-            arm.preScore();
-            arm.runConveyorPos(1.0, 2000);
         } else if (gamepad1.start && !previousStart){
             isExtended = !isExtended;
         }else if(gamepad1.share && !previousOptions){
             isDuck = !isDuck;
             arm.setIsDuck(isDuck);
 
-        } else{
-
+        } else {
             arm.setWinchPower(0);
             systems.runCarousel(0);
+            arm.intakeDumb(0);
+        }
+        if (gamepad1.right_stick_button) {
+            arm.preScore();
+            linkageState = LinkageState.RAISED;
+            Utils.sleep(250);
             arm.intakeDumb(0);
         }
         previousOptions = gamepad1.share;
         previousStart = gamepad1.start;
         telemetry.addData("isExtended", isExtended);
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
-        telemetry.addData("isDuck:", isDuck);
+        telemetry.addData("isDuck", isDuck);
         telemetry.update();
-
 
     }
 

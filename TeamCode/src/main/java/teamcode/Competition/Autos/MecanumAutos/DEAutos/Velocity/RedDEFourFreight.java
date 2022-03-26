@@ -46,24 +46,25 @@ public class RedDEFourFreight extends AbstractOpMode {
 
         //intake and back out
         warehouseSplice.add(new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)); //increase this?
-        warehouseSplice.add(new Movement(200, 9, 180.0));
+       // warehouseSplice.add(new Movement(200, 9, 180.0));
         warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
         warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
-        warehouseSplice.add(new Movement(300, 9, 180.0));
+        //warehouseSplice.add(new Movement(300, 9, 180.0));
 
         //approach and score
         warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
         warehouseSplice.add(new Movement(200));
         //warehouseSplice.add(new Movement(500, VELOCITY, 180.0));
         warehouseSplice.add(new Movement(1, true));
-        warehouseSplice.add(new Movement(Math.toRadians(117), -6,1400));
+       // warehouseSplice.add(new Movement(Math.toRadians(117), -6,1400));
+        warehouseSplice.add(new Movement(0.0));
 //        warehouseSplice.add(new Movement(150, VELOCITY, -90.0));
 //        warehouseSplice.add(new Movement(-135, 6));
 //        warehouseSplice.add(new Movement(100));
 //        warehouseSplice.add(new Movement(630, VELOCITY / 2.0, 180.0));
         warehouseSplice.add(new Movement(2, true));
         warehouseSplice.add(new Movement(200));
-        warehouseSplice.add(new Movement(Math.toRadians(117), 6,1400));
+        //warehouseSplice.add(new Movement(Math.toRadians(117), 6,1400));
 
         system = new EndgameSystems(hardwareMap, false);
         arm = new ArmSystem(hardwareMap, false);

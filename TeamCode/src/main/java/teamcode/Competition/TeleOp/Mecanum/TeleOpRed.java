@@ -118,7 +118,7 @@ public class TeleOpRed extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 } else {
-                        arm.intakeDumb(1.0);
+                        arm.intakeDumb(0.3 * Math.sin(elapsedTime) + 0.7);
                 }
 
             }
@@ -182,19 +182,13 @@ public class TeleOpRed extends AbstractOpMode {
             while (gamepad1.left_bumper) {
                 systems.runCarousel( 1);
             }
-        } else if (gamepad1.right_bumper) {
-            systems.scoreDuck();
         } else if (gamepad1.start && !previousStart){
             isExtended = !isExtended;
         }else if(gamepad1.share && !previousOptions){
             isDuck = !isDuck;
             arm.setIsDuck(isDuck);
 
-        } else if(gamepad1.b){
-
-
-        }else{
-
+        } else {
             arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);
@@ -205,12 +199,12 @@ public class TeleOpRed extends AbstractOpMode {
             Utils.sleep(250);
             arm.intakeDumb(0);
         }
-            previousOptions = gamepad1.share;
+        previousOptions = gamepad1.share;
         previousStart = gamepad1.start;
         telemetry.addData("isExtended", isExtended);
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
+        telemetry.addData("isDuck", isDuck);
         telemetry.update();
-
 
     }
 

@@ -124,12 +124,12 @@ import static java.lang.Math.PI;
         warehouse = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
-        warehouse.setGain(540);
+        warehouse.setGain(300);
         frontRed.setGain(200);
         backRed.setGain(520);
         frontBlue.setGain(100);
         backBlue.setGain(300);
-        sensor.setGain(490); //325 is tested value but i think I trust this one more //280
+        sensor.setGain(400); //325 is tested value but i think I trust this one more //280
 
         flags = new boolean[]{false, false, false, false, false};
 
@@ -186,20 +186,33 @@ import static java.lang.Math.PI;
 
 
     public synchronized void driveColorSensorWarehouse(double velocity){
-        driveColorSensorWarehouse(velocity, true);
+        driveColorSensorWarehouse(velocity, true, false);
     }
 
-    public synchronized void driveColorSensorWarehouse(double velocity, boolean isBrake){
+    public synchronized void driveColorSensorWarehouse(double velocity, boolean isBrake, boolean isCoast){
+        if(isCoast){
+            setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }else{
+            setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
         NormalizedRGBA rgba = warehouse.getNormalizedColors();
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while(rgba.red < 0.9 && opModeIsRunning()){
+        while(rgba.green < 0.9 && opModeIsRunning()){
             rgba = warehouse.getNormalizedColors();
             setMotorVelocity(velocity,velocity,velocity,velocity);
         }
         if(isBrake) {
             brake();
         }
+    }
+
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior){
+        Debug.log(behavior);
+        fl.setZeroPowerBehavior(behavior);
+        fr.setZeroPowerBehavior(behavior);
+        bl.setZeroPowerBehavior(behavior);
+        br.setZeroPowerBehavior(behavior);
     }
 
      public synchronized void strafeColorSensorWarehouse(double velocity){
@@ -566,7 +579,13 @@ import static java.lang.Math.PI;
         Utils.sleep(100);
         setMotorVelocity(pow,pow,pow,pow);
         Utils.sleep(250);
-        while(!detectedElement && opModeIsRunning()){
+        double iterator = 0.0;
+        double medianAmperageDraw = 0;
+        double amperageDrawSum = 0;
+        while(!detectedElement && (arm.getMilliAmps() - medianAmperageDraw < 1500) && opModeIsRunning()){
+            iterator++;
+            amperageDrawSum += arm.getMilliAmps();
+            medianAmperageDraw = amperageDrawSum / iterator;
 //            Vector2D vec = Vector2D.fromAngleMagnitude(0, pow);
 //            setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //            setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -588,7 +607,6 @@ import static java.lang.Math.PI;
 
             if (red > 0.9) {
                 detectedElement = true;
-                break;
             } else {
                 detectedElement = false;
             }
@@ -619,8 +637,6 @@ import static java.lang.Math.PI;
         if(!isRed){
             sign = -1;
         }
-
-        arm.intakeDumb(0);
     }
 
     public void semiDumbVisionDriving(double pow){
@@ -694,6 +710,11 @@ import static java.lang.Math.PI;
         return 0;
         //TODO import this from localizer
     }
+
+    public void modulateIntakeDumb(double power){
+        arm.intakeDumb(power);
+    }
+
 
 
 
@@ -967,6 +988,9 @@ import static java.lang.Math.PI;
                 backRGBA = backRed.getNormalizedColors();
                 Debug.log("red");
             }else{
+
+                distanceFrontThreshold = 1.5;
+                distanceBackThreshold = 1.0;
                 distanceFront = frontBlue.getDistance(DistanceUnit.INCH);
                 distanceBack = backBlue.getDistance(DistanceUnit.INCH);
 
@@ -1519,16 +1543,62 @@ import static java.lang.Math.PI;
             }else if(curr.getMovement() == Movement.MovementType.WALL_LOCALIZATION){
                 strafeDistanceSensor(curr.getVelocity(), curr.getRadians(), false, isRed);
             }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_LOCALIZATION){
-                driveColorSensorWarehouse(curr.getVelocity(), false);
+                driveColorSensorWarehouse(curr.getVelocity(), false, curr.getVal());
             }else if(curr.getMovement() == Movement.MovementType.MODIFY_FLAG){
-                Debug.log("flag flipping");
                 flags[curr.getIndex()] = curr.getVal();
             }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_OPERATION){
                 driveColorSensorSpliced(curr.getVelocity());
             }else if(curr.getMovement() == Movement.MovementType.ARC_MOVEMENT){
-
                 setOmniMovement(curr.getRadians(), curr.getDistance(), curr.getVelocity(), false);
+            }else if(curr.getMovement() == Movement.MovementType.MODULATE_INTAKE){
+                if(curr.getPower() > 0.0) {
+                    arm.lowerLinkage();
+                }
+                modulateIntakeDumb(curr.getPower());
+
+            }else if(curr.getMovement() == Movement.MovementType.COAST_MOVEMENT){
+                coastDriveEncoder(curr.getDistance(),curr.getVelocity());
+            }else if(curr.getMovement() == Movement.MovementType.MODIFY_ZEROPOWER){
+                setZeroPowerBehavior(curr.getBehavior());
             }
+        }
+        brake();
+    }
+
+    public void coastDrive(double pow, long interval, double decriment){
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        while(pow > 0) {
+            setPower(pow, pow, pow, pow);
+            Utils.sleep(interval);
+            pow -= decriment;
+        }
+        setPower(0,0,0,0);
+    }
+
+    public synchronized void coastDriveEncoder(double distance, double pow){
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        hub.clearBulkCache();
+        LynxModule.BulkData data;
+        double calculatedPow = pow;
+        double ratio = 1;
+        NormalizedRGBA rgba = sensor.getNormalizedColors();
+        while(opModeIsRunning() && ratio > 0.1 ){
+            rgba = sensor.getNormalizedColors();
+            data = hub.getBulkData();
+            double posSum = 0;
+            posSum += Math.abs(data.getMotorCurrentPosition(0));
+            posSum += Math.abs(data.getMotorCurrentPosition(1));
+            posSum += Math.abs(data.getMotorCurrentPosition(2));
+            posSum += Math.abs(data.getMotorCurrentPosition(3));
+            double posAvg = posSum / 4.0;
+            ratio = (distance - posAvg) / distance;
+            AbstractOpMode.currentOpMode().telemetry.addData("calculated", calculatedPow);
+            AbstractOpMode.currentOpMode().telemetry.update();
+            calculatedPow = pow * ratio;
+            setPower(calculatedPow,calculatedPow, calculatedPow,calculatedPow);
+            hub.clearBulkCache();
         }
         brake();
     }

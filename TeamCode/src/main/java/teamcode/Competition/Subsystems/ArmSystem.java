@@ -28,7 +28,7 @@ public class ArmSystem {
     private static final double HOUSING_POSITION = 0.22 ; //0.12
     private static final double SCORING_POSITION = 0.56; //0.5
 
-    private static final double LINKAGE_DOWN = 0.18; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
+    private static final double LINKAGE_DOWN = 0.0; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.6;
     private static final double LINKAGE_SCORE = 0.7;
 
@@ -174,17 +174,17 @@ public class ArmSystem {
 
     //will be merged into intake() later
     public void preScore(){
+        intakeDumb(1.0);
         if(isDuck){
             house.setPosition(HOUSING_POSITION_DUCK);
         }else {
             house.setPosition(HOUSING_POSITION);
         }
-
+        Utils.sleep(250);
         linkage.setPosition(LINKAGE_HOUSED);
-        if(isTeleOp) {
-            Utils.sleep(550);
-            intakeDumb(-1.0);
-        }
+
+        Utils.sleep(550);
+        intakeDumb(0);
         stage = Stage.HOUSED;
 
         //Debug.log("finish");
@@ -247,7 +247,8 @@ public class ArmSystem {
     }
 
     public synchronized void retract(){
-        while (winchEncoder.getCurrentPosition()  > 0) {
+        linkage.setPosition(LINKAGE_HOUSED);
+        while (winchEncoder.getCurrentPosition()  > 0 && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
 //                AbstractOpMode.currentOpMode().telemetry.addData("curR", winchEncoder.getCurrentPosition());
 //                AbstractOpMode.currentOpMode().telemetry.addData("tarR", position);
 //                AbstractOpMode.currentOpMode().telemetry.update();
@@ -308,7 +309,7 @@ public class ArmSystem {
     //}
 
     public void moveSlide(double power, double position){
-            while (winchEncoder.getCurrentPosition() < position) {
+            while (winchEncoder.getCurrentPosition() < position && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
 //                AbstractOpMode.currentOpMode().telemetry.addData("curE", winchEncoder.getCurrentPosition());
 //                AbstractOpMode.currentOpMode().telemetry.addData("tarE",position);
 //                AbstractOpMode.currentOpMode().telemetry.update();
@@ -373,6 +374,32 @@ public class ArmSystem {
 
     public Stage getStage(){
         return stage;
+    }
+
+    public void sinIntake(double min, double max, double dtMax){
+        double start = AbstractOpMode.currentOpMode().time;
+        double dt = AbstractOpMode.currentOpMode().time;
+        while(dt < dtMax){
+            dt = AbstractOpMode.currentOpMode().time - start;
+            double amplitude = max - min;
+            intakeDumb(amplitude * Math.sin(dt) + (amplitude / 2.0) + min);
+        }
+    }
+    boolean terminateIntake;
+    public void sinIntakeIndefinite(double min, double max){
+        double start = AbstractOpMode.currentOpMode().time;
+        double dt = AbstractOpMode.currentOpMode().time;
+        terminateIntake = false;
+        while(!terminateIntake){
+            dt = AbstractOpMode.currentOpMode().time - start;
+            double amplitude = max - min;
+            intakeDumb(amplitude * Math.sin(dt) + (amplitude / 2.0) + min);
+        }
+        intakeDumb(0);
+    }
+
+    public void setTerminateIntake(boolean val){
+        this.terminateIntake = val;
     }
 
 }

@@ -1,31 +1,46 @@
 package teamcode.test.Miscellanious;
 
+import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
+import teamcode.common.Logger;
+import teamcode.common.MecanumDriveTrain;
 
 
 @Autonomous(name="Color")
 public class ColorSensorTest extends AbstractOpMode {
 
     NormalizedColorSensor sensor;
+    //ColorSensor color;
     DetectedElement element;
     ArmSystem arm;
+    Logger logger;
+    MecanumDriveTrain drive;
 
     @Override
     protected void onInitialize() {
         sensor = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
+        //color = hardwareMap.colorSensor.get("WarehouseTapeSensor");
         element = DetectedElement.NONE;
         arm = new ArmSystem(hardwareMap, true);
+        logger = new Logger(new String[]{"Red.txt", "Blue.txt", "Green.txt", "Alpha.txt"});
+        drive = new MecanumDriveTrain(hardwareMap, false, null, arm);
+
     }
 
     @Override
     protected void onStart() {
-        sensor.setGain(480);
+        sensor.setGain(300);
+        NormalizedRGBA previousColors = sensor.getNormalizedColors();
+        int iterator = 0;
+        drive.setMotorVelocity(6,6,6,6);
+
         while(opModeIsActive()){
             if(gamepad1.b){
                 arm.preScore();
@@ -43,6 +58,7 @@ public class ColorSensorTest extends AbstractOpMode {
             double red = colors.red;
             double green = colors.green;
             double blue = colors.blue;
+            double alpha = colors.alpha;
             if(green > 0.9){
                 if(blue > 0.9){
                     element = DetectedElement.BALL;
@@ -56,7 +72,22 @@ public class ColorSensorTest extends AbstractOpMode {
             telemetry.addData("R", red);
             telemetry.addData("G", green);
             telemetry.addData("B", blue);
+            telemetry.addData("A", colors.alpha);
+//            telemetry.addData("R", color.red());
+//            telemetry.addData("G", color.green());
+//            telemetry.addData("B", color.blue());
             telemetry.update();
+            double dred = red - previousColors.red;
+            double dblue = blue - previousColors.blue;
+            double dgreen = green - previousColors.green;
+            double dalpha = alpha - previousColors.alpha;
+            iterator++;
+
+            logger.writeToLogString(0, iterator + "," + red + "\n");
+            logger.writeToLogString(1, iterator + "," + blue + "\n");
+            logger.writeToLogString(2, iterator + "," + green + "\n");
+            logger.writeToLogString(3, iterator + "," + alpha + "\n");
+            previousColors = colors;
         }
     }
 
@@ -66,6 +97,6 @@ public class ColorSensorTest extends AbstractOpMode {
     }
     @Override
     protected void onStop() {
-
+        logger.writeLoggerToFile();
     }
 }
