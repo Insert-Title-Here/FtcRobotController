@@ -118,7 +118,7 @@ public class TeleOpRed extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 } else {
-                        arm.intakeDumb(0.3 * Math.sin(elapsedTime) + 0.7);
+                        arm.intakeDumb(0.3 * Math.abs(Math.sin(6 * elapsedTime)) + 0.7);
                 }
 
             }
@@ -153,7 +153,7 @@ public class TeleOpRed extends AbstractOpMode {
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
         } else if (gamepad1.left_trigger > 0.3) {
-            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED && time - previousExtensionTime > 5) {
+            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 previousExtensionTime = time;
                 if(isExtended) {
                     arm.raise(Constants.TOP_POSITION + 2000); //3000
@@ -171,17 +171,23 @@ public class TeleOpRed extends AbstractOpMode {
             }
         } else if (gamepad1.y && pulleyState == PulleyState.RETRACTED) {
             //arm.raise(Constants.BOTTOM_POSITION);
-            arm.runConveyorPos(0.5, 2000);
+            while(gamepad1.y){
+                arm.runConveyor(0.8);
+            }
+            //arm.runConveyorPos(0.5, 2000);
             arm.idleServos();
             //arm.moveSlide(-1, 0);
             pulleyState = PulleyState.RETRACTED;
         } else if (gamepad1.dpad_left) {
             arm.resetWinchEncoder();
+        }else if(gamepad1.right_bumper){
+            systems.scoreDuck();
         }
         if (gamepad1.left_bumper) {
             while (gamepad1.left_bumper) {
-                systems.runCarousel( 1);
+                arm.runConveyor(0.8);
             }
+            arm.idleServos();
         } else if (gamepad1.start && !previousStart){
             isExtended = !isExtended;
         }else if(gamepad1.share && !previousOptions){
@@ -189,9 +195,12 @@ public class TeleOpRed extends AbstractOpMode {
             arm.setIsDuck(isDuck);
 
         } else {
-            arm.setWinchPower(0);
+            if(arm.getStage() != ArmSystem.Stage.EXTENDED) {
+                arm.setWinchPower(0);
+            }
             systems.runCarousel(0);
             arm.intakeDumb(0);
+            arm.runConveyor(0);
         }
         if (gamepad1.right_stick_button) {
             arm.preScore();

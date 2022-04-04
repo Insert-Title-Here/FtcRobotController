@@ -17,8 +17,8 @@ public class Constants {
     public static final double GRAVITY_IN_SEC = 386.09;
 
     //Game Constants
-    public static final double TOP_POSITION = 29230; // -14000 TANK   -21000 // PLASTIC WINCH 17000
-    public static final double MEDIUM_POSITION = 16153; //8000 PLASTIC WINCH
+    public static final double TOP_POSITION = 14000; // -14000 TANK   -21000 // PLASTIC WINCH 17000
+    public static final double MEDIUM_POSITION = 6000; //8000 PLASTIC WINCH
     public static final double BOTTOM_POSITION = 4000;
 
 

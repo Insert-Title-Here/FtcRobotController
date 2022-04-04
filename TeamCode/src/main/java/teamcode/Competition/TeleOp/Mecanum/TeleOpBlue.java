@@ -33,7 +33,7 @@ public class TeleOpBlue extends AbstractOpMode {
     protected void onInitialize() {
         drive = new MecanumDriveTrain(hardwareMap);
         arm = new ArmSystem(hardwareMap, true);
-        systems = new EndgameSystems(hardwareMap, false);
+        systems = new EndgameSystems(hardwareMap, true);
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
@@ -117,7 +117,7 @@ public class TeleOpBlue extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 } else {
-                    arm.intakeDumb(0.3 * Math.sin(.10 * elapsedTime) + 0.7);
+                    arm.intakeDumb(0.3 * Math.sin( elapsedTime) + 0.7);
                 }
 
             }
@@ -187,7 +187,9 @@ public class TeleOpBlue extends AbstractOpMode {
             isDuck = !isDuck;
             arm.setIsDuck(isDuck);
 
-        } else {
+        } else if(gamepad1.right_bumper){
+            systems.scoreDuck();
+        } else{
             arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.MecanumDriveTrain;
 
-@Autonomous(name="coast")
+@Autonomous(name="coastee")
 public class CoastTest extends AbstractOpMode {
 
     MecanumDriveTrain drive;

@@ -87,7 +87,7 @@ public class EndgameSystems {
 
     public void zeroCap() {
         // TODO - get the x position to set the x zero pos (not fully necessary, might be nice to have)
-        yCap.setPosition(0.12);
+        yCap.setPosition(0.2);
     }
 
     public double map(double val, double in_min, double in_max, double out_min, double out_max) {

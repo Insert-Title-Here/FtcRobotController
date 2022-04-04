@@ -65,6 +65,12 @@ public class Movement {
         movement = MovementType.ARC_MOVEMENT;
     }
 
+    public Movement(double strafe, long time){
+        this.power = strafe;
+        this.millis = time;
+        this.movement = MovementType.STRAFE_TP;
+    }
+
     /**
      * rotational splices
      * @param rotation angle in degrees
@@ -88,6 +94,7 @@ public class Movement {
 
     public Movement(double velocity, double distance, boolean coast){
         this.velocity = velocity;
+        this.distance = distance;
         this.distance = distance;
         movement = MovementType.COAST_MOVEMENT;
     }
@@ -146,7 +153,8 @@ public class Movement {
         ARC_MOVEMENT,
         MODULATE_INTAKE,
         COAST_MOVEMENT,
-        MODIFY_ZEROPOWER
+        MODIFY_ZEROPOWER,
+        STRAFE_TP
     }
 
 

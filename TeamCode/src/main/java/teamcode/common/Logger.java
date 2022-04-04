@@ -12,7 +12,11 @@ public class Logger {
     ArrayList<File> loggerFiles = new ArrayList<>();
     ArrayList<String> loggerStrings = new ArrayList<>();
     public Logger(String[] names){
+
         for(int i = 0; i < names.length; i++){
+            if(!names[i].endsWith(".txt")){
+                names[i] += ".txt";
+            }
             createLogFile(names[i]);
         }
     }

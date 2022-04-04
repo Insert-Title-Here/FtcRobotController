@@ -23,7 +23,7 @@ import teamcode.common.Utils;
 public class ArmSystem {
 
     //House Servo values
-    private static final double INTAKE_POSITION = 0.06; //0
+    private static final double INTAKE_POSITION = 0.00; //0
     private static final double HOUSING_POSITION_DUCK = 0.26; //0.12
     private static final double HOUSING_POSITION = 0.22 ; //0.12
     private static final double SCORING_POSITION = 0.56; //0.5
@@ -31,6 +31,9 @@ public class ArmSystem {
     private static final double LINKAGE_DOWN = 0.0; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.6;
     private static final double LINKAGE_SCORE = 0.7;
+
+    private static final double WINCHSTOP_STOPPING = 0.95;
+    private static final double WINCHSTOP_OPEN = 0.5;
 
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -44,7 +47,7 @@ public class ArmSystem {
 
     private ExpansionHubMotor winchMotor, winchEncoder, conveyorMotor;
     private DcMotorEx intake;
-    private Servo house, linkage, rampWinch;
+    private Servo house, linkage, rampWinch, winchStop;
     RobotPositionStateUpdater.RobotPositionState currentState;
     private Stage stage;
     private boolean isDuck;
@@ -60,6 +63,7 @@ public class ArmSystem {
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
         rampWinch = hardwareMap.servo.get("RampWinch");
+        winchStop = hardwareMap.servo.get(""); //TODO add
         //carousel = hardwareMap.get(CRServo.class, "Carousel");
 
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -84,10 +88,61 @@ public class ArmSystem {
         intake.setPower(power);
 
     }
+    public void setSlidePower(double power){
+        winchMotor.setPower(power);
+    }
+
+    public void actuateWinchStop(double pos){
+        winchStop.setPosition(pos);
+    }
+
+    public int getConveyorPosition(){
+        return conveyorMotor.getCurrentPosition();
+    }
+
+    public void intakeReverseTest(){
+
+        double previousTics = conveyorMotor.getCurrentPosition();
+        double deltaTics = 10;
+        double startTime = AbstractOpMode.currentOpMode().time;
+        double deltaTime = AbstractOpMode.currentOpMode().time - startTime;
+        conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        conveyorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeDumb(1.0);
+        boolean dticsFlag = true;
+        while(AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()){
+            int currentTics = conveyorMotor.getCurrentPosition();
+            deltaTics = currentTics - previousTics;
+            previousTics = currentTics;
+            deltaTime = AbstractOpMode.currentOpMode().time - startTime;
+            if(deltaTics < 1 &&  deltaTime > 1.0){
+                Utils.sleep(500);
+                if(deltaTics < 1){
+                    intakeDumb(-1.0);
+                    Utils.sleep(250);
+                    intakeDumb(1.0);
+                    startTime = AbstractOpMode.currentOpMode().time;
+                }
+            }
+
+            AbstractOpMode.currentOpMode().telemetry.addData("delta", deltaTics);
+            AbstractOpMode.currentOpMode().telemetry.addData("time", deltaTime);
+            AbstractOpMode.currentOpMode().telemetry.update();
+        }
+
+
+    }
+
+
+
 
 
     public double getMilliAmps(){
         return intake.getCurrent(CurrentUnit.MILLIAMPS);
+    }
+
+    public double getMilliAmpsWinch(){
+        return winchMotor.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
 
@@ -95,6 +150,10 @@ public class ArmSystem {
 
 
     public void runConveyor(double power){
+        if(power != 0) {
+            linkage.setPosition(LINKAGE_SCORE);
+            house.setPosition(SCORING_POSITION);
+        }
         conveyorMotor.setPower(power);
     }
 
@@ -174,13 +233,17 @@ public class ArmSystem {
 
     //will be merged into intake() later
     public void preScore(){
-        intakeDumb(1.0);
-        if(isDuck){
-            house.setPosition(HOUSING_POSITION_DUCK);
-        }else {
-            house.setPosition(HOUSING_POSITION);
+        if(isTeleOp) {
+            intakeDumb(1.0);
         }
-        Utils.sleep(250);
+        synchronized (this) {
+            if (isDuck) {
+                house.setPosition(HOUSING_POSITION_DUCK);
+            } else {
+                house.setPosition(HOUSING_POSITION);
+            }
+        }
+        //Utils.sleep(250);
         linkage.setPosition(LINKAGE_HOUSED);
 
         Utils.sleep(550);
@@ -188,6 +251,15 @@ public class ArmSystem {
         stage = Stage.HOUSED;
 
         //Debug.log("finish");
+
+
+    }
+
+
+    public void preScoreMulitFreight(){
+            linkage.setPosition(LINKAGE_HOUSED);
+        //house.setPosition(HOUSING_POSITION);
+        Utils.sleep(250);
 
 
     }
@@ -224,18 +296,20 @@ public class ArmSystem {
 
 
 
-    public synchronized void raise(double position) {
+    public void raise(double position) {
 
         linkage.setPosition(LINKAGE_SCORE);
         Utils.sleep(200);
         moveSlide(SLIDE_POWER, (int) position);
-
         stage = stage.EXTENDED;
     }
 
     //temporary tele op scoring function w/o color sensor
     public synchronized void score(){
         house.setPosition(SCORING_POSITION);
+    }
+    public synchronized void scoreAuto(){
+        house.setPosition(SCORING_POSITION - 0.15);
     }
 
     public synchronized void scoreAuto(boolean far){
@@ -248,14 +322,25 @@ public class ArmSystem {
 
     public synchronized void retract(){
         linkage.setPosition(LINKAGE_HOUSED);
+        while (winchEncoder.getCurrentPosition()  > 1000 && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
+//                AbstractOpMode.currentOpMode().telemetry.addData("curR", winchEncoder.getCurrentPosition());
+//                AbstractOpMode.currentOpMode().telemetry.addData("tarR", position);
+//                AbstractOpMode.currentOpMode().telemetry.update();
+            winchMotor.setPower(-0.3);
+        }
+        winchMotor.setPower(0);
+       idleServos();
+    }
+    public synchronized void retractZero(){
+        linkage.setPosition(LINKAGE_HOUSED);
         while (winchEncoder.getCurrentPosition()  > 0 && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
 //                AbstractOpMode.currentOpMode().telemetry.addData("curR", winchEncoder.getCurrentPosition());
 //                AbstractOpMode.currentOpMode().telemetry.addData("tarR", position);
 //                AbstractOpMode.currentOpMode().telemetry.update();
-            winchMotor.setPower(-1.0);
+            winchMotor.setPower(-0.3);
         }
         winchMotor.setPower(0);
-       idleServos();
+        idleServos();
     }
 
     public void idleServos(){
@@ -278,11 +363,20 @@ public class ArmSystem {
         linkage.setPosition(LINKAGE_DOWN);
     }
 
+    public void lowerLinkageAuto() {
+        house.setPosition(INTAKE_POSITION + 0.1);
+        linkage.setPosition(LINKAGE_DOWN);
+    }
+
     public void setIsDuck(boolean isDuck) {
         this.isDuck = isDuck;
     }
 
-    private enum Stage{
+    public void setConveyorMode(DcMotor.RunMode mode) {
+        conveyorMotor.setMode(mode);
+    }
+
+    public enum Stage{
         INTAKING, IDLE, HOUSED, EXTENDED
     }
 
@@ -387,13 +481,14 @@ public class ArmSystem {
     }
     boolean terminateIntake;
     public void sinIntakeIndefinite(double min, double max){
+        lowerLinkage();
         double start = AbstractOpMode.currentOpMode().time;
         double dt = AbstractOpMode.currentOpMode().time;
         terminateIntake = false;
-        while(!terminateIntake){
+        while(!terminateIntake && !AbstractOpMode.currentOpMode().isStopRequested() && AbstractOpMode.currentOpMode().opModeIsActive()){
             dt = AbstractOpMode.currentOpMode().time - start;
             double amplitude = max - min;
-            intakeDumb(amplitude * Math.sin(dt) + (amplitude / 2.0) + min);
+            intakeDumb(amplitude * Math.abs(Math.sin(5 * dt))+ min);
         }
         intakeDumb(0);
     }
