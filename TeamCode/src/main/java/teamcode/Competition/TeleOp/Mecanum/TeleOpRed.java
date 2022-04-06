@@ -67,7 +67,6 @@ public class TeleOpRed extends AbstractOpMode {
         isExtended = false;
         isDuck = false;
         arm.setIsDuck(isDuck);
-        arm.setRampWinchRetracted();
     }
 
     // Flag variable for keeping every servo frozen until game start
@@ -172,7 +171,7 @@ public class TeleOpRed extends AbstractOpMode {
         } else if (gamepad1.y && pulleyState == PulleyState.RETRACTED) {
             //arm.raise(Constants.BOTTOM_POSITION);
             while(gamepad1.y){
-                arm.runConveyor(0.8);
+                systems.runCarousel(1.0);
             }
             //arm.runConveyorPos(0.5, 2000);
             arm.idleServos();
@@ -188,9 +187,9 @@ public class TeleOpRed extends AbstractOpMode {
                 arm.runConveyor(0.8);
             }
             arm.idleServos();
-        } else if (gamepad1.start && !previousStart){
+        } else if (gamepad1.circle && !previousStart){
             isExtended = !isExtended;
-        }else if(gamepad1.share && !previousOptions){
+        }else if(gamepad1.square && !previousOptions){
             isDuck = !isDuck;
             arm.setIsDuck(isDuck);
 
@@ -208,8 +207,8 @@ public class TeleOpRed extends AbstractOpMode {
             Utils.sleep(250);
             arm.intakeDumb(0);
         }
-        previousOptions = gamepad1.share;
-        previousStart = gamepad1.start;
+        previousOptions = gamepad1.square;
+        previousStart = gamepad1.circle;
         telemetry.addData("isExtended", isExtended);
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
         telemetry.addData("isDuck", isDuck);

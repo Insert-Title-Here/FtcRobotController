@@ -67,7 +67,7 @@ public class TeleOpBlue extends AbstractOpMode {
         isExtended = false;
         isDuck = false;
         arm.setIsDuck(isDuck);
-        arm.setRampWinchRetracted();
+
     }
 
     // Flag variable for keeping every servo frozen until game start

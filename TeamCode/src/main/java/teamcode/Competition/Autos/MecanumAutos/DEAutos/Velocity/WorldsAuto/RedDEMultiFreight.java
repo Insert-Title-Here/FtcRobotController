@@ -23,10 +23,10 @@ public class RedDEMultiFreight extends AbstractOpMode {
     EndgameSystems system;
     ArmSystem arm;
     Thread armThread;
-    private final int FREIGHT = 3;
+    private final int FREIGHT = 4;
     private ArrayList<Movement> warehouseSplice;
     private final double VELOCITY = 10;
-    PIDFCoefficients coefficients = new PIDFCoefficients(5, 0.5, 1.0, 0.0); //2.5
+    PIDFCoefficients coefficients = new PIDFCoefficients(10, 0.5, 1.0, 1.0); //2.5
     int globalIterator;
 
     @Override
@@ -44,11 +44,11 @@ public class RedDEMultiFreight extends AbstractOpMode {
                 arm.retract();
                 for(int i = 0; i < FREIGHT && opModeIsActive() && !isStopRequested(); i++) {
                     while(!drive.getFlagIndex(0));
-                    arm.preScoreMulitFreight();
+                    arm.preScoreMultiFreight(drive.getCurrenElement());
                     arm.intakeDumb(-1.0);
                     drive.setFlagIndex(0, false);
                     while (!drive.getFlagIndex(1)) ;
-                    arm.raise(Constants.TOP_POSITION + 2000);
+                    arm.raise(Constants.TOP_POSITION + 500);
                     drive.setFlagIndex(1, false);
                     while (!drive.getFlagIndex(2));
                     arm.scoreAuto();
@@ -75,11 +75,11 @@ public class RedDEMultiFreight extends AbstractOpMode {
 //        }else{
 //            arm.score();
 //        }
-        Utils.sleep(250);
+        //Utils.sleep(250);
         drive.setFlagIndex(4, true);
         Utils.sleep(200);
         drive.rotateDistanceDE(-90, 24);
-        drive.strafeDistanceSensor(15, 0);
+        drive.strafeDistanceSensor(30, 0);
         //drive.driveColorSensorWarehouse(6); //alternatively make this 1000 tics
 
         for(int i = 0; i < FREIGHT; i++) {
@@ -107,8 +107,8 @@ public class RedDEMultiFreight extends AbstractOpMode {
             warehouseSplice.add(new Movement(300 + 20 * i, 2 * VELOCITY, 180.0));
             warehouseSplice.add(new Movement(1.0,200));
 
-            warehouseSplice.add(new Movement(-3, Movement.MovementType.WAREHOUSE_LOCALIZATION));
-            warehouseSplice.add(new Movement(1.0, (long)200));
+            warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+            warehouseSplice.add(new Movement(1.0, (long)100));
             //warehouseSplice.add(new Movement(100, VELOCITY, 90.0));
             //warehouseSplice.add(new Movement(300, VELOCITY, 180.0));
             //approach and score
@@ -118,12 +118,14 @@ public class RedDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(100));
             warehouseSplice.add(new Movement(100));
             warehouseSplice.add(new Movement(1, true));
-            warehouseSplice.add(new Movement(123.0 , -10.0,1550)); // -6, 1500
+            warehouseSplice.add(new Movement(129.0 , -20.0,1550)); // -6, 1500
             warehouseSplice.add(new Movement(2, true));
             warehouseSplice.add(new Movement(300));
 
-            warehouseSplice.add(new Movement(-90, 6.0));
-            warehouseSplice.add(new Movement(30, Movement.MovementType.WALL_LOCALIZATION));
+            warehouseSplice.add(new Movement(-90, 24.0));
+            warehouseSplice.add(new Movement(100));
+            //warehouseSplice.add(new Movement(200, 2 * VELOCITY, 180.0));
+            warehouseSplice.add(new Movement(40, Movement.MovementType.WALL_LOCALIZATION));
             //warehouseSplice.add(new Movement(120.0, 6.0,1200));
             warehouseSplice.add(new Movement(450,   VELOCITY,0.0));
             drive.splicedMovement(warehouseSplice);

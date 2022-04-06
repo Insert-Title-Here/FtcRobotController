@@ -24,16 +24,17 @@ public class ArmSystem {
 
     //House Servo values
     private static final double INTAKE_POSITION = 0.00; //0
+    private static final double HOUSING_POSITION_BALL = 0.15;
     private static final double HOUSING_POSITION_DUCK = 0.26; //0.12
-    private static final double HOUSING_POSITION = 0.22 ; //0.12
+    private static final double HOUSING_POSITION = 0.22; //0.22
     private static final double SCORING_POSITION = 0.56; //0.5
 
     private static final double LINKAGE_DOWN = 0.0; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.6;
     private static final double LINKAGE_SCORE = 0.7;
 
-    private static final double WINCHSTOP_STOPPING = 0.95;
-    private static final double WINCHSTOP_OPEN = 0.5;
+    private static final double WINCHSTOP_STOPPING = 0.45;
+    private static final double WINCHSTOP_OPEN = 1.0;
 
 
     private static final float GREEN_THRESHOLD = 255; //not needed for now
@@ -62,8 +63,9 @@ public class ArmSystem {
 
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
-        rampWinch = hardwareMap.servo.get("RampWinch");
-        winchStop = hardwareMap.servo.get(""); //TODO add
+        //rampWinch = hardwareMap.servo.get("RampWinch");
+        winchStop = hardwareMap.servo.get("Stop"); //TODO add
+        winchStop.setDirection(Servo.Direction.REVERSE);
         //carousel = hardwareMap.get(CRServo.class, "Carousel");
 
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -72,13 +74,14 @@ public class ArmSystem {
         winchEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
         //carousel.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        winchStop.setPosition(WINCHSTOP_OPEN);
 
         if(isTeleOp){
             house.setPosition(INTAKE_POSITION);
         }else{
             house.setPosition(HOUSING_POSITION);
         }
-        linkage.setPosition(LINKAGE_HOUSED - 0.2);
+        linkage.setPosition(LINKAGE_HOUSED - 0.1);
         stage = Stage.IDLE;
         isDuck = false;
         this.isTeleOp = isTeleOp;
@@ -233,6 +236,7 @@ public class ArmSystem {
 
     //will be merged into intake() later
     public void preScore(){
+        actuateWinchStop(WINCHSTOP_OPEN);
         if(isTeleOp) {
             intakeDumb(1.0);
         }
@@ -256,8 +260,13 @@ public class ArmSystem {
     }
 
 
-    public void preScoreMulitFreight(){
-            linkage.setPosition(LINKAGE_HOUSED);
+    public void preScoreMultiFreight(boolean ball){
+        actuateWinchStop(WINCHSTOP_OPEN);
+        linkage.setPosition(LINKAGE_HOUSED);
+        if(ball){
+            house.setPosition(HOUSING_POSITION_BALL);
+        }
+
         //house.setPosition(HOUSING_POSITION);
         Utils.sleep(250);
 
@@ -322,11 +331,11 @@ public class ArmSystem {
 
     public synchronized void retract(){
         linkage.setPosition(LINKAGE_HOUSED);
-        while (winchEncoder.getCurrentPosition()  > 1000 && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
+        while (winchEncoder.getCurrentPosition()  > 500 && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
 //                AbstractOpMode.currentOpMode().telemetry.addData("curR", winchEncoder.getCurrentPosition());
 //                AbstractOpMode.currentOpMode().telemetry.addData("tarR", position);
 //                AbstractOpMode.currentOpMode().telemetry.update();
-            winchMotor.setPower(-0.3);
+            winchMotor.setPower(-0.5);
         }
         winchMotor.setPower(0);
        idleServos();
@@ -359,11 +368,19 @@ public class ArmSystem {
     }
 
     public void lowerLinkage() {
-        house.setPosition(INTAKE_POSITION);
+
+        actuateWinchStop(WINCHSTOP_STOPPING);
+        Utils.sleep(100);
+        if (isDuck) {
+            house.setPosition(INTAKE_POSITION + 0.1);
+        } else{
+            house.setPosition(INTAKE_POSITION);
+        }
         linkage.setPosition(LINKAGE_DOWN);
     }
 
     public void lowerLinkageAuto() {
+        actuateWinchStop(WINCHSTOP_STOPPING);
         house.setPosition(INTAKE_POSITION + 0.1);
         linkage.setPosition(LINKAGE_DOWN);
     }

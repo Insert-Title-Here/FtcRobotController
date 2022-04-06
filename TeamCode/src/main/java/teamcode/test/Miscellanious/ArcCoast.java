@@ -49,7 +49,7 @@ public class ArcCoast extends AbstractOpMode {
             public void run(){
                 for(int i = 0; i < FREIGHT && opModeIsActive() && !isStopRequested(); i++) {
                     while(!drive.getFlagIndex(0));
-                    arm.preScoreMulitFreight();
+                   // arm.preScoreMulitFreight();
                     arm.intakeDumb(-1.0);
                     arm.raise(Constants.TOP_POSITION + 1000);
                     drive.setFlagIndex(0, false);

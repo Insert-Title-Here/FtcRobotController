@@ -126,12 +126,12 @@ import static java.lang.Math.PI;
         warehouse = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
-        warehouse.setGain(200);
+        warehouse.setGain(500);
         frontRed.setGain(200);
         backRed.setGain(520);
         frontBlue.setGain(100);
         backBlue.setGain(300);
-        sensor.setGain(320); //325 is tested value but i think I trust this one more //280
+        sensor.setGain(420); //325 is tested value but i think I trust this one more //280
 
 
 
@@ -146,8 +146,8 @@ import static java.lang.Math.PI;
         ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-//        chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.HIGH_3_4M);
-//        ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.HIGH_3_4M);
+        chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.HIGH_3_4M);
+        ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.HIGH_3_4M);
 
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
@@ -1621,7 +1621,7 @@ import static java.lang.Math.PI;
         double deltaTime = AbstractOpMode.currentOpMode().time;
         int currentTics = arm.getConveyorPosition();
         NormalizedRGBA rgba = sensor.getNormalizedColors();
-        while(opModeIsRunning() && ratio > 0.1 && rgba.red < 0.9) { //ratio > 0.05
+        while(opModeIsRunning() && ratio > 0.3 && rgba.red < 0.9) { //ratio > 0.05
             rgba = sensor.getNormalizedColors();
             data = hub.getBulkData();
             AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.red);
@@ -1665,8 +1665,8 @@ import static java.lang.Math.PI;
             previousTics = currentTics;
         }
 
-        if(ratio < 0.1){
-            ratio =  0.1;
+        if(ratio < 0.3){
+            ratio =  0.3;
         }
         while(rgba.red < 0.9){
             rgba = sensor.getNormalizedColors();
@@ -1678,8 +1678,17 @@ import static java.lang.Math.PI;
             AbstractOpMode.currentOpMode().telemetry.update();
 
         }
+
         if(brake) {
             brake();
+        }
+    }
+
+    public boolean getCurrenElement(){
+        if(sensor.getNormalizedColors().blue > 0.9){
+            return true;
+        }else{
+            return false;
         }
     }
 

@@ -18,7 +18,7 @@ public class Constants {
 
     //Game Constants
     public static final double TOP_POSITION = 14000; // -14000 TANK   -21000 // PLASTIC WINCH 17000
-    public static final double MEDIUM_POSITION = 6000; //8000 PLASTIC WINCH
+    public static final double MEDIUM_POSITION = 7000; //8000 PLASTIC WINCH
     public static final double BOTTOM_POSITION = 4000;
 
 

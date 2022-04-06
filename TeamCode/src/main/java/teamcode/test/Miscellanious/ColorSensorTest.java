@@ -36,7 +36,7 @@ public class ColorSensorTest extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        sensor.setGain(300);
+        sensor.setGain(500);
         NormalizedRGBA previousColors = sensor.getNormalizedColors();
         int iterator = 0;
         drive.setMotorVelocity(6,6,6,6);
@@ -72,7 +72,7 @@ public class ColorSensorTest extends AbstractOpMode {
             telemetry.addData("R", red);
             telemetry.addData("G", green);
             telemetry.addData("B", blue);
-            telemetry.addData("A", colors.alpha);
+            telemetry.addData("A", alpha);
 //            telemetry.addData("R", color.red());
 //            telemetry.addData("G", color.green());
 //            telemetry.addData("B", color.blue());
