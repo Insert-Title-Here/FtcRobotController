@@ -18,7 +18,7 @@ public class CoastTest extends AbstractOpMode {
     @Override
     protected void onStart() {
 
-        drive.coastDriveEncoder(400, 1.0);
+        //drive.coastDriveEncoder(400, 1.0);
         while(opModeIsActive());
     }
 

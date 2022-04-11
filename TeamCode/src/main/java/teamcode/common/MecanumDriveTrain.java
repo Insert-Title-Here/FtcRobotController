@@ -131,7 +131,7 @@ import static java.lang.Math.PI;
         backRed.setGain(520);
         frontBlue.setGain(100);
         backBlue.setGain(300);
-        sensor.setGain(420); //325 is tested value but i think I trust this one more //280
+        sensor.setGain(450); //325 is tested value but i think I trust this one more //280
 
 
 
@@ -146,8 +146,8 @@ import static java.lang.Math.PI;
         ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.HIGH_3_4M);
-        ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.HIGH_3_4M);
+//        chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
+//        ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
         previousVelocity = new Vector2D(0,0);
         previousOmega = 0;
@@ -174,11 +174,11 @@ import static java.lang.Math.PI;
             double angularDistance = Math.abs(startAngle - imu.getAngularOrientation().firstAngle);
             double radialDistance = Math.abs(deltaRadians);
             double ratio = (radialDistance - angularDistance) / angularDistance;
-//            if(ratio < 0.2){
-//                ratio = 0.2;
-//            }else if(ratio > 1.0){
-//                ratio = 1.0;
-//            }
+            if(ratio < 0.2){
+                ratio = 0.2;
+            }else if(ratio > 1.0){
+                ratio = 1.0;
+            }
             AbstractOpMode.currentOpMode().telemetry.addData("ratio", ratio);
             AbstractOpMode.currentOpMode().telemetry.addData("angular", angularDistance);
             AbstractOpMode.currentOpMode().telemetry.update();
@@ -192,6 +192,27 @@ import static java.lang.Math.PI;
     public synchronized void rotateDistanceDE(double degrees, double omega){
         double radians = Math.toRadians(degrees);
         rotateDistanceDERadian(radians, omega);
+    }
+     public synchronized void rotateDistanceDEUnramped(double degrees, double omega){
+         double radians = Math.toRadians(degrees);
+         rotateDistanceDEUnrampedRadians(radians, omega);
+     }
+
+    public synchronized void rotateDistanceDEUnrampedRadians(double radians, double omega){
+        double deltaRadians = radians - imu.getAngularOrientation().firstAngle;
+        double startAngle = imu.getAngularOrientation().firstAngle;
+        omega *= -getSign(deltaRadians);
+        setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians) && opModeIsRunning()){
+            double angularDistance = Math.abs(startAngle - imu.getAngularOrientation().firstAngle);
+            double radialDistance = Math.abs(deltaRadians);
+            setMotorVelocity(omega , -omega, omega , -omega);
+
+
+        }
+        brake();
     }
 
 
@@ -209,9 +230,27 @@ import static java.lang.Math.PI;
         NormalizedRGBA rgba = warehouse.getNormalizedColors();
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //hub.clearBulkCache();
+        //LynxModule.BulkData data = hub.getBulkData();
+
         while(rgba.green < 0.9 && opModeIsRunning()){
+            //data = hub.getBulkData();
+            double posSum = 0;
+//            posSum += Math.abs(data.getMotorCurrentPosition(0));
+//            posSum += Math.abs(data.getMotorCurrentPosition(1));
+//            posSum += Math.abs(data.getMotorCurrentPosition(2));
+//            posSum += Math.abs(data.getMotorCurrentPosition(3));
+//            posSum = posSum / 4.0;
+//            AbstractOpMode.currentOpMode().telemetry.addData("sum", posSum);
+//
+////            AbstractOpMode.currentOpMode().telemetry.update();
+//            if(posSum > max){
+//             //   Debug.log("MAX REACHED");
+//                break;
+//            }
             rgba = warehouse.getNormalizedColors();
             setMotorVelocity(velocity,velocity,velocity,velocity);
+            //hub.clearBulkCache();
         }
         if(isBrake) {
             brake();
@@ -219,7 +258,6 @@ import static java.lang.Math.PI;
     }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior){
-        Debug.log(behavior);
         fl.setZeroPowerBehavior(behavior);
         fr.setZeroPowerBehavior(behavior);
         bl.setZeroPowerBehavior(behavior);
@@ -996,7 +1034,7 @@ import static java.lang.Math.PI;
         NormalizedRGBA backRGBA;
         double distanceFront, distanceBack;
             if(isRed) {
-                distanceFrontThreshold = 3.4; //2.9
+                distanceFrontThreshold = 1.5; //2.9
                 distanceBackThreshold = 1.9; //1.4
                 distanceFront = frontRed.getDistance(DistanceUnit.INCH);
                 distanceBack = backRed.getDistance(DistanceUnit.INCH);
@@ -1070,7 +1108,7 @@ import static java.lang.Math.PI;
         lowMagnitudeHardwareCycles = 0;
         double startTime = AbstractOpMode.currentOpMode().time;
         double deltaTime = AbstractOpMode.currentOpMode().time - startTime;
-        while((Math.abs(deltaTics) > 10 ||  deltaTime < 1.0) && opModeIsRunning()){
+        while((Math.abs(deltaTics) > 8 ||  deltaTime < 1.0) && opModeIsRunning()){
             int currentTics = systems.getCarouselPos();
             deltaTics = currentTics - previousTics;
             previousTics = currentTics;
@@ -1575,12 +1613,13 @@ import static java.lang.Math.PI;
                 modulateIntakeDumb(curr.getPower());
 
             }else if(curr.getMovement() == Movement.MovementType.COAST_MOVEMENT){
-                coastDriveEncoder(curr.getDistance(),curr.getVelocity());
+                coastDriveEncoder(curr.getDistance(),curr.getVelocity(), curr.getPlateu());
             }else if(curr.getMovement() == Movement.MovementType.MODIFY_ZEROPOWER){
                 setZeroPowerBehavior(curr.getBehavior());
             }else if(curr.getMovement() == Movement.MovementType.STRAFE_TP){
                 strafeTP(curr.getMillis(), curr.getPower());
             }
+            Debug.log(curr.getMovement());
         }
         brake();
     }
@@ -1595,8 +1634,8 @@ import static java.lang.Math.PI;
         setPower(0,0,0,0);
     }
 
-    public void coastDriveEncoder(double distance, double pow){
-        coastDriveEncoder(distance, pow, true);
+    public void coastDriveEncoder(double distance, double pow, double threshold){
+        coastDriveEncoder(distance, pow, true, threshold);
     }
 
     public synchronized void strafeTP(long time, double power){
@@ -1605,7 +1644,7 @@ import static java.lang.Math.PI;
         brake();
     }
 
-    public synchronized void coastDriveEncoder(double distance, double pow, boolean brake){
+    public synchronized void coastDriveEncoder(double distance, double pow, boolean brake, double threshold){
         setEncoderMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setConveyorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1621,15 +1660,15 @@ import static java.lang.Math.PI;
         double deltaTime = AbstractOpMode.currentOpMode().time;
         int currentTics = arm.getConveyorPosition();
         NormalizedRGBA rgba = sensor.getNormalizedColors();
-        while(opModeIsRunning() && ratio > 0.3 && rgba.red < 0.9) { //ratio > 0.05
+        while(opModeIsRunning() && ratio > 0.2 && rgba.red < 0.9) { //ratio > 0.05
             rgba = sensor.getNormalizedColors();
             data = hub.getBulkData();
-            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.red);
-            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.green);
-            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.blue);
-            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.alpha);
-
-            AbstractOpMode.currentOpMode().telemetry.update();
+//            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.red);
+//            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.green);
+//            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.blue);
+//            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.alpha);
+//
+//            AbstractOpMode.currentOpMode().telemetry.update();
 
             double posSum = 0;
             posSum += Math.abs(data.getMotorCurrentPosition(0));
@@ -1637,10 +1676,13 @@ import static java.lang.Math.PI;
             posSum += Math.abs(data.getMotorCurrentPosition(2));
             posSum += Math.abs(data.getMotorCurrentPosition(3));
             double posAvg = posSum / 4.0;
+            if(posAvg < threshold){
+                posAvg = 0;
+            }
             ratio = (distance - posAvg) / distance;
             calculatedPow = pow * ratio;
-            AbstractOpMode.currentOpMode().telemetry.addData("calculated", calculatedPow);
-            AbstractOpMode.currentOpMode().telemetry.update();
+//            AbstractOpMode.currentOpMode().telemetry.addData("calculated", calculatedPow);
+//            AbstractOpMode.currentOpMode().telemetry.update();
 
             currentTics = arm.getConveyorPosition();
             deltaTics = currentTics - previousTics;
@@ -1665,8 +1707,8 @@ import static java.lang.Math.PI;
             previousTics = currentTics;
         }
 
-        if(ratio < 0.3){
-            ratio =  0.3;
+        if(ratio < 0.2){
+            ratio =  0.2;
         }
         while(rgba.red < 0.9){
             rgba = sensor.getNormalizedColors();

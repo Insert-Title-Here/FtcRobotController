@@ -69,7 +69,7 @@ public class IntakeDuckNew extends AbstractOpMode {
                 if(position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
                     system.raise(Constants.BOTTOM_POSITION);
                 }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
-                    system.raise(Constants.MEDIUM_POSITION + 4000);
+                    system.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
                     system.raise(Constants.TOP_POSITION);
                 }
@@ -79,10 +79,11 @@ public class IntakeDuckNew extends AbstractOpMode {
                 system.retract();
                 while(!flags[2]);
                 system.raise(Constants.TOP_POSITION + 3000);
+                Utils.sleep(400);
+                system.retract();
                 while(!flags[3]);
 
-                Utils.sleep(200);
-                system.retract();
+
 
             }
         };
@@ -98,19 +99,20 @@ public class IntakeDuckNew extends AbstractOpMode {
     protected void onStart() {
         webcam.stopStreaming();
         armThread.start();
-        drive.moveDistanceDEVelocity(1200, -45, 2 * VELOCITY);
+        system.actuateWinchStop(1.0);
+        drive.moveDistanceDEVelocity(1000, -60, 2 * VELOCITY);
         //Utils.sleep(200);
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(450, 0, VELOCITY);
-        Utils.sleep(200);
-        drive.rotateDistanceDE(75, 6);
+        drive.moveDistanceDEVelocity(750, 0, VELOCITY / 2.0);
+        Utils.sleep(400);
+        drive.rotateDistanceDE(90, 3);
 
         //extend
         flags[0] = true;
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(700, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(800, 180, VELOCITY);
         //score
         if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
             system.runConveyorPos(0.5, 2000);
@@ -121,7 +123,7 @@ public class IntakeDuckNew extends AbstractOpMode {
         drive.moveDistanceDEVelocity(200, 90, VELOCITY ); //400
 
 
-        drive.rotateDistanceDE(140, 24);
+        drive.rotateDistanceDE(150, 24);
         flags[1] = true;
         //Utils.sleep(200);
         drive.strafeDistanceSensor(30, -Math.PI / 6.0);
@@ -131,7 +133,8 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         drive.moveDistanceDEVelocity(300, -90, VELOCITY);
         Utils.sleep(200);
-
+       // drive.rotateDistanceDE(150, -6);
+        Utils.sleep(200);
         drive.moveDistanceDEVelocity(600, 0, VELOCITY);//
         //drive.driveColorSensorWarehouse(4);
         drive.moveDistanceDEVelocity(400, 0, VELOCITY / 2.0);
@@ -140,43 +143,56 @@ public class IntakeDuckNew extends AbstractOpMode {
         drive.duck();
         system.lowerLinkage();
         system.intakeDumb(1.0);
+        drive.setPower(0.05,0.05,0.05,0.05);
 
         systems.scoreDuckAuto();
         Utils.sleep(250);
-        drive.moveDistanceDEVelocity(200, -90, VELOCITY / 2.0);
+        drive.moveDistanceDEVelocity(600, 180, VELOCITY);
+        Utils.sleep(250);
+        drive.rotateDistanceDE(90, 6);
+        Utils.sleep(250);
+        drive.moveDistanceDEVelocity(200, 0, VELOCITY);
+
+    }
+
+    private void scoreDuck(){
+        drive.moveDistanceDEVelocity(300, -90, VELOCITY / 2.0);
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(100, 0, VELOCITY / 2.0);
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(800, -90, VELOCITY / 2.0); //400
 
 
-            Utils.sleep(500);
-            //drive.moveDistanceDEVelocity(100, -90, VELOCITY / 2.0);
+        Utils.sleep(500);
+        //drive.moveDistanceDEVelocity(100, -90, VELOCITY / 2.0);
 
-            //drive.moveDistanceDEVelocity(420, 0, VELOCITY / 2.0);
-            //Utils.sleep(500);
-            system.preScore();
+        //drive.moveDistanceDEVelocity(420, 0, VELOCITY / 2.0);
+        //Utils.sleep(500);
+        system.preScore();
 
-            drive.moveDistanceDEVelocity(300, 180, VELOCITY);
-            Utils.sleep(200);
-            system.intakeDumb(0);
-            drive.moveDistanceDEVelocity(1200, 90, 2 * VELOCITY); //400
-            Utils.sleep(200);
-            drive.moveDistanceDEVelocity(550, 180,  VELOCITY);
-            drive.rotateDistanceDE(90, 6);
-            Utils.sleep(200);
-
-            //extend
-            flags[2] = true;
-            drive.moveDistanceDEVelocity(900, 180, VELOCITY);
-            //score
-            system.score();
-            Utils.sleep(200);
-            flags[3] = true;
-
-        drive.moveDistanceDEVelocity(1000, 0, VELOCITY);
+        drive.moveDistanceDEVelocity(100, 180, VELOCITY);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(400, -90, VELOCITY ); //400
+        system.intakeDumb(0);
+        // drive.rotateDistanceDE(150, 24);
+        //Utils.sleep(200);
+        drive.moveDistanceDEVelocity(1400, 90, 2 * VELOCITY); //400
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(700, 180,  VELOCITY * 2.0);
+        Utils.sleep(200);
+        drive.rotateDistanceDE(105, 12);
+        Utils.sleep(200);
+
+        //extend
+        flags[2] = true;
+        drive.moveDistanceDEVelocity(400, 180, 2 * VELOCITY);
+        //score
+        flags[3] = true;
+        Utils.sleep(200);
+        system.score();
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(800, 0, 2 * VELOCITY);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(400, -90, 2 * VELOCITY ); //400
 
 
     }

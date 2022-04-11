@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import teamcode.common.AbstractOpMode;
 
-@Disabled
 @Autonomous(name="color")
 public class ColorSensorTest extends AbstractOpMode {
 
@@ -16,7 +15,7 @@ public class ColorSensorTest extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
-        sensor.setGain(280); //325 is tested value but i think I trust this one more
+        sensor.setGain(500); //325 is tested value but i think I trust this one more
 
     }
 

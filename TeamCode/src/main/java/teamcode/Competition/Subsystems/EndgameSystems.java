@@ -28,11 +28,12 @@ public class EndgameSystems {
      */
 
     private CRServo carouselBlue, carouselRed, xCap;
-    private Servo  yCap;
+    private Servo yCap;
     private DcMotor carouselEncoderBlue, carouselEncoderRed, capstoneExtension;
     private boolean isBlue;
 
     public double xCapSpeedDiv = 7;
+    private double yCapSpeed = -0.15;
 
     public void runCarousel(double power) {
 
@@ -61,7 +62,7 @@ public class EndgameSystems {
         //carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.isBlue = isBlue;
-        zeroCap();
+       // zeroCap();
 
     }
 
@@ -81,13 +82,9 @@ public class EndgameSystems {
         yCap.setPosition(pos);
     }
 
-    public double getYCapPosition() {
-        return yCap.getPosition();
-    }
-
     public void zeroCap() {
+        yCap.setPosition(0.5);
         // TODO - get the x position to set the x zero pos (not fully necessary, might be nice to have)
-        yCap.setPosition(0.2);
     }
 
     public double map(double val, double in_min, double in_max, double out_min, double out_max) {
@@ -180,11 +177,11 @@ public class EndgameSystems {
         }
         carouselRed.setPower(0);
         carouselBlue.setPower(0);
-        Utils.sleep(500);
+       Utils.sleep(500);
         while(Math.abs(encoder.getCurrentPosition()) < Math.abs((pose - 5000)) && AbstractOpMode.currentOpMode().opModeIsActive()){
             Debug.log("here");
-            carouselRed.setPower(1.0 * direction);
-            carouselBlue.setPower(1.0 * direction);
+            carouselRed.setPower(0.8 * direction);
+            carouselBlue.setPower(0.8 * direction);
 
 
         }
@@ -200,4 +197,7 @@ public class EndgameSystems {
         return carouselEncoderRed;
     }
 
+    public double getYCapPosition() {
+        return yCap.getPosition();
+    }
 }

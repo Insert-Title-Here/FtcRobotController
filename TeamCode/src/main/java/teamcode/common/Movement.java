@@ -24,6 +24,7 @@ public class Movement {
     //translational params
     private double distance;
     private double velocity, radians;
+    private double plateu;
 
     //rotational params
     private double rotation;
@@ -92,10 +93,16 @@ public class Movement {
         this.velocity = velocity;
     }
 
-    public Movement(double velocity, double distance, boolean coast){
+    public Movement(double velocity, int max){
+        this.velocity = velocity;
+        this.distance = max;
+        movement = MovementType.WAREHOUSE_LOCALIZATION;
+    }
+
+    public Movement(double velocity, double distance, double plateu){
         this.velocity = velocity;
         this.distance = distance;
-        this.distance = distance;
+        this.plateu = plateu;
         movement = MovementType.COAST_MOVEMENT;
     }
 
@@ -248,5 +255,17 @@ public class Movement {
 
     public DcMotor.ZeroPowerBehavior getBehavior() {
         return behavior;
+    }
+
+    public double getPlateu() {
+        return plateu;
+    }
+
+    public void setPlateu(double plateu) {
+        this.plateu = plateu;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 }

@@ -33,7 +33,7 @@ public class TeleOpBlue extends AbstractOpMode {
     protected void onInitialize() {
         drive = new MecanumDriveTrain(hardwareMap);
         arm = new ArmSystem(hardwareMap, true);
-        systems = new EndgameSystems(hardwareMap, true);
+        systems = new EndgameSystems(hardwareMap, false);
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
@@ -67,7 +67,6 @@ public class TeleOpBlue extends AbstractOpMode {
         isExtended = false;
         isDuck = false;
         arm.setIsDuck(isDuck);
-
     }
 
     // Flag variable for keeping every servo frozen until game start
@@ -85,9 +84,11 @@ public class TeleOpBlue extends AbstractOpMode {
             systems.setCapstoneExtensionPower(0);
         }
 
-        double yPos = systems.getYCapPosition();
-        systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
-        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.00035, 0.00035));
+
+         double yPos = systems.getYCapPosition();
+//        systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
+//        systems.setYCapPower(gamepad2.right_stick_y);
+           systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.00035, 0.00035));
 
         if (gamepad2.x) {
             systems.zeroCap();
@@ -117,7 +118,7 @@ public class TeleOpBlue extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 } else {
-                    arm.intakeDumb(0.3 * Math.sin( elapsedTime) + 0.7);
+                    arm.intakeDumb(0.3 * Math.abs(Math.sin(6 * elapsedTime)) + 0.7);
                 }
 
             }
@@ -152,7 +153,7 @@ public class TeleOpBlue extends AbstractOpMode {
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
         } else if (gamepad1.left_trigger > 0.3) {
-            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED && time - previousExtensionTime > 5) {
+            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 previousExtensionTime = time;
                 if(isExtended) {
                     arm.raise(Constants.TOP_POSITION + 2000); //3000
@@ -170,29 +171,35 @@ public class TeleOpBlue extends AbstractOpMode {
             }
         } else if (gamepad1.y && pulleyState == PulleyState.RETRACTED) {
             //arm.raise(Constants.BOTTOM_POSITION);
-            arm.runConveyorPos(0.5, 2000);
+            while(gamepad1.y){
+                systems.runCarousel(1.0);
+            }
+            //arm.runConveyorPos(0.5, 2000);
             arm.idleServos();
             //arm.moveSlide(-1, 0);
             pulleyState = PulleyState.RETRACTED;
         } else if (gamepad1.dpad_left) {
             arm.resetWinchEncoder();
+        }else if(gamepad1.right_bumper){
+            systems.scoreDuck();
         }
         if (gamepad1.left_bumper) {
             while (gamepad1.left_bumper) {
-                systems.runCarousel( 1);
+                arm.runConveyor(0.8);
             }
-        } else if (gamepad1.start && !previousStart){
-            isExtended = !isExtended;
-        }else if(gamepad1.share && !previousOptions){
+            arm.idleServos();
+        } else if (gamepad1.circle && !previousStart){
+//            isExtended = !isExtended;
+        }else if(gamepad1.square && !previousOptions){
             isDuck = !isDuck;
+            isExtended = !isExtended;
             arm.setIsDuck(isDuck);
 
-        } else if(gamepad1.right_bumper){
-            systems.scoreDuck();
-        } else{
+        } else {
             arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);
+            arm.runConveyor(0);
         }
         if (gamepad1.right_stick_button) {
             arm.preScore();
@@ -200,8 +207,8 @@ public class TeleOpBlue extends AbstractOpMode {
             Utils.sleep(250);
             arm.intakeDumb(0);
         }
-        previousOptions = gamepad1.share;
-        previousStart = gamepad1.start;
+        previousOptions = gamepad1.square;
+        previousStart = gamepad1.circle;
         telemetry.addData("isExtended", isExtended);
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
         telemetry.addData("isDuck", isDuck);

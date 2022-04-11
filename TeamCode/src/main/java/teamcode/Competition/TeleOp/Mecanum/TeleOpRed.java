@@ -71,6 +71,7 @@ public class TeleOpRed extends AbstractOpMode {
 
     // Flag variable for keeping every servo frozen until game start
     boolean capping = false;
+    private double feedPow = 0.05;
     boolean previousLeft, previousRight, previousUp, previousDown;
     private void capUpdate() {
         if(gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
@@ -85,8 +86,15 @@ public class TeleOpRed extends AbstractOpMode {
         }
 
 
+        telemetry.addData("feedpow", feedPow);
+        telemetry.update();
+
+
     double yPos = systems.getYCapPosition();
         systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
+
+//        telemetry.addData("rsy", gamepad2.right_stick_y);
+//        telemetry.update();
         systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.00035, 0.00035));
 
         if (gamepad2.x) {
@@ -188,15 +196,14 @@ public class TeleOpRed extends AbstractOpMode {
             }
             arm.idleServos();
         } else if (gamepad1.circle && !previousStart){
-            isExtended = !isExtended;
+//            isExtended = !isExtended;
         }else if(gamepad1.square && !previousOptions){
             isDuck = !isDuck;
+            isExtended = !isExtended;
             arm.setIsDuck(isDuck);
 
         } else {
-            if(arm.getStage() != ArmSystem.Stage.EXTENDED) {
-                arm.setWinchPower(0);
-            }
+            arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);
             arm.runConveyor(0);
@@ -209,10 +216,10 @@ public class TeleOpRed extends AbstractOpMode {
         }
         previousOptions = gamepad1.square;
         previousStart = gamepad1.circle;
-        telemetry.addData("isExtended", isExtended);
-        telemetry.addData("slide pos", arm.getLinearSlidePosition());
-        telemetry.addData("isDuck", isDuck);
-        telemetry.update();
+//        telemetry.addData("isExtended", isExtended);
+//        telemetry.addData("slide pos", arm.getLinearSlidePosition());
+//        telemetry.addData("isDuck", isDuck);
+//        telemetry.update();
 
     }
 

@@ -27,7 +27,7 @@ public class coastTest extends AbstractOpMode {
         arm.lowerLinkageAuto();
         arm.intakeDumb(1.0);
 //        drive.setPower(0.2,0.2,0.2,0.2);
-        drive.coastDriveEncoder(400, 1.0);
+        //drive.coastDriveEncoder(400, 1.0);
         while(opModeIsActive());
     }
 

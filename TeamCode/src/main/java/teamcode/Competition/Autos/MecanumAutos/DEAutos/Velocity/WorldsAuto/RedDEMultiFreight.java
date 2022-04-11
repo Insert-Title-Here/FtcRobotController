@@ -25,7 +25,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
     Thread armThread;
     private final int FREIGHT = 4;
     private ArrayList<Movement> warehouseSplice;
-    private final double VELOCITY = 10;
+    private final double VELOCITY = 25;
     PIDFCoefficients coefficients = new PIDFCoefficients(10, 0.5, 1.0, 1.0); //2.5
     int globalIterator;
 
@@ -37,7 +37,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
         warehouseSplice = new ArrayList<>();
         armThread = new Thread(){
             public void run(){
-                arm.raise(Constants.TOP_POSITION + 1000);
+                arm.raise(Constants.TOP_POSITION + 2000);
                 while(!drive.getFlagIndex(4));
                 arm.score();
                 Utils.sleep(250);
@@ -48,7 +48,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
                     arm.intakeDumb(-1.0);
                     drive.setFlagIndex(0, false);
                     while (!drive.getFlagIndex(1)) ;
-                    arm.raise(Constants.TOP_POSITION + 500);
+                    arm.raise(Constants.TOP_POSITION + 1500);
                     drive.setFlagIndex(1, false);
                     while (!drive.getFlagIndex(2));
                     arm.scoreAuto();
@@ -65,9 +65,10 @@ public class RedDEMultiFreight extends AbstractOpMode {
     @Override
     protected void onStart() {
         armThread.start();
+        arm.actuateWinchStop(1.0);
         drive.moveDistanceDEVelocity(700, -45, 2 * VELOCITY); // 900 -45
         Utils.sleep(100);
-        drive.rotateDistanceDE(160, 6);
+        drive.rotateDistanceDEUnramped(155, 24);
 
 //        if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
 //            Debug.log("here");
@@ -78,7 +79,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
         //Utils.sleep(250);
         drive.setFlagIndex(4, true);
         Utils.sleep(200);
-        drive.rotateDistanceDE(-90, 24);
+        drive.rotateDistanceDEUnramped(-90, 24);
         drive.strafeDistanceSensor(30, 0);
         //drive.driveColorSensorWarehouse(6); //alternatively make this 1000 tics
 
@@ -94,7 +95,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(200));
             //warehouseSplice.add(new Movement(200)); may or may not be needed
 
-            warehouseSplice.add(new Movement(1.0, 400 + 50 *Math.pow(i, 1.5), true));
+            warehouseSplice.add(new Movement(1.0, 400.0 + 30 *i, 85 * i));
             //warehouseSplice.add(new Movement(100 + (100 * i), 10.0, 0.0)); //increase this? new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)
             // warehouseSplice.add(new Movement(700));
             warehouseSplice.add(new Movement(DcMotor.ZeroPowerBehavior.BRAKE));
@@ -104,10 +105,10 @@ public class RedDEMultiFreight extends AbstractOpMode {
 //            warehouseSplice.add(new Movement(-1.0));
 
 
-            warehouseSplice.add(new Movement(300 + 20 * i, 2 * VELOCITY, 180.0));
-            warehouseSplice.add(new Movement(1.0,200));
+            warehouseSplice.add(new Movement(300 + 20 * i, 2 * VELOCITY, 180.0)); // 180.0
+            warehouseSplice.add(new Movement(1.0,(long)200));
 
-            warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+            warehouseSplice.add(new Movement(-4,500));
             warehouseSplice.add(new Movement(1.0, (long)100));
             //warehouseSplice.add(new Movement(100, VELOCITY, 90.0));
             //warehouseSplice.add(new Movement(300, VELOCITY, 180.0));
@@ -118,7 +119,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(100));
             warehouseSplice.add(new Movement(100));
             warehouseSplice.add(new Movement(1, true));
-            warehouseSplice.add(new Movement(129.0 , -20.0,1550)); // -6, 1500
+            warehouseSplice.add(new Movement(131.0 , -30.0,1550)); // -6, 1500
             warehouseSplice.add(new Movement(2, true));
             warehouseSplice.add(new Movement(300));
 
@@ -131,7 +132,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
             drive.splicedMovement(warehouseSplice);
             warehouseSplice.clear();
         }
-        drive.moveDistanceDEVelocity(300, 0, 25);
+        drive.moveDistanceDEVelocity(300, 0, 35);
     }
 
     @Override

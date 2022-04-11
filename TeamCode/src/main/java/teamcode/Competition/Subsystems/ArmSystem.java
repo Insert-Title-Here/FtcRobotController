@@ -25,15 +25,16 @@ public class ArmSystem {
     //House Servo values
     private static final double INTAKE_POSITION = 0.00; //0
     private static final double HOUSING_POSITION_BALL = 0.15;
-    private static final double HOUSING_POSITION_DUCK = 0.26; //0.12
+    private static final double HOUSING_POSITION_DUCK = 0.22; //0.12
     private static final double HOUSING_POSITION = 0.22; //0.22
     private static final double SCORING_POSITION = 0.56; //0.5
 
-    private static final double LINKAGE_DOWN = 0.0; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
+    private static final double LINKAGE_DOWN = 0.02; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.6;
     private static final double LINKAGE_SCORE = 0.7;
 
     private static final double WINCHSTOP_STOPPING = 0.45;
+    private static final double WINCHSTOP_INIT = 0.6;
     private static final double WINCHSTOP_OPEN = 1.0;
 
 
@@ -64,7 +65,7 @@ public class ArmSystem {
         house = hardwareMap.servo.get("House");
         linkage = hardwareMap.servo.get("Linkage");
         //rampWinch = hardwareMap.servo.get("RampWinch");
-        winchStop = hardwareMap.servo.get("Stop"); //TODO add
+        winchStop = hardwareMap.servo.get("Stop");
         winchStop.setDirection(Servo.Direction.REVERSE);
         //carousel = hardwareMap.get(CRServo.class, "Carousel");
 
@@ -74,7 +75,7 @@ public class ArmSystem {
         winchEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
         //carousel.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        winchStop.setPosition(WINCHSTOP_OPEN);
+        winchStop.setPosition(WINCHSTOP_INIT);
 
         if(isTeleOp){
             house.setPosition(INTAKE_POSITION);

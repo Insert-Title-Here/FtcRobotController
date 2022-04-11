@@ -90,7 +90,7 @@ public class ArcCoast extends AbstractOpMode {
             warehouseSplice.add(new Movement(1.0));
             //warehouseSplice.add(new Movement(200)); may or may not be needed
 
-            warehouseSplice.add(new Movement(0.7, 300 + 50 *Math.pow(i, 1.5), true));
+            //warehouseSplice.add(new Movement(0.7, 300 + 50 *Math.pow(i, 1.5), true));
             //warehouseSplice.add(new Movement(100 + (100 * i), 10.0, 0.0)); //increase this? new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)
            // warehouseSplice.add(new Movement(700));
             warehouseSplice.add(new Movement(DcMotor.ZeroPowerBehavior.BRAKE));
