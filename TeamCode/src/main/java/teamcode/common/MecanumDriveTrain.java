@@ -95,6 +95,7 @@ import static java.lang.Math.PI;
     }
 
     ExpansionHubEx chub, ehub;
+    Logger logger;
 
     /**
      * drive encoder constructor with Modular PIDF controller constants, for seperate opModes
@@ -126,12 +127,15 @@ import static java.lang.Math.PI;
         warehouse = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
-        warehouse.setGain(500);
+        warehouse.setGain(400);
         frontRed.setGain(200);
         backRed.setGain(520);
         frontBlue.setGain(100);
         backBlue.setGain(300);
         sensor.setGain(450); //325 is tested value but i think I trust this one more //280
+
+        logger = new Logger(new String[]{"SensorTrips.txt"});
+
 
 
 
@@ -232,10 +236,10 @@ import static java.lang.Math.PI;
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //hub.clearBulkCache();
         //LynxModule.BulkData data = hub.getBulkData();
+        int iterator = 0;
 
         while(rgba.green < 0.9 && opModeIsRunning()){
             //data = hub.getBulkData();
-            double posSum = 0;
 //            posSum += Math.abs(data.getMotorCurrentPosition(0));
 //            posSum += Math.abs(data.getMotorCurrentPosition(1));
 //            posSum += Math.abs(data.getMotorCurrentPosition(2));
@@ -249,11 +253,17 @@ import static java.lang.Math.PI;
 //                break;
 //            }
             rgba = warehouse.getNormalizedColors();
+            //iterator++;
+            //logger.writeToLogString(0, iterator + ", " + rgba.green + "\n");
+
             setMotorVelocity(velocity,velocity,velocity,velocity);
             //hub.clearBulkCache();
         }
+        ehub.setLedColor(255,0,0);
+        chub.setLedColor(255,0,0);
+
         if(isBrake) {
-            brake();
+            brakeAuto();
         }
     }
 
@@ -1337,6 +1347,15 @@ import static java.lang.Math.PI;
         previousVelocity = new Vector2D(0,0);
     }
 
+    private void brakeAuto(){
+        fl.setVelocity(0);
+        fr.setVelocity(0);
+        bl.setVelocity(0);
+        br.setVelocity(0);
+
+    }
+
+
 
     public DcMotor[] getMotors(){
         return new DcMotor[]{fl,fr,bl,br};
@@ -1598,7 +1617,10 @@ import static java.lang.Math.PI;
             }else if(curr.getMovement() == Movement.MovementType.WALL_LOCALIZATION){
                 strafeDistanceSensor(curr.getVelocity(), curr.getRadians(), false, isRed);
             }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_LOCALIZATION){
-                driveColorSensorWarehouse(curr.getVelocity(), false, curr.getVal());
+                driveColorSensorWarehouse(curr.getVelocity(), true, curr.getVal());
+                if(curr.getVelocity() < 0){
+                    arm.preScore();
+                }
             }else if(curr.getMovement() == Movement.MovementType.MODIFY_FLAG){
 
                 flags[curr.getIndex()] = curr.getVal();
@@ -1619,7 +1641,6 @@ import static java.lang.Math.PI;
             }else if(curr.getMovement() == Movement.MovementType.STRAFE_TP){
                 strafeTP(curr.getMillis(), curr.getPower());
             }
-            Debug.log(curr.getMovement());
         }
         brake();
     }
@@ -1718,12 +1739,17 @@ import static java.lang.Math.PI;
             AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.alpha);
 
             AbstractOpMode.currentOpMode().telemetry.update();
-
         }
+
+
 
         if(brake) {
             brake();
         }
+    }
+    
+    public void writeLoggerToFile(){
+        logger.writeLoggerToFile();
     }
 
     public boolean getCurrenElement(){

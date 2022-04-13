@@ -42,6 +42,13 @@ public class Logger {
         loggerStrings.set(index, curr);
     }
 
+
+    public void writeCoordinatesToLogString(int index, double x, double y){
+        String curr = loggerStrings.get(index);
+        curr += x + ", " + y;
+        loggerStrings.set(index, curr);
+    }
+
     public void writeLoggerToFile(){
         for(int i = 0; i < loggerFiles.size(); i++){
             try {

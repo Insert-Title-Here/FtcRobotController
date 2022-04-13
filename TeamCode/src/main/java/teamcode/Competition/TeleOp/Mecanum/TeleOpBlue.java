@@ -33,7 +33,7 @@ public class TeleOpBlue extends AbstractOpMode {
     protected void onInitialize() {
         drive = new MecanumDriveTrain(hardwareMap);
         arm = new ArmSystem(hardwareMap, true);
-        systems = new EndgameSystems(hardwareMap, false);
+        systems = new EndgameSystems(hardwareMap, true);
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
@@ -71,6 +71,7 @@ public class TeleOpBlue extends AbstractOpMode {
 
     // Flag variable for keeping every servo frozen until game start
     boolean capping = false;
+    private double feedPow = 0.05;
     boolean previousLeft, previousRight, previousUp, previousDown;
     private void capUpdate() {
         if(gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
@@ -85,10 +86,16 @@ public class TeleOpBlue extends AbstractOpMode {
         }
 
 
-         double yPos = systems.getYCapPosition();
-//        systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
-//        systems.setYCapPower(gamepad2.right_stick_y);
-           systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.00035, 0.00035));
+//        telemetry.addData("feedpow", feedPow);
+//        telemetry.update();
+
+
+        double yPos = systems.getYCapPosition();
+        systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
+
+//        telemetry.addData("rsy", gamepad2.right_stick_y);
+//        telemetry.update();
+        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.0007, 0.0007));
 
         if (gamepad2.x) {
             systems.zeroCap();
@@ -118,7 +125,12 @@ public class TeleOpBlue extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 } else {
-                    arm.intakeDumb(0.3 * Math.abs(Math.sin(6 * elapsedTime)) + 0.7);
+                    if(isDuck){
+                        arm.intakeDumb(0.8);
+                    }else{
+                        arm.intakeDumb(1.0);
+                    }
+                    //arm.intakeDumb(0.3 * Math.abs(Math.sin(6 * elapsedTime)) + 0.7);
                 }
 
             }
@@ -137,10 +149,10 @@ public class TeleOpBlue extends AbstractOpMode {
                         state = ScoredButtonState.SCORED;
                         arm.score();
                     } else if (state == ScoredButtonState.SCORED) {
-                        telemetry.clear();
+                        //telemetry.clear();
                         state = ScoredButtonState.RETRACTING;
                         iterator++;
-                        Debug.log("here" + iterator);
+                        //Debug.log("here" + iterator);
                         arm.retract();
                         pulleyState = PulleyState.RETRACTED;
                     }
@@ -188,14 +200,18 @@ public class TeleOpBlue extends AbstractOpMode {
                 arm.runConveyor(0.8);
             }
             arm.idleServos();
-        } else if (gamepad1.circle && !previousStart){
-//            isExtended = !isExtended;
+        } else if (gamepad1.start && !previousStart){
+            isExtended = !isExtended;
         }else if(gamepad1.square && !previousOptions){
             isDuck = !isDuck;
-            isExtended = !isExtended;
+            isExtended = isDuck;
             arm.setIsDuck(isDuck);
 
-        } else {
+        }else if(gamepad1.b){
+            while(gamepad1.b){
+                systems.runCarousel(0.7);
+            }
+        } else{
             arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);
@@ -208,7 +224,7 @@ public class TeleOpBlue extends AbstractOpMode {
             arm.intakeDumb(0);
         }
         previousOptions = gamepad1.square;
-        previousStart = gamepad1.circle;
+        previousStart = gamepad1.start;
         telemetry.addData("isExtended", isExtended);
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
         telemetry.addData("isDuck", isDuck);

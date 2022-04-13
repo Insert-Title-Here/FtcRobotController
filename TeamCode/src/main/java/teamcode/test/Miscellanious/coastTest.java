@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
+import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 
 @Autonomous(name="coast")
@@ -24,10 +25,11 @@ public class coastTest extends AbstractOpMode {
 
     @Override
     protected void onStart() {
-        arm.lowerLinkageAuto();
+        arm.lowerLinkage();
         arm.intakeDumb(1.0);
 //        drive.setPower(0.2,0.2,0.2,0.2);
-        //drive.coastDriveEncoder(400, 1.0);
+        drive.coastDriveEncoder(400, 1.0, 100);
+        Debug.log("TERMINATED");
         while(opModeIsActive());
     }
 

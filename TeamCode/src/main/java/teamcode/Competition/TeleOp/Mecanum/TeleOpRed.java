@@ -86,8 +86,8 @@ public class TeleOpRed extends AbstractOpMode {
         }
 
 
-        telemetry.addData("feedpow", feedPow);
-        telemetry.update();
+//        telemetry.addData("feedpow", feedPow);
+//        telemetry.update();
 
 
     double yPos = systems.getYCapPosition();
@@ -95,7 +95,7 @@ public class TeleOpRed extends AbstractOpMode {
 
 //        telemetry.addData("rsy", gamepad2.right_stick_y);
 //        telemetry.update();
-        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.00035, 0.00035));
+        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.0007, 0.0007));
 
         if (gamepad2.x) {
             systems.zeroCap();
@@ -125,7 +125,12 @@ public class TeleOpRed extends AbstractOpMode {
                     arm.lowerLinkage();
                     linkageState = LinkageState.LOWERED;
                 } else {
-                        arm.intakeDumb(0.3 * Math.abs(Math.sin(6 * elapsedTime)) + 0.7);
+                        if(isDuck){
+                            arm.intakeDumb(0.8);
+                        }else{
+                            arm.intakeDumb(1.0);
+                        }
+                        //arm.intakeDumb(0.3 * Math.abs(Math.sin(6 * elapsedTime)) + 0.7);
                 }
 
             }
@@ -144,10 +149,10 @@ public class TeleOpRed extends AbstractOpMode {
                         state = ScoredButtonState.SCORED;
                         arm.score();
                     } else if (state == ScoredButtonState.SCORED) {
-                        telemetry.clear();
+                        //telemetry.clear();
                         state = ScoredButtonState.RETRACTING;
                         iterator++;
-                        Debug.log("here" + iterator);
+                        //Debug.log("here" + iterator);
                         arm.retract();
                         pulleyState = PulleyState.RETRACTED;
                     }
@@ -195,14 +200,18 @@ public class TeleOpRed extends AbstractOpMode {
                 arm.runConveyor(0.8);
             }
             arm.idleServos();
-        } else if (gamepad1.circle && !previousStart){
-//            isExtended = !isExtended;
+        } else if (gamepad1.start && !previousStart){
+            isExtended = !isExtended;
         }else if(gamepad1.square && !previousOptions){
             isDuck = !isDuck;
-            isExtended = !isExtended;
+            isExtended = isDuck;
             arm.setIsDuck(isDuck);
 
-        } else {
+        }else if(gamepad1.b){
+            while(gamepad1.b){
+                systems.runCarousel(0.7);
+            }
+        } else{
             arm.setWinchPower(0);
             systems.runCarousel(0);
             arm.intakeDumb(0);
@@ -215,11 +224,11 @@ public class TeleOpRed extends AbstractOpMode {
             arm.intakeDumb(0);
         }
         previousOptions = gamepad1.square;
-        previousStart = gamepad1.circle;
-//        telemetry.addData("isExtended", isExtended);
-//        telemetry.addData("slide pos", arm.getLinearSlidePosition());
-//        telemetry.addData("isDuck", isDuck);
-//        telemetry.update();
+        previousStart = gamepad1.start;
+        telemetry.addData("isExtended", isExtended);
+        telemetry.addData("slide pos", arm.getLinearSlidePosition());
+        telemetry.addData("isDuck", isDuck);
+        telemetry.update();
 
     }
 

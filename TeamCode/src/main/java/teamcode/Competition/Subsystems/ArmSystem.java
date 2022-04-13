@@ -34,7 +34,7 @@ public class ArmSystem {
     private static final double LINKAGE_SCORE = 0.7;
 
     private static final double WINCHSTOP_STOPPING = 0.45;
-    private static final double WINCHSTOP_INIT = 0.6;
+    private static final double WINCHSTOP_INIT = 0.7;
     private static final double WINCHSTOP_OPEN = 1.0;
 
 
@@ -238,7 +238,7 @@ public class ArmSystem {
     //will be merged into intake() later
     public void preScore(){
         actuateWinchStop(WINCHSTOP_OPEN);
-        if(isTeleOp) {
+        if(isTeleOp && !isDuck) {
             intakeDumb(1.0);
         }
         synchronized (this) {
@@ -264,9 +264,10 @@ public class ArmSystem {
     public void preScoreMultiFreight(boolean ball){
         actuateWinchStop(WINCHSTOP_OPEN);
         linkage.setPosition(LINKAGE_HOUSED);
-        if(ball){
-            house.setPosition(HOUSING_POSITION_BALL);
-        }
+        //house.setPosition(HOUSING_POSITION);
+        //        if(ball){
+//            house.setPosition(HOUSING_POSITION_BALL);
+//        }
 
         //house.setPosition(HOUSING_POSITION);
         Utils.sleep(250);
@@ -382,8 +383,11 @@ public class ArmSystem {
 
     public void lowerLinkageAuto() {
         actuateWinchStop(WINCHSTOP_STOPPING);
-        house.setPosition(INTAKE_POSITION + 0.1);
-        linkage.setPosition(LINKAGE_DOWN);
+        synchronized (this) {
+            linkage.setPosition(LINKAGE_DOWN);
+        }
+        house.setPosition(INTAKE_POSITION +0.1); //+0.1
+
     }
 
     public void setIsDuck(boolean isDuck) {
@@ -421,10 +425,10 @@ public class ArmSystem {
     //}
 
     public void moveSlide(double power, double position){
-            while (winchEncoder.getCurrentPosition() < position && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
-//                AbstractOpMode.currentOpMode().telemetry.addData("curE", winchEncoder.getCurrentPosition());
-//                AbstractOpMode.currentOpMode().telemetry.addData("tarE",position);
-//                AbstractOpMode.currentOpMode().telemetry.update();
+            while (Math.abs(winchEncoder.getCurrentPosition()) < position && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
+                AbstractOpMode.currentOpMode().telemetry.addData("curE", winchEncoder.getCurrentPosition());
+                AbstractOpMode.currentOpMode().telemetry.addData("tarE",position);
+                AbstractOpMode.currentOpMode().telemetry.update();
                 winchMotor.setPower(power);
             }
             //winchMotor.setVelocity(FEEDFORWARD_V, AngleUnit.RADIANS);
