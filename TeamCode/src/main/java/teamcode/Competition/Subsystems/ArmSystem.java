@@ -299,6 +299,13 @@ public class ArmSystem {
         stage = Stage.HOUSED;
     }
 
+    public void jitterHouse(){
+        synchronized (this){
+            house.setPosition(HOUSING_POSITION_BALL);
+        }
+        house.setPosition(SCORING_POSITION);
+    }
+
 
 
     public boolean isLinkageInPreScore(){

@@ -1,4 +1,4 @@
-package teamcode.Competition.Pipeline.Calibrators;
+package teamcode.test.CalibrationClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;

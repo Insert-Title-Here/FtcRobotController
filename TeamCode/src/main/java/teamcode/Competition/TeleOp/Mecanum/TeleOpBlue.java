@@ -193,7 +193,7 @@ public class TeleOpBlue extends AbstractOpMode {
         } else if (gamepad1.dpad_left) {
             arm.resetWinchEncoder();
         }else if(gamepad1.right_bumper){
-            systems.scoreDuck();
+            arm.jitterHouse();
         }
         if (gamepad1.left_bumper) {
             while (gamepad1.left_bumper) {
