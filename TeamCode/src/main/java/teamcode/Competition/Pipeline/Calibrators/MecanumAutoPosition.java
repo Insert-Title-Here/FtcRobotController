@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
-import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline2;
+import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 
 
@@ -20,7 +20,7 @@ public class MecanumAutoPosition extends AbstractOpMode{
     WebcamName wc;
     OpenCvCamera camera;
 
-    static final MecanumBarcodePipeline2 mbp = new MecanumBarcodePipeline2();
+    static final MecanumBarcodePipeline3 mbp = new MecanumBarcodePipeline3();
 
     @Override
     protected void onInitialize() {
