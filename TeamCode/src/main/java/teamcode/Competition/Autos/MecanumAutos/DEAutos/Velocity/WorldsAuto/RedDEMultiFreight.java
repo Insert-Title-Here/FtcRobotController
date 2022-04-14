@@ -31,7 +31,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
     private final double VELOCITY = 50;
     PIDFCoefficients coefficients = new PIDFCoefficients(10, 0.5, 1.0, 1.0); //2.5
     int globalIterator;
-    MecanumBarcodePipeline.BarcodePosition position = MecanumBarcodePipeline.BarcodePosition.CENTER;
+    MecanumBarcodePipeline.BarcodePosition position = MecanumBarcodePipeline.BarcodePosition.LEFT;
 
     @Override
     protected void onInitialize() {
@@ -48,8 +48,21 @@ public class RedDEMultiFreight extends AbstractOpMode {
                 }else{
                     arm.raise(Constants.TOP_POSITION + 2000);
                 }
+                while(!drive.getFlagIndex(3));
+
+                if(position == LEFT) {
+                    Utils.sleep(200);
+                    arm.runConveyorPos(1.0, 3200);
+                    Utils.sleep(100);
+                }
                 while(!drive.getFlagIndex(4));
-                arm.score();
+                if(position == LEFT) {
+//                    arm.runConveyorPos(1.0,3000);
+//                    Utils.sleep(100);
+                }else{
+                    arm.score();
+                }
+
                 Utils.sleep(250);
                 arm.retract();
                 for(int i = 0; i < FREIGHT && opModeIsActive() && !isStopRequested(); i++) {
@@ -82,6 +95,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
         arm.actuateWinchStop(1.0);
         drive.moveDistanceDEVelocity(700, -45, 2 * VELOCITY); // 900 -45
         Utils.sleep(100);
+        drive.setFlagIndex(3, true);
         drive.rotateDistanceDEUnramped(150, 24);
         //Utils.sleep(200);
 
@@ -151,7 +165,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(200, 2 * VELOCITY, 180.0));
             warehouseSplice.add(new Movement(40, Movement.MovementType.WALL_LOCALIZATION));
             //warehouseSplice.add(new Movement(120.0, 6.0,1200));
-            warehouseSplice.add(new Movement(400, VELOCITY,0.0));
+            warehouseSplice.add(new Movement(600, VELOCITY,0.0));
             drive.splicedMovement(warehouseSplice);
             warehouseSplice.clear();
         }

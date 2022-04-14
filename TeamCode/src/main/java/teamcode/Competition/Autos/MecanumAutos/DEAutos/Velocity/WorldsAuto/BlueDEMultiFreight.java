@@ -11,6 +11,8 @@ import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
+import teamcode.common.Debug;
+import teamcode.common.Logger;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Movement;
 import teamcode.common.Utils;
@@ -18,9 +20,8 @@ import teamcode.common.Utils;
 import static teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline.BarcodePosition.CENTER;
 import static teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline.BarcodePosition.LEFT;
 
-@Autonomous(name="Multi freight blue")
+@Autonomous(name="multi freight blue")
 public class BlueDEMultiFreight extends AbstractOpMode {
-    //TODO this is a direct copy, need to mirror the diagonals and calibrate the sensors
     MecanumDriveTrain drive;
     EndgameSystems system;
     ArmSystem arm;
@@ -47,8 +48,21 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 }else{
                     arm.raise(Constants.TOP_POSITION + 2000);
                 }
+                while(!drive.getFlagIndex(3));
+
+                if(position == LEFT) {
+                    Utils.sleep(200);
+                    arm.runConveyorPos(1.0, 3200);
+                    Utils.sleep(100);
+                }
                 while(!drive.getFlagIndex(4));
-                arm.score();
+                if(position == LEFT) {
+//                    arm.runConveyorPos(1.0,3000);
+//                    Utils.sleep(100);
+                }else{
+                    arm.score();
+                }
+
                 Utils.sleep(250);
                 arm.retract();
                 for(int i = 0; i < FREIGHT && opModeIsActive() && !isStopRequested(); i++) {
@@ -79,9 +93,10 @@ public class BlueDEMultiFreight extends AbstractOpMode {
     protected void onStart() {
         armThread.start();
         arm.actuateWinchStop(1.0);
-        drive.moveDistanceDEVelocity(700, -45, 2 * VELOCITY); // 900 -45
+        drive.moveDistanceDEVelocity(700, 45, 2 * VELOCITY); // 900 -45
         Utils.sleep(100);
-        drive.rotateDistanceDEUnramped(150, 24);
+        drive.setFlagIndex(3, true);
+        drive.rotateDistanceDEUnramped(-150, 24);
         //Utils.sleep(200);
 
 
@@ -94,7 +109,8 @@ public class BlueDEMultiFreight extends AbstractOpMode {
         //Utils.sleep(250);
         drive.setFlagIndex(4, true);
         Utils.sleep(200);
-        drive.rotateDistanceDEUnramped(-105, 24);
+        drive.rotateDistanceDEUnramped(120, 24);
+        Utils.sleep(100);
         drive.strafeDistanceSensor(30, 0);
         //drive.driveColorSensorWarehouse(6); //alternatively make this 1000 tics
         boolean first = true;
@@ -112,7 +128,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(200));
             //warehouseSplice.add(new Movement(200)); may or may not be needed
 
-            warehouseSplice.add(new Movement(1.0, (double)(400.0 + 30 *i), (double)(30 * i)));
+            warehouseSplice.add(new Movement(1.0, (double)(400.0 + 60 *i),0.0));
             //warehouseSplice.add(new Movement(100 + (100 * i), 10.0, 0.0)); //increase this? new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)
             // warehouseSplice.add(new Movement(700));
             warehouseSplice.add(new Movement(DcMotor.ZeroPowerBehavior.BRAKE));
@@ -127,7 +143,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 
             warehouseSplice.add(new Movement(-4,500));
             //warehouseSplice.add(new Movement(100));
-            warehouseSplice.add(new Movement(1.0, (long)50));// change this to 100 and the arc to 1550
+            warehouseSplice.add(new Movement(1.0, (long)100));// change this to 100 and the arc to 1550
             //warehouseSplice.add(new Movement(100, VELOCITY, 90.0));
             //  warehouseSplice.add(new Movement(300, VELOCITY, 180.0));
             //approach and score
@@ -140,12 +156,12 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 //            if(i % 2 == 0){
 //                warehouseSplice.add(new Movement(130.5, -30.0, 1550)); // -6, 1500
 //            }else {
-            warehouseSplice.add(new Movement(131.0, -30.0, 1700)); // -6, 1500
+            warehouseSplice.add(new Movement(-130.0, 30.0, 1600)); // -6, 1500
             // }
             warehouseSplice.add(new Movement(2, true));
             warehouseSplice.add(new Movement(300));
 
-            warehouseSplice.add(new Movement(-105, 24.0));
+            warehouseSplice.add(new Movement(120, 24.0));
             warehouseSplice.add(new Movement(100));
             //warehouseSplice.add(new Movement(200, 2 * VELOCITY, 180.0));
             warehouseSplice.add(new Movement(40, Movement.MovementType.WALL_LOCALIZATION));

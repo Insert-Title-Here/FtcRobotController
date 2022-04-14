@@ -154,7 +154,7 @@ public class EndgameSystems {
     public synchronized void scoreDuckAuto() {
         Debug.log("here");
         DcMotor encoder;
-        int pose = -11000;
+        int pose = -15000;
         double direction;
         if(isBlue){
             encoder = carouselEncoderRed;
