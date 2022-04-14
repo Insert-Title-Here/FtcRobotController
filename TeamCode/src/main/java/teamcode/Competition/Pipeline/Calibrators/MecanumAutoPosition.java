@@ -10,17 +10,17 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline2;
 import teamcode.common.AbstractOpMode;
 
-@Disabled
+
 @TeleOp(name = "Mecanum Webcam Calibration")
 public class MecanumAutoPosition extends AbstractOpMode{
 
     WebcamName wc;
     OpenCvCamera camera;
 
-    static final MecanumBarcodePipeline mbp = new MecanumBarcodePipeline();
-    private MecanumBarcodePipeline.Side side;
+    static final MecanumBarcodePipeline2 mbp = new MecanumBarcodePipeline2();
 
     @Override
     protected void onInitialize() {
@@ -33,8 +33,6 @@ public class MecanumAutoPosition extends AbstractOpMode{
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
         camera.setPipeline(mbp);
-
-        mbp.setSide(MecanumBarcodePipeline.Side.RED);
 
         // Open an asynchronous connection to the device
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -73,7 +71,7 @@ public class MecanumAutoPosition extends AbstractOpMode{
     @Override
     protected void onStart() {
         while (opModeIsActive()) {
-
+            // stuff
         }
     }
 
