@@ -1681,7 +1681,7 @@ import static java.lang.Math.PI;
         double deltaTime = AbstractOpMode.currentOpMode().time;
         int currentTics = arm.getConveyorPosition();
         NormalizedRGBA rgba = sensor.getNormalizedColors();
-        while(opModeIsRunning() && ratio > 0.2 && rgba.red < 0.9) { //ratio > 0.05
+        while(opModeIsRunning() && ratio > 0.3 && rgba.red < 0.9) { //ratio > 0.05
             rgba = sensor.getNormalizedColors();
             data = hub.getBulkData();
 //            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.red);
@@ -1728,8 +1728,8 @@ import static java.lang.Math.PI;
             previousTics = currentTics;
         }
 
-        if(ratio < 0.2){
-            ratio =  0.2;
+        if(ratio < 0.3){
+            ratio =  0.3;
         }
         while(rgba.red < 0.9){
             rgba = sensor.getNormalizedColors();

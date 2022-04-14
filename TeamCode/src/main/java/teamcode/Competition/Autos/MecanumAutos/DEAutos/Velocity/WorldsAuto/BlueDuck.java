@@ -96,6 +96,7 @@ public class BlueDuck extends AbstractOpMode {
     private final double VELOCITY = 10;
     @Override
     protected void onStart() {
+        system.actuateWinchStop(1.0);
         webcam.stopStreaming();
         armThread.start();
         drive.moveDistanceDEVelocity(1200, 45, 2 * VELOCITY);
@@ -112,6 +113,7 @@ public class BlueDuck extends AbstractOpMode {
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(700, 180, VELOCITY);
         //score
+        Utils.sleep(300);
         if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
             system.runConveyorPos(0.5, 2000);
         }else {
@@ -124,7 +126,7 @@ public class BlueDuck extends AbstractOpMode {
         drive.rotateDistanceDE(-140, 24);
         flags[1] = true;
         //Utils.sleep(200);
-        drive.strafeDistanceSensor(30, Math.PI / 6.0);
+        drive.strafeDistanceSensor(30, 0);
         system.setIsDuck(true);
         Utils.sleep(200);
         //drive.moveDistanceDEVelocity(300, 180, VELOCITY);
@@ -157,13 +159,13 @@ public class BlueDuck extends AbstractOpMode {
         //Utils.sleep(500);
         system.preScore();
 
-        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(200, 180, VELOCITY);
         Utils.sleep(200);
         system.intakeDumb(0);
         drive.moveDistanceDEVelocity(1100, -90, 2 * VELOCITY); //400
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(700, 180,  VELOCITY);
-        drive.rotateDistanceDE(-90, 6);
+        drive.moveDistanceDEVelocity(800, 180,  VELOCITY);
+        drive.rotateDistanceDE(-75, 6);
         Utils.sleep(200);
 
         //extend
@@ -176,7 +178,7 @@ public class BlueDuck extends AbstractOpMode {
 
         drive.moveDistanceDEVelocity(1000, 0, VELOCITY);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(400, -90, VELOCITY ); //400
+        drive.moveDistanceDEVelocity(400, 90, VELOCITY ); //400
     }
 
     //drive.strafeDistanceSensor(6,0);

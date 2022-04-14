@@ -209,7 +209,7 @@ public class TeleOpRed extends AbstractOpMode {
 
         }else if(gamepad1.b){
             while(gamepad1.b){
-                systems.runCarousel(0.7);
+                systems.runCarousel(0.3);
             }
         } else{
             arm.setWinchPower(0);
