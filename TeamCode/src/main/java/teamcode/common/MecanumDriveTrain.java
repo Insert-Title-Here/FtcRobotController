@@ -22,6 +22,7 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
@@ -134,14 +135,14 @@ import static java.lang.Math.PI;
         backBlue.setGain(300);
         sensor.setGain(450); //325 is tested value but i think I trust this one more //280
 
-        logger = new Logger(new String[]{"SensorTrips.txt"});
+        logger = new Logger(new String[]{"CalculatedRatios.txt"});
 
 
 
 
 
 
-        flags = new boolean[]{false, false, false, false, false};
+        flags = new boolean[]{false, false, false, false, false, false};
 
 
         hub = hardwareMap.get(LynxModule.class, "Control Hub");
@@ -224,8 +225,10 @@ import static java.lang.Math.PI;
     public synchronized void driveColorSensorWarehouse(double velocity){
         driveColorSensorWarehouse(velocity, true, false);
     }
-
+    Random r;
     public synchronized void driveColorSensorWarehouse(double velocity, boolean isBrake, boolean isCoast){
+        r = new Random();
+
         if(isCoast){
             setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }else{
@@ -259,8 +262,8 @@ import static java.lang.Math.PI;
             setMotorVelocity(velocity,velocity,velocity,velocity);
             //hub.clearBulkCache();
         }
-        ehub.setLedColor(255,0,0);
-        chub.setLedColor(255,0,0);
+        ehub.setLedColor(r.nextInt(256),r.nextInt(256),r.nextInt(256));
+        chub.setLedColor(r.nextInt(256),r.nextInt(256),r.nextInt(256));
 
         if(isBrake) {
             brakeAuto();
@@ -1641,6 +1644,7 @@ import static java.lang.Math.PI;
             }else if(curr.getMovement() == Movement.MovementType.STRAFE_TP){
                 strafeTP(curr.getMillis(), curr.getPower());
             }
+            Debug.log(curr.getMovement());
         }
         brake();
     }
@@ -1671,7 +1675,6 @@ import static java.lang.Math.PI;
         arm.setConveyorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setConveyorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        hub.clearBulkCache();
         LynxModule.BulkData data;
         double calculatedPow = pow;
         double ratio = 1;
@@ -1681,7 +1684,8 @@ import static java.lang.Math.PI;
         double deltaTime = AbstractOpMode.currentOpMode().time;
         int currentTics = arm.getConveyorPosition();
         NormalizedRGBA rgba = sensor.getNormalizedColors();
-        while(opModeIsRunning() && ratio > 0.3 && rgba.red < 0.9) { //ratio > 0.05
+        while(opModeIsRunning() && ratio > 0.2 && rgba.red < 0.9) { //ratio > 0.05
+            hub.clearBulkCache();
             rgba = sensor.getNormalizedColors();
             data = hub.getBulkData();
 //            AbstractOpMode.currentOpMode().telemetry.addData("rgba", rgba.red);
@@ -1691,17 +1695,19 @@ import static java.lang.Math.PI;
 //
 //            AbstractOpMode.currentOpMode().telemetry.update();
 
-            double posSum = 0;
+            double posSum = 0.0;
             posSum += Math.abs(data.getMotorCurrentPosition(0));
             posSum += Math.abs(data.getMotorCurrentPosition(1));
             posSum += Math.abs(data.getMotorCurrentPosition(2));
             posSum += Math.abs(data.getMotorCurrentPosition(3));
             double posAvg = posSum / 4.0;
-            if(posAvg < threshold){
-                posAvg = 0;
+            if(posAvg < 100){ //numerical instability accounting
+                ratio = 1.0;
+            }else {
+                ratio = (distance - posAvg) / distance;
             }
-            ratio = (distance - posAvg) / distance;
             calculatedPow = pow * ratio;
+            logger.writeToLogString(0, ratio + " " + posAvg + " " + distance + "\n");
 //            AbstractOpMode.currentOpMode().telemetry.addData("calculated", calculatedPow);
 //            AbstractOpMode.currentOpMode().telemetry.update();
 
@@ -1724,12 +1730,11 @@ import static java.lang.Math.PI;
 //            }
             AbstractOpMode.currentOpMode().telemetry.update();
             setPower(calculatedPow, calculatedPow, calculatedPow, calculatedPow);
-            hub.clearBulkCache();
             previousTics = currentTics;
         }
 
-        if(ratio < 0.3){
-            ratio =  0.3;
+        if(ratio < 0.2){
+            ratio =  0.2;
         }
         while(rgba.red < 0.9){
             rgba = sensor.getNormalizedColors();
@@ -1740,6 +1745,8 @@ import static java.lang.Math.PI;
 
             AbstractOpMode.currentOpMode().telemetry.update();
         }
+
+        logger.writeToLogString(0, "-----------------------------" + "\n");
 
 
 

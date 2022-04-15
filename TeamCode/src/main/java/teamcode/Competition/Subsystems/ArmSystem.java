@@ -264,10 +264,10 @@ public class ArmSystem {
     public void preScoreMultiFreight(boolean ball){
         actuateWinchStop(WINCHSTOP_OPEN);
         linkage.setPosition(LINKAGE_HOUSED);
-        //house.setPosition(HOUSING_POSITION);
-        //        if(ball){
-//            house.setPosition(HOUSING_POSITION_BALL);
-//        }
+       // house.setPosition(HOUSING_POSITION);
+        if(ball){
+            house.setPosition(HOUSING_POSITION_BALL);
+        }
 
         //house.setPosition(HOUSING_POSITION);
         Utils.sleep(250);

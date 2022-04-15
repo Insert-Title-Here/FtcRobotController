@@ -42,7 +42,8 @@ public class MecanumBarcodePipeline3 extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat mat) {
-        Core.inRange(mat, new Scalar(125, 125, 125), new Scalar(255, 255, 255), mask);
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2RGB);
+        Core.inRange(mat, new Scalar(80, 80, 125), new Scalar(120, 120, 255), mask);
 
         region1 = mask.submat(new Rect(region1_pointA, region1_pointB));
         region2 = mask.submat(new Rect(region2_pointA, region2_pointB));
