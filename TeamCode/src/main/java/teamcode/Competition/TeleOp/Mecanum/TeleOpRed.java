@@ -95,7 +95,7 @@ public class TeleOpRed extends AbstractOpMode {
 
 //        telemetry.addData("rsy", gamepad2.right_stick_y);
 //        telemetry.update();
-        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.0007, 0.0007));
+        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.0014, 0.0014));
 
         if (gamepad2.x) {
             systems.zeroCap();
@@ -197,7 +197,7 @@ public class TeleOpRed extends AbstractOpMode {
         }
         if (gamepad1.left_bumper) {
             while (gamepad1.left_bumper) {
-                arm.runConveyor(0.8);
+                arm.runConveyor(1.0);
             }
             arm.idleServos();
         } else if (gamepad1.start && !previousStart){

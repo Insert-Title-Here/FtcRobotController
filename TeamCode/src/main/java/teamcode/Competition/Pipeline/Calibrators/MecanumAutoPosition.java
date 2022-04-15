@@ -10,11 +10,12 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline2;
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 
 
-@TeleOp(name = "Mecanum Webcam Calibration")
+@TeleOp(name = "Mecanum Webcam Calibration Test")
 public class MecanumAutoPosition extends AbstractOpMode{
 
     WebcamName wc;
