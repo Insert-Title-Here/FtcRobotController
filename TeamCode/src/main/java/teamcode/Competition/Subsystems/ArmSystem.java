@@ -164,7 +164,7 @@ public class ArmSystem {
 
     public void runConveyorPos(double power, int position){
         //linkage.setPosition(LINKAGE_SCORE);
-        house.setPosition(SCORING_POSITION);
+        house.setPosition(SCORING_POSITION_CONVEYOR);
         conveyorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         conveyorMotor.setTargetPosition(position);
         conveyorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -329,7 +329,7 @@ public class ArmSystem {
         house.setPosition(SCORING_POSITION);
     }
     public synchronized void scoreAuto(){
-        house.setPosition(SCORING_POSITION - 0.15);
+        house.setPosition(SCORING_POSITION - 0.05);
     }
 
     public synchronized void scoreAuto(boolean far){

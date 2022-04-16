@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 
-@Disabled
+
 @Autonomous(name="Color sensor calibration")
 public class ColorSensorTest extends AbstractOpMode {
     ArmSystem system;
@@ -17,8 +17,8 @@ public class ColorSensorTest extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
-        system = new ArmSystem(hardwareMap, true);
-        sensor.setGain(250);
+        //system = new ArmSystem(hardwareMap, true);
+        sensor.setGain(500);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ColorSensorTest extends AbstractOpMode {
                 system.lowerLinkage();
                 system.intakeDumb(1.0);
             }else{
-                system.intakeDumb(0);
+             //   system.intakeDumb(0);
             }
             telemetry.addData("red", colors.red);
             telemetry.addData("green", colors.green);

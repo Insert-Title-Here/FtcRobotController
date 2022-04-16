@@ -129,6 +129,6 @@ public class BusSpeedTest extends AbstractOpMode {
 
     @Override
     protected void onStop() {
-        logger.writeLoggerToFile();
+        //logger.writeLoggerToFile();
     }
 }

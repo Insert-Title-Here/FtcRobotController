@@ -62,8 +62,8 @@ public class ArcTest extends AbstractOpMode {
         armThread.start();
         for(i = 0; i < FREIGHT; i++) {
             //intake and back out
-            warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
-            warehouseSplice.add(new Movement(1, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+//            warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
+//            warehouseSplice.add(new Movement(1, Movement.MovementType.WAREHOUSE_LOCALIZATION));
 
             warehouseSplice.add(new Movement(1.0));
             warehouseSplice.add(new Movement(200));
@@ -71,14 +71,14 @@ public class ArcTest extends AbstractOpMode {
             warehouseSplice.add(new Movement(700));
             //warehouseSplice.add(new Movement(100 + (100 * i), 10, 180.0));
             warehouseSplice.add(new Movement(0, true));
-            warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
+//            warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
             warehouseSplice.add(new Movement(-1.0));
 
-            warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+//            warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
           //  warehouseSplice.add(new Movement(300, 9, 180.0));
 
             //approach and score
-            warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
+//            warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
             warehouseSplice.add(new Movement(200));
             warehouseSplice.add(new Movement(300, VELOCITY, -90.0));
             warehouseSplice.add(new Movement(200));

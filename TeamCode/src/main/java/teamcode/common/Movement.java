@@ -43,6 +43,7 @@ public class Movement {
     private MovementType movement;
 
     private DcMotor.ZeroPowerBehavior behavior;
+    boolean brake;
 
     //please note when using this class, as with MecanumDriveTrain, all angles are in RADIANS and parameters in Degrees
 
@@ -58,6 +59,16 @@ public class Movement {
         this.radians = Math.toRadians(degrees);
         movement = MovementType.TRANSLATION;
     }
+
+    public Movement(int dPosition, double velocity, double degrees, boolean brake){
+        distance =  dPosition;
+        this.velocity = velocity;
+        this.radians = Math.toRadians(degrees);
+        this.brake = brake;
+        movement = MovementType.TRANSLATION_BRAKE;
+    }
+
+
 
     public Movement(double degrees, double velocity, int dPosition){
         distance = dPosition;
@@ -88,9 +99,10 @@ public class Movement {
      * @param velocity velocity
      * @param movement movementType, wall or warehouse localization
      */
-    public Movement(double velocity, MovementType movement){
+    public Movement(double velocity, double radians, MovementType movement){
         this.movement = movement;
         this.velocity = velocity;
+        this.radians = radians;
     }
 
     public Movement(double velocity, int max){
@@ -161,7 +173,8 @@ public class Movement {
         MODULATE_INTAKE,
         COAST_MOVEMENT,
         MODIFY_ZEROPOWER,
-        STRAFE_TP
+        STRAFE_TP,
+        TRANSLATION_BRAKE
     }
 
 

@@ -163,7 +163,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
             warehouseSplice.add(new Movement(-105, 24.0));
             warehouseSplice.add(new Movement(100));
             //warehouseSplice.add(new Movement(200, 2 * VELOCITY, 180.0));
-            warehouseSplice.add(new Movement(40, Movement.MovementType.WALL_LOCALIZATION));
+            warehouseSplice.add(new Movement(40, 0, Movement.MovementType.WALL_LOCALIZATION));
             //warehouseSplice.add(new Movement(120.0, 6.0,1200));
             warehouseSplice.add(new Movement(600, VELOCITY,0.0));
             drive.splicedMovement(warehouseSplice);

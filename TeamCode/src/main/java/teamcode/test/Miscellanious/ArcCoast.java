@@ -83,8 +83,8 @@ public class ArcCoast extends AbstractOpMode {
         loggerThread.start();
 
         for(int i = 0; i < FREIGHT; i++) {
-            warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
-            warehouseSplice.add(new Movement(3, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+//            warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
+//            warehouseSplice.add(new Movement(3, Movement.MovementType.WAREHOUSE_LOCALIZATION));
 
             //warehouseSplice.add(new Movement(1.0));
             warehouseSplice.add(new Movement(1.0));
@@ -96,15 +96,15 @@ public class ArcCoast extends AbstractOpMode {
             warehouseSplice.add(new Movement(DcMotor.ZeroPowerBehavior.BRAKE));
             //warehouseSplice.add(new Movement(100 + (100 * i), 10, 180.0));
             warehouseSplice.add(new Movement(0, true));
-            warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
+//            warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
 //            warehouseSplice.add(new Movement(-1.0));
 
             warehouseSplice.add(new Movement(300 + 50 * i, 2 * VELOCITY, 180.0));
 
-            warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+//            warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
             warehouseSplice.add(new Movement(300, VELOCITY, 180.0));
             //approach and score
-            warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
+//            warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
             //warehouseSplice.add(new Movement(200));
             //warehouseSplice.add(new Movement(300, VELOCITY, -90.0));
             //warehouseSplice.add(new Movement(300));
@@ -114,7 +114,7 @@ public class ArcCoast extends AbstractOpMode {
             warehouseSplice.add(new Movement(2, true));
             warehouseSplice.add(new Movement(200));
             warehouseSplice.add(new Movement(-20, 24));
-            warehouseSplice.add(new Movement(30, Movement.MovementType.WALL_LOCALIZATION));
+//            warehouseSplice.add(new Movement(30, Movement.MovementType.WALL_LOCALIZATION));
             //warehouseSplice.add(new Movement(120.0, 6.0,1200));
             warehouseSplice.add(new Movement(400,  2 * VELOCITY,0.0));
             drive.splicedMovement(warehouseSplice);
@@ -125,6 +125,6 @@ public class ArcCoast extends AbstractOpMode {
 
     @Override
     protected void onStop() {
-        logger.writeLoggerToFile();
+        //logger.writeLoggerToFile();
     }
 }

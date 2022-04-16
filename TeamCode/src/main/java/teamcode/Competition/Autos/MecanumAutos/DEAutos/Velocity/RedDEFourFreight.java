@@ -45,14 +45,14 @@ public class RedDEFourFreight extends AbstractOpMode {
 
 
         //intake and back out
-        warehouseSplice.add(new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)); //increase this?
-       // warehouseSplice.add(new Movement(200, 9, 180.0));
-        warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
-        warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
-        //warehouseSplice.add(new Movement(300, 9, 180.0));
+//        warehouseSplice.add(new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)); //increase this?
+//       // warehouseSplice.add(new Movement(200, 9, 180.0));
+//        warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
+//        warehouseSplice.add(new Movement(-6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
+//        //warehouseSplice.add(new Movement(300, 9, 180.0));
 
         //approach and score
-        warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
+//        warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
         warehouseSplice.add(new Movement(200));
         //warehouseSplice.add(new Movement(500, VELOCITY, 180.0));
         warehouseSplice.add(new Movement(1, true));
