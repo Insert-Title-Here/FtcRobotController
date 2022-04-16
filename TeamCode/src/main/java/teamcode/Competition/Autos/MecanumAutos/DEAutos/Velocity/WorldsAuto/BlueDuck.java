@@ -106,7 +106,7 @@ public class BlueDuck extends AbstractOpMode {
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(450, 0, VELOCITY);
+        drive.moveDistanceDEVelocity(550, 0, VELOCITY);
         Utils.sleep(200);
         drive.rotateDistanceDE(-75, 6);
 
@@ -144,6 +144,7 @@ public class BlueDuck extends AbstractOpMode {
         drive.duck();
         system.lowerLinkage();
         system.intakeDumb(1.0);
+        drive.setPower(0.02,0.02,0.02,0.02);
 
         systems.scoreDuckAuto();
         Utils.sleep(250);
@@ -151,7 +152,7 @@ public class BlueDuck extends AbstractOpMode {
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(100, 0, VELOCITY / 2.0);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(800, 90, VELOCITY / 2.0); //400
+        drive.moveDistanceDEVelocity(400, 90, VELOCITY / 2.0); //400
 
 
         Utils.sleep(500);
@@ -160,15 +161,27 @@ public class BlueDuck extends AbstractOpMode {
         //drive.moveDistanceDEVelocity(420, 0, VELOCITY / 2.0);
         //Utils.sleep(500);
         system.preScore();
+        drive.moveDistanceDEVelocity(1200, 45, -2 * VELOCITY);
+        //Utils.sleep(200);
 
-        drive.moveDistanceDEVelocity(200, 180, VELOCITY);
         Utils.sleep(200);
-        system.intakeDumb(0);
-        drive.moveDistanceDEVelocity(1100, -90, 2 * VELOCITY); //400
+        //drive.driveColorSensorWarehouse(6);
+        drive.moveDistanceDEVelocity(550, 180.0, VELOCITY);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(800, 180,  VELOCITY);
-        drive.rotateDistanceDE(-75, 6);
-        Utils.sleep(200);
+        drive.rotateDistanceDE(-90, 6);
+
+
+//        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
+//        Utils.sleep(200);
+//        system.intakeDumb(0);
+//        drive.strafeDistanceSensor(20, 0);
+//        drive.moveDistanceDEVelocity(300, 90, 2 * VELOCITY); //400
+//        Utils.sleep(200);
+//        drive.moveDistanceDEVelocity(750, 180,  VELOCITY);
+//        Utils.sleep(200);
+//        drive.rotateDistanceDE(-75, 12);
+//        Utils.sleep(200);
+
 
         //extend
         flags[2] = true;

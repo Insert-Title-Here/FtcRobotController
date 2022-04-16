@@ -1,6 +1,7 @@
 package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity.WorldsAuto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -24,6 +25,7 @@ import teamcode.common.Utils;
 import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.CENTER;
 import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.LEFT;
 
+@Disabled
 @Autonomous(name="multi freight red")
 public class RedDEMultiFreight extends AbstractOpMode {
     MecanumDriveTrain drive;
