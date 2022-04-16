@@ -58,7 +58,7 @@ public class TapePipeline extends OpenCvPipeline {
         } else {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(134, 150);
-            Core.inRange(filtered, new Scalar(220, 145, 100), new Scalar(255, 188, 140), mask);
+            Core.inRange(filtered, new Scalar(230, 115, 70), new Scalar(255, 148, 97), mask);
         }
 
         Point region1_pointA = new Point(
@@ -114,10 +114,10 @@ public class TapePipeline extends OpenCvPipeline {
         }
 
 
-        double[] color = mat.get(175, 32);
-        //Imgproc.circle(mat, new Point(32, 175), 5, new Scalar(color[0], color[1], color[2]), 2);
-        double[] color2 = mat.get(165, 166);
-        //Imgproc.circle(mat, new Point(166, 165), 5, new Scalar(color2[0], color2[1], color2[2]), 2);
+        double[] color = mat.get(170, 28);
+        //Imgproc.circle(mask, new Point(28, 170), 5, WHITE, 2);
+        double[] color2 = mat.get(170, 166);
+        //Imgproc.circle(mask, new Point(166, 170), 5, WHITE, 2);
         //Imgproc.circle(mat, new Point(160, 120), 5, WHITE, 2);
         AbstractOpMode.currentOpMode().telemetry.addData("R1 - COL:", color[0]);
         AbstractOpMode.currentOpMode().telemetry.addData("R1 - COL:", color[1]);
