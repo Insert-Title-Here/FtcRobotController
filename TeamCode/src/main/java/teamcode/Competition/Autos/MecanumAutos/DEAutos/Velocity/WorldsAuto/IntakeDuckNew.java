@@ -12,6 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
@@ -29,7 +30,7 @@ public class IntakeDuckNew extends AbstractOpMode {
     EndgameSystems systems;
     DuckPipeline duck;
     private OpenCvWebcam webcam;
-    private MecanumBarcodePipeline.BarcodePosition position;
+    private TapePipeline.BarcodePosition position;
     Thread armThread;
     volatile boolean[] flags = new boolean[]{false, false, false, false};
     private PIDFCoefficients coefficients = new PIDFCoefficients(5,0.5,1.0,0);
@@ -46,8 +47,8 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         // W/ or W/ out live preview
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
-        MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
-        pipeline.setSide(MecanumBarcodePipeline.Side.RED);
+        TapePipeline pipeline = new TapePipeline();
+        pipeline.setSide(TapePipeline.Side.RED);
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -66,9 +67,9 @@ public class IntakeDuckNew extends AbstractOpMode {
             @Override
             public void run(){
                 while(!flags[0]);
-                if(position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+                if(position == TapePipeline.BarcodePosition.LEFT) {
                     system.raise(Constants.BOTTOM_POSITION);
-                }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
+                }else if(position == TapePipeline.BarcodePosition.CENTER){
                     system.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
                     system.raise(Constants.TOP_POSITION);
@@ -114,7 +115,7 @@ public class IntakeDuckNew extends AbstractOpMode {
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(800, 180, VELOCITY);
         //score
-        if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
+        if(position == TapePipeline.BarcodePosition.LEFT){
             system.runConveyorPos(0.5, 2000);
         }else {
             system.score();
