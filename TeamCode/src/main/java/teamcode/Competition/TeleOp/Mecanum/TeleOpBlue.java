@@ -95,7 +95,7 @@ public class TeleOpBlue extends AbstractOpMode {
 
 //        telemetry.addData("rsy", gamepad2.right_stick_y);
 //        telemetry.update();
-        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.0007, 0.0007));
+        systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.0010, 0.0010));
 
         if (gamepad2.x) {
             systems.zeroCap();
