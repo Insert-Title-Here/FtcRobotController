@@ -11,7 +11,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline;
+import teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
@@ -20,16 +21,16 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
-import teamcode.test.MasonTesting.DuckPipeline;
+
+import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.*;
 
 @Autonomous(name="dook blue")
 public class BlueDuck extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem system;
     EndgameSystems systems;
-    DuckPipeline duck;
     private OpenCvWebcam webcam;
-    private MecanumBarcodePipeline.BarcodePosition position;
+    private BarcodePosition position;
     Thread armThread;
     volatile boolean[] flags = new boolean[]{false, false, false, false};
     private PIDFCoefficients coefficients = new PIDFCoefficients(5,0.5,1.0,0);
@@ -37,7 +38,6 @@ public class BlueDuck extends AbstractOpMode {
 
     @Override
     protected void onInitialize() {
-        duck = new DuckPipeline();
         system = new ArmSystem(hardwareMap, false);
         systems = new EndgameSystems(hardwareMap, true);
         drive = new MecanumDriveTrain(hardwareMap, false, systems, system, coefficients);
@@ -46,8 +46,8 @@ public class BlueDuck extends AbstractOpMode {
 
         // W/ or W/ out live preview
         webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
-        MecanumBarcodePipeline pipeline = new MecanumBarcodePipeline();
-        pipeline.setSide(MecanumBarcodePipeline.Side.BLUE);
+        TapePipeline pipeline = new TapePipeline();
+        pipeline.setSide(TapePipeline.Side.BLUE);
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -66,9 +66,9 @@ public class BlueDuck extends AbstractOpMode {
             @Override
             public void run(){
                 while(!flags[0]);
-                if(position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+                if(position == LEFT) {
                     system.raise(Constants.BOTTOM_POSITION);
-                }else if(position == MecanumBarcodePipeline.BarcodePosition.CENTER){
+                }else if(position == CENTER){
                     system.raise(Constants.MEDIUM_POSITION + 4000);
                 }else{
                     system.raise(Constants.TOP_POSITION);
@@ -86,11 +86,13 @@ public class BlueDuck extends AbstractOpMode {
 
             }
         };
-        while(!opModeIsActive()){
+
+        while(!opModeIsActive() && !isStopRequested()){
             position = pipeline.getPos();
             telemetry.addData("", position);
             telemetry.update();
         }
+
     }
 
     private final double VELOCITY = 10;
@@ -114,7 +116,7 @@ public class BlueDuck extends AbstractOpMode {
         drive.moveDistanceDEVelocity(700, 180, VELOCITY);
         //score
         Utils.sleep(300);
-        if(position == MecanumBarcodePipeline.BarcodePosition.LEFT){
+        if(position == LEFT){
             system.runConveyorPos(0.5, 2000);
         }else {
             system.score();

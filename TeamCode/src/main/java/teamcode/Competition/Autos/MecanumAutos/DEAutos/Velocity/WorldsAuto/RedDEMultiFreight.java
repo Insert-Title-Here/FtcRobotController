@@ -4,21 +4,25 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+
 import java.util.ArrayList;
 
-import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
+import teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
-import teamcode.common.Debug;
-import teamcode.common.Logger;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Movement;
 import teamcode.common.Utils;
 
-import static teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline.BarcodePosition.CENTER;
-import static teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline.BarcodePosition.LEFT;
+import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.CENTER;
+import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.LEFT;
 
 @Autonomous(name="multi freight red")
 public class RedDEMultiFreight extends AbstractOpMode {
@@ -31,7 +35,8 @@ public class RedDEMultiFreight extends AbstractOpMode {
     private final double VELOCITY = 50;
     PIDFCoefficients coefficients = new PIDFCoefficients(10, 0.5, 1.0, 1.0); //2.5
     int globalIterator;
-    MecanumBarcodePipeline.BarcodePosition position = MecanumBarcodePipeline.BarcodePosition.LEFT;
+    TapePipeline.BarcodePosition position = LEFT;
+    OpenCvWebcam webcam;
 
     @Override
     protected void onInitialize() {
@@ -86,6 +91,32 @@ public class RedDEMultiFreight extends AbstractOpMode {
 
             }
         };
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName wc = hardwareMap.get(WebcamName.class, "Webcam");
+
+        // W/ or W/ out live preview
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
+        TapePipeline pipeline = new TapePipeline();
+        pipeline.setSide(TapePipeline.Side.RED);
+        webcam.setPipeline(pipeline);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT); //specify cam orientation and calibrate the resolution
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
+        while(!opModeIsActive() && !isStopRequested()){
+            position = pipeline.getPos();
+            telemetry.addData("pos", pipeline.getPos());
+        }
+
 
     }
 
