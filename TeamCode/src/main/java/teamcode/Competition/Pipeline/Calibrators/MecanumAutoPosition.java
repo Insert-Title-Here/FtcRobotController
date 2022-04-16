@@ -69,7 +69,11 @@ public class MecanumAutoPosition extends AbstractOpMode{
     @Override
     protected void onStart() {
         while (opModeIsActive()) {
-            // stuff
+            if (gamepad2.a) {
+                mbp.setSide(TapePipeline.Side.RED);
+            } else if (gamepad2.b) {
+                mbp.setSide(TapePipeline.Side.BLUE);
+            }
         }
     }
 
