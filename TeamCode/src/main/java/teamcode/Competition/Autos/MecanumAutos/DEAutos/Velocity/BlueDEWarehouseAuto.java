@@ -23,6 +23,7 @@ import teamcode.common.Movement;
 import teamcode.common.Utils;
 
 
+@Disabled
 @Autonomous(name="Blue DE 3 freight")
 public class BlueDEWarehouseAuto extends AbstractOpMode {
 

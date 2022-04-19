@@ -2,6 +2,7 @@ package teamcode.test.Miscellanious;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -19,6 +20,7 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Movement;
 import teamcode.common.Utils;
 
+@Disabled
 @Autonomous(name="ArcCoast")
 public class ArcCoast extends AbstractOpMode {
     MecanumDriveTrain drive;

@@ -177,7 +177,11 @@ public class TeleOpBlue extends AbstractOpMode {
             }
         } else if (gamepad1.dpad_right && pulleyState == PulleyState.RETRACTED) {
             if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED && time - previousExtensionTime > 5) {
-                arm.raise(Constants.MEDIUM_POSITION);
+                if(isExtended){
+                    arm.raise(Constants.MEDIUM_POSITION + 2000);
+                }else {
+                    arm.raise(Constants.MEDIUM_POSITION);
+                }
                 pulleyState = PulleyState.MID_GOAL;
                 linkageState = linkageState.RAISED;
             }

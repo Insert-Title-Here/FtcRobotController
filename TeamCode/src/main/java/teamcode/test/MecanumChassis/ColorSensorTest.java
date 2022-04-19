@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @Autonomous(name="color")
 public class ColorSensorTest extends AbstractOpMode {
 

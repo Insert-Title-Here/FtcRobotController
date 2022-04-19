@@ -28,7 +28,7 @@ public class ArmSystem {
     private static final double HOUSING_POSITION_DUCK = 0.22; //0.12
     private static final double HOUSING_POSITION = 0.22; //0.22
     private static final double SCORING_POSITION = 0.56; //0.5
-    private static final double SCORING_POSITION_CONVEYOR = 0.45;
+    private static final double SCORING_POSITION_CONVEYOR = 0.56;
 
     private static final double LINKAGE_DOWN = 0.02; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.58;
@@ -395,7 +395,7 @@ public class ArmSystem {
         synchronized (this) {
             linkage.setPosition(LINKAGE_DOWN);
         }
-        house.setPosition(INTAKE_POSITION +0.1); //+0.1
+        house.setPosition(INTAKE_POSITION +0.15); //+0.1
 
     }
 
@@ -405,6 +405,11 @@ public class ArmSystem {
 
     public void setConveyorMode(DcMotor.RunMode mode) {
         conveyorMotor.setMode(mode);
+    }
+
+    public void scoreFar() {
+        Debug.log("wooooo");
+        house.setPosition(0.66);
     }
 
     public enum Stage{

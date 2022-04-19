@@ -52,9 +52,9 @@ public class TapePipeline extends OpenCvPipeline {
         Imgproc.cvtColor(mat, filtered, Imgproc.COLOR_RGB2BGR);
         //Core.inRange(filtered, new Scalar(50, 90, 235), new Scalar(80, 117, 255), mask);
         if (side == Side.RED) {
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(120, 150);
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(110, 155);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(255, 150);
-            Core.inRange(filtered, new Scalar(0, 60, 40), new Scalar(40, 110, 255), mask);
+            Core.inRange(filtered, new Scalar(0, 60, 40), new Scalar(75, 110, 255), mask);
         } else {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(134, 150);
@@ -98,7 +98,9 @@ public class TapePipeline extends OpenCvPipeline {
 
         double deltaPercent = Math.abs(regionOnePercent - regionTwoPercent);
         if(side == Side.RED) {
-            if(regionOnePercent < regionTwoPercent){
+            if(deltaPercent < 0.1){
+                position = BarcodePosition.RIGHT;
+            }else if(regionOnePercent < regionTwoPercent){
                 position = BarcodePosition.LEFT;
             }else if(regionTwoPercent < regionOnePercent){
                 position = BarcodePosition.CENTER;
@@ -106,12 +108,14 @@ public class TapePipeline extends OpenCvPipeline {
                 position = BarcodePosition.RIGHT;
             }
         }else{
-            if(regionOnePercent < regionTwoPercent){
-                position = BarcodePosition.RIGHT;
-            }else if(regionTwoPercent < regionOnePercent){
-                position = BarcodePosition.CENTER;
-            }else{
+            if(deltaPercent < 0.1){
                 position = BarcodePosition.LEFT;
+            }else if(regionOnePercent < regionTwoPercent){
+                position = BarcodePosition.CENTER;
+            }else if(regionTwoPercent < regionOnePercent){
+                position = BarcodePosition.RIGHT;
+            }else{
+                position = BarcodePosition.RIGHT;
             }
         }
 
@@ -134,23 +138,23 @@ public class TapePipeline extends OpenCvPipeline {
 //        }
 
 
-        double[] color = mat.get(170, 28);
-        //Imgproc.circle(mask, new Point(28, 170), 5, WHITE, 2);
+        double[] color = mat.get(170, 152);
+        Imgproc.circle(mask, new Point(152, 170), 5, WHITE, 2);
         double[] color2 = mat.get(170, 166);
         //Imgproc.circle(mask, new Point(166, 170), 5, WHITE, 2);
         //Imgproc.circle(mat, new Point(160, 120), 5, WHITE, 2);
         AbstractOpMode.currentOpMode().telemetry.addData("R1 - COL:", color[0]);
         AbstractOpMode.currentOpMode().telemetry.addData("R1 - COL:", color[1]);
         AbstractOpMode.currentOpMode().telemetry.addData("R1 - COL:", color[2]);
-        AbstractOpMode.currentOpMode().telemetry.addData("R2 - COL:", color2[0]);
-        AbstractOpMode.currentOpMode().telemetry.addData("R2 - COL:", color2[1]);
-        AbstractOpMode.currentOpMode().telemetry.addData("R2 - COL:", color2[2]);
-        AbstractOpMode.currentOpMode().telemetry.addData("R1 - WHITE PX:", Core.countNonZero(region1));
-        AbstractOpMode.currentOpMode().telemetry.addData("R1 - WHITE/BLACK PX:", Math.round((Core.countNonZero(region1) / SIZE) * 100.0) / 100.0);
-        AbstractOpMode.currentOpMode().telemetry.addData("R2 - WHITE PX:", Core.countNonZero(region2));
-        AbstractOpMode.currentOpMode().telemetry.addData("R2 - WHITE/BLACK PX:", Math.round((Core.countNonZero(region2) / SIZE) * 100.0) / 100.0);
-        AbstractOpMode.currentOpMode().telemetry.addData("POS", getPos());
-        AbstractOpMode.currentOpMode().telemetry.addData("SIDE", getSide());
+//        AbstractOpMode.currentOpMode().telemetry.addData("R2 - COL:", color2[0]);
+//        AbstractOpMode.currentOpMode().telemetry.addData("R2 - COL:", color2[1]);
+//        AbstractOpMode.currentOpMode().telemetry.addData("R2 - COL:", color2[2]);
+//        AbstractOpMode.currentOpMode().telemetry.addData("R1 - WHITE PX:", Core.countNonZero(region1));
+//        AbstractOpMode.currentOpMode().telemetry.addData("R1 - WHITE/BLACK PX:", Math.round((Core.countNonZero(region1) / SIZE) * 100.0) / 100.0);
+//        AbstractOpMode.currentOpMode().telemetry.addData("R2 - WHITE PX:", Core.countNonZero(region2));
+//        AbstractOpMode.currentOpMode().telemetry.addData("R2 - WHITE/BLACK PX:", Math.round((Core.countNonZero(region2) / SIZE) * 100.0) / 100.0);
+//        AbstractOpMode.currentOpMode().telemetry.addData("POS", getPos());
+//        AbstractOpMode.currentOpMode().telemetry.addData("SIDE", getSide());
         AbstractOpMode.currentOpMode().telemetry.update();
         //Core.add(mat, mask, finalMat);
         return mask;

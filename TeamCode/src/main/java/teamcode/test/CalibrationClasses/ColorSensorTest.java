@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 
-
+@Disabled
 @Autonomous(name="Color sensor calibration")
 public class ColorSensorTest extends AbstractOpMode {
     ArmSystem system;

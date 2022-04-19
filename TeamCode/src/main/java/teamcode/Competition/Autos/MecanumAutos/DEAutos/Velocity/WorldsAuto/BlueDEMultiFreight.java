@@ -55,9 +55,9 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 if(position == LEFT){
                     arm.raise(Constants.BOTTOM_POSITION);
                 }else if(position == CENTER){
-                    arm.raise(Constants.MEDIUM_POSITION + 4000);
+                    arm.raise(Constants.MEDIUM_POSITION + 4500);
                 }else{
-                    arm.raise(Constants.TOP_POSITION + 2000);
+                    arm.raise(Constants.TOP_POSITION + 2500);
                 }
 
                 while(!drive.getFlagIndex(4));
@@ -65,7 +65,11 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 //                    arm.runConveyorPos(1.0,3000);
 //                    Utils.sleep(100);
                 }else{
-                    arm.score();
+                    if(position == CENTER){
+                        arm.scoreFar();
+                    }else {
+                        arm.score();
+                    }
                 }
                 arm.runConveyor(1.0);
 
@@ -81,9 +85,9 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 //                    drive.setFlagIndex(5, false);
                     while (!drive.getFlagIndex(1));
                     if(i > 1){
-                        arm.raise(Constants.TOP_POSITION + 2000);
+                        arm.raise(Constants.TOP_POSITION + 1500);
                     }else {
-                        arm.raise(Constants.TOP_POSITION + 2000);
+                        arm.raise(Constants.TOP_POSITION + 1500);
                     }
                     drive.setFlagIndex(1, false);
                     while (!drive.getFlagIndex(2));
@@ -119,6 +123,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
         while(!opModeIsActive() && !isStopRequested()){
             position = pipeline.getPos();
             telemetry.addData("pos", pipeline.getPos());
+            telemetry.update();
         }
 
     }
@@ -160,7 +165,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             warehouseSplice.add(new Movement(1.0));
 //            if(first) {
 //                first = false;
-                warehouseSplice.add(new Movement( 800, 2 * VELOCITY, 0.0, true));
+                warehouseSplice.add(new Movement( 1200, 2 * VELOCITY, 0.0, true));
                 warehouseSplice.add(new Movement(100));
 //            }
             //warehouseSplice.add(new Movement(6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
@@ -169,7 +174,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(200));
             //warehouseSplice.add(new Movement(200)); may or may not be needed
 
-            warehouseSplice.add(new Movement(1.0, (double)(550.0 ),0.0));
+            warehouseSplice.add(new Movement(1.0, (double)(300.0 ),0.0));
             //+ 60 *i
             //warehouseSplice.add(new Movement(100 + (100 * i), 10.0, 0.0)); //increase this? new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)
             // warehouseSplice.add(new Movement(700));
@@ -182,11 +187,11 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 
             warehouseSplice.add(new Movement(300 + 10 * i, 2 * VELOCITY, 180.0)); // 180.0
 //            warehouseSplice.add(new Movement(1.0,(long)200));
-
+            warehouseSplice.add(new Movement(1.0, (long)100));// change this to 100 and the arc to 1550
             warehouseSplice.add(new Movement(-4,500));
+            //warehouseSplice.add(new Movement(150));
 
             //warehouseSplice.add(new Movement(100));
-            warehouseSplice.add(new Movement(1.0, (long)100));// change this to 100 and the arc to 1550
             //warehouseSplice.add(new Movement(100, VELOCITY, 90.0));
             //  warehouseSplice.add(new Movement(300, VELOCITY, 180.0));
             //approach and score
@@ -213,7 +218,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             drive.splicedMovement(warehouseSplice);
             warehouseSplice.clear();
         }
-        drive.moveDistanceDEVelocity(700, 0, 35);
+        drive.moveDistanceDEVelocity(900, 0, 35);
       //  drive.writeLoggerToFile();
     }
 

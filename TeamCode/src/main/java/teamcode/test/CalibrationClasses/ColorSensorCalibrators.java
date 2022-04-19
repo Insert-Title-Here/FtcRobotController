@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import teamcode.common.AbstractOpMode;
 
+
 @Autonomous(name="Color Sensor Calibrator")
 public class ColorSensorCalibrators extends AbstractOpMode {
     NormalizedColorSensor sensor;

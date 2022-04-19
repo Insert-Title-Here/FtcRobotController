@@ -1,12 +1,14 @@
 package teamcode.test.Miscellanious;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.MecanumDriveTrain;
 
+@Disabled
 @Autonomous(name="tape")
 public class WarehouseTapeCalibration extends AbstractOpMode {
 

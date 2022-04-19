@@ -1,6 +1,7 @@
 package teamcode.test.MecanumChassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,6 +19,7 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.test.MasonTesting.DuckPipeline;
 
+@Disabled
 @Autonomous(name="duck auto tuning ")
 public class DuckAutoTuning extends AbstractOpMode {
 

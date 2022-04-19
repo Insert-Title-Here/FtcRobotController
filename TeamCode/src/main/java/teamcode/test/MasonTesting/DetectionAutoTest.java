@@ -1,6 +1,7 @@
 package teamcode.test.MasonTesting;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -17,6 +18,7 @@ import teamcode.common.PositionStuff.Pose;
 import teamcode.common.Utils;
 import teamcode.common.WestCoastDriveTrain;
 
+@Disabled
 @Autonomous(name = "DetectionAutoTest")
 public class DetectionAutoTest extends AbstractOpMode {
     WestCoastDriveTrain driveTrain;

@@ -13,6 +13,7 @@ import teamcode.common.Localizer;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.PositionStuff.Pose;
 
+@Disabled
 @TeleOp(name="Distance sensor")
 public class DistanceSensorTest extends AbstractOpMode {
     ColorRangeSensor d1, d2; //blue 0.75 //red d1 < 1.1 and d2 < 0.8

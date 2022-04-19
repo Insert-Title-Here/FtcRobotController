@@ -1,10 +1,12 @@
 package teamcode.test.Miscellanious;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @Autonomous(name="stop")
 public class WinchStopTest extends AbstractOpMode {
 

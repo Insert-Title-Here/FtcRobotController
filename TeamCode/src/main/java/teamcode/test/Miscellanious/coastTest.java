@@ -2,6 +2,9 @@ package teamcode.test.Miscellanious;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.checkerframework.framework.qual.DefaultInUncheckedCodeFor;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
@@ -9,6 +12,7 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 
+@Disabled
 @Autonomous(name="coast")
 public class coastTest extends AbstractOpMode {
 

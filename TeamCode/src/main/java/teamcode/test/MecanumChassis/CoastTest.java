@@ -1,10 +1,12 @@
 package teamcode.test.MecanumChassis;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.MecanumDriveTrain;
 
+@Disabled
 @Autonomous(name="coastee")
 public class CoastTest extends AbstractOpMode {
 

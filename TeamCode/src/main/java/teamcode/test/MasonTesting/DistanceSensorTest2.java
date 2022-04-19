@@ -1,6 +1,7 @@
 package teamcode.test.MasonTesting;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import teamcode.common.AbstractOpMode;
 
 // CONFIG NAME : ColorSensorTest2
+@Disabled
 @Autonomous(name = "DistanceSensorTest2")
 public class DistanceSensorTest2 extends AbstractOpMode {
     DistanceSensor d1, d2;

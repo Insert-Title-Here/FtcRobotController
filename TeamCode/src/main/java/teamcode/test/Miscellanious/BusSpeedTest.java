@@ -4,9 +4,11 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxNackException;
 import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DigitalIoDeviceType;
 
 import org.openftc.revextensions2.ExpansionHubEx;
 
@@ -14,6 +16,7 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Logger;
 import teamcode.common.Utils;
 
+@Disabled
 @Autonomous(name="Bus Test")
 public class BusSpeedTest extends AbstractOpMode {
     ExpansionHubEx hub;

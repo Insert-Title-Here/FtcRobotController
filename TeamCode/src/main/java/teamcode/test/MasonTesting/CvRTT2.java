@@ -1,6 +1,7 @@
 package teamcode.test.MasonTesting;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -9,6 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import teamcode.common.AbstractOpMode;
 
+@Disabled
 @Autonomous (name = "DistanceTestV0.03")
 public class CvRTT2 extends AbstractOpMode {
 

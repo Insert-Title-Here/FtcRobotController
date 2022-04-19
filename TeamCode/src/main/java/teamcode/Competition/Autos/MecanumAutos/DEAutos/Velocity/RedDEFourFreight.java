@@ -1,6 +1,7 @@
 package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -22,6 +23,7 @@ import teamcode.common.Movement;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
+@Disabled
 @Autonomous(name="4 freight red")
 public class RedDEFourFreight extends AbstractOpMode {
     private static final int FREIGHT = 3;

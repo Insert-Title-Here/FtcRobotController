@@ -1,5 +1,6 @@
 package teamcode.Competition.TeleOp.Mecanum;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import teamcode.Competition.Subsystems.ArmSystem;
@@ -9,6 +10,7 @@ import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Vector2D;
 
+@Disabled
 @TeleOp(name="debug")
 public class DebugTeleOp extends AbstractOpMode {
     MecanumDriveTrain drive;

@@ -113,7 +113,7 @@ public class BlueDuck extends AbstractOpMode {
         //extend
         flags[0] = true;
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(700, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(800, 180, VELOCITY);
         //score
         Utils.sleep(300);
         if(position == LEFT){
@@ -122,13 +122,13 @@ public class BlueDuck extends AbstractOpMode {
             system.score();
         }
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(200, -90, VELOCITY ); //400
+        //drive.moveDistanceDEVelocity(200, -90, VELOCITY ); //400
 
 
         drive.rotateDistanceDE(-140, 24);
         flags[1] = true;
         //Utils.sleep(200);
-        drive.strafeDistanceSensor(30, 0);
+        drive.strafeDistanceSensor(6, 0);
         system.setIsDuck(true);
         Utils.sleep(200);
         //drive.moveDistanceDEVelocity(300, 180, VELOCITY);
@@ -148,9 +148,11 @@ public class BlueDuck extends AbstractOpMode {
 
         systems.scoreDuckAuto();
         Utils.sleep(250);
-        drive.moveDistanceDEVelocity(200, 90, VELOCITY / 2.0);
+
+        //drive.moveDistanceDEVelocity(150, 60, VELOCITY / 2.0);
+        drive.moveDistanceDEVelocity(150, 90, VELOCITY / 2.0);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(100, 0, VELOCITY / 2.0);
+        drive.moveDistanceDEVelocity(150, 0, VELOCITY / 2.0);
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(400, 90, VELOCITY / 2.0); //400
 
@@ -161,14 +163,15 @@ public class BlueDuck extends AbstractOpMode {
         //drive.moveDistanceDEVelocity(420, 0, VELOCITY / 2.0);
         //Utils.sleep(500);
         system.preScore();
-        drive.moveDistanceDEVelocity(1200, 45, -2 * VELOCITY);
+        drive.moveDistanceDEVelocity(1000, 45, -2 * VELOCITY);
         //Utils.sleep(200);
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
         drive.moveDistanceDEVelocity(550, 180.0, VELOCITY);
+
         Utils.sleep(200);
-        drive.rotateDistanceDE(-90, 6);
+        drive.rotateDistanceDE(-75, 6);
 
 
 //        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
@@ -180,20 +183,24 @@ public class BlueDuck extends AbstractOpMode {
 //        drive.moveDistanceDEVelocity(750, 180,  VELOCITY);
 //        Utils.sleep(200);
 //        drive.rotateDistanceDE(-75, 12);
-//        Utils.sleep(200);
+        Utils.sleep(200);
 
 
         //extend
         flags[2] = true;
-        drive.moveDistanceDEVelocity(900, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(550, 180, VELOCITY);
         //score
         system.score();
+        Utils.sleep(200);
+        system.jitterHouse();
         Utils.sleep(200);
         flags[3] = true;
 
         drive.moveDistanceDEVelocity(1000, 0, VELOCITY);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(400, 90, VELOCITY ); //400
+        drive.moveDistanceDEVelocity(600, 90, VELOCITY ); //400
+        drive.setPower(0.2,0.2,0.2,0.2);
+        while(opModeIsActive() && !isStopRequested());
     }
 
     //drive.strafeDistanceSensor(6,0);

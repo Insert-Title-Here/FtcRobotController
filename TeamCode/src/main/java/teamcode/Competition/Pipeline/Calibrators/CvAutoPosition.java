@@ -3,6 +3,7 @@
 
 package teamcode.Competition.Pipeline.Calibrators;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -13,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import teamcode.Competition.Pipeline.TankPipeline.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
-
+@Disabled
 @TeleOp(name = "Webcam Calibration")
 public class CvAutoPosition extends AbstractOpMode {
 

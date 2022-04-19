@@ -25,7 +25,7 @@ import teamcode.common.Utils;
 import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.CENTER;
 import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.LEFT;
 
-@Disabled
+
 @Autonomous(name="multi freight red")
 public class RedDEMultiFreight extends AbstractOpMode {
     MecanumDriveTrain drive;
@@ -117,6 +117,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
         while(!opModeIsActive() && !isStopRequested()){
             position = pipeline.getPos();
             telemetry.addData("pos", pipeline.getPos());
+            telemetry.update();
         }
 
 
@@ -149,18 +150,19 @@ public class RedDEMultiFreight extends AbstractOpMode {
 
         for(int i = 0; i < FREIGHT; i++) {
             //warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
-            warehouseSplice.add(new Movement(1.0));
-            if(first) {
+//              if(first) {
                 first = false;
-                warehouseSplice.add(new Movement( 550, 2 * VELOCITY, 0.0));
-            }
+                warehouseSplice.add(new Movement( 900, 2 * VELOCITY, 0.0));
+                warehouseSplice.add(new Movement(1.0));
+//
+//            }
             //warehouseSplice.add(new Movement(6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
 
             //warehouseSplice.add(new Movement(1.0));
-            //warehouseSplice.add(new Movement(200));
+            warehouseSplice.add(new Movement(100));
             //warehouseSplice.add(new Movement(200)); may or may not be needed
 
-            warehouseSplice.add(new Movement(1.0, (double)(400.0 + 30 *i), (double)(30 * i)));
+            warehouseSplice.add(new Movement(1.0, (double)(300), 0.0));
             //warehouseSplice.add(new Movement(100 + (100 * i), 10.0, 0.0)); //increase this? new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)
             // warehouseSplice.add(new Movement(700));
             warehouseSplice.add(new Movement(DcMotor.ZeroPowerBehavior.BRAKE));
@@ -198,7 +200,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(200, 2 * VELOCITY, 180.0));
             warehouseSplice.add(new Movement(40, 0, Movement.MovementType.WALL_LOCALIZATION));
             //warehouseSplice.add(new Movement(120.0, 6.0,1200));
-            warehouseSplice.add(new Movement(600, VELOCITY,0.0));
+//            warehouseSplice.add(new Movement(600, VELOCITY,0.0));
             drive.splicedMovement(warehouseSplice);
             warehouseSplice.clear();
         }

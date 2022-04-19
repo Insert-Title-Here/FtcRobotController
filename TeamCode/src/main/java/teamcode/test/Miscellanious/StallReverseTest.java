@@ -1,12 +1,14 @@
 package teamcode.test.Miscellanious;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
 import teamcode.common.MecanumDriveTrain;
 
+@Disabled
 @Autonomous(name="Stall")
 public class StallReverseTest extends AbstractOpMode {
 

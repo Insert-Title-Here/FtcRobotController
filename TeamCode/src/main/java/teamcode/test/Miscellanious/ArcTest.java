@@ -15,6 +15,7 @@ import teamcode.common.Movement;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
+@Disabled
 @Autonomous(name="Arc")
 public class ArcTest extends AbstractOpMode {
     MecanumDriveTrain drive;

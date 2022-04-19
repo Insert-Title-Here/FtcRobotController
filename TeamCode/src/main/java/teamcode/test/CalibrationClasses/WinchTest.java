@@ -10,7 +10,7 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Localizer;
 import teamcode.common.Vector2D;
 
-
+@Disabled
 @TeleOp(name="Winch")
 public class WinchTest extends AbstractOpMode {
     DcMotor winchMotor, winchEncoder;

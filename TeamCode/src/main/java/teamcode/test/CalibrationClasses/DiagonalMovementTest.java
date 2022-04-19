@@ -1,4 +1,4 @@
-package teamcode.test.Miscellanious;
+package teamcode.test.CalibrationClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -6,20 +6,26 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import teamcode.common.AbstractOpMode;
 import teamcode.common.MecanumDriveTrain;
+import teamcode.common.Utils;
 
 @Disabled
-@Autonomous(name="omni")
-public class omniMovementEXO extends AbstractOpMode {
+@Autonomous(name="Diag")
+public class DiagonalMovementTest extends AbstractOpMode {
     MecanumDriveTrain drive;
+    private PIDFCoefficients coefficients = new PIDFCoefficients(5,0.5,1.0,0);
 
     @Override
     protected void onInitialize() {
-        drive = new MecanumDriveTrain(hardwareMap, true, null, null, new PIDFCoefficients(5, 0.5, 1.0, 0));
+        drive = new MecanumDriveTrain(hardwareMap, false, null, null, coefficients);
+
     }
 
     @Override
     protected void onStart() {
-        drive.setOmniMovement(Math.toRadians(117), 1400, -6);
+        drive.moveDistanceDEVelocity(150, 90, 5.0);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(150, 0, 5.0);
+
     }
 
     @Override

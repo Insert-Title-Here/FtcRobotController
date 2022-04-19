@@ -128,7 +128,7 @@ import static java.lang.Math.PI;
         warehouse = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
         sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
 
-        warehouse.setGain(400);
+        warehouse.setGain(450);
         frontRed.setGain(200);
         backRed.setGain(520);
         frontBlue.setGain(100);
@@ -241,7 +241,7 @@ import static java.lang.Math.PI;
         //LynxModule.BulkData data = hub.getBulkData();
         int iterator = 0;
 
-        while(rgba.green < 0.9 && opModeIsRunning()){
+        while(rgba.green < 0.9 && rgba.blue < 0.9 && rgba.red < 0.9 && opModeIsRunning()){
             //data = hub.getBulkData();
 //            posSum += Math.abs(data.getMotorCurrentPosition(0));
 //            posSum += Math.abs(data.getMotorCurrentPosition(1));
@@ -1050,8 +1050,8 @@ import static java.lang.Math.PI;
         NormalizedRGBA backRGBA;
         double distanceFront, distanceBack;
             if(isRed) {
-                distanceFrontThreshold = 1.5; //2.9
-                distanceBackThreshold = 1.9; //1.4
+                distanceFrontThreshold = 2.0; //2.9
+                distanceBackThreshold = 2.4; //1.4
                 distanceFront = frontRed.getDistance(DistanceUnit.INCH);
                 distanceBack = backRed.getDistance(DistanceUnit.INCH);
 
@@ -1060,8 +1060,8 @@ import static java.lang.Math.PI;
                 Debug.log("red");
             }else{
 
-                distanceFrontThreshold = 1.5;
-                distanceBackThreshold = 1.0;
+                distanceFrontThreshold = 2.0; //1.5 for straight walls, curr values for bent walls
+                distanceBackThreshold = 1.5; //1.0
                 distanceFront = frontBlue.getDistance(DistanceUnit.INCH);
                 distanceBack = backBlue.getDistance(DistanceUnit.INCH);
 
@@ -1649,7 +1649,7 @@ import static java.lang.Math.PI;
             }else if(curr.getMovement() == Movement.MovementType.TRANSLATION_BRAKE){
                 moveDistanceDEVelocity((int) curr.getDistance(), curr.getRadians(), curr.getVelocity());
             }
-            logger.writeToLogString(0, curr.getMovement().toString() + "\n");
+           // logger.writeToLogString(0, curr.getMovement().toString() + "\n");
         }
         brake();
     }
@@ -1713,15 +1713,15 @@ import static java.lang.Math.PI;
                 ratio = (distance - posAvg) / distance;
 //            }
             calculatedPow = pow * ratio;
-            logger.writeToLogString(0, ratio + " " + posAvg + " " + calculatedPow +"\n");
+           // logger.writeToLogString(0, ratio + " " + posAvg + " " + calculatedPow +"\n");
 //            AbstractOpMode.currentOpMode().telemetry.addData("calculated", calculatedPow);
 //            AbstractOpMode.currentOpMode().telemetry.update();
 
-            currentTics = arm.getConveyorPosition();
-            deltaTics = currentTics - previousTics;
-            deltaTics = Math.abs(deltaTics);
+        //    currentTics = arm.getConveyorPosition();
+            //deltaTics = currentTics - previousTics;
+            //deltaTics = Math.abs(deltaTics);
 
-            deltaTime = AbstractOpMode.currentOpMode().time - startTime;
+            //deltaTime = AbstractOpMode.currentOpMode().time - startTime;
 
 //            if (deltaTics < 1 && deltaTime > 1.0) {
 //                Utils.sleep(500);
@@ -1734,9 +1734,9 @@ import static java.lang.Math.PI;
 //                }
 //
 //            }
-            AbstractOpMode.currentOpMode().telemetry.update();
+            //AbstractOpMode.currentOpMode().telemetry.update();
             setPower(calculatedPow, calculatedPow, calculatedPow, calculatedPow);
-            previousTics = currentTics;
+         //   previousTics = currentTics;
         }
 
         if(ratio < 0.3){
