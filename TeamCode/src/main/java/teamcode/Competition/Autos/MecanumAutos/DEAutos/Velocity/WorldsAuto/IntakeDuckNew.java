@@ -106,7 +106,7 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(550, 0, VELOCITY);
+        drive.moveDistanceDEVelocity(400, 0, VELOCITY);
         Utils.sleep(200);
         drive.rotateDistanceDE(75, 6);
 
@@ -152,7 +152,7 @@ public class IntakeDuckNew extends AbstractOpMode {
         //drive.moveDistanceDEVelocity(150, 60, VELOCITY / 2.0);
         drive.moveDistanceDEVelocity(250, -90, VELOCITY / 2.0);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(50, 0, VELOCITY / 2.0);
+        drive.moveDistanceDEVelocity(100, 0, VELOCITY / 2.0);
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(400, -90, VELOCITY / 2.0); //400
 
@@ -168,7 +168,7 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(550, 180.0, VELOCITY);
+        drive.moveDistanceDEVelocity(550, 180.0,2*  VELOCITY);
 
         Utils.sleep(200);
         drive.rotateDistanceDE(90, 6);
@@ -188,7 +188,8 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         //extend
         flags[2] = true;
-        drive.moveDistanceDEVelocity(450, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(450, 180, 2 * VELOCITY);
+        Utils.sleep(250);
         //score
         system.score();
         Utils.sleep(200);

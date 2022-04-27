@@ -51,17 +51,17 @@ public class RedDEMultiFreight extends AbstractOpMode {
                 if(position == LEFT){
                     arm.raise(Constants.BOTTOM_POSITION);
                 }else if(position == CENTER){
-                    arm.raise(Constants.MEDIUM_POSITION + 4000);
+                    arm.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
                     arm.raise(Constants.TOP_POSITION + 2000);
                 }
                 while(!drive.getFlagIndex(3));
 
-                if(position == LEFT) {
-                    Utils.sleep(200);
-                    arm.runConveyorPos(1.0, 3200);
-                    Utils.sleep(100);
-                }
+//                if(position == LEFT) {
+//                    Utils.sleep(200);
+//                    arm.runConveyorPos(1.0, 3200);
+//                    Utils.sleep(100);
+//                }
                 while(!drive.getFlagIndex(4));
                 if(position == LEFT) {
 //                    arm.runConveyorPos(1.0,3000);
@@ -78,11 +78,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
                     arm.intakeDumb(-1.0);
                     drive.setFlagIndex(0, false);
                     while (!drive.getFlagIndex(1));
-                    if(i > 1){
-                        arm.raise(Constants.TOP_POSITION + 2000);
-                    }else {
-                        arm.raise(Constants.TOP_POSITION + 1500);
-                    }
+                    arm.raise(Constants.TOP_POSITION + 1500);
                     drive.setFlagIndex(1, false);
                     while (!drive.getFlagIndex(2));
                     arm.scoreAuto();
@@ -131,6 +127,16 @@ public class RedDEMultiFreight extends AbstractOpMode {
         Utils.sleep(100);
         drive.setFlagIndex(3, true);
         drive.rotateDistanceDEUnramped(150, 24);
+
+        if(position == LEFT) {
+            //Utils.sleep(300);
+            arm.runConveyorPos(1.0, 1600);
+            drive.setFlagIndex(4,true);
+//            Utils.sleep(100);
+        }else {
+            drive.setFlagIndex(4, true);
+            Utils.sleep(200);
+        }
         //Utils.sleep(200);
 
 
@@ -152,9 +158,9 @@ public class RedDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(6, Movement.MovementType.WALL_LOCALIZATION));
 //              if(first) {
                 first = false;
-                warehouseSplice.add(new Movement( 900, 2 * VELOCITY, 0.0));
                 warehouseSplice.add(new Movement(1.0));
-//
+                warehouseSplice.add(new Movement( 600, 2 * VELOCITY, 0.0));
+
 //            }
             //warehouseSplice.add(new Movement(6, Movement.MovementType.WAREHOUSE_LOCALIZATION));
 
@@ -177,7 +183,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
 
             warehouseSplice.add(new Movement(-4,500));
             //warehouseSplice.add(new Movement(100));
-            warehouseSplice.add(new Movement(1.0, (long)50));// change this to 100 and the arc to 1550
+            warehouseSplice.add(new Movement(1.0, (long)100));// change this to 100 and the arc to 1550
             //warehouseSplice.add(new Movement(100, VELOCITY, 90.0));
           //  warehouseSplice.add(new Movement(300, VELOCITY, 180.0));
             //approach and score
@@ -190,7 +196,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
 //            if(i % 2 == 0){
 //                warehouseSplice.add(new Movement(130.5, -30.0, 1550)); // -6, 1500
 //            }else {
-                warehouseSplice.add(new Movement(131.0, -30.0, 1700)); // -6, 1500
+                warehouseSplice.add(new Movement(130.5, -30.0, 1700)); // -6, 1500
            // }
             warehouseSplice.add(new Movement(2, true));
             warehouseSplice.add(new Movement(300));

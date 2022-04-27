@@ -69,7 +69,7 @@ public class BlueDuck extends AbstractOpMode {
                 if(position == LEFT) {
                     system.raise(Constants.BOTTOM_POSITION);
                 }else if(position == CENTER){
-                    system.raise(Constants.MEDIUM_POSITION + 4000);
+                    system.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
                     system.raise(Constants.TOP_POSITION);
                 }
@@ -171,7 +171,7 @@ public class BlueDuck extends AbstractOpMode {
         drive.moveDistanceDEVelocity(550, 180.0, VELOCITY);
 
         Utils.sleep(200);
-        drive.rotateDistanceDE(-75, 6);
+        drive.rotateDistanceDE(-90, 6);
 
 
 //        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
@@ -189,6 +189,7 @@ public class BlueDuck extends AbstractOpMode {
         //extend
         flags[2] = true;
         drive.moveDistanceDEVelocity(550, 180, VELOCITY);
+        Utils.sleep(200);
         //score
         system.score();
         Utils.sleep(200);
@@ -199,6 +200,7 @@ public class BlueDuck extends AbstractOpMode {
         drive.moveDistanceDEVelocity(1000, 0, VELOCITY);
         Utils.sleep(200);
         drive.moveDistanceDEVelocity(600, 90, VELOCITY ); //400
+        Utils.sleep(200);
         drive.setPower(0.2,0.2,0.2,0.2);
         while(opModeIsActive() && !isStopRequested());
     }

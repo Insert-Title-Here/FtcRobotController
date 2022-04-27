@@ -83,7 +83,7 @@ public class EndgameSystems {
     }
 
     public void zeroCap() {
-        yCap.setPosition(0.5);
+        yCap.setPosition(0.45);
         // TODO - get the x position to set the x zero pos (not fully necessary, might be nice to have)
     }
 

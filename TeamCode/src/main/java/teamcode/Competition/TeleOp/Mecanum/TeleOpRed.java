@@ -22,7 +22,7 @@ public class TeleOpRed extends AbstractOpMode {
     ArmSystem arm;
     Thread armThread, capThread;
     EndgameSystems systems;
-
+// mason was here
     private ScoredButtonState state;
     private PulleyState pulleyState;
     private LinkageState linkageState;
@@ -201,7 +201,7 @@ public class TeleOpRed extends AbstractOpMode {
         }
         if (gamepad1.left_bumper) {
             while (gamepad1.left_bumper) {
-                arm.runConveyor(1.0);
+                arm.runConveyor(0.8);
             }
             arm.idleServos();
         } else if (gamepad1.start && !previousStart){
@@ -213,7 +213,7 @@ public class TeleOpRed extends AbstractOpMode {
 
         }else if(gamepad1.b){
             while(gamepad1.b){
-                systems.runCarousel(0.3);
+                systems.runCarousel(0.2);
             }
         } else{
             arm.setWinchPower(0);

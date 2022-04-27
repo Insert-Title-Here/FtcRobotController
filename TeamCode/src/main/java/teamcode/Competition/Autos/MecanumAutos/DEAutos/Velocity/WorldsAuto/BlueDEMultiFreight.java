@@ -55,7 +55,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 if(position == LEFT){
                     arm.raise(Constants.BOTTOM_POSITION);
                 }else if(position == CENTER){
-                    arm.raise(Constants.MEDIUM_POSITION + 4500);
+                    arm.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
                     arm.raise(Constants.TOP_POSITION + 2500);
                 }
