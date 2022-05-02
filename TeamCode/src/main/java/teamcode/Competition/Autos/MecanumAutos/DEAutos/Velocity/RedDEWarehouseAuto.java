@@ -10,8 +10,6 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import java.util.ArrayList;
-
 import teamcode.Competition.Pipeline.MecanumPipeline.MecanumBarcodePipeline;
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
@@ -19,7 +17,6 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Constants;
 import teamcode.common.Debug;
 import teamcode.common.MecanumDriveTrain;
-import teamcode.common.Movement;
 import teamcode.common.Utils;
 
 @Disabled

@@ -1,7 +1,5 @@
  package teamcode.common;
 
-import android.graphics.Color;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -9,23 +7,35 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.apache.commons.math3.geometry.spherical.oned.Arc;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
-import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
+import teamcode.common.Movements.ArcMovement;
+import teamcode.common.Movements.CoastFunction;
+import teamcode.common.Movements.ModifyFlag;
+import teamcode.common.Movements.ModifyZeroPower;
+import teamcode.common.Movements.ModulateIntake;
+import teamcode.common.Movements.Movement;
+import teamcode.common.Movements.RotationalMovement;
+import teamcode.common.Movements.StrafeTP;
+import teamcode.common.Movements.TranslationalMovement;
+import teamcode.common.Movements.Wait;
+import teamcode.common.Movements.WallNormalization;
+import teamcode.common.Movements.WarehouseNormalization;
 import teamcode.test.MasonTesting.CvDetectionPipeline;
 
 import static java.lang.Math.PI;
@@ -1583,71 +1593,83 @@ import static java.lang.Math.PI;
         setEncoderMode(DcMotor.RunMode.RUN_USING_ENCODER);
         for(int i = 0; i < movements.size() && opModeIsRunning(); i++){
             Movement curr = movements.get(i);
-            if(curr.getMovement() == Movement.MovementType.TRANSLATION) {
-                double distance = curr.getDistance();
-                double radians = curr.getRadians();
-                int flDistance = (int) (Math.sin(radians) * distance);
-                int frDistance = (int) (Math.cos(radians) * distance);
-                int blDistance = (int) (Math.cos(radians) * distance);
-                int brDistance = (int) (Math.sin(radians) * distance);
-
-                hub.clearBulkCache();
-                data = hub.getBulkData();
-                int flInit = data.getMotorCurrentPosition(0);
-                int frInit = data.getMotorCurrentPosition(1);
-                int blInit = data.getMotorCurrentPosition(2);
-                int brInit = data.getMotorCurrentPosition(3);
-                Vector2D vec = Vector2D.fromAngleMagnitude(radians, curr.getVelocity());
-
-                while (Math.abs(data.getMotorCurrentPosition(0) - flInit) < flDistance ||
-                        Math.abs(data.getMotorCurrentPosition(1) - frInit) < frDistance ||
-                        Math.abs(data.getMotorCurrentPosition(2) - blInit) < blDistance ||
-                        Math.abs(data.getMotorCurrentPosition(3) - brInit) < brDistance){
+            if(curr instanceof TranslationalMovement) {
+                TranslationalMovement cur = (TranslationalMovement)curr;
+                if(cur.getBrake()){
+                    moveDistanceDEVelocity((int) cur.getdPosition(), cur.getDegrees(), cur.getVelocity());
+                }else {
+                    double distance = cur.getdPosition();
+                    double radians = Math.toRadians(cur.getDegrees());
+                    int flDistance = (int) (Math.sin(radians) * distance);
+                    int frDistance = (int) (Math.cos(radians) * distance);
+                    int blDistance = (int) (Math.cos(radians) * distance);
+                    int brDistance = (int) (Math.sin(radians) * distance);
 
                     hub.clearBulkCache();
                     data = hub.getBulkData();
+                    int flInit = data.getMotorCurrentPosition(0);
+                    int frInit = data.getMotorCurrentPosition(1);
+                    int blInit = data.getMotorCurrentPosition(2);
+                    int brInit = data.getMotorCurrentPosition(3);
+                    Vector2D vec = Vector2D.fromAngleMagnitude(radians, cur.getVelocity());
 
-                    setVelocity(vec, 0);
+                    while (Math.abs(data.getMotorCurrentPosition(0) - flInit) < flDistance ||
+                            Math.abs(data.getMotorCurrentPosition(1) - frInit) < frDistance ||
+                            Math.abs(data.getMotorCurrentPosition(2) - blInit) < blDistance ||
+                            Math.abs(data.getMotorCurrentPosition(3) - brInit) < brDistance) {
+
+                        hub.clearBulkCache();
+                        data = hub.getBulkData();
+
+                        setVelocity(vec, 0);
+                    }
                 }
-            }else if(curr.getMovement() == Movement.MovementType.ROTATION){
-                double omega = curr.getOmega();
-                double deltaRadians = curr.getRotation() - imu.getAngularOrientation().firstAngle;
+            }else if(curr instanceof RotationalMovement){
+                RotationalMovement cur = (RotationalMovement)curr;
+                double omega = cur.getOmega();
+                double deltaRadians = cur.getRotation() - imu.getAngularOrientation().firstAngle;
                 double startAngle = imu.getAngularOrientation().firstAngle;
                 omega *= -getSign(deltaRadians);
                 while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians)){
                     setMotorVelocity(omega, -omega, omega, -omega);
                 }
-            }else if(curr.getMovement() == Movement.MovementType.PAUSE){
+            }else if(curr instanceof Wait){
+                Wait cur = (Wait)curr;
                 brake();
-                Utils.sleep(curr.getMillis());
-            }else if(curr.getMovement() == Movement.MovementType.WALL_LOCALIZATION){
-                strafeDistanceSensor(curr.getVelocity(), curr.getRadians(), false, isRed);
-            }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_LOCALIZATION){
-                driveColorSensorWarehouse(curr.getVelocity(), true, curr.getVal());
-                if(curr.getVelocity() < 0){
+                Utils.sleep(cur.getMillis());
+            }else if(curr instanceof WallNormalization){
+                WallNormalization cur = (WallNormalization) curr;
+                strafeDistanceSensor(cur.getVelocity(), cur.getRadians(), false, isRed);
+            }else if(curr instanceof WarehouseNormalization){
+                WarehouseNormalization cur = (WarehouseNormalization) curr;
+                driveColorSensorWarehouse(cur.getVelocity(), true, cur.getIsCoast());
+                if(cur.getVelocity() < 0){
                     arm.preScore();
                 }
-            }else if(curr.getMovement() == Movement.MovementType.MODIFY_FLAG){
-
-                flags[curr.getIndex()] = curr.getVal();
-            }else if(curr.getMovement() == Movement.MovementType.WAREHOUSE_OPERATION){
-                driveColorSensorSpliced(curr.getVelocity());
-            }else if(curr.getMovement() == Movement.MovementType.ARC_MOVEMENT){
-                setOmniMovement(curr.getRadians(), curr.getDistance(), curr.getVelocity(), false);
-            }else if(curr.getMovement() == Movement.MovementType.MODULATE_INTAKE){
-                if(curr.getPower() > 0.0) {
+            }else if(curr instanceof ModifyFlag){
+                ModifyFlag cur = (ModifyFlag)curr;
+                flags[cur.getIndex()] = cur.getVal();
+            }else if(false){
+                //driveColorSensorSpliced(curr.getVelocity());
+            }else if(curr instanceof ArcMovement){
+                ArcMovement cur = (ArcMovement) curr;
+                setOmniMovement(cur.getRadians(), cur.getDistance(), cur.getVelocity(), false);
+            }else if(curr instanceof ModulateIntake){
+                ModulateIntake cur = (ModulateIntake)curr;
+                if(cur.getPower() > 0.0) {
                     arm.lowerLinkageAuto();
                 }
-                modulateIntakeDumb(curr.getPower());
+                modulateIntakeDumb(cur.getPower());
 
-            }else if(curr.getMovement() == Movement.MovementType.COAST_MOVEMENT){
-                coastDriveEncoder(curr.getDistance(),curr.getVelocity(), curr.getPlateu());
-            }else if(curr.getMovement() == Movement.MovementType.MODIFY_ZEROPOWER){
-                setZeroPowerBehavior(curr.getBehavior());
-            }else if(curr.getMovement() == Movement.MovementType.STRAFE_TP){
-                strafeTP(curr.getMillis(), curr.getPower());
-            }else if(curr.getMovement() == Movement.MovementType.TRANSLATION_BRAKE){
-                moveDistanceDEVelocity((int) curr.getDistance(), curr.getRadians(), curr.getVelocity());
+            }else if(curr instanceof CoastFunction){
+                CoastFunction cur = (CoastFunction) curr;
+                coastDriveEncoder(cur.getDistance(),cur.getVelocity(), cur.getPlateu());
+            }else if(curr instanceof ModifyZeroPower){
+                ModifyZeroPower cur = (ModifyZeroPower) curr;
+                setZeroPowerBehavior(cur.getBehavior());
+            }else if(curr instanceof StrafeTP){
+                StrafeTP cur = (StrafeTP) curr;
+                strafeTP(cur.getTime(), cur.getPower());
             }
            // logger.writeToLogString(0, curr.getMovement().toString() + "\n");
         }
