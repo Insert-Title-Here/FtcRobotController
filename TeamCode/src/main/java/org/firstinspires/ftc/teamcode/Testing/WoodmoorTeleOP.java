@@ -22,7 +22,7 @@ public class WoodmoorTeleOP extends LinearOpMode {
 
     MecanumDriveTrain drive;
 
-    Servo grabber;
+    Servo grabber, grabber2;
 
 
 
@@ -56,7 +56,8 @@ public class WoodmoorTeleOP extends LinearOpMode {
 
          */
 
-        grabber = hardwareMap.get(Servo.class, "Servo");
+        grabber = hardwareMap.get(Servo.class, "Left");
+        grabber2 = hardwareMap.get(Servo.class, "Right");
 
         try {
             drive = new MecanumDriveTrain(hardwareMap);
@@ -106,9 +107,11 @@ public class WoodmoorTeleOP extends LinearOpMode {
 
         if(gamepad1.a){
             grabber.setPosition(0.95);
+            grabber2.setPosition(0.05);
 
         }else if(gamepad1.b){
             grabber.setPosition(0.65);
+            grabber2.setPosition(0.35);
         }
 
 
