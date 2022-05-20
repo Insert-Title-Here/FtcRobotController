@@ -7,12 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.CapstoneArm;
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.Carousel;
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.Constants;
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.MagneticArm;
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
-import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
 
 import java.io.FileNotFoundException;
 
@@ -93,6 +87,14 @@ public class WoodmoorTeleOP extends LinearOpMode {
     private void startOpMode() {
         driveThread.start();
         armThread.start();
+
+        grabber.setPosition(1);
+        grabber2.setPosition(0);
+
+        telemetry.addData("start pos left", grabber.getPosition());
+        telemetry.addData("start pos right", grabber2.getPosition());
+        telemetry.update();
+
         //grabber.setPosition(0.4);
         //capArmThread.start();
         //arm.setArmPosition(Constants.NEW_MAGARM_RETRACTED);
@@ -106,12 +108,14 @@ public class WoodmoorTeleOP extends LinearOpMode {
 
 
         if(gamepad1.a){
-            grabber.setPosition(0.95);
-            grabber2.setPosition(0.05);
+            grabber.setPosition(1);
+            grabber2.setPosition(0.0);
 
         }else if(gamepad1.b){
-            grabber.setPosition(0.65);
-            grabber2.setPosition(0.35);
+            grabber.setPosition(0.9);
+            grabber2.setPosition(0.1);
+            telemetry.addData("Test", grabber2.getPosition());
+            telemetry.update();
         }
 
 
