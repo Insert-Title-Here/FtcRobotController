@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.MecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.MecanumCode.Common.Vector2D;
+
 import java.io.FileNotFoundException;
 
 
@@ -98,6 +101,8 @@ public class WoodmoorTeleOP extends LinearOpMode {
         //grabber.setPosition(0.4);
         //capArmThread.start();
         //arm.setArmPosition(Constants.NEW_MAGARM_RETRACTED);
+        //grabber.setPosition(0);
+        //grabber2.setPosition(0.05);
         while(opModeIsActive());
     }
 
@@ -109,11 +114,13 @@ public class WoodmoorTeleOP extends LinearOpMode {
 
         if(gamepad1.a){
             grabber.setPosition(1);
-            grabber2.setPosition(0.0);
+            grabber2.setPosition(0.1);
+            telemetry.addData("Test", grabber2.getPosition());
+            telemetry.update();
 
         }else if(gamepad1.b){
             grabber.setPosition(0.9);
-            grabber2.setPosition(0.1);
+            grabber2.setPosition(0.25);
             telemetry.addData("Test", grabber2.getPosition());
             telemetry.update();
         }
@@ -134,18 +141,23 @@ public class WoodmoorTeleOP extends LinearOpMode {
         }
         else {
 
+         */
+
         if (gamepad1.right_bumper) { // replace this with a button for sprint
-            //drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-            drive.setPower(0.3, 0.3, 0.3, 0.3);
-            sleep(2000);
+            drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+            //drive.setPower(0.3, 0.3, 0.3, 0.3);
+            //sleep(2000);
         } else {
+            drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
 
 
         }
 
-         */
 
-        drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+
+
+
+
 
         //}
 
