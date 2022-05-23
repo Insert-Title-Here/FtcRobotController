@@ -26,11 +26,11 @@ public class ArmSystem {
     private static final double INTAKE_POSITION = 0.00; //0
     private static final double HOUSING_POSITION_BALL = 0.15;
     private static final double HOUSING_POSITION_DUCK = 0.22; //0.12
-    private static final double HOUSING_POSITION = 0.22; //0.22
+    private static final double HOUSING_POSITION = 0.16; //0.22
     private static final double SCORING_POSITION = 0.56; //0.5
     private static final double SCORING_POSITION_CONVEYOR = 0.56;
 
-    private static final double LINKAGE_DOWN = 0.02; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
+    private static final double LINKAGE_DOWN = 0.1; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.58;
     private static final double LINKAGE_SCORE = 0.7;
 
@@ -156,8 +156,8 @@ public class ArmSystem {
 
     public void runConveyor(double power){
         if(power != 0) {
-            //linkage.setPosition(LINKAGE_SCORE);
-            house.setPosition(SCORING_POSITION_CONVEYOR);
+            linkage.setPosition(LINKAGE_SCORE - 0.1);
+            house.setPosition(SCORING_POSITION_CONVEYOR - 0.06);
         }
         conveyorMotor.setPower(power);
     }
