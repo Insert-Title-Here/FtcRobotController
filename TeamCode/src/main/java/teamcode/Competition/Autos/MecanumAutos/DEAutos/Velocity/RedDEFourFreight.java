@@ -1,4 +1,6 @@
+/*
 package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -139,6 +141,7 @@ public class RedDEFourFreight extends AbstractOpMode {
         spline.add(new Movement(-90, 6));
         drive.splicedMovement(spline);
      */
+/*
     @Override
     protected void onStart() {
 
@@ -232,7 +235,7 @@ public class RedDEFourFreight extends AbstractOpMode {
         drive.park;
 
          */
-
+/*
     @Override
     protected void onStop() {
         drive.brake();
@@ -240,3 +243,6 @@ public class RedDEFourFreight extends AbstractOpMode {
 
     }
 }
+
+
+ */
