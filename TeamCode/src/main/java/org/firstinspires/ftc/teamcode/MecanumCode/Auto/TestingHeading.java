@@ -90,6 +90,8 @@ public class TestingHeading extends OpModeWrapper {
 
         //sleep(1000);
 
+        /*
+
         drive.straightHeadingTester((3 * Math.PI / 4), (int)(2 * Math.sqrt(2)));
         sleep(1000);
         drive.straightHeadingTester(Math.PI / 4, (int)(2 * Math.sqrt(2)));
@@ -97,6 +99,12 @@ public class TestingHeading extends OpModeWrapper {
         drive.straightHeadingTester(5 * Math.PI / 4,(int)(2 * Math.sqrt(2)));
         sleep(1000);
         drive.straightHeadingTester(7 * Math.PI / 4,(int)(2 * Math.sqrt(2)));
+
+         */
+
+        drive.straightHeadingTester(-Math.PI / 4, (int)(2 * Math.sqrt(2)));
+        drive.straightHeadingTester(-Math.PI / 2, (int)(2 * Math.sqrt(2)));
+
 
 
 

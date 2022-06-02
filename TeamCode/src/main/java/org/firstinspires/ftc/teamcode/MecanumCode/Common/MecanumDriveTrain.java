@@ -439,8 +439,17 @@ public class MecanumDriveTrain {
         setPower(linear + rotate, linear - rotate, linear + rotate, linear - rotate);
     }
 
+
+    //Goes from -pi to pi
     public void straightHeadingTester(double radAngle, int ft){
-        int leftRightTics = (int)(Math.cos(radAngle) * ft * 640);
+
+        if(radAngle > 0 && radAngle < Math.PI / 4){
+            radAngle += Math.PI/2;
+
+        }
+
+        radAngle = 0;
+        int leftRightTics = (int)(Math.cos(radAngle) * ft * 640); //TODO calibrate
         int frontBackTicks = (int)(Math.sin(radAngle) * ft * 508);
 
 
