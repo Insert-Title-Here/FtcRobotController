@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.Common;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.Testing.Utils.sleep;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -107,7 +108,7 @@ public class MecanumDriveTrain {
 
 
 
-    private void brake() {
+    public void brake() {
         fl.setPower(0);
         fr.setPower(0);
         bl.setPower(0);
@@ -436,6 +437,19 @@ public class MecanumDriveTrain {
 
     public void tankSetPower(double linear, double rotate){
         setPower(linear + rotate, linear - rotate, linear + rotate, linear - rotate);
+    }
+
+    public void straightHeadingTester(double radAngle, int ft){
+        int leftRightTics = (int)(Math.cos(radAngle) * ft * 640);
+        int frontBackTicks = (int)(Math.sin(radAngle) * ft * 508);
+
+
+
+        driveAuto(0.3, leftRightTics, MovementType.STRAFE);
+        sleep(1000);
+        driveAuto(0.3, frontBackTicks, MovementType.STRAIGHT);
+
+
     }
 
 
