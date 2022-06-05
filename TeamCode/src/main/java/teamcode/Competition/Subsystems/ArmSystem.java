@@ -23,14 +23,14 @@ import teamcode.common.Utils;
 public class ArmSystem {
 
     //House Servo values
-    private static final double INTAKE_POSITION = 0.00; //0
+    private static final double INTAKE_POSITION = 0.08; //0
     private static final double HOUSING_POSITION_BALL = 0.15;
     private static final double HOUSING_POSITION_DUCK = 0.22; //0.12
     private static final double HOUSING_POSITION = 0.16; //0.22
     private static final double SCORING_POSITION = 0.56; //0.5
     private static final double SCORING_POSITION_CONVEYOR = 0.56;
 
-    private static final double LINKAGE_DOWN = 0.1; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
+    private static final double LINKAGE_DOWN = 0.3; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.58;
     private static final double LINKAGE_SCORE = 0.7;
 
@@ -156,8 +156,8 @@ public class ArmSystem {
 
     public void runConveyor(double power){
         if(power != 0) {
-            linkage.setPosition(LINKAGE_SCORE - 0.1);
-            house.setPosition(SCORING_POSITION_CONVEYOR - 0.06);
+            linkage.setPosition(LINKAGE_SCORE + 0.2);
+            house.setPosition(SCORING_POSITION_CONVEYOR - 0.12);
         }
         conveyorMotor.setPower(power);
     }
@@ -242,6 +242,8 @@ public class ArmSystem {
         if(isTeleOp && !isDuck) {
             intakeDumb(1.0);
         }
+        linkage.setPosition(LINKAGE_HOUSED);
+        Utils.sleep(250);
         synchronized (this) {
             if (isDuck) {
                 house.setPosition(HOUSING_POSITION_DUCK);
@@ -249,11 +251,9 @@ public class ArmSystem {
                 house.setPosition(HOUSING_POSITION);
             }
         }
-        //Utils.sleep(250);
-        linkage.setPosition(LINKAGE_HOUSED);
+        intakeDumb(0);
 
         Utils.sleep(550);
-        intakeDumb(0);
         stage = Stage.HOUSED;
 
         //Debug.log("finish");
@@ -319,6 +319,7 @@ public class ArmSystem {
     public void raise(double position) {
 
         linkage.setPosition(LINKAGE_SCORE);
+        house.setPosition(HOUSING_POSITION);
         Utils.sleep(200);
         moveSlide(SLIDE_POWER, (int) position);
         stage = stage.EXTENDED;
@@ -329,7 +330,7 @@ public class ArmSystem {
         house.setPosition(SCORING_POSITION);
     }
     public synchronized void scoreAuto(){
-        house.setPosition(SCORING_POSITION - 0.05);
+        house.setPosition(SCORING_POSITION+0.05);
     }
 
     public synchronized void scoreAuto(boolean far){
@@ -395,7 +396,7 @@ public class ArmSystem {
         synchronized (this) {
             linkage.setPosition(LINKAGE_DOWN);
         }
-        house.setPosition(INTAKE_POSITION +0.15); //+0.1
+        house.setPosition(INTAKE_POSITION -0.08); //+0.156
 
     }
 

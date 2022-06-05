@@ -168,7 +168,7 @@ public class TeleOpBlue extends AbstractOpMode {
             if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 previousExtensionTime = time;
                 if(isExtended) {
-                    arm.raise(Constants.TOP_POSITION + 2000); //3000
+                    arm.raise(Constants.TOP_POSITION + 1000); //3000
                 }else{
                     arm.raise(Constants.TOP_POSITION);
                 }

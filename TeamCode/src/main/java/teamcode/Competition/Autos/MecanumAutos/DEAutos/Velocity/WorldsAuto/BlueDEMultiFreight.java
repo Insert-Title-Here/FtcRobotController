@@ -64,7 +64,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 }else if(position == CENTER){
                     arm.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
-                    arm.raise(Constants.TOP_POSITION + 2500);
+                    arm.raise(Constants.TOP_POSITION + 1500);
                 }
 
                 while(!drive.getFlagIndex(4));
@@ -84,7 +84,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 arm.retract();
                 for(int i = 0; i < FREIGHT && opModeIsActive() && !isStopRequested(); i++) {
                     while(!drive.getFlagIndex(0));
-                    arm.preScoreMultiFreight(drive.getCurrenElement());
+                    arm.preScoreMultiFreight(false);
                     arm.intakeDumb(-1.0);
                     drive.setFlagIndex(0, false);
 //                    while(!drive.getFlagIndex(5));
@@ -139,7 +139,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
     protected void onStart() {
         armThread.start();
         arm.actuateWinchStop(1.0);
-        drive.moveDistanceDEVelocity(800, 45, 2 * VELOCITY); // 900 -45
+        drive.moveDistanceDEVelocity(920, 45, 2 * VELOCITY); // 900 -45
         Utils.sleep(100);
         drive.rotateDistanceDEUnramped(-150, 24);
         //Utils.sleep(200);
@@ -181,7 +181,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(200));
             //warehouseSplice.add(new Movement(200)); may or may not be needed
 
-            warehouseSplice.add(new CoastFunction(1.0, (double)(300.0 ),0.0));
+            warehouseSplice.add(new CoastFunction(1.0, (300.0 ),0.0));
             //+ 60 *i
             //warehouseSplice.add(new Movement(100 + (100 * i), 10.0, 0.0)); //increase this? new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)
             // warehouseSplice.add(new Movement(700));
@@ -211,12 +211,12 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 //            if(i % 2 == 0){
 //                warehouseSplice.add(new Movement(130.5, -30.0, 1550)); // -6, 1500
 //            }else {
-            warehouseSplice.add(new ArcMovement(1600, 40.0, -131.5)); // -6, 1500
+            warehouseSplice.add(new ArcMovement(1700, 40.0, -131.5)); // -6, 1500
             // }
             warehouseSplice.add(new ModifyFlag( true, 2));
             warehouseSplice.add(new Wait(200));
 
-            warehouseSplice.add(new RotationalMovement(120, 24.0));
+            warehouseSplice.add(new RotationalMovement(105, 24.0));
             warehouseSplice.add(new Wait(100));
             //warehouseSplice.add(new Movement(200, 2 * VELOCITY, 180.0));
             warehouseSplice.add(new WallNormalization(40, Math.PI / 5.0));

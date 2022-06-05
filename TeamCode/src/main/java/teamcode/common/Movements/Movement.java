@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.UserConfigur
 
 public class Movement {
 
+    /**
+     * dont enstantiate this class, its just a base object for all the other movements we use.
+     */
     public Movement(){
 
     }

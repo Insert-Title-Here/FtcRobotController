@@ -26,6 +26,7 @@ import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.Movements.ArcMovement;
 import teamcode.common.Movements.CoastFunction;
+import teamcode.common.Movements.CustomMovement;
 import teamcode.common.Movements.ModifyFlag;
 import teamcode.common.Movements.ModifyZeroPower;
 import teamcode.common.Movements.ModulateIntake;
@@ -95,6 +96,11 @@ import static java.lang.Math.PI;
         fr = (ExpansionHubMotor) hardwareMap.dcMotor.get("FrontRightDrive");
         bl = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackLeftDrive");
         br = (ExpansionHubMotor) hardwareMap.dcMotor.get("BackRightDrive");
+
+        sensor = hardwareMap.get(NormalizedColorSensor.class, "color");
+        sensor.setGain(500); //325 is tested value but i think I trust this one more //280
+
+
 
 
         this.localizer = localizer;
@@ -1627,10 +1633,14 @@ import static java.lang.Math.PI;
             }else if(curr instanceof RotationalMovement){
                 RotationalMovement cur = (RotationalMovement)curr;
                 double omega = cur.getOmega();
-                double deltaRadians = cur.getRotation() - imu.getAngularOrientation().firstAngle;
+                double deltaRadians = Math.toRadians(cur.getRotation()) - imu.getAngularOrientation().firstAngle;
                 double startAngle = imu.getAngularOrientation().firstAngle;
                 omega *= -getSign(deltaRadians);
                 while(Math.abs(startAngle - imu.getAngularOrientation().firstAngle) < Math.abs(deltaRadians)){
+                    AbstractOpMode.currentOpMode().telemetry.addData("rot", Math.abs(startAngle - imu.getAngularOrientation().firstAngle));
+                    AbstractOpMode.currentOpMode().telemetry.addData("rot",Math.abs(deltaRadians));
+
+                    AbstractOpMode.currentOpMode().telemetry.update();
                     setMotorVelocity(omega, -omega, omega, -omega);
                 }
             }else if(curr instanceof Wait){

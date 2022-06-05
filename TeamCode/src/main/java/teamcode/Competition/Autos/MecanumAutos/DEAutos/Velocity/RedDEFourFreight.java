@@ -1,4 +1,3 @@
-/*
 package teamcode.Competition.Autos.MecanumAutos.DEAutos.Velocity;
 
 
@@ -56,17 +55,17 @@ public class RedDEFourFreight extends AbstractOpMode {
 
         //approach and score
 //        warehouseSplice.add(new Movement(VELOCITY, Movement.MovementType.WALL_LOCALIZATION));
-        warehouseSplice.add(new Movement(200));
+        //warehouseSplice.add(new Movement(200));
         //warehouseSplice.add(new Movement(500, VELOCITY, 180.0));
-        warehouseSplice.add(new Movement(1, true));
+        //warehouseSplice.add(new Movement(1, true));
        // warehouseSplice.add(new Movement(Math.toRadians(117), -6,1400));
-        warehouseSplice.add(new Movement(0.0));
+       // warehouseSplice.add(new Movement(0.0));
 //        warehouseSplice.add(new Movement(150, VELOCITY, -90.0));
 //        warehouseSplice.add(new Movement(-135, 6));
 //        warehouseSplice.add(new Movement(100));
 //        warehouseSplice.add(new Movement(630, VELOCITY / 2.0, 180.0));
-        warehouseSplice.add(new Movement(2, true));
-        warehouseSplice.add(new Movement(200));
+//        warehouseSplice.add(new Movement(2, true));
+//        warehouseSplice.add(new Movement(200));
         //warehouseSplice.add(new Movement(Math.toRadians(117), 6,1400));
 
         system = new EndgameSystems(hardwareMap, false);
@@ -132,7 +131,7 @@ public class RedDEFourFreight extends AbstractOpMode {
         }
     }
 
-    private final double  VELOCITY = 10; //10
+    private final double  VELOCITY = 10;
 
     /*
     example of how to use spliced movement, keep in mind 2 nums is rotate and 3 nums is translate
@@ -141,7 +140,7 @@ public class RedDEFourFreight extends AbstractOpMode {
         spline.add(new Movement(-90, 6));
         drive.splicedMovement(spline);
      */
-/*
+
     @Override
     protected void onStart() {
 
@@ -180,62 +179,59 @@ public class RedDEFourFreight extends AbstractOpMode {
 
     }
 
-    /*
-    drive.moveDistanceDE(500, 0, 0.3, 0);
-        flags[0] = true;
-        drive.rotateDistanceDE(-135, 0.3);
-        sleep(250);
-        drive.moveDistanceDE(490, -180, 0.3, 0);
-        flags[1] = true;
-        sleep(1000);
-        drive.rotateDistanceDE(-90, 0.3);
-        sleep(1000);
-        drive.moveDistanceDENoErrorCorrection(1500, 90, 0.3);
-        drive.moveDistanceDE(1800, 0, 0.3, 0);
+//
+//    drive.moveDistanceDE(500, 0, 0.3, 0);
+//        flags[0] = true;
+//        drive.rotateDistanceDE(-135, 0.3);
+//        sleep(250);
+//        drive.moveDistanceDE(490, -180, 0.3, 0);
+//        flags[1] = true;
+//        sleep(1000);
+//        drive.rotateDistanceDE(-90, 0.3);
+//        sleep(1000);
+//        drive.moveDistanceDENoErrorCorrection(1500, 90, 0.3);
+//        drive.moveDistanceDE(1800, 0, 0.3, 0);
+//
+//
+//    if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+//                    arm.raise(Constants.BOTTOM_POSITION);
+//
+//                } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
+//                    arm.raise(Constants.MEDIUM_POSITION);
+//                } else {
+//                    arm.raise(Constants.TOP_POSITION);
+//                }
+//                flags[0] = false;
+//                while (!flags[1]) ;
+//                if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
+//                    arm.runConveyorPos(0.5, 2000);
+//                } else {
+//                    arm.score();
+//                }
+//                try {
+//                    Thread.currentThread().sleep(500);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                arm.retract();
+//
+//
+//    drive.moveDistanceDE(400, 0, 0.3, 0);
+//        drive.rotateDistanceDE(-90, 0.3);
+//        drive.moveDistanceDE(1400, -90, 0.3, 0.2);
+//        drive.moveDistanceDE(200, -90, 0.3, 0.2);
+//        flags[0] = true;
+//        drive.moveDistanceDE(600, -180, 0.3, 0);
+//        flags[1] =true;
+//        drive.moveDistanceDE(600, 0, 0.3, 0);
+//
+//
+//        drive.goToAllianceHub;
+//        drive.score;
+//        drive.park;
 
-     */
-
-    /*
-    if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-                    arm.raise(Constants.BOTTOM_POSITION);
-
-                } else if (position == MecanumBarcodePipeline.BarcodePosition.CENTER) {
-                    arm.raise(Constants.MEDIUM_POSITION);
-                } else {
-                    arm.raise(Constants.TOP_POSITION);
-                }
-                flags[0] = false;
-                while (!flags[1]) ;
-                if (position == MecanumBarcodePipeline.BarcodePosition.LEFT) {
-                    arm.runConveyorPos(0.5, 2000);
-                } else {
-                    arm.score();
-                }
-                try {
-                    Thread.currentThread().sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                arm.retract();
-
-     */
-
-    /*drive.moveDistanceDE(400, 0, 0.3, 0);
-        drive.rotateDistanceDE(-90, 0.3);
-        drive.moveDistanceDE(1400, -90, 0.3, 0.2);
-        drive.moveDistanceDE(200, -90, 0.3, 0.2);
-        flags[0] = true;
-        drive.moveDistanceDE(600, -180, 0.3, 0);
-        flags[1] =true;
-        drive.moveDistanceDE(600, 0, 0.3, 0);
 
 
-        drive.goToAllianceHub;
-        drive.score;
-        drive.park;
-
-         */
-/*
     @Override
     protected void onStop() {
         drive.brake();
@@ -245,4 +241,3 @@ public class RedDEFourFreight extends AbstractOpMode {
 }
 
 
- */

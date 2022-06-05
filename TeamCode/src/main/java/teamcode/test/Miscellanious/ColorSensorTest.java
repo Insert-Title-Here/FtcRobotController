@@ -15,7 +15,6 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Logger;
 import teamcode.common.MecanumDriveTrain;
 
-@Disabled
 @Autonomous(name="Color")
 public class ColorSensorTest extends AbstractOpMode {
 
@@ -30,8 +29,8 @@ public class ColorSensorTest extends AbstractOpMode {
     @Override
     protected void onInitialize() {
         sensor = hardwareMap.get(NormalizedColorSensor.class, "WarehouseTapeSensor");
-        frontRed = hardwareMap.get(ColorRangeSensor.class, "FrontColorSensorRed");
-        backRed = hardwareMap.get(ColorRangeSensor.class, "BackColorSensorRed");
+        frontRed = hardwareMap.get(ColorRangeSensor.class, "FrontColorSensorBlue");
+        backRed = hardwareMap.get(ColorRangeSensor.class, "BackColorSensorBlue bd");
         //color = hardwareMap.colorSensor.get("WarehouseTapeSensor");
         element = DetectedElement.NONE;
         arm = new ArmSystem(hardwareMap, true);

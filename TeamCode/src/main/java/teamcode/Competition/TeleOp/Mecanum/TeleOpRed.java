@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import java.util.Random;
+
 import teamcode.Competition.Subsystems.ArmSystem;
 import teamcode.Competition.Subsystems.EndgameSystems;
 import teamcode.common.AbstractOpMode;
@@ -66,6 +68,7 @@ public class TeleOpRed extends AbstractOpMode {
         iterator = 0;
         isExtended = false;
         isDuck = false;
+        isMid = false;
         arm.setIsDuck(isDuck);
     }
 
@@ -114,7 +117,7 @@ public class TeleOpRed extends AbstractOpMode {
     double startTime;
     double previousExtensionTime;
     int iterator;
-    boolean isExtended, previousStart, previousOptions;
+    boolean isExtended, previousStart, previousOptions, isMid;
     volatile boolean isEndgame = false;
     private void armUpdate() {
         if (gamepad1.right_trigger > 0.3) {
@@ -165,26 +168,9 @@ public class TeleOpRed extends AbstractOpMode {
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
         } else if (gamepad1.left_trigger > 0.3) {
-            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
-                previousExtensionTime = time;
-                if(isExtended) {
-                    arm.raise(Constants.TOP_POSITION + 2000); //3000
-                }else{
-                    arm.raise(Constants.TOP_POSITION);
-                }
-                pulleyState = PulleyState.HIGH_GOAL;
-                linkageState = LinkageState.RAISED;
-            }
+            //drive.setPower(-1,-1,1,1);
         } else if (gamepad1.dpad_right && pulleyState == PulleyState.RETRACTED) {
-            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED && time - previousExtensionTime > 5) {
-                if(isExtended){
-                    arm.raise(Constants.MEDIUM_POSITION + 2000);
-                }else {
-                    arm.raise(Constants.MEDIUM_POSITION);
-                }
-                pulleyState = PulleyState.MID_GOAL;
-                linkageState = linkageState.RAISED;
-            }
+            isMid = !isMid;
         } else if (gamepad1.y && pulleyState == PulleyState.RETRACTED) {
             //arm.raise(Constants.BOTTOM_POSITION);
             while(gamepad1.y){
@@ -222,9 +208,37 @@ public class TeleOpRed extends AbstractOpMode {
             arm.runConveyor(0);
         }
         if (gamepad1.right_stick_button) {
-            arm.preScore();
+            Random r = new Random();
+            arm.intakeDumb(1.0);
+            arm.preScoreMultiFreight(false);
             linkageState = LinkageState.RAISED;
             Utils.sleep(250);
+            arm.intakeDumb(-1.0);
+
+            if(gamepad1.left_trigger > 0.3){
+                if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED ) {
+                    if(isExtended){
+                        arm.raise(Constants.MEDIUM_POSITION + 2000);
+                    }else {
+                        arm.raise(Constants.MEDIUM_POSITION);
+                    }
+                    pulleyState = PulleyState.MID_GOAL;
+                    linkageState = linkageState.RAISED;
+                }
+            }else {
+                if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
+                    previousExtensionTime = time;
+
+                    if (isExtended) {
+                        arm.raise(Constants.TOP_POSITION + 1000); //3000
+                    } else {
+                        arm.raise(Constants.TOP_POSITION);
+                    }
+
+                    pulleyState = PulleyState.HIGH_GOAL;
+                    linkageState = LinkageState.RAISED;
+                }
+            }
             arm.intakeDumb(0);
         }
         previousOptions = gamepad1.square;
@@ -232,6 +246,7 @@ public class TeleOpRed extends AbstractOpMode {
         telemetry.addData("isExtended", isExtended);
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
         telemetry.addData("isDuck", isDuck);
+        telemetry.addData("isMid", isMid);
         telemetry.update();
 
     }
