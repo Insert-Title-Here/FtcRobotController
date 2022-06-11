@@ -443,12 +443,15 @@ public class MecanumDriveTrain {
     //Goes from -pi to pi
     public void straightHeadingTester(double radAngle, int ft){
 
-        if(radAngle > 0 && radAngle < Math.PI / 4){
+        /*
+        if(radAngle > 0 && radAngle < -Math.PI / 4){
             radAngle += Math.PI/2;
 
         }
 
-        radAngle = 0;
+         */
+
+        radAngle += Math.PI/2;
         int leftRightTics = (int)(Math.cos(radAngle) * ft * 640); //TODO calibrate
         int frontBackTicks = (int)(Math.sin(radAngle) * ft * 508);
 
@@ -460,6 +463,74 @@ public class MecanumDriveTrain {
 
 
     }
+
+
+    public void diagonalHeadingTester(double radAngle, int ft) {
+
+        double degreeAngle = (180 * radAngle) / Math.PI;
+
+        double power = 0.5;
+
+
+        /*
+        if (radAngle < 0) {
+
+
+
+            while((bl.getCurrentPosition() + fr.getCurrentPosition()) / 2 < 508) {
+
+
+
+                bl.setPower(0.5);
+                fr.setPower(0.5);
+
+            }
+        }else{
+
+
+            while((br.getCurrentPosition() + fl.getCurrentPosition()) / 2 < 508){
+                br.setPower(0.5);
+                fl.setPower(0.5);
+
+
+            }
+
+
+        }
+
+         */
+
+        //67.5 degrees
+
+
+
+
+
+        if (radAngle > 0) {
+
+            double tempAngle = degreeAngle % 45;
+
+            if(degreeAngle > 45){
+                setPower(-(tempAngle/degreeAngle), power, power, -(tempAngle/degreeAngle));
+
+            }else{
+                setPower((tempAngle/degreeAngle), power, power, (tempAngle/degreeAngle));
+            }
+
+
+
+            sleep(1000);
+        }else{
+            setPower(0.5, 0, 0, 0.5);
+
+
+            sleep(1000);
+        }
+    }
+
+
+
+
 
 
 

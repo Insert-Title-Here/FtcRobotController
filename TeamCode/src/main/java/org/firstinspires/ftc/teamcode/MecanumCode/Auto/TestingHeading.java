@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.MecanumCode.Auto;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -36,6 +38,12 @@ public class TestingHeading extends OpModeWrapper {
     WebcamName wc;
     OpenCvCamera camera;
 
+    Thread telemetryThread;
+
+
+
+
+
 
 
 
@@ -67,6 +75,23 @@ public class TestingHeading extends OpModeWrapper {
         imu.initialize(parameters);
 
 
+        telemetryThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    telemetry.addData("bl ", drive.bl.getCurrentPosition());
+                    telemetry.addData("fr ", drive.fr.getCurrentPosition());
+                    telemetry.addData("fl ", drive.fr.getCurrentPosition());
+                    telemetry.addData("br ", drive.fr.getCurrentPosition());
+
+                    telemetry.update();
+
+                }
+
+            }
+        };
+
+
 
 
 
@@ -79,6 +104,8 @@ public class TestingHeading extends OpModeWrapper {
 
     @Override
     protected void onStart() {
+
+        telemetryThread.start();
         /*
         drive.driveAuto(0.3, 508, MecanumDriveTrain.MovementType.STRAIGHT);
         sleep(1000);
@@ -100,11 +127,31 @@ public class TestingHeading extends OpModeWrapper {
         sleep(1000);
         drive.straightHeadingTester(7 * Math.PI / 4,(int)(2 * Math.sqrt(2)));
 
-         */
+
 
         drive.straightHeadingTester(-Math.PI / 4, (int)(2 * Math.sqrt(2)));
-        drive.straightHeadingTester(-Math.PI / 2, (int)(2 * Math.sqrt(2)));
+        drive.straightHeadingTester(-Math.PI/2, (int)(2 * Math.sqrt(2)));
+        drive.straightHeadingTester(Math.PI/4, (int)(2 * Math.sqrt(2)));
+        drive.straightHeadingTester(Math.PI/2, (int)(2 * Math.sqrt(2)));
+        drive.straightHeadingTester(3 * Math.PI/4, (int)(2 * Math.sqrt(2)));
 
+
+        drive.straightHeadingTester(0, (int)(2 * Math.sqrt(2)));
+        drive.straightHeadingTester(Math.PI, (int)(2 * Math.sqrt(2)));
+        drive.straightHeadingTester(-3 * Math.PI/4, (int)(2 * Math.sqrt(2)));
+        drive.straightHeadingTester(-Math.PI, (int)(2 * Math.sqrt(2)));
+
+
+
+
+
+        //drive.straightHeadingTester(-Math.PI / 2, (int)(2 * Math.sqrt(2)));
+
+         */
+
+        //drive.diagonalHeadingTester(-Math.PI/4, 1);
+        //sleep(1000);
+        drive.diagonalHeadingTester(Math.PI/6, 1);
 
 
 
