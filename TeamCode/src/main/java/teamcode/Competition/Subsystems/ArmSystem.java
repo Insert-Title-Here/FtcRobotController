@@ -396,7 +396,7 @@ public class ArmSystem {
         synchronized (this) {
             linkage.setPosition(LINKAGE_DOWN);
         }
-        house.setPosition(INTAKE_POSITION -0.08); //+0.156
+        house.setPosition(INTAKE_POSITION ); //+0.156
 
     }
 
@@ -409,7 +409,7 @@ public class ArmSystem {
     }
 
     public void scoreFar() {
-        Debug.log("wooooo");
+
         house.setPosition(0.66);
     }
 
