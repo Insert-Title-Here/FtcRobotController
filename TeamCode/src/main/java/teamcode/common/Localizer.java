@@ -10,8 +10,6 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
-import com.spartronics4915.lib.T265Camera;
-import com.spartronics4915.lib.T265Helper;
 
 import org.apache.commons.math3.analysis.function.Abs;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -95,8 +93,8 @@ public class Localizer extends Thread {
 
     private static final double INCHES_TO_METERS = 0.0254; //-8.628937
         Pose2d cameraToRobot = new Pose2d(0,0,0); //-7.965 * INCHES_TO_METERS,  0 * INCHES_TO_METERS 0.8, -7.2
-    private static T265Camera slamra;
-    T265Camera.CameraUpdate currentSlamraPos;
+//    private static T265Camera slamra;
+//    T265Camera.CameraUpdate currentSlamraPos;
     private Pose2d slamraStartingPose = new Pose2d(0,0,0);
     private static double TAO = 1.0; //0.9 optimal
     private static final double MEASUREMENT_VARIANCE = 0.01; // 0.01 + 0.02? account more for odo variance
@@ -168,11 +166,11 @@ public class Localizer extends Thread {
      */
     public Localizer(HardwareMap hardwareMap, Vector2D position, double globalRads, double previousEstimateUncertainty){
 
-        if(slamra == null) {
+        /*if(slamra == null) {
             Debug.log("here");
             slamra = new T265Camera(new T265Camera.OdometryInfo(cameraToRobot, 1.0), hardwareMap.appContext);
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-        }
+        }*/
         slamraStartingPose = new Pose2d(0 , 0, globalRads);
         this.previousEstimateUncertainty = previousEstimateUncertainty; //this should always be a high value otherwise bad things will happen
         minElapsedTime = 0;
@@ -220,10 +218,10 @@ public class Localizer extends Thread {
 
 
     public void stopThread() {
-        if(slamra != null) {
+        /*if(slamra != null) {
             Debug.log("end");
             slamra.stop();
-        }
+        }*/
         this.stop.set(true);
     }
     @Override
@@ -231,12 +229,12 @@ public class Localizer extends Thread {
         // make sure we reset our accounting of start times
         state.resetUpdateTime();
         startingTime = System.currentTimeMillis();
-        if(slamra != null) {
+        /*if(slamra != null) {
             slamra.start();
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
             //slamra.setPose(new Pose2d(0,0,0));
 
-        }
+        }*/
         // max speed 300 Hz)
         while (!stop.get()) {
             long millis = System.currentTimeMillis();
@@ -400,7 +398,7 @@ public class Localizer extends Thread {
     private synchronized void updateKalman(){
         // read sensor data
         data1 = hub1.getBulkInputData();
-        currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+//        currentSlamraPos = slamra.getLastReceivedCameraUpdate();
         RobotPositionStateUpdater.RobotPositionState currentState = getCurrentState();
 
         int leftVerticalTics = data1.getMotorCurrentPosition(leftVertical);
@@ -475,7 +473,7 @@ public class Localizer extends Thread {
 
 
         //matrix declarations
-        final double robotRadius = 7.7;
+        /*final double robotRadius = 7.7;
         Pose2d slamraEstimatePose = currentSlamraPos.pose;
         double slamx = -slamraEstimatePose.getY() / INCHES_TO_METERS;
         double slamy = 7.7 + (slamraEstimatePose.getX() / INCHES_TO_METERS);
@@ -490,7 +488,7 @@ public class Localizer extends Thread {
                 {currentSlamraPos.velocity.getX()},
                 {currentSlamraPos.velocity.getY()},
                 {currentSlamraPos.velocity.getHeading()}
-        };
+        };*/
 //        if(abs(vislamMat[3][0]) < 0.2){
 //            vislamMat[3][0] = 0;
 //        }
@@ -500,7 +498,7 @@ public class Localizer extends Thread {
 //        if(abs(vislamMat[5][0]) < 0.2){
 //            vislamMat[5][0] = 0;
 //        }
-        Matrix slamraEstimate = new Matrix(vislamMat);
+        /*Matrix slamraEstimate = new Matrix(vislamMat);*/
 
         double[][] odoMat = {
                 {previousOdoMat.getValue(0,0) + horizontalDelta},
@@ -549,8 +547,8 @@ public class Localizer extends Thread {
         };
             previousOdoMat = new Matrix(previousOdoArray);
 
-        slamraEstimate.multiply(1.0-TAO);
-        Matrix complementaryStateEstimtate = odoEstimate.add(slamraEstimate); //measured state, Z
+        /*slamraEstimate.multiply(1.0-TAO);
+        Matrix complementaryStateEstimtate = odoEstimate.add(slamraEstimate); //measured state, Z*/
 
         double kalmanGain = previousEstimateUncertainty / (previousEstimateUncertainty + MEASUREMENT_VARIANCE);
 
@@ -563,7 +561,7 @@ public class Localizer extends Thread {
         //multiplying only the distance components since we assume constant velocity
         //the kinematic model assumes constant velocity meaning that the values was
         //being greatly diminished causing overacceleration
-        complementaryStateEstimtate.setValue(0,0, complementaryStateEstimtate.getValue(0,0) * kalmanGain);
+        /*complementaryStateEstimtate.setValue(0,0, complementaryStateEstimtate.getValue(0,0) * kalmanGain);
         complementaryStateEstimtate.setValue(1,0, complementaryStateEstimtate.getValue(1,0) * kalmanGain);
         complementaryStateEstimtate.setValue(2,0, complementaryStateEstimtate.getValue(2,0) * kalmanGain);
         Matrix finalStateEstimate = complementaryStateEstimtate.add(idealEstimate);
@@ -574,10 +572,10 @@ public class Localizer extends Thread {
         double dphi = finalStateEstimate.getValue(2,0);
         double dvx = complementaryStateEstimtate.getValue(3,0);
         double dvy = complementaryStateEstimtate.getValue(4,0);
-        double domega = complementaryStateEstimtate.getValue(5,0);
+        double domega = complementaryStateEstimtate.getValue(5,0);*/
 
 
-        state.updateState(dx, dy, dphi, dvx, dvy, domega);
+//        state.updateState(dx, dy, dphi, dvx, dvy, domega);
 
         loggingString += state.getCurrentState().getPosition().loggerToString()+ "\n";
         secondaryLoggingString += iterator + "," +  state.getCurrentState().getPosition().getX() + "\n";
@@ -607,10 +605,10 @@ public class Localizer extends Thread {
         loggingString = "";
         secondaryLoggingString = "";
         state = new RobotPositionStateUpdater();
-        if(slamra == null) {
+        /*if(slamra == null) {
             slamra = T265Helper.getCamera(new T265Camera.OdometryInfo(new Pose2d(0,0, 0), 1.0),hardwareMap.appContext);//new T265Camera(cameraToRobot, 1.0, hardwareMap.appContext);
             currentSlamraPos = slamra.getLastReceivedCameraUpdate();
-        }
+        }*/
 
         //hub2 = hardwareMap.get(ExpansionHubEx.class,"Expansion Hub 2");
         // initialize hardware
@@ -721,7 +719,7 @@ public class Localizer extends Thread {
     private synchronized void matUpdate() {
        if(!freezeUpdate) {
             data1 = hub1.getBulkInputData();
-            currentSlamraPos = slamra.getLastReceivedCameraUpdate();
+//            currentSlamraPos = slamra.getLastReceivedCameraUpdate();
 //            double heading = (imu.getAngularOrientation().firstAngle);
 //            double dHeading = heading - previousHeading;
 
@@ -740,13 +738,13 @@ public class Localizer extends Thread {
             }
 
 
-            final double robotRadius = 2.0;
+            /*final double robotRadius = 2.0;
             Pose2d slamraEstimatePose = currentSlamraPos.pose;
             double slamx =  (slamraEstimatePose.getX());
             double slamy = robotRadius + slamraEstimatePose.getY();
             double slamRotation = currentSlamraPos.pose.getHeading();
             double trueX = slamx + sin(slamRotation) * robotRadius;
-            double trueY = slamy - (cos(slamRotation) * robotRadius);
+            double trueY = slamy - (cos(slamRotation) * robotRadius);*/
 
 
 
@@ -763,16 +761,16 @@ public class Localizer extends Thread {
 //                slamErrorY = trueY - odoEstimate.y;
 //            }
 
-            double[][] vislamMat = {
+            /*double[][] vislamMat = {
                     {trueX - slamErrorX}, //trueX - slamErrorX
                     {trueY - slamErrorY}, //trueY - slamErrorY
                     {-currentSlamraPos.pose.getHeading()},
                     {currentSlamraPos.velocity.getX()},
                     {currentSlamraPos.velocity.getY()},
                     {-currentSlamraPos.velocity.getHeading()}
-            };
+            };*/
 
-            Matrix slamraEstimate = new Matrix(vislamMat);
+            /*Matrix slamraEstimate = new Matrix(vislamMat);*/
 
             double[][] odoMat = {
                     {odoEstimate.x},
@@ -786,14 +784,14 @@ public class Localizer extends Thread {
 
             odoMatrix.multiply(TAO);
 
-            slamraEstimate.multiply(1.0 - TAO);
+            /*slamraEstimate.multiply(1.0 - TAO);
             Matrix complementaryStateEstimtate = odoMatrix.add(slamraEstimate); //measured state, Z
             state.updateState(complementaryStateEstimtate.getValue(0, 0),
                     complementaryStateEstimtate.getValue(1, 0),
                     complementaryStateEstimtate.getValue(2, 0),
                     complementaryStateEstimtate.getValue(3, 0),
                     complementaryStateEstimtate.getValue(4, 0),
-                    complementaryStateEstimtate.getValue(5, 0));
+                    complementaryStateEstimtate.getValue(5, 0));*/
 
             //previousHeading = heading;
 

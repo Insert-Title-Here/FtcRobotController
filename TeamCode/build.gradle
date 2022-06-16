@@ -28,7 +28,6 @@ dependencies {
     implementation 'org.openftc:rev-extensions-2:1.2'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.4'
-    implementation files('lib/ftc265-3.0.0-pre.5.aar')
     implementation 'com.intel.realsense:librealsense:2.41.1-ftc265@aar'
 
 }
