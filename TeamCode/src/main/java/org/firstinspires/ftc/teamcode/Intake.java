@@ -38,11 +38,11 @@ public class Intake {
 
     public void setPower(boolean rT, double power){
         if (rT) {
-            lIntake.setPower(-power);
-            rIntake.setPower(power);
-        } else{
             lIntake.setPower(power);
             rIntake.setPower(-power);
+        } else{
+            lIntake.setPower(-power);
+            rIntake.setPower(power);
         }
     }
 }

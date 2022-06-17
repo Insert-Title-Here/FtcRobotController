@@ -75,6 +75,8 @@ public class MecanumDriveTrain {
         imu.initialize(parameters);
 
 
+
+
     }
 
 
@@ -334,6 +336,7 @@ public class MecanumDriveTrain {
         return power;
     }
 
+
     public double getAngle(){
         return imu.getAngularOrientation().firstAngle;
     }
@@ -380,6 +383,8 @@ public class MecanumDriveTrain {
         brake();
 
     }
+
+
 
     public void tinyRotate(rotatePower power) {
         if (power == rotatePower.Negative) {

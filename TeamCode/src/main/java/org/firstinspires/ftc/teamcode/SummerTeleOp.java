@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -15,6 +16,7 @@ public class SummerTeleOp extends LinearOpMode {
     Thread intakeThread;
     MecanumDriveTrain drive;
     Intake intake;
+    ColorSensor color;
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.45;
@@ -25,12 +27,17 @@ public class SummerTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
 
+        color = hardwareMap.get(ColorSensor.class, "color");
+
+
         try {
             drive = new MecanumDriveTrain(hardwareMap);
             intake = new Intake(hardwareMap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+
 
         driveThread = new Thread(){
             @Override
@@ -55,6 +62,18 @@ public class SummerTeleOp extends LinearOpMode {
         driveThread.start();
         intakeThread.start();
 
+        while(opModeIsActive()){
+
+
+        telemetry.addData("red", color.red());
+        telemetry.addData("blue", color.blue());
+        telemetry.addData("green", color.green());
+        color.enableLed(true);
+        telemetry.update();
+
+
+        }
+
 
     }
 
@@ -67,7 +86,7 @@ public class SummerTeleOp extends LinearOpMode {
     }
 
     private void intakeUpdate(){
-        if (gamepad1.a) {
+        if (gamepad1.a || (color.red() > 70 && color.green() > 100 && color.blue() > 40)) {
             intake.clampAndRelease(true);
         } else {
             intake.clampAndRelease(false);
@@ -77,6 +96,10 @@ public class SummerTeleOp extends LinearOpMode {
             intake.setPower(true, gamepad1.right_trigger);
         } else if (gamepad1.left_trigger > 0.1){
             intake.setPower(false, gamepad1.left_trigger);
+        } else {
+            intake.setPower(true, 0);
         }
+
+
     }
 }
