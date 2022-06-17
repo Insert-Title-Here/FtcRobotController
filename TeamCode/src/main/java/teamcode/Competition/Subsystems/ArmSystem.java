@@ -248,7 +248,7 @@ public class ArmSystem {
             if (isDuck) {
                 house.setPosition(HOUSING_POSITION_DUCK);
             } else {
-                house.setPosition(HOUSING_POSITION);
+                //house.setPosition(HOUSING_POSITION);
             }
         }
         intakeDumb(0);

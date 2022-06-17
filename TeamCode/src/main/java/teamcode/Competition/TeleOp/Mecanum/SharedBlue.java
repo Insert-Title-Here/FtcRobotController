@@ -185,7 +185,7 @@ public class SharedBlue extends AbstractOpMode {
         }
         if (gamepad1.left_bumper) {
             while (gamepad1.left_bumper) {
-                arm.runConveyor(0.8);
+                arm.runConveyor(0.9);
             }
             arm.retract();
             arm.idleServos();
