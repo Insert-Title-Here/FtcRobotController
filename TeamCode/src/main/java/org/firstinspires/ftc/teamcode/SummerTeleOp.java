@@ -12,7 +12,10 @@ import java.io.FileNotFoundException;
 public class SummerTeleOp extends LinearOpMode {
 
     Thread driveThread;
+    Thread intakeThread;
     MecanumDriveTrain drive;
+    Intake intake;
+
 
     private final double NORMAL_LINEAR_MODIFIER = 0.45;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -24,6 +27,7 @@ public class SummerTeleOp extends LinearOpMode {
 
         try {
             drive = new MecanumDriveTrain(hardwareMap);
+            intake = new Intake(hardwareMap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -37,36 +41,20 @@ public class SummerTeleOp extends LinearOpMode {
             }
         };
 
-        Servo lJoint = hardwareMap.get(Servo.class, "lJoint");
-        Servo rJoint = hardwareMap.get(Servo.class, "rJoint");
-        CRServo lIntake = hardwareMap.get(CRServo.class, "lIntake");
-        CRServo rIntake = hardwareMap.get(CRServo.class, "rIntake");
-
-        lJoint.setPosition(1);
-        rJoint.setPosition(0);
+        intakeThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    intakeUpdate();
+                }
+            }
+        };
 
         waitForStart();
 
         driveThread.start();
+        intakeThread.start();
 
-        while (opModeIsActive()) {
-            if (gamepad1.a) {
-                lJoint.setPosition(0.9);
-                rJoint.setPosition(0.1);
-            } else {
-                lJoint.setPosition(1);
-                rJoint.setPosition(0);
-            }
-
-            if (gamepad1.right_trigger > 0.1) {
-                lIntake.setPower(-gamepad1.right_trigger);
-                rIntake.setPower(gamepad1.right_trigger);
-            } else if (gamepad1.left_trigger > 0.1){
-                lIntake.setPower(gamepad1.left_trigger);
-                rIntake.setPower(-gamepad1.left_trigger);
-            }
-
-        }
 
     }
 
@@ -75,6 +63,20 @@ public class SummerTeleOp extends LinearOpMode {
             drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
         } else {
             drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+        }
+    }
+
+    private void intakeUpdate(){
+        if (gamepad1.a) {
+            intake.clampAndRelease(true);
+        } else {
+            intake.clampAndRelease(false);
+        }
+
+        if (gamepad1.right_trigger > 0.1) {
+            intake.setPower(true, gamepad1.right_trigger);
+        } else if (gamepad1.left_trigger > 0.1){
+            intake.setPower(false, gamepad1.left_trigger);
         }
     }
 }
