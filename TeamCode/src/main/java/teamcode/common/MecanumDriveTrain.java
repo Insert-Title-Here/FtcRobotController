@@ -242,7 +242,7 @@ import static java.lang.Math.PI;
         driveColorSensorWarehouse(velocity, true, false);
     }
     Random r;
-    public synchronized void driveColorSensorWarehouse(double velocity, boolean isBrake, boolean isCoast){
+    public void driveColorSensorWarehouse(double velocity, boolean isBrake, boolean isCoast){
         r = new Random();
 
         if(isCoast){

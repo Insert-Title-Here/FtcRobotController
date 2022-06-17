@@ -165,25 +165,10 @@ public class TeleOpBlue extends AbstractOpMode {
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
         } else if (gamepad1.left_trigger > 0.3) {
-            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
-                previousExtensionTime = time;
-                if(isExtended) {
-                    arm.raise(Constants.TOP_POSITION + 1000); //3000
-                }else{
-                    arm.raise(Constants.TOP_POSITION);
-                }
-                pulleyState = PulleyState.HIGH_GOAL;
-                linkageState = LinkageState.RAISED;
-            }
+
         } else if (gamepad1.dpad_right && pulleyState == PulleyState.RETRACTED) {
             if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED && time - previousExtensionTime > 5) {
-                if(isExtended){
-                    arm.raise(Constants.MEDIUM_POSITION + 2000);
-                }else {
-                    arm.raise(Constants.MEDIUM_POSITION);
-                }
-                pulleyState = PulleyState.MID_GOAL;
-                linkageState = linkageState.RAISED;
+
             }
         } else if (gamepad1.y && pulleyState == PulleyState.RETRACTED) {
             //arm.raise(Constants.BOTTOM_POSITION);
@@ -224,8 +209,31 @@ public class TeleOpBlue extends AbstractOpMode {
         if (gamepad1.right_stick_button) {
             arm.preScore();
             linkageState = LinkageState.RAISED;
-            Utils.sleep(250);
+            Utils.sleep(150);
             arm.intakeDumb(0);
+
+            if(gamepad1.left_trigger > 0.3){
+                if(isExtended){
+                    arm.raise(Constants.MEDIUM_POSITION + 2000);
+                }else {
+                    arm.raise(Constants.MEDIUM_POSITION);
+                }
+                pulleyState = PulleyState.MID_GOAL;
+                linkageState = linkageState.RAISED;
+            }else {
+                if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
+                    previousExtensionTime = time;
+                    if (isExtended) {
+                        arm.raise(Constants.TOP_POSITION + 1000); //3000
+                    } else {
+                        arm.raise(Constants.TOP_POSITION);
+                    }
+                    pulleyState = PulleyState.HIGH_GOAL;
+                    linkageState = LinkageState.RAISED;
+                }
+            }
+
+
         }
         previousOptions = gamepad1.square;
         previousStart = gamepad1.start;

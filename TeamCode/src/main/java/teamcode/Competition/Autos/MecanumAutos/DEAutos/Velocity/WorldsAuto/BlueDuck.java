@@ -168,10 +168,10 @@ public class BlueDuck extends AbstractOpMode {
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(550, 180.0, VELOCITY);
+        drive.moveDistanceDEVelocity(650, 180.0, VELOCITY);
 
         Utils.sleep(200);
-        drive.rotateDistanceDE(-90, 6);
+        drive.rotateDistanceDE(-75, 6);
 
 
 //        drive.moveDistanceDEVelocity(300, 180, VELOCITY);

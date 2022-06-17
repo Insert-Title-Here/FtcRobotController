@@ -156,7 +156,7 @@ public class ArmSystem {
 
     public void runConveyor(double power){
         if(power != 0) {
-            linkage.setPosition(LINKAGE_SCORE + 0.2);
+            //linkage.setPosition(LINKAGE_SCORE + 0.2);
             house.setPosition(SCORING_POSITION_CONVEYOR - 0.12);
         }
         conveyorMotor.setPower(power);
@@ -318,7 +318,25 @@ public class ArmSystem {
 
     public void raise(double position) {
 
+        if(!isTeleOp){
+            linkage.setPosition(LINKAGE_SCORE);
+        }
+        house.setPosition(HOUSING_POSITION);
+        moveSlide(SLIDE_POWER, (int) position);
+
+        //Utils.sleep(200);
         linkage.setPosition(LINKAGE_SCORE);
+
+        stage = stage.EXTENDED;
+    }
+
+
+    public void setLinkageScored(){
+        linkage.setPosition(LINKAGE_SCORE);
+    }
+
+    public void sharedRaise(double position) {
+
         house.setPosition(HOUSING_POSITION);
         Utils.sleep(200);
         moveSlide(SLIDE_POWER, (int) position);
@@ -384,7 +402,7 @@ public class ArmSystem {
         actuateWinchStop(WINCHSTOP_STOPPING);
         Utils.sleep(100);
         if (isDuck) {
-            house.setPosition(INTAKE_POSITION + 0.1);
+            house.setPosition(INTAKE_POSITION);
         } else{
             house.setPosition(INTAKE_POSITION);
         }

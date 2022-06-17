@@ -16,8 +16,8 @@ import teamcode.common.MecanumDriveTrain;
 import teamcode.common.Utils;
 import teamcode.common.Vector2D;
 
-@TeleOp(name="Tele Op Red")
-public class TeleOpRed extends AbstractOpMode {
+@TeleOp(name="Shared Red")
+public class SharedRed extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem arm;
     Thread armThread, capThread;
@@ -33,7 +33,7 @@ public class TeleOpRed extends AbstractOpMode {
     protected void onInitialize() {
         drive = new MecanumDriveTrain(hardwareMap);
         arm = new ArmSystem(hardwareMap, true);
-        systems = new EndgameSystems(hardwareMap, false);
+        systems = new EndgameSystems(hardwareMap, true);
 
         state = ScoredButtonState.RETRACTING;
         pulleyState = PulleyState.RETRACTED;
@@ -141,35 +141,34 @@ public class TeleOpRed extends AbstractOpMode {
                 arm.intakeDumb(-1.0);
             }
         } else if (gamepad1.left_stick_button) {
-            long currentSampleTime = System.currentTimeMillis();
-            if (currentSampleTime - scoredSampleTime > 200) {
-                if (pulleyState != PulleyState.RETRACTED) {
-                    if (state == ScoredButtonState.RETRACTING) {
-                        scoredSampleTime = System.currentTimeMillis();
-                        state = ScoredButtonState.SCORED;
-                        arm.score();
-                    } else if (state == ScoredButtonState.SCORED) {
-                        //telemetry.clear();
-                        state = ScoredButtonState.RETRACTING;
-                        iterator++;
-                        //Debug.log("here" + iterator);
-                        arm.retract();
-                        pulleyState = PulleyState.RETRACTED;
-                    }
-                }
-
-            }
+            arm.runConveyor(0.8);
+            arm.retract();
         } else if (gamepad1.dpad_up) {
             // set to full
             arm.setWinchPower(1);
         } else if (gamepad1.dpad_down) {
             arm.setWinchPower(-0.5);
         } else if (gamepad1.left_trigger > 0.3) {
-
-        } else if (gamepad1.dpad_right && pulleyState == PulleyState.RETRACTED) {
-            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED && time - previousExtensionTime > 5) {
-
+            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
+                previousExtensionTime = time;
+                if(isExtended) {
+                    arm.raise(Constants.TOP_POSITION + 1000); //3000
+                }else{
+                    arm.raise(Constants.TOP_POSITION);
+                }
+                pulleyState = PulleyState.HIGH_GOAL;
+                linkageState = LinkageState.RAISED;
             }
+        } else if (gamepad1.dpad_right && pulleyState == PulleyState.RETRACTED) {
+//            if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED && time - previousExtensionTime > 5) {
+//                if(isExtended){
+//                    arm.raise(Constants.MEDIUM_POSITION + 2000);
+//                }else {
+//                    arm.raise(Constants.MEDIUM_POSITION);
+//                }
+//                pulleyState = PulleyState.MID_GOAL;
+//                linkageState = linkageState.RAISED;
+//            }
         } else if (gamepad1.y && pulleyState == PulleyState.RETRACTED) {
             //arm.raise(Constants.BOTTOM_POSITION);
             while(gamepad1.y){
@@ -188,6 +187,7 @@ public class TeleOpRed extends AbstractOpMode {
             while (gamepad1.left_bumper) {
                 arm.runConveyor(0.8);
             }
+            arm.retract();
             arm.idleServos();
         } else if (gamepad1.start && !previousStart){
             isExtended = !isExtended;
@@ -208,32 +208,11 @@ public class TeleOpRed extends AbstractOpMode {
         }
         if (gamepad1.right_stick_button) {
             arm.preScore();
+            arm.intakeDumb(-1.0);
             linkageState = LinkageState.RAISED;
             Utils.sleep(150);
+            arm.sharedRaise(3000);
             arm.intakeDumb(0);
-
-            if(gamepad1.left_trigger > 0.3){
-                if(isExtended){
-                    arm.raise(Constants.MEDIUM_POSITION + 2000);
-                }else {
-                    arm.raise(Constants.MEDIUM_POSITION);
-                }
-                pulleyState = PulleyState.MID_GOAL;
-                linkageState = linkageState.RAISED;
-            }else {
-                if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
-                    previousExtensionTime = time;
-                    if (isExtended) {
-                        arm.raise(Constants.TOP_POSITION + 1000); //3000
-                    } else {
-                        arm.raise(Constants.TOP_POSITION);
-                    }
-                    pulleyState = PulleyState.HIGH_GOAL;
-                    linkageState = LinkageState.RAISED;
-                }
-            }
-
-
         }
         previousOptions = gamepad1.square;
         previousStart = gamepad1.start;
@@ -241,7 +220,6 @@ public class TeleOpRed extends AbstractOpMode {
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
         telemetry.addData("isDuck", isDuck);
         telemetry.update();
-
     }
 
     @Override
