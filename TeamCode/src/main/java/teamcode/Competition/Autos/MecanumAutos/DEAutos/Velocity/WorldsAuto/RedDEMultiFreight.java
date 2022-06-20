@@ -84,7 +84,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
                 arm.retract();
                 for(int i = 0; i < FREIGHT && opModeIsActive() && !isStopRequested(); i++) {
                     while(!drive.getFlagIndex(0));
-                    arm.preScoreMultiFreight(drive.getCurrenElement());
+                    arm.preScoreMultiFreight();
                     arm.intakeDumb(-1.0);
                     drive.setFlagIndex(0, false);
                     while (!drive.getFlagIndex(1));

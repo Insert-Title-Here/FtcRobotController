@@ -74,6 +74,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 //                    arm.runConveyorPos(1.0,3000);
 //                    Utils.sleep(100);
                 }else{
+                    Utils.sleep(100);
                     if(position == CENTER){
                         arm.scoreFar();
                     }else {
@@ -86,7 +87,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 arm.retract();
                 for(int i = 0; i < FREIGHT && opModeIsActive() && !isStopRequested(); i++) {
                     while(!drive.getFlagIndex(0));
-                    arm.preScoreMultiFreight(false);
+                    arm.preScoreMultiFreight();
 
                     drive.setFlagIndex(0, false);
 //                    while(!drive.getFlagIndex(5));
@@ -94,7 +95,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 //                    drive.setFlagIndex(5, false);
                     while (!drive.getFlagIndex(1));
                     arm.intakeDumb(-1.0);
-                    if(i > 1){
+                    if(i > 1) {
                         arm.raise(Constants.TOP_POSITION + 1000);
                     }else {
                         arm.raise(Constants.TOP_POSITION + 1000);
@@ -106,7 +107,6 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                     arm.retract();
                     drive.setFlagIndex(2, false);
                 }
-
             }
         };
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -142,9 +142,12 @@ public class BlueDEMultiFreight extends AbstractOpMode {
     protected void onStart() {
         armThread.start();
         arm.actuateWinchStop(1.0);
-        drive.moveDistanceDEVelocity(850, 45, 2 * VELOCITY); // 900 -45
+        drive.moveDistanceDEVelocity(805 + (position == CENTER ? 30 : 0), 45, 2 * VELOCITY); // 900 -45
+
         Utils.sleep(100);
         drive.rotateDistanceDEUnramped(-150, 24);
+        Utils.sleep(100);
+
         //Utils.sleep(200);
 
 
@@ -164,6 +167,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             drive.setFlagIndex(4, true);
             Utils.sleep(400);
         }
+        Utils.sleep(500);
         drive.rotateDistanceDEUnramped(120, 30);
         Utils.sleep(100);
         drive.strafeDistanceSensor(40, Math.PI / 5.0);
@@ -175,7 +179,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 
 //            if(first) {
 //                first = false;
-            warehouseSplice.add(new TranslationalMovement( 650, 2 * VELOCITY, 0.0, true));
+            warehouseSplice.add(new TranslationalMovement( 750, 2 * VELOCITY, 0.0, true));
             warehouseSplice.add(new ModulateIntake(1.0));
             if(i == 0) {
                 warehouseSplice.add(new TranslationalMovement(650, 2 * VELOCITY, 0.0, true));
@@ -226,7 +230,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 warehouseSplice.add(new ModifyFlag(true, 2));
                 warehouseSplice.add(new Wait(200));
 
-                warehouseSplice.add(new RotationalMovement(105, 30.0));
+                warehouseSplice.add(new RotationalMovement(120, 30.0));
                 warehouseSplice.add(new Wait(100));
                 //warehouseSplice.add(new Movement(200, 2 * VELOCITY, 180.0));
                 warehouseSplice.add(new WallNormalization(45, Math.PI / 5.0));

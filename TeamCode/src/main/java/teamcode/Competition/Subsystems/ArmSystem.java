@@ -261,19 +261,17 @@ public class ArmSystem {
 
     }
 
+    public void setHouse(double position) {
+        house.setPosition(position);
+    }
 
-    public void preScoreMultiFreight(boolean ball){
+    public void preScoreMultiFreight(){
         actuateWinchStop(WINCHSTOP_OPEN);
         linkage.setPosition(LINKAGE_HOUSED);
-       // house.setPosition(HOUSING_POSITION);
-        if(ball){
-            house.setPosition(HOUSING_POSITION_BALL);
-        }
+        house.setPosition(0.08 ); // 0.12
 
         //house.setPosition(HOUSING_POSITION);
         Utils.sleep(250);
-
-
     }
     public void preScoreAuto(){
         if(isDuck){
@@ -321,6 +319,7 @@ public class ArmSystem {
         if(!isTeleOp){
             linkage.setPosition(LINKAGE_SCORE);
         }
+
         house.setPosition(HOUSING_POSITION);
         moveSlide(SLIDE_POWER, (int) position);
 
