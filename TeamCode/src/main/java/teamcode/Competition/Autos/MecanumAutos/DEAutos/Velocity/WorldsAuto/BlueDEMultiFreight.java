@@ -142,7 +142,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
     protected void onStart() {
         armThread.start();
         arm.actuateWinchStop(1.0);
-        drive.moveDistanceDEVelocity(805 + (position == CENTER ? 30 : 0), 45, 2 * VELOCITY); // 900 -45
+        drive.moveDistanceDEVelocity(850, 45, 2 * VELOCITY); // 900 -45
 
         Utils.sleep(100);
         drive.rotateDistanceDEUnramped(-150, 24);

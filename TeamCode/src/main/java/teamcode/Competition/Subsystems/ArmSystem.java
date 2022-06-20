@@ -251,9 +251,10 @@ public class ArmSystem {
                 //house.setPosition(HOUSING_POSITION);
             }
         }
-        intakeDumb(0);
-
+        intakeDumb(-1);
+        setHouse();
         Utils.sleep(550);
+        intakeDumb(0);
         stage = Stage.HOUSED;
 
         //Debug.log("finish");
@@ -261,8 +262,8 @@ public class ArmSystem {
 
     }
 
-    public void setHouse(double position) {
-        house.setPosition(position);
+    public void setHouse() {
+        house.setPosition(HOUSING_POSITION_DUCK);
     }
 
     public void preScoreMultiFreight(){
