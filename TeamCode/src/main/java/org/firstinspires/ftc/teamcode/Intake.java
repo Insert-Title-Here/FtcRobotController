@@ -24,7 +24,10 @@ public class Intake {
         lJoint.setPosition(1);
         rJoint.setPosition(0);
 
+
     }
+
+
 
     public void clampAndRelease(boolean toClamp){
         if (toClamp) {

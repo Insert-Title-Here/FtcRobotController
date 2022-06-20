@@ -19,6 +19,10 @@ public class SummerTeleOp extends LinearOpMode {
     ColorSensor color;
 
 
+
+    boolean auto = false;
+    boolean changePower = true;
+    private double power = 1;
     private final double NORMAL_LINEAR_MODIFIER = 0.45;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
@@ -57,6 +61,9 @@ public class SummerTeleOp extends LinearOpMode {
             }
         };
 
+        color.enableLed(true);
+
+
         waitForStart();
 
         driveThread.start();
@@ -68,7 +75,9 @@ public class SummerTeleOp extends LinearOpMode {
         telemetry.addData("red", color.red());
         telemetry.addData("blue", color.blue());
         telemetry.addData("green", color.green());
-        color.enableLed(true);
+        telemetry.addData("auto", auto);
+        telemetry.addData("power", power);
+
         telemetry.update();
 
 
@@ -86,20 +95,58 @@ public class SummerTeleOp extends LinearOpMode {
     }
 
     private void intakeUpdate(){
-        if (gamepad1.a || (color.red() > 70 && color.green() > 100 && color.blue() > 40)) {
+        if (gamepad1.a || (color.red() > 130 && color.green() > 150 && color.blue() > 60)) {
             intake.clampAndRelease(true);
         } else {
             intake.clampAndRelease(false);
         }
 
-        if (gamepad1.right_trigger > 0.1) {
-            intake.setPower(true, gamepad1.right_trigger);
-        } else if (gamepad1.left_trigger > 0.1){
-            intake.setPower(false, gamepad1.left_trigger);
-        } else {
-            intake.setPower(true, 0);
+        if(gamepad1.left_bumper){
+            auto = !auto;
+
+        }
+
+        if(gamepad1.start){
+            if(changePower) {
+                changePower();
+                changePower = false;
+            }
+        }else{
+            changePower = true;
+        }
+
+        if(!auto) {
+
+            if (gamepad1.right_trigger > 0.1) {
+                intake.setPower(true, gamepad1.right_trigger);
+            } else if (gamepad1.left_trigger > 0.1) {
+                intake.setPower(false, gamepad1.left_trigger);
+            } else {
+                intake.setPower(true, 0);
+            }
+        }else{
+            if(gamepad1.right_trigger > 0.1){
+                intake.setPower(true, power);
+            }else if(gamepad1.left_trigger > 0.1){
+                intake.setPower(false, power);
+            }else{
+                intake.setPower(true, 0);
+            }
         }
 
 
+    }
+
+
+    public void changePower(){
+        if(power == 0.3){
+            power = 0.5;
+        }else if(power == 0.5){
+            power = 0.7;
+        }else if(power == 0.7){
+            power = 1;
+        }else{
+            power = 0.3;
+        }
     }
 }

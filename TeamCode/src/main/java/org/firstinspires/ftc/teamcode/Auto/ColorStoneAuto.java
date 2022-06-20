@@ -40,19 +40,23 @@ public class ColorStoneAuto extends OpModeWrapper {
     @Override
     protected void onStart() {
 
-        while(!(color.red() > 70 && color.blue() > 40 && color.green() > 100)){
-            drive.setPower(0.3, 0.3, 0.3, 0.3);
+        for(int i = 0; i < 4; i++) {
+
+            while (!(color.red() > 70 && color.blue() > 40 && color.green() > 100)) {
+                drive.setPower(0.3, 0.3, 0.3, 0.3);
+            }
+
+            intake.clampAndRelease(true);
+
+            intakeThread.start();
+
+            drive.setPower(0.2, 0.2, 0.2, 0.2);
+            sleep(1000);
+
+            drive.tankRotate(Math.PI / 2, 0.3);
+            drive.driveAuto(0.4, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
+
         }
-
-        intake.clampAndRelease(true);
-
-        intakeThread.start();
-
-        drive.setPower(0.2, 0.2, 0.2, 0.2);
-        sleep(1000);
-
-        drive.tankRotate(Math.PI/2, 0.3);
-        drive.driveAuto(0.4, 1500, MecanumDriveTrain.MovementType.STRAIGHT);
 
 
 

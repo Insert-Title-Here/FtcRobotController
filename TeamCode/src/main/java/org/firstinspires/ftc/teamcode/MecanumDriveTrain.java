@@ -128,7 +128,7 @@ public class MecanumDriveTrain {
      */
     public void setPower(Vector2D velocity, double turnValue, boolean isSwapped){
         turnValue = -turnValue;
-        double direction = velocity.getDirection();
+        double direction =  velocity.getDirection();
 
 
         double power = velocity.magnitude();
