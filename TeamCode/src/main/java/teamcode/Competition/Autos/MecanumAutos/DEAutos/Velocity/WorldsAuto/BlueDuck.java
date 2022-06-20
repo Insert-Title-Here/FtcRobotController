@@ -78,7 +78,7 @@ public class BlueDuck extends AbstractOpMode {
 
                 system.retract();
                 while(!flags[2]);
-                system.raise(Constants.TOP_POSITION + 3000);
+                system.raise(Constants.TOP_POSITION + 1500);
                 while(!flags[3]);
 
                 Utils.sleep(200);
@@ -168,7 +168,7 @@ public class BlueDuck extends AbstractOpMode {
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(650, 180.0, VELOCITY);
+        drive.moveDistanceDEVelocity(700, 180.0, VELOCITY);
 
         Utils.sleep(200);
         drive.rotateDistanceDE(-75, 6);

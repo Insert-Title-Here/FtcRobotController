@@ -1076,8 +1076,8 @@ import static java.lang.Math.PI;
                 Debug.log("red");
             }else{
 
-                distanceFrontThreshold = 2.0; //1.5 for straight walls, curr values for bent walls
-                distanceBackThreshold = 1.5; //1.0
+                distanceFrontThreshold = 1.5; //1.5 for straight walls, curr values for bent walls
+                distanceBackThreshold = 1.0; //1.0
                 distanceFront = frontBlue.getDistance(DistanceUnit.INCH);
                 distanceBack = backBlue.getDistance(DistanceUnit.INCH);
 
@@ -1670,7 +1670,6 @@ import static java.lang.Math.PI;
                     arm.lowerLinkageAuto();
                 }
                 modulateIntakeDumb(cur.getPower());
-
             }else if(curr instanceof CoastFunction){
                 CoastFunction cur = (CoastFunction) curr;
                 coastDriveEncoder(cur.getDistance(),cur.getVelocity(), cur.getPlateu());
