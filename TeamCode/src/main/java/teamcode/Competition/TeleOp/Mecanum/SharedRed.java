@@ -172,7 +172,7 @@ public class SharedRed extends AbstractOpMode {
         } else if (gamepad1.y && pulleyState == PulleyState.RETRACTED) {
             //arm.raise(Constants.BOTTOM_POSITION);
             while(gamepad1.y){
-                systems.runCarousel(-1.0);
+                systems.runCarousel(1.0);
             }
             //arm.runConveyorPos(0.5, 2000);
             arm.idleServos();
@@ -185,7 +185,7 @@ public class SharedRed extends AbstractOpMode {
         }
         if (gamepad1.left_bumper) {
             while (gamepad1.left_bumper) {
-                arm.runConveyor(1.0);
+                arm.runConveyor(0.9);
             }
             arm.retract();
             arm.idleServos();
@@ -198,7 +198,7 @@ public class SharedRed extends AbstractOpMode {
 
         }else if(gamepad1.b){
             while(gamepad1.b){
-                systems.runCarousel(-0.2);
+                systems.runCarousel(0.2);
             }
         } else{
             arm.setWinchPower(0);
