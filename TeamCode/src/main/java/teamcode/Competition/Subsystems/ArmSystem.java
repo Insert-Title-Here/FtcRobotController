@@ -25,7 +25,7 @@ public class ArmSystem {
     //House Servo values
     private static final double INTAKE_POSITION = 0.08; //0
     private static final double HOUSING_POSITION_BALL = 0.15;
-    private static final double HOUSING_POSITION_DUCK = 0.22; //0.12
+    private static final double HOUSING_POSITION_DUCK = 0.22 ; //0.12
     private static final double HOUSING_POSITION = 0.16; //0.22
     private static final double SCORING_POSITION = 0.56; //0.5
     private static final double SCORING_POSITION_CONVEYOR = 0.56;
@@ -258,8 +258,26 @@ public class ArmSystem {
         stage = Stage.HOUSED;
 
         //Debug.log("finish");
+    }
 
-
+    public void duckPreScore() {
+        actuateWinchStop(WINCHSTOP_OPEN);
+        if (isTeleOp && !isDuck) {
+            intakeDumb(1.0);
+        }
+        linkage.setPosition(LINKAGE_HOUSED);
+        Utils.sleep(250);
+        synchronized (this) {
+            if (isDuck) {
+                house.setPosition(HOUSING_POSITION_DUCK);
+            } else {
+                // house.setPosition(HOUSING_POSITION);
+            }
+        }
+        setHouse();
+        Utils.sleep(550);
+        intakeDumb(0);
+        stage = Stage.HOUSED;
     }
 
     public void setHouse() {
