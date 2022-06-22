@@ -65,7 +65,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 }else if(position == CENTER){
                     arm.raise(Constants.MEDIUM_POSITION + 5000);
                 }else{
-                    arm.raise(Constants.TOP_POSITION + 1000);
+                    arm.raise(Constants.TOP_POSITION );
                 }
                 arm.setLinkageScored();
                 Utils.sleep(200);
@@ -73,11 +73,11 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                 if(position == LEFT) {
 //                    arm.runConveyorPos(1.0,3000);
 //                    Utils.sleep(100);
-                }else{
+                }else {
                     Utils.sleep(100);
-                    if(position == CENTER){
+                    if (position == CENTER) {
                         arm.scoreFar();
-                    }else {
+                    } else {
                         arm.score();
                     }
                 }
@@ -96,9 +96,9 @@ public class BlueDEMultiFreight extends AbstractOpMode {
                     while (!drive.getFlagIndex(1));
                     arm.intakeDumb(-1.0);
                     if(i > 1) {
-                        arm.raise(Constants.TOP_POSITION + 1000);
+                        arm.raise(Constants.TOP_POSITION);
                     }else {
-                        arm.raise(Constants.TOP_POSITION + 1000);
+                        arm.raise(Constants.TOP_POSITION);
                     }
                     drive.setFlagIndex(1, false);
                     while (!drive.getFlagIndex(2));
@@ -179,7 +179,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 
 //            if(first) {
 //                first = false;
-            warehouseSplice.add(new TranslationalMovement( 750, 2 * VELOCITY, 0.0, true));
+            warehouseSplice.add(new TranslationalMovement( 600, 2 * VELOCITY, 0.0, true));
             warehouseSplice.add(new ModulateIntake(1.0));
             if(i == 0) {
                 warehouseSplice.add(new TranslationalMovement(650, 2 * VELOCITY, 0.0, true));
@@ -193,7 +193,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             //warehouseSplice.add(new Movement(200));
             //warehouseSplice.add(new Movement(200)); may or may not be needed
 
-            warehouseSplice.add(new CoastFunction(1.0, (300.0 ),0.0));
+            warehouseSplice.add(new CoastFunction(1.0, 300.0,0.0));
             //+ 60 *i
             //warehouseSplice.add(new Movement(100 + (100 * i), 10.0, 0.0)); //increase this? new Movement(2, Movement.MovementType.WAREHOUSE_OPERATION)
             // warehouseSplice.add(new Movement(700));
@@ -210,22 +210,12 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             warehouseSplice.add(new ModulateIntake(0.0));
             if(i < 3) {
                 warehouseSplice.add(new WarehouseNormalization(-4, 500, false));
-                //warehouseSplice.add(new Movement(150));
 
-                //warehouseSplice.add(new Movement(100));
-                //warehouseSplice.add(new Movement(100, VELOCITY, 90.0));
-                //  warehouseSplice.add(new Movement(300, VELOCITY, 180.0));
-                //approach and score
-                //warehouseSplice.add(new Movement(200));
-                //warehouseSplice.add(new Movement(300, VELOCITY, -90.0));
-                //warehouseSplice.add(new Movement(300));
-                //warehouseSplice.add(new Movement(100));
-                // warehouseSplice.add(new Movement(100));
                 warehouseSplice.add(new ModifyFlag(true, 1));
 //            if(i % 2 == 0){
 //                warehouseSplice.add(new Movement(130.5, -30.0, 1550)); // -6, 1500
 //            }else {
-                warehouseSplice.add(new ArcMovement(1650, 40.0, -131.8)); // -6, 1500
+                warehouseSplice.add(new ArcMovement(1700, 40.0, -131.8)); // -6, 1500
                 // }
                 warehouseSplice.add(new ModifyFlag(true, 2));
                 warehouseSplice.add(new Wait(200));
@@ -240,12 +230,13 @@ public class BlueDEMultiFreight extends AbstractOpMode {
             drive.splicedMovement(warehouseSplice);
             warehouseSplice.clear();
         }
+        drive.moveDistanceDEVelocity(300, 0, 35);
         //drive.moveDistanceDEVelocity(900, 0, 50);
       //  drive.writeLoggerToFile();
     }
 
     @Override
     protected void onStop() {
-          drive.writeLoggerToFile();
+          //drive.writeLoggerToFile();
     }
 }

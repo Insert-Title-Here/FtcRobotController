@@ -23,12 +23,12 @@ import teamcode.common.Utils;
 public class ArmSystem {
 
     //House Servo values
-    private static final double INTAKE_POSITION = 0.08; //0
-    private static final double HOUSING_POSITION_BALL = 0.15;
-    private static final double HOUSING_POSITION_DUCK = 0.22 ; //0.12
-    private static final double HOUSING_POSITION = 0.16; //0.22
-    private static final double SCORING_POSITION = 0.56; //0.5
-    private static final double SCORING_POSITION_CONVEYOR = 0.56;
+    private static final double INTAKE_POSITION = 0.12; //0
+    private static final double HOUSING_POSITION_BALL = 0.19;
+    private static final double HOUSING_POSITION_DUCK = 0.26; //0.12
+    private static final double HOUSING_POSITION = 0.20; //0.22
+    private static final double SCORING_POSITION = 0.60; //0.5
+    private static final double SCORING_POSITION_CONVEYOR = 0.60;
 
     private static final double LINKAGE_DOWN = 0.3; //these values need to be refined but they are good ballparks. AYUSH: No longer a final constant.
     private static final double LINKAGE_HOUSED = 0.58;
@@ -335,14 +335,17 @@ public class ArmSystem {
 
     public void raise(double position) {
 
-        if(!isTeleOp){
-            linkage.setPosition(LINKAGE_SCORE);
-        }
+
 
         house.setPosition(HOUSING_POSITION);
         moveSlide(SLIDE_POWER, (int) position);
 
         //Utils.sleep(200);
+
+        if(!isTeleOp){
+            linkage.setPosition(LINKAGE_SCORE);
+        }
+
         linkage.setPosition(LINKAGE_SCORE);
 
         stage = stage.EXTENDED;
