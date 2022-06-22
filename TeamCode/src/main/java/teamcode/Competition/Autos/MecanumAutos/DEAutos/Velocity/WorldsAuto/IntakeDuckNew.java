@@ -83,6 +83,7 @@ public class IntakeDuckNew extends AbstractOpMode {
 
                 Utils.sleep(200);
                 system.retract();
+                Utils.sleep(300);
 
             }
         };
@@ -106,14 +107,14 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(400, 0, VELOCITY);
+        drive.moveDistanceDEVelocity(540, 0, VELOCITY);
         Utils.sleep(200);
         drive.rotateDistanceDE(75, 6);
 
         //extend
         flags[0] = true;
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(800, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(720, 180, VELOCITY);
         //score
         Utils.sleep(300);
         if(position == LEFT){
@@ -122,23 +123,23 @@ public class IntakeDuckNew extends AbstractOpMode {
             system.score();
         }
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(200, 90, VELOCITY ); //400
+        //drive.moveDistanceDEVelocity(200, 90, VELOCITY ); //400
 
 
-        drive.rotateDistanceDE(140, 24);
+        drive.rotateDistanceDE(160, 12);
         flags[1] = true;
         //Utils.sleep(200);
-        drive.strafeDistanceSensor(6, -Math.PI / 24.0);
+        drive.strafeDistanceSensor(6, 0);
         system.setIsDuck(true);
-        Utils.sleep(200);
         //drive.moveDistanceDEVelocity(300, 180, VELOCITY);
 
-        drive.moveDistanceDEVelocity(200, -90, VELOCITY);
         Utils.sleep(200);
-
-        drive.moveDistanceDEVelocity(400, 0, VELOCITY);//
+        drive.moveDistanceDEVelocity(100, -90, 2 * VELOCITY);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(400, 0, 2 * VELOCITY);//
         //drive.driveColorSensorWarehouse(4);
-        drive.moveDistanceDEVelocity(400, 0, VELOCITY / 2.0);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(400, 0, VELOCITY);
         Utils.sleep(200);
 
         drive.duck();
@@ -150,28 +151,31 @@ public class IntakeDuckNew extends AbstractOpMode {
         Utils.sleep(250);
 
         //drive.moveDistanceDEVelocity(150, 60, VELOCITY / 2.0);
-        drive.moveDistanceDEVelocity(250, -90, VELOCITY / 2.0);
+        drive.moveDistanceDEVelocity(450, -90, VELOCITY / 2.0);
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(100, 0, VELOCITY / 2.0);
+        drive.moveDistanceDEVelocity(75, 0, VELOCITY / 2.0);
         Utils.sleep(200);
+        drive.rotateDistanceDE(190, 6);
+        Utils.sleep(100);
         drive.moveDistanceDEVelocity(400, -90, VELOCITY / 2.0); //400
 
 
-        Utils.sleep(500);
+        Utils.sleep(200);
         //drive.moveDistanceDEVelocity(100, -90, VELOCITY / 2.0);
 
         //drive.moveDistanceDEVelocity(420, 0, VELOCITY / 2.0);
         //Utils.sleep(500);
         system.preScore();
-        drive.moveDistanceDEVelocity(1000, -45, -2 * VELOCITY);
+        Utils.sleep(200);
+        drive.moveDistanceDEVelocity(50, -50, -2 * VELOCITY);
         //Utils.sleep(200);
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(550, 180.0,2*  VELOCITY);
+        drive.moveDistanceDEVelocity(500, 180.0, VELOCITY);
 
         Utils.sleep(200);
-        drive.rotateDistanceDE(90, 6);
+        drive.rotateDistanceDE(70, 6);
 
 
 //        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
@@ -188,7 +192,7 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         //extend
         flags[2] = true;
-        drive.moveDistanceDEVelocity(450, 180, 2 * VELOCITY);
+        drive.moveDistanceDEVelocity(700, 180, VELOCITY);
         Utils.sleep(250);
         //score
         system.score();
@@ -197,9 +201,14 @@ public class IntakeDuckNew extends AbstractOpMode {
         Utils.sleep(200);
         flags[3] = true;
 
-        drive.moveDistanceDEVelocity(800, 0, VELOCITY);
-        Utils.sleep(200);
-        drive.moveDistanceDEVelocity(600, -90, VELOCITY ); //400
+        drive.moveDistanceDEVelocity(1000, 0, VELOCITY);
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(450, -90, VELOCITY ); //400
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(100, -45, VELOCITY);
+        drive.setPower(0.2,0.2,0.2,0.2);
+
+        while(opModeIsActive() && !isStopRequested());
     }
 
     //drive.strafeDistanceSensor(6,0);

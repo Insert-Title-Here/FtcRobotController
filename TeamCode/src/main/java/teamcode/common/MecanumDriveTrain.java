@@ -464,15 +464,15 @@ import static java.lang.Math.PI;
                 Math.abs(data.getMotorCurrentPosition(2)) < Math.abs(blDistance) || Math.abs(data.getMotorCurrentPosition(3)) < Math.abs(brDistance)) && opModeIsRunning()){
             hub.clearBulkCache();
             data = hub.getBulkData();
-//            AbstractOpMode.currentOpMode().telemetry.addData("fl",data.getMotorCurrentPosition(0));
-//            AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
-//            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
-//            AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
-//            AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
-//            AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
-//            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
-//            AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
-//            AbstractOpMode.currentOpMode().telemetry.update();
+            AbstractOpMode.currentOpMode().telemetry.addData("fl",data.getMotorCurrentPosition(0));
+            AbstractOpMode.currentOpMode().telemetry.addData("fl", flDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", data.getMotorCurrentPosition(1));
+            AbstractOpMode.currentOpMode().telemetry.addData("fr", frDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", data.getMotorCurrentPosition(2));
+            AbstractOpMode.currentOpMode().telemetry.addData("bl", blDistance);
+            AbstractOpMode.currentOpMode().telemetry.addData("br", data.getMotorCurrentPosition(3));
+            AbstractOpMode.currentOpMode().telemetry.addData("br", brDistance);
+            AbstractOpMode.currentOpMode().telemetry.update();
 
             setVelocity(vec, 0);
         }

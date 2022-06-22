@@ -52,8 +52,8 @@ public class TapePipeline extends OpenCvPipeline {
         Imgproc.cvtColor(mat, filtered, Imgproc.COLOR_RGB2BGR);
         //Core.inRange(filtered, new Scalar(50, 90, 235), new Scalar(80, 117, 255), mask);
         if (side == Side.RED) {
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(110, 155);
-            REGION2_TOPLEFT_ANCHOR_POINT = new Point(255, 150);
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(135, 165);
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(255, 165);
             Core.inRange(filtered, new Scalar(0, 60, 40), new Scalar(75, 110, 255), mask);
         } else {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);

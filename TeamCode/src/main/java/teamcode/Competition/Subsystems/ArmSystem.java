@@ -35,7 +35,7 @@ public class ArmSystem {
     private static final double LINKAGE_SCORE = 0.7;
 
     private static final double WINCHSTOP_STOPPING = 0.45;
-    private static final double WINCHSTOP_INIT = 0.7;
+    private static final double WINCHSTOP_INIT = 0.6;
     private static final double WINCHSTOP_OPEN = 1.0;
 
 
