@@ -24,7 +24,7 @@ import teamcode.common.Vector2D;
 
 import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.*;
 
-@Autonomous(name="dook red")
+@Autonomous(name="\uD83D\uDFE5 RED DUCK")
 public class IntakeDuckNew extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem system;
@@ -71,7 +71,7 @@ public class IntakeDuckNew extends AbstractOpMode {
                 }else if(position == CENTER){
                     system.raise(Constants.MEDIUM_POSITION + 3000);
                 }else{
-                    system.raise(Constants.TOP_POSITION);
+                    system.raise(Constants.TOP_POSITION + 500);
                 }
                 while(!flags[1]);
 
@@ -117,7 +117,7 @@ public class IntakeDuckNew extends AbstractOpMode {
 
         //score
         Utils.sleep(300);
-        drive.moveDistanceDEVelocity(720 + (position == CENTER ? 40 : 0), 180, VELOCITY);
+        drive.moveDistanceDEVelocity(720 + (position == CENTER ? 40 : 20), 180, VELOCITY);
         if(position == LEFT){
             system.runConveyorPos(0.5, 2000);
         }else {
@@ -168,14 +168,14 @@ public class IntakeDuckNew extends AbstractOpMode {
         //Utils.sleep(500);
         system.duckPreScore();
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(550, -60, -2 * VELOCITY);
+        drive.moveDistanceDEVelocity(550, -57, -2 * VELOCITY);
         //Utils.sleep(200);
         /*Utils.sleep(200);
         drive.moveDistanceDEVelocity(100, -90, 2 * VELOCITY);*/
 
         Utils.sleep(150);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(800, 180.0, VELOCITY);
+        drive.moveDistanceDEVelocity(900, 180.0, VELOCITY);
 
         Utils.sleep(150);
         drive.rotateDistanceDE(80, 6);
@@ -205,11 +205,11 @@ public class IntakeDuckNew extends AbstractOpMode {
         flags[3] = true;
         Utils.sleep(200);
 
-        drive.moveDistanceDEVelocity(1000, 0, VELOCITY);
+        drive.moveDistanceDEVelocity(1000, 0, 3 * VELOCITY);
         Utils.sleep(100);
-        drive.moveDistanceDEVelocity(450, -90, VELOCITY ); //400
-        Utils.sleep(100);
-        drive.moveDistanceDEVelocity(100, -45, VELOCITY);
+        drive.moveDistanceDEVelocity(500, -90, 3 * VELOCITY ); //400
+        /*Utils.sleep(100);
+        drive.moveDistanceDEVelocity(100, -45, VELOCITY);*/
         //drive.setPower(0.2,0.2,0.2,0.2);
         while(opModeIsActive() && !isStopRequested());
     }

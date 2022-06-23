@@ -24,7 +24,7 @@ import teamcode.common.Vector2D;
 
 import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.*;
 
-@Autonomous(name="dook blue")
+@Autonomous(name="\uD83D\uDFE6 BLUE DUCK")
 public class BlueDuck extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem system;

@@ -15,6 +15,7 @@ import teamcode.common.AbstractOpMode;
 import teamcode.common.Logger;
 import teamcode.common.MecanumDriveTrain;
 
+@Disabled
 @Autonomous(name="Color")
 public class ColorSensorTest extends AbstractOpMode {
 

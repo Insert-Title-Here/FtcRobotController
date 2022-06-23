@@ -12,6 +12,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline;
 import teamcode.Competition.Pipeline.TankPipeline.BarcodePipeline3;
 import teamcode.common.AbstractOpMode;
 @Disabled
@@ -23,7 +24,7 @@ public class CvAutoPosition extends AbstractOpMode {
     OpenCvCamera camera;
 
     // global obj
-    static final BarcodePipeline3 brp = new BarcodePipeline3();
+    static final TapePipeline brp = new TapePipeline();
 
     @Override
     protected void onInitialize() {
@@ -36,7 +37,7 @@ public class CvAutoPosition extends AbstractOpMode {
         // W/ or W/ out live preview
         camera = OpenCvCameraFactory.getInstance().createWebcam(wc, cameraMonitorViewId);
         // camera = OpenCvCameraFactory.getInstance().createWebcam(wc);
-        brp.setSide(BarcodePipeline3.Side.RED);
+        brp.setSide(TapePipeline.Side.RED);
         camera.setPipeline(brp);
 
 

@@ -257,11 +257,11 @@ import static java.lang.Math.PI;
         //LynxModule.BulkData data = hub.getBulkData();
         int iterator = 0;
 
-        while(rgba.green < 0.9 && rgba.blue < 0.9 && rgba.red < 0.9 && opModeIsRunning()){
+        while(rgba.green < 0.95 && rgba.blue < 0.95 && rgba.red < 0.95 && opModeIsRunning()){
             //data = hub.getBulkData();
 //            posSum += Math.abs(data.getMotorCurrentPosition(0));
 //            posSum += Math.abs(data.getMotorCurrentPosition(1));
-//            posSum += Math.abs(data.getMotorCurrentPosition(2));
+//            posSum += Math.afbs(data.getMotorCurrentPosition(2));
 //            posSum += Math.abs(data.getMotorCurrentPosition(3));
 //            posSum = posSum / 4.0;
 //            AbstractOpMode.currentOpMode().telemetry.addData("sum", posSum);
@@ -1721,7 +1721,7 @@ import static java.lang.Math.PI;
         double deltaTime = AbstractOpMode.currentOpMode().time;
         int currentTics = arm.getConveyorPosition();
         NormalizedRGBA rgba = sensor.getNormalizedColors();
-        while(opModeIsRunning() && ratio > 0.25 && rgba.green < 0.7) { //ratio > 0.05
+        while(opModeIsRunning() && ratio > 0.25 && rgba.green < 0.87) { //ratio > 0.05
             hub.clearBulkCache();
             rgba = sensor.getNormalizedColors();
             data = hub.getBulkData();

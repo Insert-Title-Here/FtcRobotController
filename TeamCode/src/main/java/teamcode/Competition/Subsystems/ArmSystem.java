@@ -286,11 +286,12 @@ public class ArmSystem {
 
     public void preScoreMultiFreight(){
         actuateWinchStop(WINCHSTOP_OPEN);
-        linkage.setPosition(LINKAGE_HOUSED);
-        house.setPosition(0.08 ); // 0.12
+
 
         //house.setPosition(HOUSING_POSITION);
         Utils.sleep(250);
+        linkage.setPosition(LINKAGE_HOUSED);
+        house.setPosition(0.08 ); // 0.12
     }
     public void preScoreAuto(){
         if(isDuck){
@@ -382,7 +383,7 @@ public class ArmSystem {
 
     public synchronized void retract(){
         linkage.setPosition(LINKAGE_HOUSED);
-        while (winchEncoder.getCurrentPosition()  > 500 && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
+        while (winchEncoder.getCurrentPosition()  > 1000 && AbstractOpMode.currentOpMode().opModeIsActive() && !AbstractOpMode.currentOpMode().isStopRequested()) {
 //                AbstractOpMode.currentOpMode().telemetry.addData("curR", winchEncoder.getCurrentPosition());
 //                AbstractOpMode.currentOpMode().telemetry.addData("tarR", position);
 //                AbstractOpMode.currentOpMode().telemetry.update();

@@ -59,7 +59,7 @@ public class TapePipeline extends OpenCvPipeline {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(134, 150);
             //Core.inRange(filtered, new Scalar(230, 115, 70), new Scalar(255, 148, 97), mask);
-            Core.inRange(filtered, new Scalar(99, 35, 0), new Scalar(255, 192, 162), mask);
+            Core.inRange(filtered, new Scalar(99, 35, 0), new Scalar(255, 140, 162), mask);
         }
 
         Point region1_pointA = new Point(
@@ -101,9 +101,9 @@ public class TapePipeline extends OpenCvPipeline {
             if(deltaPercent < 0.1){
                 position = BarcodePosition.RIGHT;
             }else if(regionOnePercent < regionTwoPercent){
-                position = BarcodePosition.CENTER;
-            }else if(regionTwoPercent < regionOnePercent){
                 position = BarcodePosition.LEFT;
+            }else if(regionTwoPercent < regionOnePercent){
+                position = BarcodePosition.CENTER;
             }else{
                 position = BarcodePosition.RIGHT;
             }
