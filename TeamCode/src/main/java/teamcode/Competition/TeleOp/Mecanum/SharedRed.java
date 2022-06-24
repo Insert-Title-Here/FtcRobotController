@@ -141,8 +141,23 @@ public class SharedRed extends AbstractOpMode {
                 arm.intakeDumb(-1.0);
             }
         } else if (gamepad1.left_stick_button) {
-            arm.runConveyor(0.8);
-            arm.retract();
+            long currentSampleTime = System.currentTimeMillis();
+            if (currentSampleTime - scoredSampleTime > 200) {
+                if (pulleyState != SharedRed.PulleyState.RETRACTED) {
+                    if (state == SharedRed.ScoredButtonState.RETRACTING) {
+                        scoredSampleTime = System.currentTimeMillis();
+                        state = SharedRed.ScoredButtonState.SCORED;
+                        arm.score();
+                    } else if (state == SharedRed.ScoredButtonState.SCORED) {
+                        //telemetry.clear();
+                        state = SharedRed.ScoredButtonState.RETRACTING;
+                        iterator++;
+                        //Debug.log("here" + iterator);
+                        arm.retract();
+                        pulleyState = SharedRed.PulleyState.RETRACTED;
+                    }
+                }
+            }
         } else if (gamepad1.dpad_up) {
             // set to full
             arm.setWinchPower(1);
@@ -151,10 +166,10 @@ public class SharedRed extends AbstractOpMode {
         } else if (gamepad1.left_trigger > 0.3) {
             if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 previousExtensionTime = time;
-                if(isExtended) {
-                    arm.raise(Constants.TOP_POSITION + 1000); //3000
-                }else{
+                if (gamepad1.left_trigger > 0.3) {
                     arm.raise(Constants.TOP_POSITION);
+                } else {
+                    arm.sharedRaise(3000);
                 }
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
@@ -211,7 +226,12 @@ public class SharedRed extends AbstractOpMode {
             arm.intakeDumb(-1.0);
             linkageState = LinkageState.RAISED;
             Utils.sleep(150);
-            arm.sharedRaise(3000);
+            if (gamepad1.left_trigger > 0.3) {
+                arm.raise(Constants.TOP_POSITION);
+            } else {
+                arm.sharedRaise(3000);
+            }
+
             arm.intakeDumb(0);
         }
         previousOptions = gamepad1.square;

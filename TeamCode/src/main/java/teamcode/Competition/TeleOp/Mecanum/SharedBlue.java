@@ -130,9 +130,7 @@ public class SharedBlue extends AbstractOpMode {
                     }else{
                         arm.intakeDumb(1.0);
                     }
-                    //arm.intakeDumb(0.3 * Math.abs(Math.sin(6 * elapsedTime)) + 0.7);
                 }
-
             }
         } else if (gamepad1.a) {
 
@@ -141,8 +139,23 @@ public class SharedBlue extends AbstractOpMode {
                 arm.intakeDumb(-1.0);
             }
         } else if (gamepad1.left_stick_button) {
-            arm.runConveyor(0.8);
-            arm.retract();
+            long currentSampleTime = System.currentTimeMillis();
+            if (currentSampleTime - scoredSampleTime > 200) {
+                if (pulleyState != PulleyState.RETRACTED) {
+                    if (state == ScoredButtonState.RETRACTING) {
+                        scoredSampleTime = System.currentTimeMillis();
+                        state = ScoredButtonState.SCORED;
+                        arm.score();
+                    } else if (state == ScoredButtonState.SCORED) {
+                        //telemetry.clear();
+                        state = ScoredButtonState.RETRACTING;
+                        iterator++;
+                        //Debug.log("here" + iterator);
+                        arm.retract();
+                        pulleyState = PulleyState.RETRACTED;
+                    }
+                }
+            }
         } else if (gamepad1.dpad_up) {
             // set to full
             arm.setWinchPower(1);
@@ -151,10 +164,10 @@ public class SharedBlue extends AbstractOpMode {
         } else if (gamepad1.left_trigger > 0.3) {
             if (pulleyState == PulleyState.RETRACTED && linkageState == LinkageState.RAISED) {
                 previousExtensionTime = time;
-                if(isExtended) {
-                    arm.raise(Constants.TOP_POSITION + 1000); //3000
-                }else{
+                if (gamepad1.left_trigger > 0.3) {
                     arm.raise(Constants.TOP_POSITION);
+                } else {
+                    arm.sharedRaise(3000);
                 }
                 pulleyState = PulleyState.HIGH_GOAL;
                 linkageState = LinkageState.RAISED;
@@ -211,7 +224,11 @@ public class SharedBlue extends AbstractOpMode {
             arm.intakeDumb(-1.0);
             linkageState = LinkageState.RAISED;
             Utils.sleep(150);
-            arm.sharedRaise(3000);
+            if (gamepad1.left_trigger > 0.3) {
+                arm.raise(Constants.TOP_POSITION);
+            } else {
+                arm.sharedRaise(3000);
+            }
             arm.intakeDumb(0);
         }
         previousOptions = gamepad1.square;

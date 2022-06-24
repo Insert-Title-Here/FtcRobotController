@@ -25,7 +25,7 @@ import teamcode.common.Vector2D;
 import static teamcode.Competition.Pipeline.MecanumPipeline.TapePipeline.BarcodePosition.*;
 
 @Autonomous(name="\uD83D\uDFE5 RED DUCK")
-public class IntakeDuckNew extends AbstractOpMode {
+public class RedDuck extends AbstractOpMode {
     MecanumDriveTrain drive;
     ArmSystem system;
     EndgameSystems systems;
@@ -178,7 +178,7 @@ public class IntakeDuckNew extends AbstractOpMode {
         drive.moveDistanceDEVelocity(900, 180.0, VELOCITY);
 
         Utils.sleep(150);
-        drive.rotateDistanceDE(80, 6);
+        drive.rotateDistanceDE(70, 6);
 
 
 //        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
