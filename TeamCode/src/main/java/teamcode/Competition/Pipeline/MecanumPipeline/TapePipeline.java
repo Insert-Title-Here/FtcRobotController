@@ -29,6 +29,7 @@ public class TapePipeline extends OpenCvPipeline {
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
     static final Scalar WHITE = new Scalar(255, 255, 255);
+    static final Scalar RED = new Scalar(255, 0, 0);
 
     static final int REGION_WIDTH = 65;
     static final int REGION_HEIGHT = 30;
@@ -37,6 +38,10 @@ public class TapePipeline extends OpenCvPipeline {
 
     static Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(108, 145);
     static Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(251, 145);
+
+    static double deltaPercent = 0.0;
+    static double regionOnePercent = 0.0;
+    static double regionTwoPercent = 0.0;
 
     Mat filtered = new Mat();
     Mat mask = new Mat();
@@ -52,14 +57,14 @@ public class TapePipeline extends OpenCvPipeline {
         Imgproc.cvtColor(mat, filtered, Imgproc.COLOR_RGB2BGR);
         //Core.inRange(filtered, new Scalar(50, 90, 235), new Scalar(80, 117, 255), mask);
         if (side == Side.RED) {
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(135, 165);
-            REGION2_TOPLEFT_ANCHOR_POINT = new Point(255, 165);
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(135, 155);
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(255, 155);
             Core.inRange(filtered, new Scalar(0, 60, 40), new Scalar(75, 110, 255), mask);
         } else {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(134, 150);
             //Core.inRange(filtered, new Scalar(230, 115, 70), new Scalar(255, 148, 97), mask);
-            Core.inRange(filtered, new Scalar(99, 35, 0), new Scalar(255, 140, 162), mask);
+            Core.inRange(filtered, new Scalar(99, 35, 0), new Scalar(255, 192, 162), mask);
         }
 
         Point region1_pointA = new Point(
@@ -82,28 +87,28 @@ public class TapePipeline extends OpenCvPipeline {
                 mask,
                 region1_pointA,
                 region1_pointB,
-                WHITE,
+                RED,
                 2
         );
         Imgproc.rectangle(
                 mask,
                 region2_pointA,
                 region2_pointB,
-                WHITE,
+                RED,
                 2
         );
 
-        double regionOnePercent = Math.round((Core.countNonZero(region1) / SIZE) * 100.0) / 100.0;
-        double regionTwoPercent = Math.round((Core.countNonZero(region2) / SIZE) * 100.0) / 100.0;
+        regionOnePercent = Math.round((Core.countNonZero(region1) / SIZE) * 100.0) / 100.0;
+        regionTwoPercent = Math.round((Core.countNonZero(region2) / SIZE) * 100.0) / 100.0;
 
-        double deltaPercent = Math.abs(regionOnePercent - regionTwoPercent);
+        deltaPercent = Math.abs(regionOnePercent - regionTwoPercent);
         if(side == Side.RED) {
-            if(deltaPercent < 0.1){
-                position = BarcodePosition.RIGHT;
-            }else if(regionOnePercent < regionTwoPercent){
+            if(deltaPercent < 0.15){
                 position = BarcodePosition.LEFT;
-            }else if(regionTwoPercent < regionOnePercent){
+            }else if(regionOnePercent < regionTwoPercent){
                 position = BarcodePosition.CENTER;
+            }else if(regionTwoPercent < regionOnePercent){
+                position = BarcodePosition.LEFT;
             }else{
                 position = BarcodePosition.RIGHT;
             }
@@ -170,5 +175,9 @@ public class TapePipeline extends OpenCvPipeline {
 
     public BarcodePosition getPos() {
         return position;
+    }
+
+    public String getVal() {
+        return "delta %: " + deltaPercent + "\nregion 1%: " + regionOnePercent + "\nregion 2%: " + regionTwoPercent;
     }
 }

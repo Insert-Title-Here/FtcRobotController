@@ -90,7 +90,8 @@ public class RedDuck extends AbstractOpMode {
 
         while(!opModeIsActive() && !isStopRequested()){
             position = pipeline.getPos();
-            telemetry.addData("", position);
+            telemetry.addData("pos", pipeline.getPos());
+            telemetry.addData("", pipeline.getVal());
             telemetry.update();
         }
 
@@ -178,7 +179,7 @@ public class RedDuck extends AbstractOpMode {
         drive.moveDistanceDEVelocity(900, 180.0, VELOCITY);
 
         Utils.sleep(150);
-        drive.rotateDistanceDE(70, 6);
+        drive.rotateDistanceDE(75, 6);
 
 
 //        drive.moveDistanceDEVelocity(300, 180, VELOCITY);
@@ -208,6 +209,9 @@ public class RedDuck extends AbstractOpMode {
         drive.moveDistanceDEVelocity(1000, 0, 3 * VELOCITY);
         Utils.sleep(100);
         drive.moveDistanceDEVelocity(500, -90, 3 * VELOCITY ); //400
+        Utils.sleep(100);
+        drive.moveDistanceDEVelocity(150, 0, 2 * VELOCITY);
+        Utils.sleep(100);
         /*Utils.sleep(100);
         drive.moveDistanceDEVelocity(100, -45, VELOCITY);*/
         //drive.setPower(0.2,0.2,0.2,0.2);

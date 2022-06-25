@@ -89,7 +89,8 @@ public class BlueDuck extends AbstractOpMode {
 
         while(!opModeIsActive() && !isStopRequested()){
             position = pipeline.getPos();
-            telemetry.addData("", position);
+            telemetry.addData("pos", pipeline.getPos());
+            telemetry.addData("", pipeline.getVal());
             telemetry.update();
         }
 
@@ -113,7 +114,7 @@ public class BlueDuck extends AbstractOpMode {
         //extend
         flags[0] = true;
         Utils.sleep(200);
-        drive.moveDistanceDEVelocity(800, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(800 + (position == CENTER ? 75 : (position == LEFT ? 50 : 0)), 180, VELOCITY);
         //score
         Utils.sleep(300);
         if(position == LEFT){
@@ -168,7 +169,7 @@ public class BlueDuck extends AbstractOpMode {
 
         Utils.sleep(200);
         //drive.driveColorSensorWarehouse(6);
-        drive.moveDistanceDEVelocity(700, 180.0, VELOCITY);
+        drive.moveDistanceDEVelocity(680, 180.0, VELOCITY);
 
         Utils.sleep(200);
         drive.rotateDistanceDE(-75, 6);
@@ -188,7 +189,7 @@ public class BlueDuck extends AbstractOpMode {
 
         //extend
         flags[2] = true;
-        drive.moveDistanceDEVelocity(550, 180, VELOCITY);
+        drive.moveDistanceDEVelocity(650, 180, VELOCITY);
         Utils.sleep(200);
         //score
         system.score();

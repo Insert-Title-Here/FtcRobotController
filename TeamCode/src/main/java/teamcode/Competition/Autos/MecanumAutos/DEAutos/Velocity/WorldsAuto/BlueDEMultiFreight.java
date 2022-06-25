@@ -133,6 +133,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
         while(!opModeIsActive() && !isStopRequested()){
             position = pipeline.getPos();
             telemetry.addData("pos", pipeline.getPos());
+            telemetry.addData("", pipeline.getVal());
             telemetry.update();
         }
     }
@@ -141,7 +142,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
     protected void onStart() {
         armThread.start();
         arm.actuateWinchStop(1.0);
-        drive.moveDistanceDEVelocity(800, 45, 2 * VELOCITY); // 900 -45
+        drive.moveDistanceDEVelocity(800 + (position == CENTER ? 10 : 0), 45, 2 * VELOCITY); // 900 -45
         Utils.sleep(100);
         drive.rotateDistanceDEUnramped(-150, 24);
         Utils.sleep(100);
@@ -167,7 +168,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 
         for(int i = 0; i < FREIGHT; i++) {
 
-            warehouseSplice.add(new TranslationalMovement( 1200 + (10 * i), 2 * VELOCITY, 0.0, true));
+            warehouseSplice.add(new TranslationalMovement( 1250 + (10 * i), 2 * VELOCITY, 0.0, true));
             warehouseSplice.add(new ModulateIntake(0.8));
 
 
@@ -192,7 +193,7 @@ public class BlueDEMultiFreight extends AbstractOpMode {
 
             warehouseSplice.add(new ModifyFlag(true, 1));
             warehouseSplice.add(new TranslationalMovement(130, 2 * -VELOCITY, 0, true));
-            warehouseSplice.add(new ArcMovement(1650, 40.0, -131.8)); // -6, 1500
+            warehouseSplice.add(new ArcMovement(1650 , 40.0, -131.8)); // -6, 1500
             warehouseSplice.add(new ModifyFlag(true, 2));
             warehouseSplice.add(new Wait(200));
 

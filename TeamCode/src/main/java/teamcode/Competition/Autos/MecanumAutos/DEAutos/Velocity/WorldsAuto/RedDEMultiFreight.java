@@ -132,6 +132,7 @@ public class RedDEMultiFreight extends AbstractOpMode {
         while(!opModeIsActive() && !isStopRequested()){
             position = pipeline.getPos();
             telemetry.addData("pos", pipeline.getPos());
+            telemetry.addData("", pipeline.getVal());
             telemetry.update();
         }
 
