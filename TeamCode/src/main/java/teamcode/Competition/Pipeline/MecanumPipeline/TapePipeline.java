@@ -52,8 +52,6 @@ public class TapePipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat mat) {
 
-
-
         Imgproc.cvtColor(mat, filtered, Imgproc.COLOR_RGB2BGR);
         //Core.inRange(filtered, new Scalar(50, 90, 235), new Scalar(80, 117, 255), mask);
         if (side == Side.RED) {
@@ -64,7 +62,7 @@ public class TapePipeline extends OpenCvPipeline {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(134, 150);
             //Core.inRange(filtered, new Scalar(230, 115, 70), new Scalar(255, 148, 97), mask);
-            Core.inRange(filtered, new Scalar(99, 35, 0), new Scalar(255, 192, 162), mask);
+            Core.inRange(filtered, new Scalar(99, 35, 0), new Scalar(255, 210, 162), mask);
         }
 
         Point region1_pointA = new Point(
@@ -104,7 +102,7 @@ public class TapePipeline extends OpenCvPipeline {
         deltaPercent = Math.abs(regionOnePercent - regionTwoPercent);
         if(side == Side.RED) {
             if(deltaPercent < 0.15){
-                position = BarcodePosition.LEFT;
+                position = BarcodePosition.RIGHT;
             }else if(regionOnePercent < regionTwoPercent){
                 position = BarcodePosition.CENTER;
             }else if(regionTwoPercent < regionOnePercent){
@@ -123,24 +121,6 @@ public class TapePipeline extends OpenCvPipeline {
                 position = BarcodePosition.RIGHT;
             }
         }
-
-//        if (side == Side.RED) {
-//            if (!(regionOnePercent > 0.31 && regionOnePercent < 0.51)) {
-//                position = BarcodePosition.LEFT;
-//            } else if (!(regionTwoPercent > 0.31  && regionTwoPercent < 0.52)) {
-//                position = BarcodePosition.CENTER;
-//            } else {
-//                position = BarcodePosition.RIGHT;
-//            }
-//        } else {
-//            if (!(regionOnePercent > 0.31 && regionOnePercent < 0.47)) {
-//                position = BarcodePosition.CENTER;
-//            } else if (!(regionTwoPercent > 0.31 && regionTwoPercent < 0.47)) {
-//                position = BarcodePosition.RIGHT;
-//            } else {
-//                position = BarcodePosition.LEFT;
-//            }
-//        }
 
 
         double[] color = mat.get(170, 152);

@@ -450,7 +450,7 @@ public class ArmSystem {
 
     public void scoreFar() {
 
-        house.setPosition(0.66);
+        house.setPosition(0.9);
     }
 
     public enum Stage{
