@@ -171,11 +171,10 @@ public class RedDEMultiFreight extends AbstractOpMode {
         curTime.startTime();
         armThread.start();
         arm.actuateWinchStop(1.0);
-        drive.moveDistanceDEVelocity(750 + (position == CENTER ? 25 : (position == LEFT ? 20 : 50)), -45, 2 * VELOCITY); // 900 -45
-
-        Utils.sleep(75);
+        drive.moveDistanceDEVelocity(800 + (position == CENTER ? 10 : 0), -45, 2 * VELOCITY); // 900 -45
+        Utils.sleep(100);
         drive.rotateDistanceDEUnramped(150, 24);
-        Utils.sleep(75);
+        Utils.sleep(100);
 
         if(position == LEFT) {
             arm.runConveyorPos(1.0, 2000);

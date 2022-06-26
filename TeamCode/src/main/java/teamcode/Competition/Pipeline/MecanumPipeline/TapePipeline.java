@@ -55,9 +55,9 @@ public class TapePipeline extends OpenCvPipeline {
         Imgproc.cvtColor(mat, filtered, Imgproc.COLOR_RGB2BGR);
         //Core.inRange(filtered, new Scalar(50, 90, 235), new Scalar(80, 117, 255), mask);
         if (side == Side.RED) {
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(135, 155);
-            REGION2_TOPLEFT_ANCHOR_POINT = new Point(255, 155);
-            Core.inRange(filtered, new Scalar(0, 60, 40), new Scalar(75, 110, 255), mask);
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(135, 145);
+            REGION2_TOPLEFT_ANCHOR_POINT = new Point(255, 140);
+            Core.inRange(filtered, new Scalar(0, 20, 40), new Scalar(75, 110, 255), mask);
         } else {
             REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);
             REGION2_TOPLEFT_ANCHOR_POINT = new Point(134, 150);
@@ -104,9 +104,9 @@ public class TapePipeline extends OpenCvPipeline {
             if(deltaPercent < 0.15){
                 position = BarcodePosition.RIGHT;
             }else if(regionOnePercent < regionTwoPercent){
-                position = BarcodePosition.LEFT;
-            }else if(regionTwoPercent < regionOnePercent){
                 position = BarcodePosition.CENTER;
+            }else if(regionTwoPercent < regionOnePercent){
+                position = BarcodePosition.LEFT;
             }else{
                 position = BarcodePosition.RIGHT;
             }
