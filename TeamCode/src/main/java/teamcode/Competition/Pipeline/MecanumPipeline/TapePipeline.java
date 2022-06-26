@@ -104,9 +104,9 @@ public class TapePipeline extends OpenCvPipeline {
             if(deltaPercent < 0.15){
                 position = BarcodePosition.RIGHT;
             }else if(regionOnePercent < regionTwoPercent){
-                position = BarcodePosition.CENTER;
-            }else if(regionTwoPercent < regionOnePercent){
                 position = BarcodePosition.LEFT;
+            }else if(regionTwoPercent < regionOnePercent){
+                position = BarcodePosition.CENTER;
             }else{
                 position = BarcodePosition.RIGHT;
             }
