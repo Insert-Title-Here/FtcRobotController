@@ -204,14 +204,13 @@ public class SharedBlue extends AbstractOpMode {
             arm.idleServos();
         } else if (gamepad1.start && !previousStart){
             isExtended = !isExtended;
-        }else if(gamepad1.square && !previousOptions){
-            isDuck = !isDuck;
-            isExtended = isDuck;
-            arm.setIsDuck(isDuck);
-
+        }else if(gamepad1.square){
+            while (gamepad1.square) {
+                systems.runCarousel(-0.2);
+            }
         }else if(gamepad1.b){
             while(gamepad1.b){
-                systems.runCarousel(-0.2);
+                systems.runCarousel(-0.4);
             }
         } else{
             arm.setWinchPower(0);

@@ -114,7 +114,7 @@ public class TeleOpBlue extends AbstractOpMode {
     double startTime;
     double previousExtensionTime;
     int iterator;
-    boolean isExtended, previousStart, previousOptions;
+    boolean isExtended, previousStart;
     volatile boolean isEndgame = false;
     private void armUpdate() {
         if (gamepad1.right_trigger > 0.3) {
@@ -191,14 +191,14 @@ public class TeleOpBlue extends AbstractOpMode {
             arm.idleServos();
         } else if (gamepad1.start && !previousStart){
             isExtended = !isExtended;
-        }else if(gamepad1.square && !previousOptions){
-            isDuck = !isDuck;
-            isExtended = isDuck;
-            arm.setIsDuck(isDuck);
+        }else if(gamepad1.square){
+            while (gamepad1.square) {
+                systems.runCarousel(-0.2);
+            }
 
         }else if(gamepad1.b){
             while(gamepad1.b){
-                systems.runCarousel(-0.2);
+                systems.runCarousel(-0.4);
             }
         } else{
             arm.setWinchPower(0);
@@ -235,7 +235,6 @@ public class TeleOpBlue extends AbstractOpMode {
 
 
         }
-        previousOptions = gamepad1.square;
         previousStart = gamepad1.start;
         telemetry.addData("isExtended", isExtended);
         telemetry.addData("slide pos", arm.getLinearSlidePosition());
