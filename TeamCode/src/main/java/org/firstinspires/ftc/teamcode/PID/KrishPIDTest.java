@@ -74,9 +74,12 @@ public class KrishPIDTest extends OpModeWrapper {
 
         double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
         lastError = error;
+        /*
         telemetry.addData("error ", error);
         telemetry.addData("derivative ", derivative);
         telemetry.addData("integralSum ", integralSum);
+
+         */
         return output;
     }
 }
