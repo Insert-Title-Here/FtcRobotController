@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.OpModeWrapper;
 
 import java.io.FileNotFoundException;
 
-@Autonomous(name = "PositionalPIDTest")
+@Autonomous(name = "KRISH PID")
 public class KrishPIDTest extends OpModeWrapper {
 
     MecanumDriveTrain drive;

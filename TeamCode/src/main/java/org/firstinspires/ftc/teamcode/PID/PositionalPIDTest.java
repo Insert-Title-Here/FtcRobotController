@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.OpModeWrapper;
 
 import java.io.FileNotFoundException;
 
-@Autonomous(name = "PositionalPIDTest")
+@Autonomous(name = "MASON PositionalPIDTest")
 public class PositionalPIDTest extends OpModeWrapper {
 
     MecanumDriveTrain drive;
 
     double integralSum = 0;
-    double Kp = 0.0;
+    double Kp = 0.95;
     double Ki = 0.0;
     double Kd = 0.0;
 
