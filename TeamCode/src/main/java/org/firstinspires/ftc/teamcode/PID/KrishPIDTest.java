@@ -17,8 +17,10 @@ public class KrishPIDTest extends OpModeWrapper {
 
     double integralSum = 0;
     double Kp = 0.19;
-    double Ki = 0.02;
-    double Kd = 0.0;
+    double Ki = 0.015;
+    double Kd = 0.01;
+
+    boolean stillRun;
 
     ElapsedTime timer = new ElapsedTime();
     private double lastError = 0;
@@ -26,6 +28,7 @@ public class KrishPIDTest extends OpModeWrapper {
     @Override
     protected void onInitialize() throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap, true);
+        stillRun = true;
 
 
     }
@@ -66,20 +69,34 @@ public class KrishPIDTest extends OpModeWrapper {
     }
 
     public double PIDControl(double reference, double state) {
-        double error = reference - state;
-        integralSum += error * timer.seconds();
-        double derivative = (error - lastError) / timer.seconds();
 
-        timer.reset();
+        if (stillRun) {
+            double error = reference - state;
+            integralSum += error * timer.seconds();
+            double derivative = (error - lastError) / timer.seconds();
 
-        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
-        lastError = error;
+            timer.reset();
+
+            double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+            lastError = error;
         /*
         telemetry.addData("error ", error);
         telemetry.addData("derivative ", derivative);
         telemetry.addData("integralSum ", integralSum);
 
          */
-        return output;
+
+            if(Math.abs(state) > Math.abs(reference)){
+                stillRun = false;
+            }
+
+
+            return output;
+
+        }
+
+
+        return 0;
     }
+
 }
