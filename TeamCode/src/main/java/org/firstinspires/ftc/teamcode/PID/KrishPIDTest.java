@@ -78,8 +78,30 @@ public class KrishPIDTest extends OpModeWrapper {
     }
 
     public void goToPosition(int position){
+
+        /*
         drive.setPower(PIDControl(position, drive.fl.getCurrentPosition()), PIDControl(-position, drive.fr.getCurrentPosition()),
                 PIDControl(position, drive.bl.getCurrentPosition()), PIDControl(-position, drive.br.getCurrentPosition()));
+
+         */
+
+        double power = 0;
+
+        while(Math.abs(avgPos() - position) > 10) {
+
+            power = PIDControl(position, avgPos());
+
+            drive.setPower(PIDControl(position, power), PIDControl(-position, power),
+                    PIDControl(position, power), PIDControl(-position, power));
+
+
+        }
+
+
+    }
+
+    public int avgPos(){
+        return (drive.fl.getCurrentPosition() + drive.fr.getCurrentPosition() + drive.bl.getCurrentPosition() + drive.br.getCurrentPosition()) / 4;
     }
 
     public double PIDControl(double reference, double state) {
