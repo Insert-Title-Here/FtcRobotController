@@ -35,6 +35,11 @@ public class KrishPIDTest extends OpModeWrapper {
 
     @Override
     protected void onStart() {
+
+        goToPosition(1000);
+        drive.tankRotate(-Math.PI/2, 0.3);
+        goToPosition(1000);
+
         while (opModeIsActive()) {
             // backwards
             /*double flPow = PIDControl(500, drive.fl.getCurrentPosition());
@@ -62,9 +67,6 @@ public class KrishPIDTest extends OpModeWrapper {
 
             //drive.setPower(flPow, -frPow, blPow, -brPow);
 
-            goToPosition(1000);
-            drive.tankRotate(-Math.PI/2, 0.3);
-            goToPosition(1000);
 
 
         }
