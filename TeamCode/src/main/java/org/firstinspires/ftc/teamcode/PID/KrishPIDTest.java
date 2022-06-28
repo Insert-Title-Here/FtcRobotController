@@ -91,7 +91,7 @@ public class KrishPIDTest extends OpModeWrapper {
 
             power = PIDControl(position, avgPos());
 
-            drive.setPower(power, -power, power, -power);
+            drive.setPower(power, power, power, power);
 
 
         }
