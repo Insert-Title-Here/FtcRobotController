@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.PID;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,7 +17,7 @@ public class PositionalPIDTest extends OpModeWrapper {
     MecanumDriveTrain drive;
 
     double integralSum = 0;
-    double Kp = 0.5;
+    double Kp = 0.8;
     double Ki = 0.45;
     double Kd = 0.8;
 
@@ -49,15 +50,23 @@ public class PositionalPIDTest extends OpModeWrapper {
 
             if (!(drive.fl.getCurrentPosition() >= 495 && drive.fl.getCurrentPosition() <= 505)) {
                 flPow = PIDControl(500, drive.fl.getCurrentPosition());
+            } else {
+                drive.fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             if (!(drive.fr.getCurrentPosition() >= -505 && drive.fr.getCurrentPosition() <= -495)) {
                 frPow = PIDControl(-500, drive.fr.getCurrentPosition());
+            } else {
+                drive.fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             if (!(drive.bl.getCurrentPosition() >= 495 && drive.bl.getCurrentPosition() <= 505)) {
                 blPow = PIDControl(500, drive.bl.getCurrentPosition());
+            } else {
+                drive.bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             if (!(drive.br.getCurrentPosition() >= -505 && drive.br.getCurrentPosition() <= -495)) {
                 brPow = PIDControl(-500, drive.br.getCurrentPosition());
+            } else {
+                drive.br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
 
             telemetry.addData("fl ", drive.fl.getCurrentPosition());
