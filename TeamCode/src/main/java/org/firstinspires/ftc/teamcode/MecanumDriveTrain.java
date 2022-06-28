@@ -85,6 +85,13 @@ public class MecanumDriveTrain {
         fr = hardwareMap.dcMotor.get("FrontRightDrive");
         bl = hardwareMap.dcMotor.get("BackLeftDrive");
         br = hardwareMap.dcMotor.get("BackRightDrive");
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        correctMotors();
+
     }
 
 
