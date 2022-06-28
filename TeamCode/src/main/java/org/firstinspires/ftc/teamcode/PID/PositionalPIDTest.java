@@ -17,8 +17,8 @@ public class PositionalPIDTest extends OpModeWrapper {
 
     double integralSum = 0;
     double Kp = 0.5;
-    double Ki = 0.3;
-    double Kd = 0.0;
+    double Ki = 0.45;
+    double Kd = 0.8;
 
     ElapsedTime timer = new ElapsedTime();
     private double lastError = 0;
