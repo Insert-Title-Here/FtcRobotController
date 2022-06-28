@@ -1,0 +1,65 @@
+package org.firstinspires.ftc.teamcode.PID;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.MecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.OpModeWrapper;
+
+import java.io.FileNotFoundException;
+
+@Autonomous(name = "PositionalPIDTest")
+public class PositionalPIDTest extends OpModeWrapper {
+
+    MecanumDriveTrain drive;
+
+    double integralSum = 0;
+    double Kp = 10;
+    double Ki = 5;
+    double Kd = 5;
+
+    ElapsedTime timer = new ElapsedTime();
+    private double lastError = 0;
+
+    @Override
+    protected void onInitialize() throws FileNotFoundException {
+        drive = new MecanumDriveTrain(hardwareMap, true);
+
+    }
+
+    @Override
+    protected void onStart() {
+        while (opModeIsActive()) {
+            double flPow = PIDControl(500, drive.fl.getCurrentPosition());
+            double frPow = PIDControl(500, drive.fr.getCurrentPosition());
+            double blPow = PIDControl(500, drive.bl.getCurrentPosition());
+            double brPow = PIDControl(500, drive.br.getCurrentPosition());
+            telemetry.addData("fl ", drive.fl.getCurrentPosition());
+            telemetry.addData("fr ", drive.fr.getCurrentPosition());
+            telemetry.addData("bl ", drive.bl.getCurrentPosition());
+            telemetry.addData("br ", drive.br.getCurrentPosition());
+            telemetry.update();
+
+            drive.setPower(flPow, -frPow, blPow, -brPow);
+
+        }
+    }
+
+    @Override
+    protected void onStop() {
+
+    }
+
+    public double PIDControl(double reference, double state) {
+        double error = reference - state;
+        integralSum = error * timer.seconds();
+        double derivative = (error - lastError) / timer.seconds();
+
+        timer.reset();
+
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        return output;
+    }
+}

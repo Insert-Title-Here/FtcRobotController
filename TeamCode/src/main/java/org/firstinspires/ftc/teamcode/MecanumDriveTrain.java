@@ -7,6 +7,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
@@ -77,6 +78,13 @@ public class MecanumDriveTrain {
 
 
 
+    }
+
+    public MecanumDriveTrain(HardwareMap hardwareMap, boolean a) {
+        fl = hardwareMap.dcMotor.get("FrontLeftDrive");
+        fr = hardwareMap.dcMotor.get("FrontRightDrive");
+        bl = hardwareMap.dcMotor.get("BackLeftDrive");
+        br = hardwareMap.dcMotor.get("BackRightDrive");
     }
 
 
