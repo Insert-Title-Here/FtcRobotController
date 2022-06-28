@@ -16,8 +16,8 @@ public class KrishPIDTest extends OpModeWrapper {
     MecanumDriveTrain drive;
 
     double integralSum = 0;
-    double Kp = 0.3;
-    double Ki = 0.0;
+    double Kp = 0.19;
+    double Ki = 0.1;
     double Kd = 0.0;
 
     ElapsedTime timer = new ElapsedTime();
