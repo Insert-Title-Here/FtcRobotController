@@ -45,10 +45,21 @@ public class PositionalPIDTest extends OpModeWrapper {
             telemetry.update();
 
             drive.setPower(flPow, -frPow, blPow, -brPow);*/
-            double flPow = PIDControl(500, drive.fl.getCurrentPosition());
-            double frPow = PIDControl(-500, drive.fr.getCurrentPosition());
-            double blPow = PIDControl(500, drive.bl.getCurrentPosition());
-            double brPow = PIDControl(-500, drive.br.getCurrentPosition());
+            double flPow = 0.0, frPow = 0.0, blPow = 0.0, brPow = 0.0;
+
+            if (!(drive.fl.getCurrentPosition() >= 495 && drive.fl.getCurrentPosition() <= 505)) {
+                flPow = PIDControl(500, drive.fl.getCurrentPosition());
+            }
+            if (!(drive.fr.getCurrentPosition() >= -505 && drive.fr.getCurrentPosition() <= -495)) {
+                frPow = PIDControl(-500, drive.fr.getCurrentPosition());
+            }
+            if (!(drive.bl.getCurrentPosition() >= 495 && drive.bl.getCurrentPosition() <= 505)) {
+                blPow = PIDControl(500, drive.bl.getCurrentPosition());
+            }
+            if (!(drive.br.getCurrentPosition() >= -505 && drive.br.getCurrentPosition() <= -495)) {
+                brPow = PIDControl(-500, drive.br.getCurrentPosition());
+            }
+
             telemetry.addData("fl ", drive.fl.getCurrentPosition());
             telemetry.addData("fr ", drive.fr.getCurrentPosition());
             telemetry.addData("bl ", drive.bl.getCurrentPosition());
