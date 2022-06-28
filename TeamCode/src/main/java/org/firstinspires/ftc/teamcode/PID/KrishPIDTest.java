@@ -18,7 +18,7 @@ public class KrishPIDTest extends OpModeWrapper {
     double integralSum = 0;
     double Kp = 0.19;
     double Ki = 0.015;
-    double Kd = 0.01;
+    double Kd = 0.1;
 
     boolean stillRun;
 
@@ -47,18 +47,25 @@ public class KrishPIDTest extends OpModeWrapper {
             telemetry.addData("br ", drive.br.getCurrentPosition());
             telemetry.update();
 
-            drive.setPower(flPow, -frPow, blPow, -brPow);*/
+            drive.setPower(flPow, -frPow, blPow, -brPow);
             double flPow = PIDControl(500, drive.fl.getCurrentPosition());
             double frPow = PIDControl(-500, drive.fr.getCurrentPosition());
             double blPow = PIDControl(500, drive.bl.getCurrentPosition());
             double brPow = PIDControl(-500, drive.br.getCurrentPosition());
+
+             */
             telemetry.addData("fl ", drive.fl.getCurrentPosition());
             telemetry.addData("fr ", drive.fr.getCurrentPosition());
             telemetry.addData("bl ", drive.bl.getCurrentPosition());
             telemetry.addData("br ", drive.br.getCurrentPosition());
             telemetry.update();
 
-            drive.setPower(flPow, -frPow, blPow, -brPow);
+            //drive.setPower(flPow, -frPow, blPow, -brPow);
+
+            goToPosition(1000);
+            drive.tankRotate(-Math.PI/2, 0.3);
+            goToPosition(1000);
+
 
         }
     }
@@ -68,9 +75,15 @@ public class KrishPIDTest extends OpModeWrapper {
 
     }
 
+    public void goToPosition(int position){
+        drive.setPower(PIDControl(position, drive.fl.getCurrentPosition()), PIDControl(-position, drive.fr.getCurrentPosition()),
+                PIDControl(position, drive.bl.getCurrentPosition()), PIDControl(-position, drive.br.getCurrentPosition()));
+    }
+
     public double PIDControl(double reference, double state) {
 
         if (stillRun) {
+
             double error = reference - state;
             integralSum += error * timer.seconds();
             double derivative = (error - lastError) / timer.seconds();
