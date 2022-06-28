@@ -16,8 +16,8 @@ public class PositionalPIDTest extends OpModeWrapper {
     MecanumDriveTrain drive;
 
     double integralSum = 0;
-    double Kp = 0.95;
-    double Ki = 0.0;
+    double Kp = 0.5;
+    double Ki = 0.3;
     double Kd = 0.0;
 
     ElapsedTime timer = new ElapsedTime();
