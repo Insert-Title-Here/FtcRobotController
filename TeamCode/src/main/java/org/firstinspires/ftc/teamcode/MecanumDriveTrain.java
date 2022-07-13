@@ -5,7 +5,9 @@ import static org.firstinspires.ftc.teamcode.Utils.sleep;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,6 +38,7 @@ public class MecanumDriveTrain {
      */
 
     public DcMotor fl, fr, bl, br;
+    LynxModule chubby;
     BNO055IMU imu;
 
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -60,6 +63,11 @@ public class MecanumDriveTrain {
         br = hardwareMap.dcMotor.get("BackRightDrive");
         correctMotors();
 
+
+        chubby = hardwareMap.get(LynxModule.class, "Control Hub");
+        chubby.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        chubby.clearBulkCache();
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -76,11 +84,12 @@ public class MecanumDriveTrain {
         imu.initialize(parameters);
 
 
-
-
     }
 
+    ColorRangeSensor frontRed, backRed, frontBlue, backBlue;
+
     public MecanumDriveTrain(HardwareMap hardwareMap, boolean a) {
+
         fl = hardwareMap.dcMotor.get("FrontLeftDrive");
         fr = hardwareMap.dcMotor.get("FrontRightDrive");
         bl = hardwareMap.dcMotor.get("BackLeftDrive");
@@ -107,7 +116,25 @@ public class MecanumDriveTrain {
 
         imu.initialize(parameters);
 
+        frontRed = hardwareMap.get(ColorRangeSensor.class, "");
+
+
+
     }
+
+
+
+
+    //thread update()
+    //volatile
+
+    public void bulkUpdateManual(int port){
+        LynxModule.BulkData data = chubby.getBulkData();
+        data.getMotorCurrentPosition(port);
+        chubby.clearBulkCache();
+    }
+
+
 
 
 
@@ -120,6 +147,8 @@ public class MecanumDriveTrain {
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
