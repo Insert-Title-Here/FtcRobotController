@@ -3,20 +3,23 @@ package org.firstinspires.ftc.teamcode.KrishTesting;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 import org.firstinspires.ftc.teamcode.Intake;
 import org.firstinspires.ftc.teamcode.MecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.OpModeWrapper;
 import org.firstinspires.ftc.teamcode.Vector2D;
 
 import java.io.FileNotFoundException;
 
 @TeleOp(name="Summer Testing TeleOp")
-public class TestingTeleOp extends LinearOpMode {
+public class TestingTeleOp extends OpModeWrapper {
 
     Thread driveThread;
     Thread intakeThread;
     RobotK robot;
-    ColorSensor color;
+    //ColorSensor color;
 
 
 
@@ -28,8 +31,93 @@ public class TestingTeleOp extends LinearOpMode {
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
 
+    private ElapsedTime timer;
+    private boolean timerFlag;
+
     @Override
-    public void runOpMode() throws InterruptedException{
+    protected void onInitialize() throws FileNotFoundException {
+
+
+        //color = hardwareMap.get(ColorSensor.class, "color");
+        timerFlag = true;
+
+        try {
+            robot = new RobotK(hardwareMap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+
+        driveThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    driveUpdate();
+                }
+            }
+        };
+
+
+
+        intakeThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    intakeUpdate();
+                }
+            }
+        };
+
+        robot.color.enableLed(true);
+
+    }
+
+    @Override
+    protected void onStart() {
+        driveThread.start();
+        intakeThread.start();
+        timer = new ElapsedTime();
+
+        while(opModeIsActive()){
+
+            if(timer.seconds() > 30 && timer.seconds() < 90 && timerFlag){
+                gamepad1.rumble(500);
+                timerFlag = false;
+
+                //Insert LED strip light color change
+                robot.randomColor();
+            }
+
+            if(timer.seconds() > 60 && !timerFlag){
+                gamepad1.rumble(500);
+                timerFlag = true;
+
+                //Insert LED strip light color change
+                robot.randomColor();
+            }
+
+            if(timer.seconds() > 90 && !timerFlag){
+                gamepad1.rumble(1000);
+                timerFlag = false;
+
+                //Insert LED strip light color change
+                robot.randomColor();
+            }
+
+
+        }
+    }
+
+    @Override
+    public void onStop() {
+        robot.stop();
+    }
+
+    /*
+
+    @Override
+    public void runOpMode(){
 
         color = hardwareMap.get(ColorSensor.class, "color");
 
@@ -68,6 +156,9 @@ public class TestingTeleOp extends LinearOpMode {
         driveThread.start();
         intakeThread.start();
 
+
+        while(opModeIsActive());
+
         while(opModeIsActive()){
 
 
@@ -83,7 +174,10 @@ public class TestingTeleOp extends LinearOpMode {
         }
 
 
+
+
     }
+    */
 
     private void driveUpdate() {
         if (gamepad1.right_bumper) { // replace this with a button for sprint
@@ -94,7 +188,7 @@ public class TestingTeleOp extends LinearOpMode {
     }
 
     private void intakeUpdate(){
-        if (gamepad1.a || (color.red() > 130 && color.green() > 150 && color.blue() > 60)) {
+        if (gamepad1.a || (robot.color.red() > 130 && robot.color.green() > 150 && robot.color.blue() > 60)) {
             robot.intake.clampAndRelease(true);
         } else {
             robot.intake.clampAndRelease(false);

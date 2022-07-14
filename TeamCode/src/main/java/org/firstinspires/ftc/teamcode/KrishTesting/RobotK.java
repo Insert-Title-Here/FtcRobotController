@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Intake;
@@ -23,6 +24,7 @@ public class RobotK {
     //private final List<LynxModule> hubs;
     LynxModule hub1, hub2;
     ExpansionHubEx chub, ehub;
+    ColorRangeSensor color;
 
 
 
@@ -36,6 +38,8 @@ public class RobotK {
 
         chub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
         ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
+
+        color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
@@ -96,6 +100,22 @@ public class RobotK {
         returnEncoderValues.put(2, hub2Array);
 
         return returnEncoderValues;
+    }
+
+    public void stop(){
+        drive.brake();
+        intake.clampAndRelease(false);
+        intake.brake();
+    }
+
+    public void randomColor(){
+        int color1 = (int)Math.floor(Math.random() * 256);
+        int color2 = (int)Math.floor(Math.random() * 256);
+        int color3 = (int)Math.floor(Math.random() * 256);
+
+
+        chub.setLedColor(color1, color2, color3);
+        ehub.setLedColor(color2, color3, color1);
     }
 
 

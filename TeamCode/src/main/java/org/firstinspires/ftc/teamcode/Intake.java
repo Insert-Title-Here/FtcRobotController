@@ -48,4 +48,9 @@ public class Intake {
             rIntake.setPower(power);
         }
     }
+
+    public void brake(){
+        lIntake.setPower(0);
+        rIntake.setPower(0);
+    }
 }

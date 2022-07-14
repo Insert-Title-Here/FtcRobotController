@@ -13,10 +13,10 @@ import java.io.FileNotFoundException;
 public class SummerTeleOp extends LinearOpMode {
 
     Thread driveThread;
-    Thread intakeThread;
+    //Thread intakeThread;
     MecanumDriveTrain drive;
-    Intake intake;
-    ColorSensor color;
+    //Intake intake;
+    //ColorSensor color;
 
 
 
@@ -26,17 +26,17 @@ public class SummerTeleOp extends LinearOpMode {
     private final double NORMAL_LINEAR_MODIFIER = 0.45;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
-    private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
+    private final double SPRINT_ROTATIONAL_MODIFIER = 1  ;
 
     @Override
     public void runOpMode() throws InterruptedException{
 
-        color = hardwareMap.get(ColorSensor.class, "color");
+        //color = hardwareMap.get(ColorSensor.class, "color");
 
 
         try {
             drive = new MecanumDriveTrain(hardwareMap);
-            intake = new Intake(hardwareMap);
+            //intake = new Intake(hardwareMap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -52,6 +52,14 @@ public class SummerTeleOp extends LinearOpMode {
             }
         };
 
+
+        drive.bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        drive.br.setDirection(DcMotorSimple.Direction.REVERSE);
+        drive.fr.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
+        /*
+
         intakeThread = new Thread(){
             @Override
             public void run(){
@@ -61,24 +69,26 @@ public class SummerTeleOp extends LinearOpMode {
             }
         };
 
-        color.enableLed(true);
+         */
+
+        //color.enableLed(true);
 
 
         waitForStart();
 
         driveThread.start();
-        intakeThread.start();
+        //intakeThread.start();
 
         while(opModeIsActive()){
 
 
-        telemetry.addData("red", color.red());
-        telemetry.addData("blue", color.blue());
-        telemetry.addData("green", color.green());
-        telemetry.addData("auto", auto);
-        telemetry.addData("power", power);
+        //telemetry.addData("red", color.red());
+        //telemetry.addData("blue", color.blue());
+        //telemetry.addData("green", color.green());
+        //telemetry.addData("auto", auto);
+        //telemetry.addData("power", power);
 
-        telemetry.update();
+        //telemetry.update();
 
 
         }
@@ -92,8 +102,14 @@ public class SummerTeleOp extends LinearOpMode {
         } else {
             drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
         }
+
+
+        if(gamepad1.right_trigger > 0.1){
+            drive.setPower(0.5, 0.5, 0.5, 0.5);
+        }
     }
 
+    /*
     private void intakeUpdate(){
         if (gamepad1.a || (color.red() > 130 && color.green() > 150 && color.blue() > 60)) {
             intake.clampAndRelease(true);
@@ -149,4 +165,6 @@ public class SummerTeleOp extends LinearOpMode {
             power = 0.3;
         }
     }
+
+     */
 }
