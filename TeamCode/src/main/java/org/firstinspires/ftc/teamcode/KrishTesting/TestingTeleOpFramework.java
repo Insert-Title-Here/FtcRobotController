@@ -14,8 +14,9 @@ import org.firstinspires.ftc.teamcode.Vector2D;
 
 import java.io.FileNotFoundException;
 
-@TeleOp(name="Summer Testing TeleOp")
-public class TestingTeleOp extends OpModeWrapper {
+@Disabled
+@TeleOp(name="Krish Framework")
+public class TestingTeleOpFramework extends LinearOpMode {
 
     Thread driveThread;
     Thread intakeThread;
