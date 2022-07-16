@@ -9,6 +9,14 @@ public class Lift {
 
     public Lift(HardwareMap hardwareMap){
         lift = hardwareMap.get(DcMotor.class, "lift");
+
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //TODO: See if we need to set direction
+    }
+
+    public void setPower(double power){
+        lift.setPower(power);
     }
 
 

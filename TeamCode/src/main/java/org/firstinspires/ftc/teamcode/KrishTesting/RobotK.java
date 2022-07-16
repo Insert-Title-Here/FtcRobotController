@@ -6,12 +6,16 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Intake;
 import org.firstinspires.ftc.teamcode.MecanumDriveTrain;
 import org.openftc.revextensions2.ExpansionHubEx;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,12 @@ public class RobotK {
     LynxModule hub1, hub2;
     ExpansionHubEx chub, ehub;
     ColorRangeSensor color;
+    File logFile;
+
+    LynxModule.BulkData chubData, ehubData;
+    NormalizedRGBA rgba;
+    String logString;
+
 
 
 
@@ -35,22 +45,23 @@ public class RobotK {
         //intake = new Intake(hardwareMap);
 
         hub1 = hardwareMap.get(LynxModule.class, "Control Hub");
-        //hub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 1");
+        hub2 = hardwareMap.get(LynxModule.class, "Expansion Hub");
 
         chub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
-        //ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
+        ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub");
 
-        //color = hardwareMap.get(ColorRangeSensor.class, "color");
+        color = hardwareMap.get(ColorRangeSensor.class, "color");
 
-        //ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
+        ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
+        logFile = AppUtil.getInstance().getSettingsFile("DataReceiver.txt");
 
 
         hub1.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        //hub2.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        hub2.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         hub1.clearBulkCache();
-        //hub2.clearBulkCache();
+        hub2.clearBulkCache();
 
         /*
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -63,7 +74,7 @@ public class RobotK {
          */
 
         chub.setLedColor(255, 255, 0);
-        //ehub.setLedColor(255, 0, 255);
+        ehub.setLedColor(255, 0, 255);
     }
 
     //new Blinker.Step(Color.BLUE, 100, TimeUnit.SECONDS);
@@ -103,6 +114,16 @@ public class RobotK {
         return returnEncoderValues;
     }
 
+    public void update(){
+        chubData = hub1.getBulkData();
+        ehubData = hub2.getBulkData();
+
+        rgba = color.getNormalizedColors();
+
+        hub1.clearBulkCache();
+        hub2.clearBulkCache();
+    }
+
     public void stop(){
         drive.brake();
         intake.clampAndRelease(false);
@@ -117,6 +138,21 @@ public class RobotK {
 
         chub.setLedColor(color1, color2, color3);
         //ehub.setLedColor(color2, color3, color1);
+    }
+
+    public void addLog(String addition){
+        logString += addition + "\n";
+
+    }
+
+    public void sendDataToFile(){
+        try {
+            PrintStream ps = new PrintStream(logFile);
+            ps.println(logString);
+            ps.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 
