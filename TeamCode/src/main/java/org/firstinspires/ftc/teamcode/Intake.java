@@ -5,15 +5,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
-    /*public enum ServoPosition{
-        Clamped,
-        Open
+
+    public enum ConstantState{
+        In,
+        Still,
+        Out,
     }
 
-     */
 
-    Servo lJoint, rJoint;
-    CRServo lIntake, rIntake;
+
+    private Servo lJoint, rJoint;
+    private CRServo lIntake, rIntake;
+    public ConstantState constantState;
+    private ConstantState previousState;
 
     public Intake(HardwareMap hardwareMap){
         lJoint = hardwareMap.get(Servo.class, "lJoint");
@@ -23,6 +27,9 @@ public class Intake {
 
         lJoint.setPosition(1);
         rJoint.setPosition(0);
+
+        constantState = ConstantState.Still;
+        previousState = ConstantState.Out;
 
 
     }
@@ -46,6 +53,25 @@ public class Intake {
         } else{
             lIntake.setPower(-power);
             rIntake.setPower(power);
+        }
+    }
+
+    public void shiftConstantState(){
+        if(constantState == ConstantState.In){
+            constantState = ConstantState.Still;
+            previousState = ConstantState.In;
+        }else if(constantState == ConstantState.Out){
+            constantState = ConstantState.Still;
+            previousState = ConstantState.Out;
+        }else{
+            if(previousState == ConstantState.Out){
+                constantState = ConstantState.In;
+
+            }else if(previousState == ConstantState.In){
+                constantState = ConstantState.Out;
+            }
+
+            previousState = ConstantState.Still;
         }
     }
 

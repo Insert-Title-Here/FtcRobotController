@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.revextensions2.ExpansionHubEx;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Robot {
 
@@ -15,10 +19,16 @@ public class Robot {
     private LynxModule ch, eh;
     private ExpansionHubEx ehub, chub;
     private BNO055IMU imu;
+
+
+
+
+    ColorRangeSensor color;
     public synchronized void update(){
         chData = ch.getBulkData();
         ehData = eh.getBulkData();
 
+        rgba = color.getNormalizedColors();
 
         eh.clearBulkCache();
         ch.clearBulkCache();
@@ -36,11 +46,14 @@ public class Robot {
         ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
+        color = hardwareMap.get(ColorRangeSensor.class, "Color");
+
 
         eh.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         ch.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         eh.clearBulkCache();
         ch.clearBulkCache();
+
     }
 
 
