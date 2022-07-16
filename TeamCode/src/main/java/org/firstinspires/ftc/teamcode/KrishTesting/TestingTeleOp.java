@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.Vector2D;
 
 import java.io.FileNotFoundException;
 
-@TeleOp(name="Summer Testing TeleOp")
-public class TestingTeleOp extends OpModeWrapper {
+@TeleOp(name="Krish Testing TeleOp")
+public class TestingTeleOp extends LinearOpMode {
 
     Thread driveThread;
     Thread intakeThread;
@@ -33,6 +33,86 @@ public class TestingTeleOp extends OpModeWrapper {
 
     private ElapsedTime timer;
     private boolean timerFlag;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+        timerFlag = true;
+
+        try {
+            robot = new RobotK(hardwareMap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+
+        driveThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    driveUpdate();
+                }
+            }
+        };
+
+
+
+        intakeThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    intakeUpdate();
+                }
+            }
+        };
+
+        //robot.color.enableLed(true);
+        waitForStart();
+
+        driveThread.start();
+        timer = new ElapsedTime();
+
+        while(opModeIsActive()){
+            if(timer.seconds() > 30 && timer.seconds() < 90 && timerFlag){
+                gamepad1.rumble(500);
+                timerFlag = false;
+
+                //Insert LED strip light color change
+                robot.randomColor();
+            }
+
+            if(timer.seconds() > 60 && timer.seconds() < 90 && !timerFlag){
+                gamepad1.rumble(500);
+                timerFlag = true;
+                telemetry.addData("In here", timerFlag);
+
+                //Insert LED strip light color change
+                robot.randomColor();
+            }
+
+            if(timer.seconds() > 90 && timerFlag){
+                gamepad1.rumble(1000);
+                timerFlag = false;
+
+                telemetry.addData("In here2", timerFlag);
+
+
+                //Insert LED strip light color change
+                robot.randomColor();
+            }
+
+
+            telemetry.addData("Not in here", timerFlag);
+
+            telemetry.addData("Timer: ", timer);
+            telemetry.update();
+
+        }
+
+    }
+
+    /*
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
@@ -76,7 +156,7 @@ public class TestingTeleOp extends OpModeWrapper {
     @Override
     protected void onStart() {
         driveThread.start();
-        intakeThread.start();
+        //intakeThread.start();
         timer = new ElapsedTime();
 
         while(opModeIsActive()){
@@ -115,6 +195,8 @@ public class TestingTeleOp extends OpModeWrapper {
     }
 
     /*
+
+
 
     @Override
     public void runOpMode(){
@@ -172,6 +254,8 @@ public class TestingTeleOp extends OpModeWrapper {
 
 
         }
+
+
 
 
 
