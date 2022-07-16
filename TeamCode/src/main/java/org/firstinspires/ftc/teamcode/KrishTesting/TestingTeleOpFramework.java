@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.KrishTesting;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -13,8 +14,9 @@ import org.firstinspires.ftc.teamcode.Vector2D;
 
 import java.io.FileNotFoundException;
 
+@Disabled
 @TeleOp(name="Krish Testing TeleOp")
-public class TestingTeleOp extends LinearOpMode {
+public class TestingTeleOpFramework extends LinearOpMode {
 
     Thread driveThread;
     Thread intakeThread;
@@ -31,12 +33,16 @@ public class TestingTeleOp extends LinearOpMode {
     private ElapsedTime timer;
     private boolean timerFlag;
     private boolean changeState;
+    protected boolean blueAlliance;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         timerFlag = true;
         changeState = true;
+        blueAlliance = true;
 
         try {
             robot = new RobotK(hardwareMap);
@@ -79,7 +85,7 @@ public class TestingTeleOp extends LinearOpMode {
         timer = new ElapsedTime();
 
 
-        while(opModeIsActive()){
+        while(opModeIsActive() && !isStopRequested()){
             if(timer.seconds() > 30 && timer.seconds() < 60 && timerFlag){
                 gamepad1.rumble(500);
                 timerFlag = false;
@@ -117,6 +123,12 @@ public class TestingTeleOp extends LinearOpMode {
         }
 
         robot.drive.brake();
+
+        if(blueAlliance) {
+            robot.setColor(0, 0, 255);
+        }else{
+            robot.setColor(255, 0, 0);
+        }
     }
 
 

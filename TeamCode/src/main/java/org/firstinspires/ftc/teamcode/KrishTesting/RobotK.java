@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Intake;
+import org.firstinspires.ftc.teamcode.Lift;
 import org.firstinspires.ftc.teamcode.MecanumDriveTrain;
 import org.openftc.revextensions2.ExpansionHubEx;
 
@@ -25,6 +26,7 @@ public class RobotK {
 
     public MecanumDriveTrain drive;
     public Intake intake;
+    public Lift lift;
 
     //private final List<LynxModule> hubs;
     LynxModule hub1, hub2;
@@ -43,6 +45,7 @@ public class RobotK {
     public RobotK(HardwareMap hardwareMap) throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
         //intake = new Intake(hardwareMap);
+        //lift - new Lift(hardwareMap);
 
         hub1 = hardwareMap.get(LynxModule.class, "Control Hub");
         hub2 = hardwareMap.get(LynxModule.class, "Expansion Hub");
@@ -137,7 +140,12 @@ public class RobotK {
 
 
         chub.setLedColor(color1, color2, color3);
-        //ehub.setLedColor(color2, color3, color1);
+        ehub.setLedColor(color2, color3, color1);
+    }
+
+    public void setColor(int r, int g, int b){
+        chub.setLedColor(r, g, b);
+        ehub.setLedColor(r, g, b);
     }
 
     public void addLog(String addition){
