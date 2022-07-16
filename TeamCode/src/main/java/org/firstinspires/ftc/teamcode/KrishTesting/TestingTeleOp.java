@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Vector2D;
 
 import java.io.FileNotFoundException;
 
-@TeleOp(name="Summer Testing TeleOp")
+@TeleOp(name="Krish Testing TeleOp")
 public class TestingTeleOp extends OpModeWrapper {
 
     Thread driveThread;
