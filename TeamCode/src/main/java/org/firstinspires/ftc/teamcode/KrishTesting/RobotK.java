@@ -21,6 +21,7 @@ public class RobotK {
 
     public MecanumDriveTrain drive;
     public Intake intake;
+
     //private final List<LynxModule> hubs;
     LynxModule hub1, hub2;
     ExpansionHubEx chub, ehub;
@@ -31,25 +32,25 @@ public class RobotK {
 
     public RobotK(HardwareMap hardwareMap) throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
-        intake = new Intake(hardwareMap);
+        //intake = new Intake(hardwareMap);
 
         hub1 = hardwareMap.get(LynxModule.class, "Control Hub");
-        hub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 1");
+        //hub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 1");
 
         chub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
-        ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
+        //ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
-        ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
+        //ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
 
 
         hub1.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        hub2.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        //hub2.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         hub1.clearBulkCache();
-        hub2.clearBulkCache();
+        //hub2.clearBulkCache();
 
         /*
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -62,7 +63,7 @@ public class RobotK {
          */
 
         chub.setLedColor(255, 255, 0);
-        ehub.setLedColor(255, 0, 255);
+        //ehub.setLedColor(255, 0, 255);
     }
 
     //new Blinker.Step(Color.BLUE, 100, TimeUnit.SECONDS);
@@ -115,7 +116,7 @@ public class RobotK {
 
 
         chub.setLedColor(color1, color2, color3);
-        ehub.setLedColor(color2, color3, color1);
+        //ehub.setLedColor(color2, color3, color1);
     }
 
 
