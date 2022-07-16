@@ -16,25 +16,32 @@ public class TestingSubsystem extends SubsystemBase {
 
     private Servo lJoint, rJoint;
     private CRServo lIntake, rIntake;
-    public Intake.ConstantState constantState;
-    private Intake.ConstantState previousState;
 
-    public TestingSubsystem(HardwareMap hMap, String name) {
-        //mechRotation = hMap.get(Servo.class, name);
+
+    public TestingSubsystem(HardwareMap hardwareMap) {
+        lJoint = hardwareMap.get(Servo.class, "lJoint");
+        rJoint = hardwareMap.get(Servo.class, "rJoint");
+        lIntake = hardwareMap.get(CRServo.class, "lIntake");
+        rIntake = hardwareMap.get(CRServo.class, "rIntake");
+
+        lJoint.setPosition(1);
+        rJoint.setPosition(0);
     }
 
     /**
      * Grabs a stone.
      */
-    public void grab() {
-        //mechRotation.setPosition(0.76);
+    public void clamp() {
+        lJoint.setPosition(0.9);
+        rJoint.setPosition(0.1);
     }
 
     /**
      * Releases a stone.
      */
     public void release() {
-        //mechRotation.setPosition(0);
+        lJoint.setPosition(1);
+        rJoint.setPosition(0);
     }
 
 }
