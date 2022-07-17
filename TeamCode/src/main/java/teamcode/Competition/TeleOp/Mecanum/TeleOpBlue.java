@@ -120,6 +120,7 @@ public class TeleOpBlue extends AbstractOpMode {
         if (gamepad1.right_trigger > 0.3) {
             startTime = AbstractOpMode.currentOpMode().time;
             while (gamepad1.right_trigger > 0.3) {
+                //Why not use elapsed time object???
                 double elapsedTime = AbstractOpMode.currentOpMode().time - startTime;
                 if (elapsedTime < 0.5 && linkageState == linkageState.RAISED) {
                     arm.lowerLinkage();
