@@ -1,18 +1,11 @@
-package org.firstinspires.ftc.teamcode.KrishTesting.Command;
+package org.firstinspires.ftc.teamcode.KrishTesting.Command.NewBot;
 
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.Robot;
-import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.KeyReader;
 
 import org.firstinspires.ftc.teamcode.KrishTesting.RobotK;
 import org.firstinspires.ftc.teamcode.Vector2D;
 
 import java.io.FileNotFoundException;
-import java.util.function.BooleanSupplier;
 
 public class CommandTestingTeleOp extends CommandOpMode {
 
@@ -49,7 +42,7 @@ public class CommandTestingTeleOp extends CommandOpMode {
             robot.lift.retract(0.5);
         }
 
-        if(gamepad1.a) {
+        if(gamepad1.a && !robot.lift.extended) {
             schedule(new ScoreSequence(ScoreSequence.OpModeType.TELEOP, robot));
         }
 

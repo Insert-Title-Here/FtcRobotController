@@ -33,10 +33,12 @@ public class Lift {
     public void extend(double power){
         //TODO: tune extension tic value later
         runToPosition(1000, power);
+        extended = true;
     }
 
     public void retract(double power){
         runToPosition(0, power);
+        extended = false;
     }
 
     public void brake(){

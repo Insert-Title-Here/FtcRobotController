@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TalonTester;
 
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.teamcode.OpModeWrapper;
 
 import java.io.FileNotFoundException;
 
+
+@Disabled
 @TeleOp(name = "Stuff")
 public class TestingTeleOp extends LinearOpMode {
 

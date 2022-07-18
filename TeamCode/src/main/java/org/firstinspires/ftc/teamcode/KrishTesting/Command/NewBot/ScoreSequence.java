@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.KrishTesting.Command;
+package org.firstinspires.ftc.teamcode.KrishTesting.Command.NewBot;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -26,10 +27,13 @@ public class ScoreSequence extends CommandBase {
 
                 //TODO: Need to tune position and power
                 new InstantCommand(() -> robot.lift.extend(0.5)),
-                new InstantCommand(() -> robot.intake.clampAndRelease(false))
+
+                new ParallelCommandGroup(
+                        new InstantCommand(() -> robot.intake.clampAndRelease(false)),
+                        new InstantCommand(() -> robot.intake.setPower(false, 0.5))
+                )
         );
 
-        robot.lift.extended = true;
 
     }
 
