@@ -1,16 +1,13 @@
-package org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons;
-
-import android.graphics.Color;
+package org.firstinspires.ftc.teamcode.KrishTesting.NormalTalons;
 
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.Intake;
-import org.firstinspires.ftc.teamcode.Lift;
+import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsIntake;
+import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsScoringSystem;
 import org.firstinspires.ftc.teamcode.MecanumDriveTrain;
 import org.openftc.revextensions2.ExpansionHubEx;
 
@@ -18,13 +15,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-public class RobotT {
+public class Robot {
 
-
+    TalonsScoringSystem score;
+    TalonsIntake intake;
+    MecanumDriveTrain drive;
 
     //private final List<LynxModule> hubs;
     LynxModule hub1, hub2;
@@ -40,7 +37,7 @@ public class RobotT {
 
 
 
-    public RobotT(HardwareMap hardwareMap) throws FileNotFoundException {
+    public Robot(HardwareMap hardwareMap) throws FileNotFoundException {
 
 
         hub1 = hardwareMap.get(LynxModule.class, "Control Hub");
@@ -55,6 +52,16 @@ public class RobotT {
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
         logFile = AppUtil.getInstance().getSettingsFile("DataReceiver.txt");
+
+        try{
+            drive = new MecanumDriveTrain(hardwareMap);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        score = new TalonsScoringSystem(hardwareMap);
+        intake = new TalonsIntake(hardwareMap);
 
 
         hub1.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -74,6 +81,12 @@ public class RobotT {
 
         chub.setLedColor(255, 255, 0);
         ehub.setLedColor(255, 0, 255);
+    }
+
+    public void brake(){
+        drive.brake();
+        score.brake();
+        intake.brake();
     }
 
     //new Blinker.Step(Color.BLUE, 100, TimeUnit.SECONDS);
@@ -154,6 +167,8 @@ public class RobotT {
             e.printStackTrace();
         }
     }
+
+
 
 
 

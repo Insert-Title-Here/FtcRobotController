@@ -86,33 +86,6 @@ public class TestingTeleOpFramework extends LinearOpMode {
 
 
         while(opModeIsActive() && !isStopRequested()){
-            if(timer.seconds() > 30 && timer.seconds() < 60 && timerFlag){
-                gamepad1.rumble(500);
-                timerFlag = false;
-
-                //Insert LED strip light color change
-                robot.randomColor();
-            }
-
-            if(timer.seconds() > 60 && timer.seconds() < 90 && !timerFlag){
-                gamepad1.rumble(500);
-                timerFlag = true;
-                telemetry.addData("In here", timerFlag);
-
-                //Insert LED strip light color change
-                robot.randomColor();
-            }
-
-            if(timer.seconds() > 90 && timerFlag){
-                gamepad1.rumble(1000);
-                timerFlag = false;
-
-                telemetry.addData("In here2", timerFlag);
-
-
-                //Insert LED strip light color change
-                robot.randomColor();
-            }
 
 
             telemetry.addData("Not in here", timerFlag);

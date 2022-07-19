@@ -1,27 +1,23 @@
 package org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.Command;
 
-import static org.firstinspires.ftc.teamcode.Utils.sleep;
-
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.RobotT;
+import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsScoringSystem;
 
 public class RampCommand extends CommandBase {
 
-    RobotT robot;
+    TalonsScoringSystem lift;
     ElapsedTime timer;
 
-    public RampCommand(RobotT robot){
-        this.robot = robot;
+    public RampCommand(TalonsScoringSystem lift){
+        this.lift = lift;
         timer = new ElapsedTime();
     }
 
     @Override
     public void execute() {
-        robot.lift.setRampPower(1);
+        lift.setRampPower(1);
 
 
 
@@ -33,7 +29,8 @@ public class RampCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(timer.seconds() > 2){
+        if(timer.seconds() > 1.5){
+            lift.setRampPower(0);
             return true;
         }else{
             return false;

@@ -5,26 +5,24 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.Command.CarouselCommand;
 import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.Command.IntakeCommand;
 import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.RobotT;
-import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsScoringSystem;
 import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsCommandTestingTeleOp;
+import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsEndGame;
 import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsIntake;
+import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsScoringSystem;
 
-public class TalonsLiftingSequence extends SequentialCommandGroup {
+public class TalonsCarouselSequence extends SequentialCommandGroup {
 
 
 
 
-    public TalonsLiftingSequence(TalonsCommandTestingTeleOp.OpModeType type, TalonsIntake intake, TalonsScoringSystem lift, Gamepad gamepad, RobotT robot){
+    public TalonsCarouselSequence(TalonsCommandTestingTeleOp.OpModeType type, TalonsEndGame endgame, Gamepad gamepad){
         super(
-                new IntakeCommand(intake, gamepad, robot),
 
-                new InstantCommand(() -> intake.brake()),
-                new InstantCommand(() -> lift.close()),
+                new CarouselCommand(endgame, gamepad)
 
-                new WaitCommand(100),
-                new InstantCommand(() -> lift.linkageSetPosition(0.65))
                 /*new WaitCommand(300),
                 new InstantCommand(() -> robot.lift.houseSetPosition(0.5)),
                 new RampCommand(robot),

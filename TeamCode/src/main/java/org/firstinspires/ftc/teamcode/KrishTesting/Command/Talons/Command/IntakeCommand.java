@@ -5,25 +5,28 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.RobotT;
+import org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons.TalonsIntake;
 
 public class IntakeCommand extends CommandBase {
 
+    TalonsIntake intake;
     RobotT robot;
     boolean intaken;
     Gamepad gamepad;
 
-    public IntakeCommand(RobotT robot, Gamepad gamepad){
-        this.robot = robot;
+    public IntakeCommand(TalonsIntake intake, Gamepad gamepad, RobotT robot){
+        this.intake = intake;
         this.gamepad = gamepad;
+        this.robot = robot;
     }
 
     @Override
     public void execute() {
-        robot.intake.setPower(1);
+        intake.setPower(1);
 
         if(robot.color.getDistance(DistanceUnit.INCH) < 1 || gamepad.start){
             intaken = true;
-            robot.intake.brake();
+            intake.brake();
         }
 
 

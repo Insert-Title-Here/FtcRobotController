@@ -2,19 +2,20 @@ package org.firstinspires.ftc.teamcode.KrishTesting.Command.Talons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.openftc.revextensions2.ExpansionHubMotor;
 
-public class TalonsArmSystem {
+public class TalonsScoringSystem {
 
     //private DcMotor lift, ramp, liftEncoder;
     public ExpansionHubMotor liftEncoder, lift, ramp;
     private Servo house, linkage, stop;
     private boolean extended;
 
-    public TalonsArmSystem(HardwareMap hardwareMap){
+    public TalonsScoringSystem(HardwareMap hardwareMap){
         lift = (ExpansionHubMotor) hardwareMap.dcMotor.get("lift");
         house = hardwareMap.get(Servo.class, "house");
         linkage = hardwareMap.get(Servo.class, "linkage");
@@ -49,7 +50,7 @@ public class TalonsArmSystem {
 
     }
 
-    public void runToPosition(int target, double power){
+    public void runToPosition(int target, double power, Gamepad gamepad){
 
         if(Math.abs(liftEncoder.getCurrentPosition()) > target){
             power = -power;
@@ -58,25 +59,37 @@ public class TalonsArmSystem {
         while(Math.abs(liftEncoder.getCurrentPosition()) < target){
             setPower(power);
 
+            if(gamepad.x){
+                score();
+                break;
+            }
+
         }
 
-        setPower(0);
 
     }
 
-    public void extend(double power){
+
+
+    public void extend(double power, Gamepad gamepad){
         //TODO: tune extension tic value later
-        runToPosition(5000, power);
+        runToPosition(15000, power, gamepad);
         //14800
-        extended = true;
+        //extended = true;
+
+
+
+
+
+
     }
 
     public boolean isExtended(){
         return extended;
     }
 
-    public void retract(double power){
-        runToPosition(1000, power);
+    public void retract(double power, Gamepad gamepad){
+        runToPosition(1000, power, gamepad);
         extended = false;
         liftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -84,6 +97,7 @@ public class TalonsArmSystem {
 
     public void brake(){
         setPower(0);
+        setRampPower(0);
     }
 
     public void houseSetPosition(double position){
@@ -97,7 +111,7 @@ public class TalonsArmSystem {
 
     public void score(){
         //TODO: tune this value
-        houseSetPosition(0.5);
+        houseSetPosition(0.7);
     }
 
     public void open(){
