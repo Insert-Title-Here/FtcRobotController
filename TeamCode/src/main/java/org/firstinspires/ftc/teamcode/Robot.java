@@ -1,24 +1,35 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Robot {
+public class Robot extends Thread{
+
+
+
 
     private volatile LynxModule.BulkData ehData, chData;
     private volatile NormalizedRGBA rgba;
+    private volatile Orientation imuAngle;
 
     private LynxModule ch, eh;
     private ExpansionHubEx ehub, chub;
     private BNO055IMU imu;
+
+    AtomicBoolean shouldUpdate;
+    private final long runtime = 20;
+
+    private final float COLOR_GAIN = 3;
 
 
 
@@ -27,16 +38,48 @@ public class Robot {
     public synchronized void update(){
         chData = ch.getBulkData();
         ehData = eh.getBulkData();
+        imuAngle = imu.getAngularOrientation();
 
         rgba = color.getNormalizedColors();
 
         eh.clearBulkCache();
         ch.clearBulkCache();
+
     }
 
 
+    @Override
+    public void run() {
+        while(shouldUpdate.get()){
+            long loopStart = System.currentTimeMillis();
+            update();
+            long loopDelta = System.currentTimeMillis() - loopStart;
+            if(loopDelta <= runtime){
+                try {
+                    Thread.currentThread().sleep(runtime - loopDelta);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                //memory leaks are bad
+            }
+        }
+    }
+
     //Control Constructor
     public Robot(HardwareMap hardwareMap){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+
         eh = hardwareMap.get(LynxModule.class, "Expansion Hub");
         ch = hardwareMap.get(LynxModule.class, "Control Hub");
 
@@ -47,6 +90,7 @@ public class Robot {
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
         color = hardwareMap.get(ColorRangeSensor.class, "Color");
+        color.setGain(COLOR_GAIN);
 
 
         eh.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -54,14 +98,25 @@ public class Robot {
         eh.clearBulkCache();
         ch.clearBulkCache();
 
+        shouldUpdate = new AtomicBoolean(true);
+
     }
 
 
-    public int getMotorPos(int port, boolean chub){
+    public LynxModule.BulkData getBulkPacket(boolean chub){
         if(chub){
-            return chData.getMotorCurrentPosition(port);
+            return chData;
         }else{
-            return ehData.getMotorCurrentPosition(port);
+            return ehData;
         }
+    }
+
+
+    public void stopThread() {
+        shouldUpdate.set(false);
+        imu.close();
+        eh.clearBulkCache();
+        ch.clearBulkCache();
+
     }
 }
