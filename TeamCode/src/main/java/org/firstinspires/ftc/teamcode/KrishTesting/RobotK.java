@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Intake;
 import org.firstinspires.ftc.teamcode.Lift;
@@ -25,35 +26,35 @@ import java.util.concurrent.TimeUnit;
 public class RobotK {
 
     public MecanumDriveTrain drive;
-    public Intake intake;
+    //public Intake intake;
     public Lift lift;
 
     //private final List<LynxModule> hubs;
     LynxModule hub1, hub2;
     ExpansionHubEx chub, ehub;
-    ColorRangeSensor color;
+    //ColorRangeSensor color;
     File logFile;
 
     LynxModule.BulkData chubData, ehubData;
-    NormalizedRGBA rgba;
+    //NormalizedRGBA rgba;
     String logString;
 
 
 
 
 
-    public RobotK(HardwareMap hardwareMap) throws FileNotFoundException {
+    public RobotK(HardwareMap hardwareMap, Telemetry telemetry) throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
         //intake = new Intake(hardwareMap);
-        //lift - new Lift(hardwareMap);
+        lift = new Lift(hardwareMap, this, telemetry);
 
         hub1 = hardwareMap.get(LynxModule.class, "Control Hub");
-        hub2 = hardwareMap.get(LynxModule.class, "Expansion Hub");
+        hub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
 
         chub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
-        ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub");
+        ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
 
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
@@ -85,13 +86,29 @@ public class RobotK {
 
     public int getSpecificEncoderValue(int port, boolean controlHub){
         if(controlHub) {
+            /*
             int encoderValue = hub1.getBulkData().getMotorCurrentPosition(port);
             hub1.clearBulkCache();
             return encoderValue;
-        }else{
-            int encoderValue = hub2.getBulkData().getMotorCurrentPosition(port);
+
+             */
+            int encoderValue = chubData.getMotorCurrentPosition(port);
             hub1.clearBulkCache();
             return encoderValue;
+
+
+        }else{
+            /*
+            int encoderValue = hub2.getBulkData().getMotorCurrentPosition(port);
+            hub2.clearBulkCache();
+            return encoderValue;
+
+             */
+            int encoderValue = ehubData.getMotorCurrentPosition(port);
+            hub2.clearBulkCache();
+            return encoderValue;
+
+
         }
     }
 
@@ -121,7 +138,7 @@ public class RobotK {
         chubData = hub1.getBulkData();
         ehubData = hub2.getBulkData();
 
-        rgba = color.getNormalizedColors();
+        //rgba = color.getNormalizedColors();
 
         hub1.clearBulkCache();
         hub2.clearBulkCache();
@@ -129,8 +146,8 @@ public class RobotK {
 
     public void stop(){
         drive.brake();
-        intake.clampAndRelease(false);
-        intake.brake();
+        //intake.clampAndRelease(false);
+        //intake.brake();
     }
 
     public void randomColor(){

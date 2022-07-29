@@ -3,16 +3,26 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.KrishTesting.RobotK;
+
 public class Lift {
 
     public DcMotor lift;
+    private RobotK robot;
+    private Telemetry telemetry;
     public boolean extended;
 
-    public Lift(HardwareMap hardwareMap){
-        lift = hardwareMap.get(DcMotor.class, "lift");
+    public Lift(HardwareMap hardwareMap, RobotK robot, Telemetry telemetry){
+        lift = hardwareMap.get(DcMotor.class, "Lift");
         extended = false;
 
+        this.robot = robot;
+        this.telemetry = telemetry;
+
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //TODO: See if we need to set direction
     }
@@ -22,7 +32,11 @@ public class Lift {
     }
 
     public void runToPosition(int tics, double power){
-        while(Math.abs(tics - lift.getCurrentPosition()) > 10){
+        while(Math.abs(tics - robot.getSpecificEncoderValue(0, false)) > 10){
+            robot.update();
+            telemetry.addData("Lift Encoder", robot.getSpecificEncoderValue(0, false));
+            telemetry.update();
+
             setPower(power);
         }
 
@@ -32,12 +46,12 @@ public class Lift {
 
     public void extend(double power){
         //TODO: tune extension tic value later
-        runToPosition(1000, power);
+        runToPosition(-1900, power);
         extended = true;
     }
 
     public void retract(double power){
-        runToPosition(0, power);
+        runToPosition(0, -power);
         extended = false;
     }
 

@@ -20,8 +20,8 @@ public class ScoreSequence extends CommandBase {
 
     public ScoreSequence(OpModeType type, RobotK robot){
         new SequentialCommandGroup(
-                new InstantCommand(() -> robot.intake.brake()),
-                new InstantCommand(() -> robot.intake.clampAndRelease(true)),
+                //new InstantCommand(() -> robot.intake.brake()),
+                //new InstantCommand(() -> robot.intake.clampAndRelease(true)),
 
                 //TODO: need to add linkage part ("house")
 
@@ -29,8 +29,8 @@ public class ScoreSequence extends CommandBase {
                 new InstantCommand(() -> robot.lift.extend(0.5)),
 
                 new ParallelCommandGroup(
-                        new InstantCommand(() -> robot.intake.clampAndRelease(false)),
-                        new InstantCommand(() -> robot.intake.setPower(false, 0.5))
+                        //new InstantCommand(() -> robot.intake.clampAndRelease(false)),
+                        //new InstantCommand(() -> robot.intake.setPower(false, 0.5))
                 )
         );
 

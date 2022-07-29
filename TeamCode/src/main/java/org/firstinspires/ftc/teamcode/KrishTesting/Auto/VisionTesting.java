@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.KrishTesting.Auto;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class VisionTesting extends OpenCvPipeline {
     Telemetry telemetry;
@@ -40,9 +45,27 @@ public class VisionTesting extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input){
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
         Scalar lowHSV = new Scalar(23, 50, 70);
         Scalar highHSV = new Scalar(32, 255, 255);
+        ArrayList<MatOfPoint> contours = new ArrayList<>();
+
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
+        ArrayList<Mat> yCrCbChannels = new ArrayList<>(3);
+        Core.split(mat, yCrCbChannels);
+        mat = yCrCbChannels.get(2);
+
+        //Core.inRange(mat, lowHSV, highHSV, mat);
+        //Core.extractChannel(mat, mat, Core.REDUCE_AVG);
+
+        Imgproc.threshold(mat, mat, 80, 255, Imgproc.THRESH_BINARY);
+        Imgproc.findContours(mat, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        telemetry.addData("thung", contours);
+        //Imgproc.threshold(mat, mat, 60,  255, Imgproc.THRESH_BINARY);
+
+
+        /*
+
 
         Core.inRange(mat, lowHSV, highHSV, mat);
 
@@ -90,10 +113,12 @@ public class VisionTesting extends OpenCvPipeline {
         }
 
         telemetry.addData("position: ", getPosition());
+
+        */
         telemetry.update();
 
 
-        return input;
+        return mat;
 
     }
 

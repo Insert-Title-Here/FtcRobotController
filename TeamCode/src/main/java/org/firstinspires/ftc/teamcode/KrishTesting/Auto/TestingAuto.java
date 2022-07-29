@@ -51,9 +51,7 @@ public class TestingAuto extends LinearOpMode {
             }
         });
 
-        while(!opModeIsActive()){
-            position = pipeline.getPosition();
-        }
+
 
 
 
@@ -62,6 +60,7 @@ public class TestingAuto extends LinearOpMode {
 
         waitForStart();
 
+        /*
         if(position == VisionTesting.Position.RIGHT){
             intake.setPower(0.5);
             sleep(3000);
@@ -75,6 +74,8 @@ public class TestingAuto extends LinearOpMode {
             sleep(3000);
             endGame.brakeCarousel();
         }
+
+         */
 
 
     }

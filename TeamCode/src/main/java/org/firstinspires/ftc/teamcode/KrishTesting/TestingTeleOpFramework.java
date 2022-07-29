@@ -45,7 +45,7 @@ public class TestingTeleOpFramework extends LinearOpMode {
         blueAlliance = true;
 
         try {
-            robot = new RobotK(hardwareMap);
+            robot = new RobotK(hardwareMap, telemetry);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -67,7 +67,7 @@ public class TestingTeleOpFramework extends LinearOpMode {
             @Override
             public void run(){
                 while(opModeIsActive()){
-                    intakeUpdate();
+                    //intakeUpdate();
                 }
             }
         };
@@ -114,6 +114,8 @@ public class TestingTeleOpFramework extends LinearOpMode {
         }
     }
 
+    /*
+
     private void intakeUpdate(){
         if (gamepad1.a || (robot.color.red() > 130 && robot.color.green() > 150 && robot.color.blue() > 60)) {
             robot.intake.clampAndRelease(true);
@@ -148,6 +150,8 @@ public class TestingTeleOpFramework extends LinearOpMode {
 
 
     }
+
+     */
 
 
 
