@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.KrishTesting.RobotK;
+import org.firstinspires.ftc.teamcode.Testing.RobotK;
 
 public class Lift {
 
@@ -34,8 +34,8 @@ public class Lift {
     public void runToPosition(int tics, double power){
         while(Math.abs(tics - robot.getSpecificEncoderValue(0, false)) > 10){
             robot.update();
-            telemetry.addData("Lift Encoder", robot.getSpecificEncoderValue(0, false));
-            telemetry.update();
+            //telemetry.addData("Lift Encoder", robot.getSpecificEncoderValue(0, false));
+            //telemetry.update();
 
             setPower(power);
         }

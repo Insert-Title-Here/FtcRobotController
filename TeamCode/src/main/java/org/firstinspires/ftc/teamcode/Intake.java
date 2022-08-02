@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -18,6 +19,7 @@ public class Intake {
     private CRServo lIntake, rIntake;
     public ConstantState constantState;
     private ConstantState previousState;
+    //  private ColorRangeSensor color;
 
     public Intake(HardwareMap hardwareMap){
         lJoint = hardwareMap.get(Servo.class, "lJoint");
