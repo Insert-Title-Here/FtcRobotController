@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.Testing;
+package org.firstinspires.ftc.teamcode.Testing.FtcDashboard;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.io.FileNotFoundException;
 
+@Config
 @TeleOp(name="FTC Dashboard Test")
 public class FtcDashboardTest extends LinearOpMode {
 
@@ -27,16 +28,21 @@ public class FtcDashboardTest extends LinearOpMode {
     //Intake intake;
     ColorSensor color;
 
-    FtcDashboard dashboard = FtcDashboard.getInstance();
     TelemetryPacket testPacket = new TelemetryPacket();
     ElapsedTime timer = new ElapsedTime();
-    Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
+    //Vision Constants
+    public static int R1X = 70;
+    public static int R1Y = 190;
+    public static int R2X = 280;
+    public static int R2Y = 190;
+    public static int WIDTH = 50;
+    public static int HEIGHT = 40;
 
     WebcamName wc;
     OpenCvCamera camera;
 
     static final BarcodePipelineBlue brp = new BarcodePipelineBlue();
-
 
 
 
@@ -50,6 +56,9 @@ public class FtcDashboardTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException{
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        dashboard.updateConfig();
 
         //color = hardwareMap.get(ColorSensor.class, "color");
 
@@ -131,6 +140,8 @@ public class FtcDashboardTest extends LinearOpMode {
 
         });
 
+        dashboard.updateConfig();
+        testPacket.put("test", R1X);
         testPacket.put("Status", "Ready to Start!");
         testPacket.put("Elapsed Time", "-");
         dashboard.sendTelemetryPacket(testPacket);

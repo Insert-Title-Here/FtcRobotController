@@ -1,4 +1,7 @@
-package org.firstinspires.ftc.teamcode.Testing;
+package org.firstinspires.ftc.teamcode.Testing.FtcDashboard;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -9,6 +12,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class BarcodePipelineBlue extends OpenCvPipeline{
+
     // define position enums
     public enum BarcodePosition
     {
@@ -24,8 +28,8 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
     static int currentMinValue = 0;
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(70, 190);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(280, 190);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(FtcDashboardTest.R1X, FtcDashboardTest.R1Y);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(FtcDashboardTest.R2X, FtcDashboardTest.R2Y);
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 50;
 
