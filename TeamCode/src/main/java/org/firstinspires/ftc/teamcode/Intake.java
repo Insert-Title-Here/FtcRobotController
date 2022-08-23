@@ -15,7 +15,7 @@ public class Intake {
 
 
 
-    private Servo lJoint, rJoint;
+    private Servo lJoint, rJoint, linkage;
     private CRServo lIntake, rIntake;
     public ConstantState constantState;
     private ConstantState previousState;
@@ -26,9 +26,11 @@ public class Intake {
         rJoint = hardwareMap.get(Servo.class, "rJoint");
         lIntake = hardwareMap.get(CRServo.class, "lIntake");
         rIntake = hardwareMap.get(CRServo.class, "rIntake");
+        linkage = hardwareMap.get(Servo.class, "Linkage");
 
-        lJoint.setPosition(1);
-        rJoint.setPosition(0);
+
+        lJoint.setPosition(0); //was 0
+        rJoint.setPosition(0.5); //was 1
 
         constantState = ConstantState.Still;
         previousState = ConstantState.Out;
@@ -40,11 +42,11 @@ public class Intake {
 
     public void clampAndRelease(boolean toClamp){
         if (toClamp) {
-            lJoint.setPosition(0.9);
-            rJoint.setPosition(0.1);
+            lJoint.setPosition(0.1); //was 0.9
+            rJoint.setPosition(0.4); //was 0.1
         } else {
-            lJoint.setPosition(1);
-            rJoint.setPosition(0);
+            lJoint.setPosition(0);
+            rJoint.setPosition(0.5);
         }
     }
 
@@ -56,6 +58,15 @@ public class Intake {
             lIntake.setPower(-power);
             rIntake.setPower(power);
         }
+    }
+
+    public void setPower(double power) {
+        lIntake.setPower(power);
+        rIntake.setPower(-power);
+    }
+
+    public void setLinkage(double position) {
+        linkage.setPosition(position);
     }
 
     public void shiftConstantState(){
@@ -77,8 +88,9 @@ public class Intake {
         }
     }
 
-    public void brake(){
+    public void brake() {
         lIntake.setPower(0);
         rIntake.setPower(0);
     }
+
 }

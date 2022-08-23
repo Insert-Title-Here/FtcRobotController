@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Testing.RobotK;
@@ -9,12 +11,14 @@ import org.firstinspires.ftc.teamcode.Testing.RobotK;
 public class Lift {
 
     public DcMotor lift;
+
     private RobotK robot;
     private Telemetry telemetry;
     public boolean extended;
 
     public Lift(HardwareMap hardwareMap, RobotK robot, Telemetry telemetry){
         lift = hardwareMap.get(DcMotor.class, "Lift");
+
         extended = false;
 
         this.robot = robot;
@@ -58,7 +62,5 @@ public class Lift {
     public void brake(){
         setPower(0);
     }
-
-
 
 }
