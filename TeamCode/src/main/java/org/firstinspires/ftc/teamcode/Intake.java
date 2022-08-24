@@ -22,15 +22,15 @@ public class Intake {
     //  private ColorRangeSensor color;
 
     public Intake(HardwareMap hardwareMap){
-        lJoint = hardwareMap.get(Servo.class, "lJoint");
-        rJoint = hardwareMap.get(Servo.class, "rJoint");
-        lIntake = hardwareMap.get(CRServo.class, "lIntake");
-        rIntake = hardwareMap.get(CRServo.class, "rIntake");
+        lJoint = hardwareMap.get(Servo.class, "LeftClamp");
+        rJoint = hardwareMap.get(Servo.class, "RightClamp");
+        lIntake = hardwareMap.get(CRServo.class, "LeftIntake");
+        rIntake = hardwareMap.get(CRServo.class, "RightIntake");
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
 
-        lJoint.setPosition(0); //was 0
-        rJoint.setPosition(0.5); //was 1
+        lJoint.setPosition(0.87); //was 0
+        rJoint.setPosition(0.43); //was 1
 
         constantState = ConstantState.Still;
         previousState = ConstantState.Out;
@@ -42,11 +42,11 @@ public class Intake {
 
     public void clampAndRelease(boolean toClamp){
         if (toClamp) {
-            lJoint.setPosition(0.1); //was 0.9
-            rJoint.setPosition(0.4); //was 0.1
+            lJoint.setPosition(0.83); //was 0.9
+            rJoint.setPosition(0.5); //was 0.1
         } else {
-            lJoint.setPosition(0);
-            rJoint.setPosition(0.5);
+            lJoint.setPosition(0.87); //was 0
+            rJoint.setPosition(0.43); //was 0.5
         }
     }
 

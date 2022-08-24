@@ -38,7 +38,7 @@ public class RobotK {
 
     public RobotK(HardwareMap hardwareMap, Telemetry telemetry) throws FileNotFoundException {
         drive = new MecanumDriveTrain(hardwareMap);
-        //intake = new Intake(hardwareMap);
+        intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap, this, telemetry);
 
         hub1 = hardwareMap.get(LynxModule.class, "Control Hub");

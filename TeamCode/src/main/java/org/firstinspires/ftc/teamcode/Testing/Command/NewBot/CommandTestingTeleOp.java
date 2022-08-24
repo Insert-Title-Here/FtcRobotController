@@ -16,6 +16,9 @@ public class CommandTestingTeleOp extends CommandOpMode {
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
     private double power = 0.055;
+    private boolean clampFlag = false;
+    private boolean clampState = false;
+
     //private boolean changePower = true;
 
 
@@ -68,7 +71,19 @@ public class CommandTestingTeleOp extends CommandOpMode {
             robot.intake.setPower(gamepad1.right_trigger);
         }
 
-        robot.intake.clampAndRelease(gamepad1.left_bumper);
+
+        if(gamepad1.left_bumper && clampFlag){
+
+            robot.intake.clampAndRelease(clampState);
+            clampState = !clampState;
+
+            clampFlag = false;
+
+        }
+
+        if(!gamepad1.left_bumper){
+            clampFlag = true;
+        }
 
         if (gamepad1.x) {
             robot.intake.setLinkage(0);
