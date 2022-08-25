@@ -195,7 +195,6 @@ public class TalonsCommandTestingTeleOp extends CommandOpMode {
 
 
 
-        telemetry.update();
 
 
     }

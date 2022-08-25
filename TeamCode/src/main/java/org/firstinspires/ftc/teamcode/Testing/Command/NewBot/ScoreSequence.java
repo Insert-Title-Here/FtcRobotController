@@ -4,30 +4,23 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.Testing.RobotK;
 
-public class ScoreSequence extends CommandBase {
+public class ScoreSequence extends SequentialCommandGroup {
+
+    public ScoreSequence(RobotK robot){
+        super(
 
 
-    public enum OpModeType {
-        TELEOP, AUTO
-    }
 
-    public ScoreSequence(OpModeType type, RobotK robot){
-        new SequentialCommandGroup(
-                //new InstantCommand(() -> robot.intake.brake()),
-                //new InstantCommand(() -> robot.intake.clampAndRelease(true)),
+                new InstantCommand(() -> robot.intake.clampAndRelease(false)),
+                new WaitCommand(1000),
+                new InstantCommand(() -> robot.intake.setLinkage(0)),
+                new WaitCommand(500),
+                new InstantCommand(() -> robot.lift.retract(0.3))
 
-                //TODO: need to add linkage part ("house")
-
-                //TODO: Need to tune position and power
-                new InstantCommand(() -> robot.lift.extend(0.5)),
-
-                new ParallelCommandGroup(
-                        //new InstantCommand(() -> robot.intake.clampAndRelease(false)),
-                        //new InstantCommand(() -> robot.intake.setPower(false, 0.5))
-                )
         );
 
 

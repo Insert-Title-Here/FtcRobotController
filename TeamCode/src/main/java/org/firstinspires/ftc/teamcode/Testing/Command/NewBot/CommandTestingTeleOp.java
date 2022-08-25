@@ -52,26 +52,6 @@ public class CommandTestingTeleOp extends CommandOpMode {
         }
 
 
-
-        if (gamepad1.b){
-            robot.lift.retract(0.5);
-        }
-
-        if (gamepad1.a && !robot.lift.extended) {
-            robot.lift.extend(1);
-        }
-
-
-
-
-        if (gamepad1.dpad_left){
-            robot.lift.setPower(0.3);
-        }else if (gamepad1.dpad_right){
-            robot.lift.setPower(-0.3);
-        }else{
-            robot.lift.setPower(power);
-        }
-
         if (gamepad1.left_trigger > 0.1) {
             robot.intake.setPower(gamepad1.left_trigger);
         } else if (gamepad1.right_trigger > 0.1) {
@@ -95,18 +75,23 @@ public class CommandTestingTeleOp extends CommandOpMode {
         }
 
         if (gamepad1.x) {
-            robot.intake.setLinkage(0);
-        } else if (gamepad1.y) {
-            robot.intake.setLinkage(1);
+            schedule(new LinkageUpSequence(robot));
+            clampState = true;
         }
 
-        //will change button later, auto 
 
-        if (gamepad1.back) {
-            robot.intake.clampAndRelease(true);
-            robot.intake.setLinkage(1);
-            sleep(1000);
-            robot.lift.extend(1);
+        if (gamepad1.b) {
+            robot.lift.extend(0.7);
+        }
+
+        if(gamepad1.a){
+            schedule(new ScoreSequence(robot));
+            clampState = false;
+        }
+
+        if(!gamepad1.x || gamepad1.a || gamepad1.b){
+            robot.lift.setPower(0.07);
+
         }
 
 
