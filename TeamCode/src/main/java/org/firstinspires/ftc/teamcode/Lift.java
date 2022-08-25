@@ -50,7 +50,7 @@ public class Lift {
 
     public void extend(double power){
         //TODO: tune extension tic value later
-        runToPosition(-1350, power); //was -1900
+        runToPosition(-1450, power); //was -1900
         extended = true;
     }
 

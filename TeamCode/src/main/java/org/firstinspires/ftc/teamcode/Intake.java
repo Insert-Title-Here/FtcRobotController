@@ -28,6 +28,8 @@ public class Intake {
         rIntake = hardwareMap.get(CRServo.class, "RightIntake");
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
+        linkage.setPosition(0);
+
 
         lJoint.setPosition(0.87); //was 0
         rJoint.setPosition(0.43); //was 1
@@ -42,8 +44,8 @@ public class Intake {
 
     public void clampAndRelease(boolean toClamp){
         if (toClamp) {
-            lJoint.setPosition(0.83); //was 0.9
-            rJoint.setPosition(0.5); //was 0.1
+            lJoint.setPosition(0.82); //was 0.9
+            rJoint.setPosition(0.48); //was 0.1
         } else {
             lJoint.setPosition(0.87); //was 0
             rJoint.setPosition(0.43); //was 0.5

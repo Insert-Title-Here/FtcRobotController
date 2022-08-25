@@ -7,6 +7,13 @@ import org.firstinspires.ftc.teamcode.Testing.RobotK;
 import org.firstinspires.ftc.teamcode.Vector2D;
 
 import java.io.FileNotFoundException;
+
+
+// intake
+// clamp + linkage
+// b to extend
+// a scores, returns lift + linkage
+
 @TeleOp
 public class CommandTestingTeleOp extends CommandOpMode {
 
@@ -68,7 +75,9 @@ public class CommandTestingTeleOp extends CommandOpMode {
         if (gamepad1.left_trigger > 0.1) {
             robot.intake.setPower(gamepad1.left_trigger);
         } else if (gamepad1.right_trigger > 0.1) {
-            robot.intake.setPower(gamepad1.right_trigger);
+            robot.intake.setPower(-gamepad1.right_trigger);
+        } else {
+            robot.intake.brake();
         }
 
 
