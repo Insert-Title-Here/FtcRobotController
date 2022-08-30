@@ -89,9 +89,16 @@ public class CommandTestingTeleOp extends CommandOpMode {
             clampState = false;
         }
 
+        /*
         if(!gamepad1.x || gamepad1.a || gamepad1.b){
             robot.lift.setPower(0.07);
 
+        }
+
+
+         */
+        if (gamepad1.dpad_up) {
+            robot.lift.brake();
         }
 
 
