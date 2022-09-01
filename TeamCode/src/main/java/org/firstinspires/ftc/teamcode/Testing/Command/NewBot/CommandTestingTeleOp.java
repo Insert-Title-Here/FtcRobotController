@@ -14,6 +14,8 @@ import java.io.FileNotFoundException;
 // b to extend
 // a scores, returns lift + linkage
 
+// hopefully this will fix krish's terra-bly broken code
+
 @TeleOp
 public class CommandTestingTeleOp extends CommandOpMode {
 
