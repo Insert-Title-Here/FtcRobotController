@@ -44,13 +44,13 @@ public class RobotK {
         hub1 = hardwareMap.get(LynxModule.class, "Control Hub");
         hub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
 
-        chub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
-        ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        //chub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
+        //ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
 
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
-        ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
-        chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
+        //ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
+        //chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
         logFile = AppUtil.getInstance().getSettingsFile("DataReceiver.txt");
 
@@ -70,8 +70,8 @@ public class RobotK {
 
          */
 
-        chub.setLedColor(255, 255, 0);
-        ehub.setLedColor(255, 0, 255);
+        //chub.setLedColor(255, 255, 0);
+        //ehub.setLedColor(255, 0, 255);
     }
 
     //new Blinker.Step(Color.BLUE, 100, TimeUnit.SECONDS);
