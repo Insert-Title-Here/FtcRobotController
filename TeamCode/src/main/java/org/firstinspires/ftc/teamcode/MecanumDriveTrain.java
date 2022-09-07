@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -64,9 +65,9 @@ public class MecanumDriveTrain {
         correctMotors();
 
 
-        chubby = hardwareMap.get(LynxModule.class, "Control Hub");
-        chubby.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        chubby.clearBulkCache();
+        //chubby = hardwareMap.get(LynxModule.class, "Control Hub");
+        //chubby.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        //chubby.clearBulkCache();
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
@@ -143,10 +144,10 @@ public class MecanumDriveTrain {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -341,7 +342,144 @@ public class MecanumDriveTrain {
 
 
 
+
     }
+
+
+
+    public synchronized void driveAuto(double desiredVelocity, int tics, MovementType movement, Telemetry telemetry){
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        OpModeWrapper currentOpMode = OpModeWrapper.currentOpMode();
+        double startTime = currentOpMode.time;
+        /*
+        double startTime = currentOpMode.time;
+        double lastError = 0;
+        previousPositions = new double[]{0,0,0,0};
+        double[] currentPositions = new double[]{0, 0, 0, 0};
+        double average = computeAvg(currentPositions);
+        double error = 0;
+        while(average <= tics / 2){
+            currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
+            currentOpMode.telemetry.addData("currentPositions: ",currentPositions);
+            currentOpMode.telemetry.addData("error: ",error);
+            average = computeAvg(currentPositions);
+            error = average - (6 * tics) / 13;
+            double P = PID.p * error;
+            if(error < 0 && 1 + P <= 0.25){
+                setPowerAuto(0.25, movement);
+            }else if(error < 0 && 1 + P > 0.25){
+                setPowerAuto(1 + P, movement);
+            }else{
+                setPowerAuto(1, movement);
+            }
+            lastError = error;
+        }
+        while(average < tics - 10){
+            currentPositions = new double[]{fl.getCurrentPosition(), fr.getCurrentPosition(), bl.getCurrentPosition(), br.getCurrentPosition()};
+            error = computeAvg(currentPositions) - (12 * tics) / 13;
+            currentOpMode.telemetry.addData("currentPositions: ",currentPositions);
+            currentOpMode.telemetry.addData("error: ",error);
+            if(error > 0){
+                 setPowerAuto(0.1, movement);
+             }else{
+                 double P = Math.abs(PID.p * error);
+                 setPowerAuto(P, movement);
+             }
+             lastError = error;
+        }
+         */
+
+        if(tics < 0) {
+            desiredVelocity *= -1;
+        }
+        double elapsedTime = 0;
+
+        while(isFar(tics) && currentOpMode.opModeIsActive() && elapsedTime < 5.0){
+            elapsedTime = currentOpMode.time - startTime;
+            setPowerAuto(desiredVelocity, movement);
+            telemetry.addData("fl ", fl.getCurrentPosition());
+            telemetry.addData("fr ", fr.getCurrentPosition());
+            telemetry.addData("bl ", bl.getCurrentPosition());
+            telemetry.addData("br ", br.getCurrentPosition());
+            telemetry.addData("elapsedTime ", elapsedTime);
+            telemetry.update();
+
+        }
+
+        brake();
+
+
+
+
+        previousVelocity = 0;
+        previousPositions = new double[]{0,0,0,0};
+        previousError = 0;
+        //double previousTime = startTime;
+
+        while(isFar(tics) && currentOpMode.opModeIsActive()){
+
+            double currentTime = currentOpMode.time;
+
+            //double dt = currentTime - previousTime;
+
+
+            double currentVelocity;
+            //double deltaPositions = computeDeltas(currentPositions);
+
+            /*
+            if(currentTime - startTime < 0.01){ //TODO not sure this will work the way we want it to, the top may invoke every time causing bad things to happen.
+                currentVelocity = 0;
+            }else {
+                currentVelocity = deltaPositions / dt;
+            }
+            //previousTime = currentTime;
+            currentOpMode.telemetry.addData("dt", dt);
+            loggingString += "dt: " + dt + "\n";
+            currentOpMode.telemetry.addData("velocity",currentVelocity);
+            loggingString += "velocity: " + currentVelocity + "\n";
+            currentOpMode.telemetry.addData("deltaPositions: ",deltaPositions);
+            loggingString += "deltaPositions: " + deltaPositions + "\n";
+            currentOpMode.telemetry.addData("Position :", Arrays.toString(currentPositions));
+            loggingString += "Position: " + Arrays.toString(currentPositions) + "\n";
+            currentOpMode.telemetry.update();
+            double velocityError = desiredVelocity - currentVelocity;
+            double dError = velocityError - previousError;
+            double output = velocityError * pVelocity + dError * dVelocity;
+            double passedValue = previousVelocity + output;
+            if(passedValue > 1.0){
+                desiredVelocity = currentVelocity;
+                passedValue = 1.0;
+            }else if(passedValue < -1.0){
+                desiredVelocity = currentVelocity;
+                passedValue = -1.0;
+            }
+             */
+
+
+            if(tics > 0) {
+                previousVelocity = setPowerAuto(desiredVelocity, movement);
+            } else {
+                previousVelocity = setPowerAuto(-desiredVelocity, movement);
+            }
+
+            //previousPositions = new double[]{currentPositions[0], currentPositions[1], currentPositions[2], currentPositions[3]};
+            //previousError = velocityError;
+
+
+
+        }
+    }
+
 
 
     private double TIC_TOLERANCE = 25;
