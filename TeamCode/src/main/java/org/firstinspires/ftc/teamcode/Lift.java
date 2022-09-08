@@ -16,7 +16,7 @@ public class Lift {
     private Telemetry telemetry;
     public boolean extended;
 
-    public Lift(HardwareMap hardwareMap, RobotK robot, Telemetry telemetry){
+    public Lift(HardwareMap hardwareMap, RobotK robot, Telemetry telemetry) {
         lift = hardwareMap.get(DcMotor.class, "Lift");
 
         extended = false;
@@ -31,12 +31,12 @@ public class Lift {
         //TODO: See if we need to set direction
     }
 
-    public void setPower(double power){
+    public void setPower(double power) {
         lift.setPower(power);
     }
 
-    public void runToPosition(int tics, double power){
-        while(Math.abs(tics - robot.getSpecificEncoderValue(0, false)) > 10){
+    public void runToPosition(int tics, double power) {
+        while (Math.abs(tics - robot.getSpecificEncoderValue(0, false)) > 10) {
             robot.update();
             //telemetry.addData("Lift Encoder", robot.getSpecificEncoderValue(0, false));
             //telemetry.update();
@@ -48,10 +48,19 @@ public class Lift {
 
     }
 
-    public void extend(double power){
+    public void extend(double power) {
         //TODO: tune extension tic value later
         runToPosition(-1600, power); //was -1900
         extended = true;
+    }
+
+    //Thread(){
+        //continue the I component of the loop (REMEMBER INTEGRAL WINDUP)
+        //keep the thread running after your extension and retraction
+    //}
+    public void setPosPID(){
+        //PID stuff
+        //flag thread be active()
     }
 
     public void retract(double power){

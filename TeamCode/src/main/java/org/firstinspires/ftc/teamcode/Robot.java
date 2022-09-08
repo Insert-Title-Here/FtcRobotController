@@ -27,6 +27,7 @@ public class Robot extends Thread{
     private BNO055IMU imu;
 
     AtomicBoolean shouldUpdate;
+    AtomicBoolean controlProcessRunning;
     private final long runtime = 20;
 
     private final float COLOR_GAIN = 3;
@@ -44,24 +45,25 @@ public class Robot extends Thread{
 
         eh.clearBulkCache();
         ch.clearBulkCache();
-
     }
 
 
     @Override
     public void run() {
-        while(shouldUpdate.get()){
-            long loopStart = System.currentTimeMillis();
-            update();
-            long loopDelta = System.currentTimeMillis() - loopStart;
-            if(loopDelta <= runtime){
-                try {
-                    Thread.currentThread().sleep(runtime - loopDelta);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        while(controlProcessRunning.get()){
+            if(shouldUpdate.get()) {
+                long loopStart = System.currentTimeMillis();
+                update();
+                long loopDelta = System.currentTimeMillis() - loopStart;
+                if (loopDelta <= runtime) {
+                    try {
+                        Thread.currentThread().sleep(runtime - loopDelta);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //memory leaks are bad
                 }
-            }else{
-                //memory leaks are bad
             }
         }
     }
@@ -99,7 +101,7 @@ public class Robot extends Thread{
         ch.clearBulkCache();
 
         shouldUpdate = new AtomicBoolean(true);
-
+        controlProcessRunning = new AtomicBoolean(true);
     }
 
 
@@ -111,6 +113,13 @@ public class Robot extends Thread{
         }
     }
 
+    public double getDirection() {
+        return imuAngle.firstAngle;
+    }
+
+    public void setShouldUpdate(boolean val){
+        shouldUpdate.set(val);
+    }
 
     public void stopThread() {
         shouldUpdate.set(false);
