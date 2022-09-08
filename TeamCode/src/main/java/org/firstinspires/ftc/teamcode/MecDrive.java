@@ -232,11 +232,6 @@ public class MecDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LynxModule.BulkData data = robot.getBulkPacket(isDriveOnChub);
-        int flTargetPos = data.getMotorCurrentPosition(0) + tics;
-        int frTargetPos = data.getMotorCurrentPosition(1) + tics;
-        int blTargetPos = data.getMotorCurrentPosition(2) + tics;
-        int brTargetPos = data.getMotorCurrentPosition(3) + tics;
-
 
 
         OpModeWrapper currentOpMode = OpModeWrapper.currentOpMode();
@@ -247,7 +242,7 @@ public class MecDrive {
         }
         double elapsedTime = 0;
 
-        while(isFar(flTargetPos, frTargetPos, blTargetPos, brTargetPos) && currentOpMode.opModeIsActive() && elapsedTime < 5.0){
+        while(isFar(tics) && currentOpMode.opModeIsActive() && elapsedTime < 5.0){
             elapsedTime = currentOpMode.time - startTime;
             setPowerAuto(desiredVelocity, movement);
             data = robot.getBulkPacket(isDriveOnChub);
@@ -260,10 +255,6 @@ public class MecDrive {
         }
 
         brake();
-
-
-
-
     }
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
@@ -288,23 +279,12 @@ public class MecDrive {
         }
         return power;
     }
-
-
+    //random comment
     private double TIC_TOLERANCE = 25;
-    private boolean isFar(int flTargetPos, int frTargetPos, int blTargetPos, int brTargetPos){
+    private boolean isFar(int tics){
         LynxModule.BulkData data = robot.getBulkPacket(isDriveOnChub);
 
-
-            return Math.abs(flTargetPos - data.getMotorCurrentPosition(0)) > TIC_TOLERANCE && Math.abs(frTargetPos - data.getMotorCurrentPosition(1)) > TIC_TOLERANCE &&
-                    Math.abs(flTargetPos - data.getMotorCurrentPosition(2)) > TIC_TOLERANCE && Math.abs(flTargetPos - data.getMotorCurrentPosition(3)) > TIC_TOLERANCE;
-
+        return Math.abs(tics - data.getMotorCurrentPosition(0)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(1)) > TIC_TOLERANCE
+                && Math.abs(tics - data.getMotorCurrentPosition(2)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(3)) > TIC_TOLERANCE;
     }
-
-
-
-
-
-
-
-
 }
