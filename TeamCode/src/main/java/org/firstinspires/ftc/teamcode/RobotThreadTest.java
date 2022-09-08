@@ -7,15 +7,18 @@ import java.io.FileNotFoundException;
 public class RobotThreadTest extends OpModeWrapper {
 
     Robot robot;
+    MecDrive drive;
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
         robot = new Robot(hardwareMap);
+        drive = new MecDrive(hardwareMap, robot, true);
     }
 
     @Override
     protected void onStart() {
         robot.start();
+        drive.moveToPosition(new Point(1000, 1000), 12);
         while(opModeIsActive());
     }
 

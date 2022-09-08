@@ -95,10 +95,10 @@ public class MecDrive {
     }
 
 
-    double P = 0.1; //TODO starting values to be tuned with Zeiger Nichols method
-    double I = 0;
-    double D = 0;
-    double F = 0;
+    private double P = 0.1; //TODO starting values to be tuned with Zeiger Nichols method
+    private double I = 0;
+    private double D = 0;
+    private double F = 0;
 
     double integralSumLimit = 0.3;
 
