@@ -35,13 +35,13 @@ public class Robot extends Thread{
 
 
 
-    ColorRangeSensor color;
+    //ColorRangeSensor color;
     public synchronized void update(){
         chData = ch.getBulkData();
         ehData = eh.getBulkData();
         imuAngle = imu.getAngularOrientation();
 
-        rgba = color.getNormalizedColors();
+        //rgba = color.getNormalizedColors();
 
         eh.clearBulkCache();
         ch.clearBulkCache();
@@ -82,17 +82,17 @@ public class Robot extends Thread{
         imu.initialize(parameters);
 
 
-        eh = hardwareMap.get(LynxModule.class, "Expansion Hub");
+        eh = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
         ch = hardwareMap.get(LynxModule.class, "Control Hub");
 
-        ehub  = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub");
+        ehub  = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         chub  = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
 
         ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
-        color = hardwareMap.get(ColorRangeSensor.class, "Color");
-        color.setGain(COLOR_GAIN);
+        //color = hardwareMap.get(ColorRangeSensor.class, "Color");
+        //color.setGain(COLOR_GAIN);
 
 
         eh.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);

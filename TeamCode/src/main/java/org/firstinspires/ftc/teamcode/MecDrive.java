@@ -6,24 +6,28 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class MecDrive {
 
     private DcMotorEx fl, fr, bl, br;
     private Robot robot;
     private boolean isDriveOnChub = true;
     private boolean pidEnabled;
+    Telemetry telemetry;
 
     /*
     localizer -> Arm/actuator -> drive
      */
 
-    public MecDrive(HardwareMap hardwareMap, Robot robot , boolean pidEnabled){
+    public MecDrive(HardwareMap hardwareMap, Robot robot , boolean pidEnabled, Telemetry telemetry){
         fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
         fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
         br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
         this.robot = robot;
         this.pidEnabled = pidEnabled;
+        this.telemetry = telemetry;
         CorrectMotors();
     }
 
@@ -215,4 +219,92 @@ public class MecDrive {
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
+
+    public synchronized void driveAuto(double desiredVelocity, int tics, MecanumDriveTrain.MovementType movement){
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LynxModule.BulkData data = robot.getBulkPacket(isDriveOnChub);
+        int flTargetPos = data.getMotorCurrentPosition(0) + tics;
+        int frTargetPos = data.getMotorCurrentPosition(1) + tics;
+        int blTargetPos = data.getMotorCurrentPosition(2) + tics;
+        int brTargetPos = data.getMotorCurrentPosition(3) + tics;
+
+
+
+        OpModeWrapper currentOpMode = OpModeWrapper.currentOpMode();
+        double startTime = currentOpMode.time;
+
+        if(tics < 0) {
+            desiredVelocity *= -1;
+        }
+        double elapsedTime = 0;
+
+        while(isFar(flTargetPos, frTargetPos, blTargetPos, brTargetPos) && currentOpMode.opModeIsActive() && elapsedTime < 5.0){
+            elapsedTime = currentOpMode.time - startTime;
+            setPowerAuto(desiredVelocity, movement);
+            data = robot.getBulkPacket(isDriveOnChub);
+            telemetry.addData("fl ", data.getMotorCurrentPosition(0));
+            telemetry.addData("fr ", data.getMotorCurrentPosition(1));
+            telemetry.addData("bl ", data.getMotorCurrentPosition(2));
+            telemetry.addData("br ", data.getMotorCurrentPosition(3));
+            telemetry.update();
+
+        }
+
+        brake();
+
+
+
+
+    }
+
+    public void setPower(double flPow, double frPow, double blPow, double brPow) {
+        fl.setPower(-flPow);
+        fr.setPower(frPow) ;
+        bl.setPower(-blPow);
+        br.setPower(brPow);
+    }
+
+
+    public double setPowerAuto(double power, MecanumDriveTrain.MovementType movement) {
+        if(movement == MecanumDriveTrain.MovementType.STRAIGHT) {
+            setPower(power, power, power, power);
+        }else if(movement == MecanumDriveTrain.MovementType.STRAFE){
+            setPower(power, -power, -power, power);
+        }else if(movement == MecanumDriveTrain.MovementType.ROTATE){
+            setPower(power, -power, power, -power);
+        }else if(movement == MecanumDriveTrain.MovementType.LDIAGONAL){
+            setPower(power, 0, 0, power);
+        }else if(movement == MecanumDriveTrain.MovementType.RDIAGONAL){
+            setPower(0, power, power, 0);
+        }
+        return power;
+    }
+
+
+    private double TIC_TOLERANCE = 25;
+    private boolean isFar(int flTargetPos, int frTargetPos, int blTargetPos, int brTargetPos){
+        LynxModule.BulkData data = robot.getBulkPacket(isDriveOnChub);
+
+
+            return Math.abs(flTargetPos - data.getMotorCurrentPosition(0)) > TIC_TOLERANCE && Math.abs(frTargetPos - data.getMotorCurrentPosition(1)) > TIC_TOLERANCE &&
+                    Math.abs(flTargetPos - data.getMotorCurrentPosition(2)) > TIC_TOLERANCE && Math.abs(flTargetPos - data.getMotorCurrentPosition(3)) > TIC_TOLERANCE;
+
+    }
+
+
+
+
+
+
+
+
 }

@@ -12,7 +12,7 @@ public class RobotThreadTest extends OpModeWrapper {
     @Override
     protected void onInitialize() throws FileNotFoundException {
         robot = new Robot(hardwareMap);
-        drive = new MecDrive(hardwareMap, robot, true);
+        drive = new MecDrive(hardwareMap, robot, true, telemetry);
     }
 
     @Override

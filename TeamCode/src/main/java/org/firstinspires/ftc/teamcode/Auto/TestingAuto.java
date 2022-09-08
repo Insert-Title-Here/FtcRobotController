@@ -7,8 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Intake;
+import org.firstinspires.ftc.teamcode.MecDrive;
 import org.firstinspires.ftc.teamcode.MecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.Point;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Testing.RobotK;
 
 import java.io.FileNotFoundException;
@@ -18,25 +21,22 @@ public class TestingAuto extends OpModeWrapper {
 
     //RobotK robot;
     //MecanumDriveTrain drive;
-    LynxModule hub;
+    Robot robot;
+    MecDrive drive;
 
-    DcMotorEx fl, fr, bl, br;
+
 
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
+        robot = new Robot(hardwareMap);
+        drive = new MecDrive(hardwareMap, robot, true, telemetry);
         //robot = new RobotK(hardwareMap, telemetry);
         //drive = new MecanumDriveTrain(hardwareMap);
-        hub = hardwareMap.get(LynxModule.class, "Control Hub");
-        hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
 
 
 
-        fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
-        fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
-        bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
-        br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
 
 
 
@@ -46,15 +46,16 @@ public class TestingAuto extends OpModeWrapper {
 
     @Override
     protected void onStart() {
-        //robot.drive.driveAuto(0.5, 50, MecanumDriveTrain.MovementType.STRAIGHT, telemetry);
-        int[] bulkEncoders = new int[4];
 
-        goToPosition(200, 20);
+        robot.start();
+        //drive.moveToPosition(new Point(1000, 1000), 12);
+        drive.driveAuto(0.4, -1000, MecanumDriveTrain.MovementType.STRAIGHT);
+        //robot.drive.driveAuto(0.5, 50, MecanumDriveTrain.MovementType.STRAIGHT, telemetry);
+
 
         //robot.drive.driveAuto(0.5, 100, MecanumDriveTrain.MovementType.STRAIGHT);
 
         while(opModeIsActive()){
-            bulkEncoders = getEncoderValues();
 
             /*
             telemetry.addData("fl ", drive.fl.getCurrentPosition());
@@ -72,10 +73,8 @@ public class TestingAuto extends OpModeWrapper {
              */
 
 
-            telemetry.addData("fl bulk ", bulkEncoders[0]);
-            telemetry.addData("fr bulk", bulkEncoders[1]);
-            telemetry.addData("bl bulk", bulkEncoders[2]);
-            telemetry.addData("br bulk", bulkEncoders[3]);
+
+
 
             telemetry.update();
 
@@ -122,18 +121,9 @@ public class TestingAuto extends OpModeWrapper {
 
     }
 
-    public int[] getEncoderValues(){
-
-        LynxModule.BulkData data = hub.getBulkData();
-
-        int[] encoderValues = {data.getMotorCurrentPosition(0), data.getMotorCurrentPosition(1), data.getMotorCurrentPosition(2), data.getMotorCurrentPosition(3)};
-        hub.clearBulkCache();
-
-        return encoderValues;
 
 
-    }
-
+    /*
     //TODO: fix this (went the wrong way, maybe change negative to positive or vice versa velocity)
     public void goToPosition(int targetPosition, int velocity){
 
@@ -170,6 +160,8 @@ public class TestingAuto extends OpModeWrapper {
 
 
     }
+
+     */
 
 
 
