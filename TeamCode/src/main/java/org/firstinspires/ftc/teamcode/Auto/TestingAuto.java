@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Testing.RobotK;
 
 import java.io.FileNotFoundException;
 
-@Autonomous(name = "StuffAuto")
+@Autonomous(name = "Moving Auto")
 public class TestingAuto extends OpModeWrapper {
 
     Robot robot;
@@ -28,29 +28,29 @@ public class TestingAuto extends OpModeWrapper {
         robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, robot, false, telemetry);
 
+        robot.start();
+
+
     }
 
     @Override
     protected void onStart() {
 
-        robot.start();
-        drive.moveToPosition(new Point(0, 500), 10);
 
-        while(opModeIsActive()){
-/*
-            telemetry.addData("fl ", drive.fl.getCurrentPosition());
-            telemetry.addData("fr ", drive.fr.getCurrentPosition());
-            telemetry.addData("bl ", drive.bl.getCurrentPosition());
-            telemetry.addData("br ", drive.br.getCurrentPosition());
+        drive.newMoveToPosition(new Point(0, 1000), 0.5);
 
-            telemetry.addData("fl ", robot.drive.fl.getCurrentPosition());
-            telemetry.addData("fr ", robot.drive.fr.getCurrentPosition());
-            telemetry.addData("bl ", robot.drive.bl.getCurrentPosition());
-            telemetry.addData("br ", robot.drive.br.getCurrentPosition());
+        /*while(opModeIsActive()){
+            LynxModule.BulkData data = robot.getBulkPacket(true);
+
+            telemetry.addData("fl ", data.getMotorCurrentPosition(0));
+            telemetry.addData("fr ", data.getMotorCurrentPosition(1));
+            telemetry.addData("bl ", data.getMotorCurrentPosition(2));
+            telemetry.addData("br ", data.getMotorCurrentPosition(3));
+
 
             telemetry.update();
-*/
-        }
+
+        }*/
     }
 
 

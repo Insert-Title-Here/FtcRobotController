@@ -44,10 +44,10 @@ public class Intake {
 
     public void clampAndRelease(boolean toClamp){
         if (toClamp) {
-            lJoint.setPosition(0.82); //was 0.9
-            rJoint.setPosition(0.48); //was 0.1
+            //lJoint.setPosition(0.82); //was 0.9
+            rJoint.setPosition(0.6); //was 0.1
         } else {
-            lJoint.setPosition(0.87); //was 0
+            //lJoint.setPosition(0.87); //was 0
             rJoint.setPosition(0.43); //was 0.5
         }
     }

@@ -113,8 +113,16 @@ public class Robot extends Thread{
         }
     }
 
+    /*
+
     public double getDirection() {
         return imuAngle.firstAngle;
+    }
+
+     */
+
+    public double getDirection(){
+        return imu.getAngularOrientation().firstAngle;
     }
 
     public void setShouldUpdate(boolean val){
