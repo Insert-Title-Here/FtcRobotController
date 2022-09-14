@@ -57,20 +57,37 @@ public class MecDrive {
             LynxModule.BulkData data = robot.getBulkPacket(isDriveOnChub);
 
             int flPos = data.getMotorCurrentPosition(0);
-            int frPos = data.getMotorCurrentPosition(1);
+            int frPos = -1 * data.getMotorCurrentPosition(1);
             int blPos = data.getMotorCurrentPosition(2);
-            int brPos = data.getMotorCurrentPosition(3);
-            while (opModeIsRunning() && flPos < flPosition && frPos < frPosition && blPos < blPosition && brPos < brPosition) {
+            int brPos = -1 * data.getMotorCurrentPosition(3);
+            while (opModeIsRunning() && (flPos < flPosition || frPos < frPosition || blPos < blPosition || brPos < brPosition)) {
                 //setMotorVelocity(flVelocity, frVelocity, blVelocity, brVelocity);
+
+                if(flPos >= flPosition){
+                    flPower = 0;
+
+                }else if(frPos >= frPosition){
+                    frPower = 0;
+
+                }else if(blPos >= blPosition){
+                    blPower = 0;
+
+                }else if(brPos >= brPosition){
+                    brPower = 0;
+
+                }
+
                 setPower(flPower, frPower, blPower, brPower);
+
+
 
                 //setPower(0.3, 0.3, 0.3, 0.3);
                 data = robot.getBulkPacket(isDriveOnChub);
 
                 flPos = data.getMotorCurrentPosition(0);
-                frPos = data.getMotorCurrentPosition(1);
+                frPos = -1 * data.getMotorCurrentPosition(1);
                 blPos = data.getMotorCurrentPosition(2);
-                brPos = data.getMotorCurrentPosition(3);
+                brPos = -1 * data.getMotorCurrentPosition(3);
 
                 telemetry.addData("fl: ", flPos);
                 telemetry.addData("fr: ", frPos);
@@ -81,6 +98,11 @@ public class MecDrive {
                 telemetry.addData("target fr: ", frPosition);
                 telemetry.addData("target bl: ", blPosition);
                 telemetry.addData("target br: ", brPosition);
+
+                telemetry.addData("flPower: ", flPower);
+                telemetry.addData("frPower: ", frPower);
+                telemetry.addData("blPower: ", blPower);
+                telemetry.addData("brPower: ", brPower);
 
 
                 telemetry.update();
