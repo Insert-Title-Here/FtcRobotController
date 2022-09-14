@@ -37,7 +37,7 @@ public class TestingAuto extends OpModeWrapper {
     protected void onStart() {
 
 
-        drive.newMoveToPosition(new Point(0, 1000), 0.5);
+        drive.newMoveToPosition(new Point(1000, 1000), 0.5);
 
         /*while(opModeIsActive()){
             LynxModule.BulkData data = robot.getBulkPacket(true);
