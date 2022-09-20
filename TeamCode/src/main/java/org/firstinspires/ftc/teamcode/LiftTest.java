@@ -46,8 +46,8 @@ public class LiftTest extends LinearOpMode {
         goToPosition(0, 0.25);
         sleep(500);
         */
-
-        score.goToPosition(2000, 0.5);
+        // low cone, 1700 tics  ->>>>> 13, 23, 33 inch elevations
+        score.goToPosition(1700, 0.5);
         sleep(5000);
         score.goToPosition(0, 0.25);
         sleep(500);
