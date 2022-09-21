@@ -25,7 +25,7 @@ public class Claw extends LinearOpMode {
         sleep(500);
 
         while(opModeIsActive()) {
-            telemetry.addData("servoPosition", intake.claw.getPosition());
+            telemetry.addData("servoPosition", intake.claw.getPosition()); // expected pos.
             telemetry.update();
         }
     }
