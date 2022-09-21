@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
@@ -14,6 +15,7 @@ public class FirstTeleOp extends LinearOpMode {
     MecanumDrive drive;
     //ScoringSystem score;
     CRServo liftMotor;
+    Servo claw;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.45;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -25,7 +27,12 @@ public class FirstTeleOp extends LinearOpMode {
 
         drive = new MecanumDrive(hardwareMap, telemetry);
         liftMotor = hardwareMap.get(CRServo.class, "liftMotor");
+        claw = hardwareMap.get(Servo.class, "claw");
+
+
         //score = new ScoringSystem(hardwareMap);
+        claw.setPosition(0.23);
+
 
 
         waitForStart();
@@ -48,6 +55,13 @@ public class FirstTeleOp extends LinearOpMode {
                 liftMotor.setPower(-gamepad1.left_trigger / 2.3);
             }else{
                 liftMotor.setPower(0);
+            }
+
+            if(gamepad1.a){
+                claw.setPosition(0.14);
+
+            }else if(gamepad1.b){
+                claw.setPosition(0.23);
             }
 
         }
