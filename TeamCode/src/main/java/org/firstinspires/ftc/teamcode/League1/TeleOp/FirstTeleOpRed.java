@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.TeleOp;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -52,16 +53,23 @@ public class FirstTeleOpRed extends CommandOpMode {
 
         //TODO: Check all the commands and command groups
         //Close Grabber and Lift up linkage
-        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new GrabAndLinkageUpGroup(lift, constants, hardwareMap, robot));
+        //driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new GrabAndLinkageUpGroup(lift, constants, hardwareMap, robot));
 
         //Lift up slides to medium height
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new LiftCommand(lift, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.MEDIUM, 0.5));
+        //driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new LiftCommand(lift, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.MEDIUM, 0.5));
 
         //Lift up slides to height height
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new LiftCommand(lift, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.HIGH, 0.5));
+        //driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new LiftCommand(lift, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.HIGH, 0.5));
 
         //Slides back to zero, open grabber and linkage goes down
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ResetScoringGroup(lift, constants, hardwareMap, robot));
+        //driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ResetScoringGroup(lift, constants, hardwareMap, robot));
+
+        //Testing value for up linkage
+        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(() -> lift.setLinkagePosition(1)));
+        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(() -> lift.setGrabberPosition(0)));
+        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(() -> lift.setGrabberPosition(1)));
+        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(() -> lift.setLinkagePosition(0)));
+
 
 
         //Initializing objects
