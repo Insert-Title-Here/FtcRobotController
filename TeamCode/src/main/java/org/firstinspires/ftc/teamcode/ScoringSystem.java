@@ -2,14 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class ScoringSystem {
     DcMotor liftMotor;
-    //Servo claw;
+    Servo claw;
 
     public ScoringSystem(HardwareMap hardwareMap) {
         /* the below is init*/
-        //claw = hardwareMap.get(Servo.class, "claw");
+        claw = hardwareMap.get(Servo.class, "claw");
         liftMotor = hardwareMap.get(DcMotor.class, "motor");
 
         // reset encoder's tics for liftMotor
@@ -46,7 +47,7 @@ public class ScoringSystem {
     }
 
     public void setClawPosition(double position) {
-        //claw.setPosition(position);
+        claw.setPosition(position);
     }
 
 }
