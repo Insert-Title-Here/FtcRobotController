@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Common;
 
 /**
  * Represents an immutable 2-dimensional vector.

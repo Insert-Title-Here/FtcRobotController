@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ScoringSystem {
-    DcMotor liftMotor;
-    Servo claw;
+    private DcMotor liftMotor;
+    private Servo claw;
 
     public ScoringSystem(HardwareMap hardwareMap) {
         /* the below is init*/
@@ -28,6 +28,9 @@ public class ScoringSystem {
 
     // goes to given tics at given power -> max tics for arm raising = 4906 -> go for 4800
     public void goToPosition(int tics, double power) {
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         int motorPosition = liftMotor.getCurrentPosition();
 
         if (motorPosition > tics) {
@@ -52,6 +55,14 @@ public class ScoringSystem {
 
     public void setClawPosition(double position) {
         claw.setPosition(position);
+    }
+
+    public int getEncoderPosition() {
+        return liftMotor.getCurrentPosition();
+    }
+
+    public double getClawPosition() {
+        return claw.getPosition();
     }
 
 }

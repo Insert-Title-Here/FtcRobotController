@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 //use servo programmer to find out 0 and 1 position
 
-@TeleOp
-public class Claw extends LinearOpMode {
+@Autonomous
+public class ClawTest extends LinearOpMode {
     ScoringSystem intake;
 
     @Override
@@ -25,7 +27,7 @@ public class Claw extends LinearOpMode {
         sleep(500);
 
         while(opModeIsActive()) {
-            telemetry.addData("servoPosition", intake.claw.getPosition()); // expected pos.
+            telemetry.addData("servoPosition", intake.getClawPosition()); // expected pos.
             telemetry.update();
         }
     }

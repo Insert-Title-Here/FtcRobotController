@@ -1,13 +1,17 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
+@TeleOp
 public class FirstTeleOp extends LinearOpMode {
 
     //TODO: change names if you want to
     MecanumDrive drive;
-    ScoringSystem score;
+    //ScoringSystem score;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.45;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -17,8 +21,8 @@ public class FirstTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        drive = new MecanumDrive(hardwareMap);
-        score = new ScoringSystem(hardwareMap);
+        drive = new MecanumDrive(hardwareMap, telemetry);
+        //score = new ScoringSystem(hardwareMap);
 
 
         waitForStart();
@@ -38,7 +42,7 @@ public class FirstTeleOp extends LinearOpMode {
         }
 
         drive.setPower(0, 0, 0, 0);
-        score.setPower(0);
+        //score.setPower(0);
 
         //TODO:figure out this value
         //score.setClawPosition();

@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 /* @TeleOp for driver controlled, @Autonomous for autonomous period */
 @Autonomous
@@ -53,14 +55,14 @@ public class LiftTest extends LinearOpMode {
         sleep(500);
         // runs until the end of the match (driver presses STOP)
         while(opModeIsActive()){
-            telemetry.addData("motorPosition", score.liftMotor.getCurrentPosition());
+            telemetry.addData("motorPosition", score.getEncoderPosition());
             telemetry.update();
             // generally
 
         }
 
         //liftMotor.setPower(0);
-        score.liftMotor.setPower(0);
+        score.setPower(0);
 
 
 

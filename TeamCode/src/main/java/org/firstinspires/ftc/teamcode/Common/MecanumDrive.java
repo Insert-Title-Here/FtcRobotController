@@ -1,18 +1,22 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Common;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
-
-    public MecanumDrive(HardwareMap hardwareMap){
+    Telemetry telemetry;
+    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry){
+        this.telemetry = telemetry;
 
         //TODO: Change the deviceName for each
-        fl = hardwareMap.get(DcMotor.class, "");
-        fr = hardwareMap.get(DcMotor.class, "");
-        bl = hardwareMap.get(DcMotor.class, "");
-        br = hardwareMap.get(DcMotor.class, "");
+        fl = hardwareMap.get(DcMotor.class, "fl");
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        br = hardwareMap.get(DcMotor.class, "br");
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -29,6 +33,9 @@ public class MecanumDrive {
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
@@ -54,12 +61,36 @@ public class MecanumDrive {
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
         fl.setPower(-flPow);
-        fr.setPower(-frPow) ;
+        fr.setPower(-frPow);
         bl.setPower(blPow);
         br.setPower(brPow);
     }
 
+    public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics) {
+        //fl fr bl br
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        // won't work for turns, only forward and backward
+        int position = (int)(fl.getCurrentPosition() + fr.getCurrentPosition() + bl.getCurrentPosition() +
+                br.getCurrentPosition()) / 4;
+
+        telemetry.addData("motorPosition", position);
+        telemetry.update();
+
+        while (Math.abs(position - tics) > 0) {
+            setPower(flPow, frPow, blPow, brPow);
+        }
+
+        setPower(0, 0, 0, 0);
+
+    }
 
 }
