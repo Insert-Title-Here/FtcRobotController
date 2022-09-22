@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
 @TeleOp
@@ -13,9 +14,8 @@ public class FirstTeleOp extends LinearOpMode {
 
     //TODO: change names if you want to
     MecanumDrive drive;
-    //ScoringSystem score;
-    CRServo liftMotor;
-    Servo claw;
+    ScoringSystem score;
+
 
     private final double NORMAL_LINEAR_MODIFIER = 0.45;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -26,12 +26,13 @@ public class FirstTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         drive = new MecanumDrive(hardwareMap, telemetry);
-        liftMotor = hardwareMap.get(CRServo.class, "liftMotor");
-        claw = hardwareMap.get(Servo.class, "claw");
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
 
         //score = new ScoringSystem(hardwareMap);
-        claw.setPosition(0.23);
+        score.setClawPosition(0.23);
 
 
 
@@ -39,7 +40,8 @@ public class FirstTeleOp extends LinearOpMode {
 
 
         while(opModeIsActive()){
-
+            telemetry.addData("servoPosition", drive.getPosition()); // expected pos.
+            telemetry.update();
             //TODO: Decide if you want sprint capability
             if (gamepad1.right_bumper) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
@@ -50,18 +52,21 @@ public class FirstTeleOp extends LinearOpMode {
             }
 
             if(gamepad1.right_trigger > 0.1){
-                liftMotor.setPower(gamepad1.right_trigger / 2.3);
+                score.setPower(gamepad1.right_trigger / 2.3);
             }else if(gamepad1.left_trigger > 0.1){
-                liftMotor.setPower(-gamepad1.left_trigger / 2.3);
+                score.setPower(-gamepad1.left_trigger / 2.3);
             }else{
-                liftMotor.setPower(0);
+                score.setPower(0);
             }
 
             if(gamepad1.a){
-                claw.setPosition(0.14);
+                score.setClawPosition(0.14);
 
             }else if(gamepad1.b){
-                claw.setPosition(0.23);
+                score.setClawPosition(0.23);
+            }
+            if(gamepad1.x){
+                drive.resetEncoders();
             }
 
         }
