@@ -28,7 +28,7 @@ public class ScoringSystem {
 
     //TODO: See if this is what we are actually using
     DcMotorEx rLift, lLift;
-    Servo grabber, /*lLinkage,*/ linkage; //dont know whether there are two linkage servos or one
+    Servo grabber, linkage; //dont know whether there are two linkage servos or one
     private Robot robot;
 
 
@@ -83,6 +83,39 @@ public class ScoringSystem {
         linkage = hardwareMap.get(Servo.class, "Linkage");
 
         grabber = hardwareMap.get(Servo.class, "Grabber");
+
+    }
+
+    public ScoringSystem(HardwareMap hardwareMap, Constants constants, boolean pid){
+        this.constants = constants;
+        rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
+        lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
+
+        rLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        rLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //TODO: Initialize Servos to correct position
+
+
+        pidEnabled = pid;
+
+
+
+
+        correctMotors();
+
+
+        //lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
+        linkage = hardwareMap.get(Servo.class, "Linkage");
+
+        grabber = hardwareMap.get(Servo.class, "Grabber");
+
+        linkage.setPosition(constants.linkageDown);
+        grabber.setPosition(constants.open);
+
 
     }
 
@@ -243,8 +276,16 @@ public class ScoringSystem {
 
     }
 
-    private void setPower(double power){
+    public void setPower(double power){
         rLift.setPower(power);
+        lLift.setPower(-power);
+    }
+
+    public void setrLiftPower(double power){
+        rLift.setPower(power);
+    }
+
+    public void setlLiftPower(double power){
         lLift.setPower(power);
     }
 
@@ -265,6 +306,15 @@ public class ScoringSystem {
         linkage.setPosition(position);
     }
 
+    public void linkageAutomated(boolean up){
+        if(up){
+            setLinkagePosition(constants.linkageUp);
+        }else{
+            setLinkagePosition(constants.linkageDown);
+
+        }
+    }
+
     public void linkageUpAndDown(boolean up){
         if(up) {
             setLinkagePosition(constants.linkageUp);
@@ -273,9 +323,13 @@ public class ScoringSystem {
         }
     }
 
+
+
+
     public void setGrabberPosition(double position){
         grabber.setPosition(position);
     }
+
 
     public void grabberOpenAndClose(boolean close){
         if(close) {

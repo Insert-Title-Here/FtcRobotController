@@ -94,7 +94,7 @@ public class FirstTeleOpRed extends CommandOpMode {
 
 
         //Drive code
-        if (gamepad1.right_bumper) {
+        /*if (gamepad1.right_bumper) {
             drive.setPower(new Vector2D(driver.getLeftX() * SPRINT_LINEAR_MODIFIER, driver.getLeftY() * SPRINT_LINEAR_MODIFIER), driver.getRightX() * SPRINT_ROTATIONAL_MODIFIER, false);
         } else {
             drive.setPower(new Vector2D(driver.getLeftX() * NORMAL_LINEAR_MODIFIER, driver.getLeftY() * NORMAL_LINEAR_MODIFIER), driver.getRightX() * NORMAL_ROTATIONAL_MODIFIER, false);
@@ -105,7 +105,7 @@ public class FirstTeleOpRed extends CommandOpMode {
             schedule(new GrabAndLinkageUpGroup(lift, constants, hardwareMap, robot));
 
         }
-
+*/
 
 
         telemetry.update();
