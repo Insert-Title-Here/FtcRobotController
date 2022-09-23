@@ -17,8 +17,8 @@ public class FirstTeleOp extends LinearOpMode {
     ScoringSystem score;
 
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.45;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
+    private final double NORMAL_LINEAR_MODIFIER = 0.7;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.7;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
@@ -33,6 +33,8 @@ public class FirstTeleOp extends LinearOpMode {
 
 
         //score = new ScoringSystem(hardwareMap);
+
+        //Open
         score.setClawPosition(0.23);
 
 
@@ -41,6 +43,40 @@ public class FirstTeleOp extends LinearOpMode {
 
 
         while(opModeIsActive()){
+
+
+            //TODO: Decide if you want sprint capability
+            if (gamepad1.right_bumper) { // replace this with a button for sprint
+                drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+            }
+            else {
+                drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+            }
+
+            if(gamepad1.right_trigger > 0.1){
+                score.setPower(gamepad1.right_trigger);
+            }else if(gamepad1.left_trigger > 0.1){
+                score.setPower(-gamepad1.left_trigger);
+            }else{
+                score.setPower(0);
+            }
+
+            if(gamepad1.a){
+                //Closed
+                score.setClawPosition(0.14);
+
+
+
+            }else if(gamepad1.b){
+                //Open
+                score.setClawPosition(0.23);
+            }
+            if(gamepad1.x){
+                drive.resetEncoders();
+            }
+
+
+
             telemetry.addData("flPos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());
             telemetry.addData("blPos", drive.getBLPosition());
@@ -48,39 +84,12 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("servoPosition", drive.getPosition()); // expected pos.
             telemetry.update();
-            //TODO: Decide if you want sprint capability
-            if (gamepad1.right_bumper) { // replace this with a button for sprint
-                drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-            }
 
-            else {
-                drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
-            }
-
-            if(gamepad1.right_trigger > 0.1){
-                score.setPower(gamepad1.right_trigger / 2.3);
-            }else if(gamepad1.left_trigger > 0.1){
-                score.setPower(-gamepad1.left_trigger / 2.3);
-            }else{
-                score.setPower(0);
-            }
-
-            if(gamepad1.a){
-                score.setClawPosition(0.14);
-
-            }else if(gamepad1.b){
-                score.setClawPosition(0.23);
-            }
-            if(gamepad1.x){
-                drive.resetEncoders();
-            }
 
         }
 
         drive.setPower(0, 0, 0, 0);
-        //score.setPower(0);
-
-        //TODO:figure out this value
-        //score.setClawPosition();
+        score.setPower(0);
+        score.setClawPosition(0.23);
     }
 }
