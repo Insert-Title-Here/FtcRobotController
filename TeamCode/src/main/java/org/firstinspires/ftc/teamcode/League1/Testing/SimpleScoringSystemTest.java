@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 
 
+//TODO: figure out bulk read
+
 @TeleOp
 public class SimpleScoringSystemTest extends LinearOpMode {
 
@@ -36,14 +38,18 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
             if(gamepad1.dpad_down){
                 //score.linkageAutomated(false);
-                score.setLinkagePosition(0);
+                score.setLinkagePosition(0.05);
 
             }
 
             if(gamepad1.dpad_up){
                 //score.linkageAutomated(true);
-                score.setLinkagePosition(1);
+                score.setLinkagePosition(0.42);
 
+            }
+
+            if(gamepad1.dpad_right){
+                score.setLinkagePosition(0.95);
             }
 
             if(gamepad1.a){
@@ -53,6 +59,23 @@ public class SimpleScoringSystemTest extends LinearOpMode {
             if(gamepad1.b){
                 score.grabberOpenAndClose(true);
             }
+
+            if(gamepad1.x){
+                score.reset();
+            }
+
+            if(gamepad1.y){
+                score.moveToPosition(550, 0.5);
+            }
+
+            if(!score.isBusy()){
+                score.setPower(0.04);
+
+            }
+
+            telemetry.addData("rMotor", score.getEncoderPosition(true));
+            telemetry.addData("lMotor", score.getEncoderPosition(false));
+            telemetry.update();
 
         }
     }

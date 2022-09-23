@@ -91,8 +91,6 @@ public class ScoringSystem {
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
 
-        rLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         rLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -131,7 +129,8 @@ public class ScoringSystem {
 
             //TODO: figure out if we need to negate either of them
             int rLiftPos = data.getMotorCurrentPosition(0);
-            int lLiftPos = data.getMotorCurrentPosition(1);
+            int lLiftPos = data.getMotorCurrentPosition(1) * -1;
+
 
 
             //Dont know if need the != condition
@@ -143,7 +142,7 @@ public class ScoringSystem {
 
                     //TODO: figure out if we need to negate either of them
                     rLiftPos = data.getMotorCurrentPosition(0);
-                    lLiftPos = data.getMotorCurrentPosition(1);
+                    lLiftPos = data.getMotorCurrentPosition(1) * -1;
 
                     setPower(power);
 
@@ -321,6 +320,28 @@ public class ScoringSystem {
         }else{
             setLinkagePosition(constants.linkageDown);
         }
+    }
+
+    public int getEncoderPosition(boolean right){
+        if(right){
+            return rLift.getCurrentPosition();
+        }else{
+            return lLift.getCurrentPosition();
+
+        }
+    }
+
+    public void reset(){
+        lLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    }
+
+    public boolean isBusy(){
+        return rLift.isBusy() && lLift.isBusy();
     }
 
 
