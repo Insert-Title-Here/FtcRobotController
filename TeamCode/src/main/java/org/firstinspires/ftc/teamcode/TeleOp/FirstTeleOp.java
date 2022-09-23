@@ -76,22 +76,28 @@ public class FirstTeleOp extends LinearOpMode {
             }
 
             // reset   gamepad1.dpad_down
-            // low cone, 13 in, -2094  gamepad1.dpad_left
-            // medium cone, 23 in, -3483 gamepad1.dpad_up
-            // high cone, 33 in, -4911 gamepad1.dpad_right
+            // low cone, 13 in, 2094  gamepad1.dpad_left
+            // medium cone, 23 in, 3483 gamepad1.dpad_up
+            // high cone, 33 in, 4911 gamepad1.dpad_right
 
             if(gamepad1.dpad_down) {
                 //reset
-                score.goToPosition(0, 0.5);
-            } else if (gamepad1.dpad_left) {
+                score.goToPosition(0, 1);
+            }
+
+            if (gamepad1.dpad_left) {
                 //low cone
-                score.goToPosition(-2094, 0.5);
-            } else if (gamepad1.dpad_up) {
+                score.goToPosition(2100, 1);
+            }
+
+            if (gamepad1.dpad_up) {
                 //medium cone
-                score.goToPosition(-3483, 0.5);
-            } else if (gamepad1.dpad_right) {
+                score.goToPosition(3500, 1);
+            }
+
+            if (gamepad1.dpad_right) {
                 //high cone
-                score.goToPosition(-4911, 0.5);
+                score.goToPosition(4800, 1);
             }
 
             telemetry.addData("flPos", drive.getFLPosition());
