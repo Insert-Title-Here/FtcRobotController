@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -35,8 +33,8 @@ public class FirstTeleOp extends LinearOpMode {
         //score = new ScoringSystem(hardwareMap);
 
         //Open
-        //score.setClawPosition(1);
-        //score.setClawPosition(0.54);
+        score.setClawPosition(0.9);
+
 
 
         waitForStart();
@@ -63,21 +61,38 @@ public class FirstTeleOp extends LinearOpMode {
 
             if(gamepad1.b){
                 //Closed
-                score.setClawPosition(0.56);
+                score.setClawPosition(0.4);
 
 
 
 
             }else if(gamepad1.x){
                 //Open
-                score.setClawPosition(1);
+                score.setClawPosition(0.9);
 
             }
             if(gamepad1.a){
                 drive.resetEncoders();
             }
 
+            // reset   gamepad1.dpad_down
+            // low cone, 13 in, -2094  gamepad1.dpad_left
+            // medium cone, 23 in, -3483 gamepad1.dpad_up
+            // high cone, 33 in, -4911 gamepad1.dpad_right
 
+            if(gamepad1.dpad_down) {
+                //reset
+                score.goToPosition(0, 0.5);
+            } else if (gamepad1.dpad_left) {
+                //low cone
+                score.goToPosition(-2094, 0.5);
+            } else if (gamepad1.dpad_up) {
+                //medium cone
+                score.goToPosition(-3483, 0.5);
+            } else if (gamepad1.dpad_right) {
+                //high cone
+                score.goToPosition(-4911, 0.5);
+            }
 
             telemetry.addData("flPos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());
@@ -92,6 +107,6 @@ public class FirstTeleOp extends LinearOpMode {
 
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
-        score.setClawPosition(0.23);
+        score.setClawPosition(0.9);
     }
 }
