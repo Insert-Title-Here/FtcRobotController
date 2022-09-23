@@ -61,17 +61,17 @@ public class FirstTeleOp extends LinearOpMode {
                 score.setPower(0);
             }
 
-            if(gamepad1.a){
+            if(gamepad1.b){
                 //Closed
                 score.setClawPosition(0.14);
 
 
 
-            }else if(gamepad1.b){
+            }else if(gamepad1.x){
                 //Open
                 score.setClawPosition(0.23);
             }
-            if(gamepad1.x){
+            if(gamepad1.a){
                 drive.resetEncoders();
             }
 
