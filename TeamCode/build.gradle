@@ -25,6 +25,8 @@ dependencies {
     implementation 'org.openftc:rev-extensions-2:1.2'
     implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
     implementation 'org.ftclib.ftclib:core:2.0.1' // core
+    implementation 'org.openftc:easyopencv:1.5.2'
+
 
 
 

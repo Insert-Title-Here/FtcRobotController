@@ -12,7 +12,7 @@ public class ServoTester extends OpModeWrapper {
     Servo servo;
     @Override
     protected void onInitialize() throws FileNotFoundException {
-        servo = hardwareMap.get(Servo.class, "servo");
+        servo = hardwareMap.get(Servo.class, "Linkage");
         servo.setPosition(0);
 
 
@@ -25,6 +25,10 @@ public class ServoTester extends OpModeWrapper {
 
 
         servo.setPosition(1);
+        sleep(4000);
+        servo.setPosition(0.1);
+        sleep(4000);
+        servo.setPosition(0);
         sleep(4000);
         
     }
