@@ -26,6 +26,7 @@ public class FirstTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         drive = new MecanumDrive(hardwareMap, telemetry);
+        score = new ScoringSystem(hardwareMap);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -40,6 +41,11 @@ public class FirstTeleOp extends LinearOpMode {
 
 
         while(opModeIsActive()){
+            telemetry.addData("flPos", drive.getFLPosition());
+            telemetry.addData("frPos", drive.getFRPosition());
+            telemetry.addData("blPos", drive.getBLPosition());
+            telemetry.addData("brPos", drive.getBRPosition());
+            telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("servoPosition", drive.getPosition()); // expected pos.
             telemetry.update();
             //TODO: Decide if you want sprint capability

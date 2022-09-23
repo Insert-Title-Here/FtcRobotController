@@ -39,6 +39,26 @@ public class MecanumDrive {
 
     }
 
+    public int getFLPosition(){
+        return fl.getCurrentPosition();
+    }
+
+    public int getFRPosition(){
+        return fl.getCurrentPosition();
+
+    }
+
+    public int getBLPosition(){
+        return fl.getCurrentPosition();
+
+    }
+
+    public int getBRPosition(){
+        return fl.getCurrentPosition();
+
+    }
+
+
     public void setPower(Vector2D velocity, double turnValue, boolean isSwapped){
         turnValue = -turnValue;
         double direction =  velocity.getDirection();
