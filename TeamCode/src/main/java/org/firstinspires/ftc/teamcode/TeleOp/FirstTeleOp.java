@@ -17,8 +17,8 @@ public class FirstTeleOp extends LinearOpMode {
     ScoringSystem score;
 
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.7;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.7;
+    private final double NORMAL_LINEAR_MODIFIER = 0.6;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.6;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
@@ -35,8 +35,8 @@ public class FirstTeleOp extends LinearOpMode {
         //score = new ScoringSystem(hardwareMap);
 
         //Open
-        score.setClawPosition(0.23);
-
+        //score.setClawPosition(1);
+        //score.setClawPosition(0.54);
 
 
         waitForStart();
@@ -63,13 +63,15 @@ public class FirstTeleOp extends LinearOpMode {
 
             if(gamepad1.b){
                 //Closed
-                score.setClawPosition(0.14);
+                score.setClawPosition(0.56);
+
 
 
 
             }else if(gamepad1.x){
                 //Open
-                score.setClawPosition(0.23);
+                score.setClawPosition(1);
+
             }
             if(gamepad1.a){
                 drive.resetEncoders();
