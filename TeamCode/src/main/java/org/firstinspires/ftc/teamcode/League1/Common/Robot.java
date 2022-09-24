@@ -87,17 +87,17 @@ public class Robot extends Thread{
         eh = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
         ch = hardwareMap.get(LynxModule.class, "Control Hub");
 
-        ehub  = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
-        chub  = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
+        //ehub  = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        //chub  = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
 
-        ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
-        chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
+        //ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
+        //chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
-        grabberColor = hardwareMap.get(ColorRangeSensor.class, "Color");
-        grabberColor.setGain(COLOR_GAIN);
+        //grabberColor = hardwareMap.get(ColorRangeSensor.class, "Color");
+        //grabberColor.setGain(COLOR_GAIN);
 
-        driveColor = hardwareMap.get(ColorRangeSensor.class, "Color");
-        driveColor.setGain(COLOR_GAIN);
+        //driveColor = hardwareMap.get(ColorRangeSensor.class, "Color");
+        //driveColor.setGain(COLOR_GAIN);
 
 
         eh.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
