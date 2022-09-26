@@ -19,12 +19,12 @@ public class Robot extends Thread{
 
 
     private volatile LynxModule.BulkData ehData, chData;
-    private volatile NormalizedRGBA grabberRGBA, driveRGBA;
+    //private volatile NormalizedRGBA grabberRGBA, driveRGBA;
     private volatile Orientation imuAngle;
 
     private LynxModule ch, eh;
     private ExpansionHubEx ehub, chub;
-    private ColorRangeSensor grabberColor, driveColor;
+    //private ColorRangeSensor grabberColor, driveColor;
     private BNO055IMU imu;
 
     AtomicBoolean shouldUpdate;
@@ -42,8 +42,8 @@ public class Robot extends Thread{
         ehData = eh.getBulkData();
         imuAngle = imu.getAngularOrientation();
 
-        grabberRGBA = grabberColor.getNormalizedColors();
-        driveRGBA = driveColor.getNormalizedColors();
+        //grabberRGBA = grabberColor.getNormalizedColors();
+        //driveRGBA = driveColor.getNormalizedColors();
 
         eh.clearBulkCache();
         ch.clearBulkCache();
@@ -109,15 +109,16 @@ public class Robot extends Thread{
         controlProcessRunning = new AtomicBoolean(true);
     }
 
+    /*
     public NormalizedRGBA getRGBA(boolean grabber){
         if(grabber){
-            return grabberRGBA;
+            //return grabberRGBA;
         }else{
-            return driveRGBA;
+            //return driveRGBA;
         }
     }
 
-
+*/
     public LynxModule.BulkData getBulkPacket(boolean chub){
         if(chub){
             return chData;

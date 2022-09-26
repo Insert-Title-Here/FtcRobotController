@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Testing;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -29,6 +30,8 @@ public class DriveTest extends LinearOpMode {
         robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, robot, false, telemetry);
 
+        robot.start();
+
 
         waitForStart();
 
@@ -39,6 +42,17 @@ public class DriveTest extends LinearOpMode {
             } else {
             drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
+
+            LynxModule.BulkData data = robot.getBulkPacket(true);
+
+
+
+            telemetry.addData("flPos: ", data.getMotorCurrentPosition(0));
+            telemetry.addData("frPos: ", data.getMotorCurrentPosition(1));
+            telemetry.addData("blPos: ", data.getMotorCurrentPosition(2));
+            telemetry.addData("brPos: ", data.getMotorCurrentPosition(3));
+            telemetry.update();
+
         }
     }
 }

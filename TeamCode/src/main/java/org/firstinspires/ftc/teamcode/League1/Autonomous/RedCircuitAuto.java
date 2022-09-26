@@ -33,8 +33,8 @@ public class RedCircuitAuto extends OpModeWrapper {
 
     @Override
     protected void onStart() {
-        drive.rotate(Math.PI/2, 0.2);
-        drive.newMoveToPosition(new Point(0, -1000), 0.5);
+        //drive.rotate(Math.PI/2, 0.2);
+        drive.newMoveToPosition(new Point(0, 250), 0.5);
         //drive.setPower(-0.2, -0.2, -0.2, -0.2);
 
        /* while(opModeIsActive()){
