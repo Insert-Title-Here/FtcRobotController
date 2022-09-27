@@ -15,8 +15,8 @@ public class FirstTeleOp extends LinearOpMode {
     ScoringSystem score;
 
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.6;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.6;
+    private final double NORMAL_LINEAR_MODIFIER = 0.5;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
@@ -64,7 +64,7 @@ public class FirstTeleOp extends LinearOpMode {
                 score.setClawPosition(0.4);
 
 
-
+            //2220
 
             }else if(gamepad1.x){
                 //Open

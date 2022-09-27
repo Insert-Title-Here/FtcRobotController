@@ -44,17 +44,17 @@ public class MecanumDrive {
     }
 
     public int getFRPosition(){
-        return fl.getCurrentPosition();
+        return fr.getCurrentPosition();
 
     }
 
     public int getBLPosition(){
-        return fl.getCurrentPosition();
+        return bl.getCurrentPosition();
 
     }
 
     public int getBRPosition(){
-        return fl.getCurrentPosition();
+        return br.getCurrentPosition();
 
     }
 
@@ -125,6 +125,7 @@ public class MecanumDrive {
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     //Method used for testing purposes
+
     public int getPosition(){
         int position = (int)(fl.getCurrentPosition() + fr.getCurrentPosition() + bl.getCurrentPosition() +
                 br.getCurrentPosition()) / 4;

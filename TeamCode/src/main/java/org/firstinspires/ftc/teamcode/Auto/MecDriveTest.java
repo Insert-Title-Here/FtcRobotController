@@ -5,10 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 @Autonomous
 public class MecDriveTest extends LinearOpMode {
     MecanumDrive drive;
+    ScoringSystem score;
     int parkLocation;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,8 +49,19 @@ public class MecDriveTest extends LinearOpMode {
 
         // Camera checks sleeve...stores parking location??
         waitForStart();
+        //close claw
+        //score.setClawPosition(0.4);
+        //lift claw a little bit
+        score.goToPosition(30, 1);
+        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, 130);
+        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, 640);
+        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, 1100);
+        drive.goToPosition(0.3, -0.3, 0.3, -0.3, 590);
 
-        drive.goToPosition(0, 0.3, 0.3, 0, 4000);
+
+
+        sleep(50);
+
        /*
         drive.goToPosition(0, 0, 0, 0, 0);
         drive.goToPosition(0, 0, 0, 0, 0);
