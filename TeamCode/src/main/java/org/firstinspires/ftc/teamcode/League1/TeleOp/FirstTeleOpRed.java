@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.LiftCommand;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.GrabAndLinkageUpGroup;
+import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.LinkageDown;
+import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.LinkageUp;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.ResetScoringGroup;
 
 //TODO: FIX THIS
@@ -25,8 +27,8 @@ import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.ResetScoringGr
 @TeleOp
 public class FirstTeleOpRed extends CommandOpMode {
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.8;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.8;
+    private final double NORMAL_LINEAR_MODIFIER = 0.5;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
@@ -65,10 +67,10 @@ public class FirstTeleOpRed extends CommandOpMode {
         //driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ResetScoringGroup(lift, constants, hardwareMap, robot));
 
         //Testing value for up linkage
-        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(() -> lift.setLinkagePosition(1)));
-        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(() -> lift.setGrabberPosition(0)));
-        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(() -> lift.setGrabberPosition(1)));
-        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(() -> lift.setLinkagePosition(0)));
+        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new LinkageUp(lift));
+        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new LinkageDown(lift));
+        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(() -> lift.grabberOpenAndClose(true)));
+        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(() -> lift.grabberOpenAndClose(false)));
 
 
 
@@ -80,8 +82,8 @@ public class FirstTeleOpRed extends CommandOpMode {
         endgameSystem = new EndgameSystems(hardwareMap);
 
 
-        //TODO: Fix this
-        lift.setLinkagePosition(0.35);
+        //TODO: Fix this (wont need this if we have mechanical rest)
+        //lift.setLinkagePosition(0.05);
 
     }
 
@@ -94,18 +96,19 @@ public class FirstTeleOpRed extends CommandOpMode {
 
 
         //Drive code
-        /*if (gamepad1.right_bumper) {
+        if (gamepad1.right_bumper) {
             drive.setPower(new Vector2D(driver.getLeftX() * SPRINT_LINEAR_MODIFIER, driver.getLeftY() * SPRINT_LINEAR_MODIFIER), driver.getRightX() * SPRINT_ROTATIONAL_MODIFIER, false);
         } else {
             drive.setPower(new Vector2D(driver.getLeftX() * NORMAL_LINEAR_MODIFIER, driver.getLeftY() * NORMAL_LINEAR_MODIFIER), driver.getRightX() * NORMAL_ROTATIONAL_MODIFIER, false);
         }
 
+        /*
         //TODO:Tune this value later
         if(robot.getRGBA(true).red > 500){
             schedule(new GrabAndLinkageUpGroup(lift, constants, hardwareMap, robot));
 
         }
-*/
+        */
 
 
         telemetry.update();

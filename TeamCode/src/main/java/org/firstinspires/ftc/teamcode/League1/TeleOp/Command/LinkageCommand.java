@@ -23,7 +23,7 @@ public class LinkageCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        score.linkageUpAndDown(up);
+        score.setLinkagePosition(1);
     }
 
     @Override
