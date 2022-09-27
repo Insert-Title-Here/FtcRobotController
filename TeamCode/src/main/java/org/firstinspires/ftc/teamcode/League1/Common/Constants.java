@@ -12,8 +12,8 @@ public class Constants {
     public static final double linkageUp = 0;
 
     //Grabber Positions (tuned)
-    public static final double grabbing = 1;
-    public static final double open = 0;
+    public static final double grabbing = 0;
+    public static final double open = 0.75;
 
 
 }

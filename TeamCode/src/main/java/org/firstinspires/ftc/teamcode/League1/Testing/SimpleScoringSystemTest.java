@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
+import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 
 
@@ -13,19 +15,38 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 @TeleOp
 public class SimpleScoringSystemTest extends LinearOpMode {
 
+    private final double NORMAL_LINEAR_MODIFIER = 0.5;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
+    private final double SPRINT_LINEAR_MODIFIER = 1;
+    private final double SPRINT_ROTATIONAL_MODIFIER = 1;
+
+
     ScoringSystem score;
     Constants constants;
+    Robot robot;
+    MecDrive drive;
 
     @Override
     public void runOpMode() throws InterruptedException {
         constants = new Constants();
         score = new ScoringSystem(hardwareMap,constants, false);
+        robot = new Robot(hardwareMap);
+        drive = new MecDrive(hardwareMap, robot, false, telemetry);
+
 
 
         waitForStart();
 
         while(opModeIsActive()){
 
+            if (gamepad1.right_bumper) {
+                drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+            } else {
+                drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+            }
+
+
+            /*
             if(gamepad1.right_trigger > 0.1){
                 score.setPower(gamepad1.right_trigger);
 
@@ -34,7 +55,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
             }else{
                 score.setPower(0);
             }
-
+*/
 
             if(gamepad1.dpad_down){
                 //score.linkageAutomated(false);
@@ -42,13 +63,13 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
             }
 
-            if(gamepad1.dpad_up){
+            if(gamepad1.dpad_right){
                 //score.linkageAutomated(true);
                 score.setLinkagePosition(0.42);
 
             }
 
-            if(gamepad1.dpad_right){
+            if(gamepad1.dpad_up){
                 score.setLinkagePosition(0.95);
             }
 
@@ -60,6 +81,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
                 score.grabberOpenAndClose(true);
             }
 
+            /*
             if(gamepad1.x){
                 score.reset();
             }
@@ -72,7 +94,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
                 score.setPower(0.04);
 
             }
-
+*/
             telemetry.addData("rMotor", score.getEncoderPosition(true));
             telemetry.addData("lMotor", score.getEncoderPosition(false));
             telemetry.update();
