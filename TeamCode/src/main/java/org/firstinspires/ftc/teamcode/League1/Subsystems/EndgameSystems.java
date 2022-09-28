@@ -24,7 +24,7 @@ public class EndgameSystems {
 
     private CRServo xCap;
     private Servo yCap;
-    private DcMotor capstoneExtension;
+    private CRServo capstoneExtension;
     private boolean isBlue;
 
     public double xCapSpeedDiv = 7;
@@ -36,7 +36,7 @@ public class EndgameSystems {
     public EndgameSystems(HardwareMap hardwareMap){
         xCap = hardwareMap.crservo.get("xCap");
         yCap = hardwareMap.servo.get("yCap");
-        capstoneExtension = hardwareMap.dcMotor.get("WinchEncoder");
+        capstoneExtension = hardwareMap.get(CRServo.class, "extension");
 
         //carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -62,7 +62,7 @@ public class EndgameSystems {
     }
 
     public void zeroCap() {
-        yCap.setPosition(0.45);
+        yCap.setPosition(0);
         // TODO - get the x position to set the x zero pos (not fully necessary, might be nice to have)
     }
 
