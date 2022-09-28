@@ -8,9 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.R;
 
-@Autonomous
+@TeleOp
 public class ColorTest extends LinearOpMode {
     ColorRangeSensor color;
     Servo servo;
@@ -30,10 +31,13 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("blue", color.blue());
             telemetry.addData("green", color.green());
             telemetry.addData("alpha", color.alpha());
-            telemetry.addData("normalized", color.getNormalizedColors());
+            telemetry.addData("distance", color.getDistance(DistanceUnit.CM));
             telemetry.update();
 
-            if(color.alpha() > 70){
+            if(gamepad1.right_trigger > 0.1){
+                servo.setPosition(0.8);
+            }else if(color.getDistance(DistanceUnit.CM) < 6.8){
+                //Closed
                 servo.setPosition(0);
             }else{
                 servo.setPosition(0.8);

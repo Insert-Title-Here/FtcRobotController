@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.League1.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
@@ -25,6 +27,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
     Constants constants;
     Robot robot;
     MecDrive drive;
+    ColorRangeSensor color;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,6 +35,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
         score = new ScoringSystem(hardwareMap,constants, false);
         robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, robot, false, telemetry);
+        color = hardwareMap.get(ColorRangeSensor.class, "color");
 
 
 
@@ -75,9 +79,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
             if(gamepad1.a){
                 score.grabberOpenAndClose(false);
-            }
-
-            if(gamepad1.b){
+            }else if(gamepad1.b || color.getDistance(DistanceUnit.CM) < 6.5){
                 score.grabberOpenAndClose(true);
             }
 
