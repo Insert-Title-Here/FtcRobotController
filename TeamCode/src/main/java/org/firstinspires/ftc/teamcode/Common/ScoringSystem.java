@@ -62,6 +62,9 @@ public class ScoringSystem {
     public double getClawPosition() {
         return claw.getPosition();
     }
+    public void resetLiftEncoder(){
+         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
 
 }
 

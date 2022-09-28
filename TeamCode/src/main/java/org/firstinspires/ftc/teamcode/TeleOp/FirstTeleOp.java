@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -44,7 +45,6 @@ public class FirstTeleOp extends LinearOpMode {
 
 
             //TODO: Decide if you want sprint capability
-            //TODO: Fix encoder values for lift system
             if (gamepad1.right_bumper) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }
@@ -62,7 +62,7 @@ public class FirstTeleOp extends LinearOpMode {
 
             if(gamepad1.b){
                 //Closed
-                score.setClawPosition(0.4);
+                score.setClawPosition(0.48);
 
 
             //2220
@@ -75,11 +75,14 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.a){
                 drive.resetEncoders();
             }
+            if(gamepad1.y){
+                score.resetLiftEncoder();
+            }
 
             // reset   gamepad1.dpad_down
-            // low cone, 13 in, 2094  gamenpad1.dpad_left
-            // medium cone, 23 in, 3483 gamepad1.dpad_up
-            // high cone, 33 in, 4911 gamepad1.dpad_right
+            // low cone, 13 in, 1209  gamenpad1.dpad_left
+            // medium cone, 23 in, 1795 gamepad1.dpad_up
+            // high cone, 33 in, 2390 gamepad1.dpad_right
 
             if(gamepad1.dpad_down) {
                 //reset
@@ -88,17 +91,17 @@ public class FirstTeleOp extends LinearOpMode {
 
             if (gamepad1.dpad_left) {
                 //low cone
-                score.goToPosition(2100, 1);
+                score.goToPosition(1209, 1);
             }
 
             if (gamepad1.dpad_up) {
                 //medium cone
-                score.goToPosition(3500, 1);
+                score.goToPosition(1795, 1);
             }
 
             if (gamepad1.dpad_right) {
                 //high cone
-                score.goToPosition(4800, 1);
+                score.goToPosition(2390, 1);
             }
 
             telemetry.addData("flPos", drive.getFLPosition());
