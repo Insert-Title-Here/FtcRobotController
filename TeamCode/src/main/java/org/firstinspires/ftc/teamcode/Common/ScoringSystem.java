@@ -14,7 +14,7 @@ public class ScoringSystem {
         liftMotor = hardwareMap.get(DcMotor.class, "motor");
 
         // reset encoder's tics for liftMotor
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         //Not actually without encoder (just doesn't use given PID)

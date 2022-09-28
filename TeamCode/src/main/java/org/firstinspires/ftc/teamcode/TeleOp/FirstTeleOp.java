@@ -44,6 +44,7 @@ public class FirstTeleOp extends LinearOpMode {
 
 
             //TODO: Decide if you want sprint capability
+            //TODO: Fix encoder values for lift system
             if (gamepad1.right_bumper) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }
@@ -52,9 +53,9 @@ public class FirstTeleOp extends LinearOpMode {
             }
 
             if(gamepad1.right_trigger > 0.1){
-                score.setPower(gamepad1.right_trigger);
+                score.setPower(gamepad1.right_trigger/2);
             }else if(gamepad1.left_trigger > 0.1){
-                score.setPower(-gamepad1.left_trigger);
+                score.setPower(-gamepad1.left_trigger/2);
             }else{
                 score.setPower(0);
             }
@@ -76,7 +77,7 @@ public class FirstTeleOp extends LinearOpMode {
             }
 
             // reset   gamepad1.dpad_down
-            // low cone, 13 in, 2094  gamepad1.dpad_left
+            // low cone, 13 in, 2094  gamenpad1.dpad_left
             // medium cone, 23 in, 3483 gamepad1.dpad_up
             // high cone, 33 in, 4911 gamepad1.dpad_right
 
