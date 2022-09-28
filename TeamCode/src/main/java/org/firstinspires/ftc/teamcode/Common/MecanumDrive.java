@@ -5,10 +5,21 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
+
+    // creates/accesses file
+    File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
+    // holds data
+    public String loggingString;
+
     public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry){
         this.telemetry = telemetry;
 
@@ -86,7 +97,7 @@ public class MecanumDrive {
         br.setPower(brPow);
     }
 
-    public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics) {
+    public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics, String action) {
         //fl fr bl br
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -108,6 +119,14 @@ public class MecanumDrive {
         while (Math.abs(position - tics) > 0) {
             setPower(flPow, frPow, blPow, brPow);
         }
+        loggingString += action.toUpperCase() + "/n";
+        loggingString += "FL Position: " + getFLPosition() + "/n";
+        loggingString += "FR Position: " + getFRPosition() + "/n";
+        loggingString += "BL Position: " + getBLPosition() + "/n";
+        loggingString += "BR Position: " + getBRPosition() + "/n";
+        loggingString += "---------------------" + "/n";
+
+        // loggingString += "Claw (Intake) Position: " + score.getClawPosition()
 
         setPower(0, 0, 0, 0);
 
@@ -131,5 +150,16 @@ public class MecanumDrive {
                 br.getCurrentPosition()) / 4;
         return position;
     }
+
+    // logs string into file
+    public void writeLoggerToFile(){
+        try{
+            PrintStream toFile = new PrintStream(loggingFile);
+            toFile.println(loggingString);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+    }
+
 
 }

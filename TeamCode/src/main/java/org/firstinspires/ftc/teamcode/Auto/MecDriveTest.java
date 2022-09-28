@@ -60,14 +60,14 @@ public class MecDriveTest extends LinearOpMode {
         //lift claw a little bit
         score.goToPosition(30, 1);
         // move forward a bit so strafing works better
-        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, 130);
+        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, 130, "forward a bit");
         //strafe right
-        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, 640);
+        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, 640, "strafe right");
         // move forward
-        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, 1100);
+        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, 1100, "move forward");
         // strafe left and push cone to other grid
-        drive.goToPosition(0.3, -0.3, 0.3, -0.3, 590);
-        //
+        drive.goToPosition(0.3, -0.3, 0.3, -0.3, 590, "strafe left (push cone)");
+
 
 
 
