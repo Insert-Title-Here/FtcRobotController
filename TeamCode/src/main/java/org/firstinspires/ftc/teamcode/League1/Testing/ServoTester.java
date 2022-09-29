@@ -9,11 +9,14 @@ import java.io.FileNotFoundException;
 
 @Autonomous
 public class ServoTester extends OpModeWrapper {
-    Servo servo;
+    Servo rServo, lServo;
     @Override
     protected void onInitialize() throws FileNotFoundException {
-        servo = hardwareMap.get(Servo.class, "Linkage");
-        servo.setPosition(0);
+        rServo = hardwareMap.get(Servo.class, "rLinkage");
+        lServo = hardwareMap.get(Servo.class, "lLinkage");
+
+        rServo.setPosition(0);
+        lServo.setPosition(0);
 
 
 
@@ -22,19 +25,18 @@ public class ServoTester extends OpModeWrapper {
     @Override
     protected void onStart() {
 
-
-
-        servo.setPosition(1);
-        sleep(4000);
-        servo.setPosition(0.1);
-        sleep(4000);
-        servo.setPosition(0);
-        sleep(4000);
+        for(int i = 0; i <= 1; i += 0.1){
+            rServo.setPosition(i);
+            lServo.setPosition(i);
+            sleep(1000);
+        }
         
     }
 
     @Override
     protected void onStop() {
+        rServo.setPosition(0);
+        lServo.setPosition(0);
 
     }
 }
