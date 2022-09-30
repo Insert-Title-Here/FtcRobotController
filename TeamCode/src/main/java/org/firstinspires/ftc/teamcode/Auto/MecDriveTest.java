@@ -15,6 +15,8 @@ public class MecDriveTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
         // TODO: Fix "User OpMode was stuck in stop(), but was able to be force stopped s/o restarting the app. It appears
         // TODO: Continued... this awas a linear OPMODE; wmake sure you are calling opModelIsActive() in any loops.
         /*
@@ -50,16 +52,17 @@ public class MecDriveTest extends LinearOpMode {
          */
 
         // Camera checks sleeve...stores parking location??
+        score.setClawPosition(0.9);
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
         waitForStart();
         //close claw
         score.setClawPosition(0.48);
 
 
         //lift claw a little bit
-        score.goToPosition(30, 0.3);
+        //score.goToPosition(300, 0.3);
+        drive.goToPosition(-0.1, -0.1, 0.1, 0.1, 1000, "forward");
+        /*
         // move forward a square
         drive.goToPosition(-0.3, -0.3, 0.3, 0.3, avgPosition(-1235, -1198, 1204, 1144)/4, "forward");
         sleep(50);
@@ -81,6 +84,8 @@ public class MecDriveTest extends LinearOpMode {
         //turn -> -395, 368, 413, -410
         drive.goToPosition(-0.3, -0.3, 0.3, 0.3, avgPosition(-98, -95, 105, 92), "move forward a bit");
         sleep(50);
+
+         */
 
         /*
         //2

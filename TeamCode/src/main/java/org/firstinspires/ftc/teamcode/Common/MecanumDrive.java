@@ -91,9 +91,9 @@ public class MecanumDrive {
     }
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
-        // change these to positive for tele
-        fl.setPower(-flPow);
-        fr.setPower(-frPow);
+        // change these to neg for tele (top 2)
+        fl.setPower(flPow);
+        fr.setPower(frPow);
         bl.setPower(blPow);
         br.setPower(brPow);
     }
@@ -114,14 +114,17 @@ public class MecanumDrive {
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // won't work for turns, only forward and backward
+
         int position = (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                 Math.abs(br.getCurrentPosition())) / 4;
 
         telemetry.addData("motorPosition", position);
         telemetry.update();
 
-        while (Math.abs(position - tics) > 0) {
+        while ((Math.abs(tics)-position) > 0) {
             setPower(flPow, frPow, blPow, brPow);
+            position = (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+                    Math.abs(br.getCurrentPosition())) / 4;
         }
         loggingString += action.toUpperCase() + "/n";
         loggingString += "FL Position: " + getFLPosition() + "/n";
