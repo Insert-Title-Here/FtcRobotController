@@ -43,14 +43,18 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
         while(opModeIsActive()){
 
+            /*
+
             if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             } else {
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
+             */
 
-            /*
+
+
             if(gamepad1.right_trigger > 0.1){
                 score.setPower(gamepad1.right_trigger);
 
@@ -59,8 +63,8 @@ public class SimpleScoringSystemTest extends LinearOpMode {
             }else{
                 score.setPower(0);
             }
-*/
 
+        /*
             if(gamepad1.dpad_down){
                 //score.linkageAutomated(false);
                 score.setLinkagePosition(0.05);
@@ -82,6 +86,8 @@ public class SimpleScoringSystemTest extends LinearOpMode {
             }else if(gamepad1.b || color.getDistance(DistanceUnit.CM) < 6.5){
                 score.grabberOpenAndClose(true);
             }
+
+         */
 
             /*
             if(gamepad1.x){
