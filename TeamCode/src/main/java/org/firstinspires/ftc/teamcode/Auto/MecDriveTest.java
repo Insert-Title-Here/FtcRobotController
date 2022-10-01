@@ -3,18 +3,30 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
 public class MecDriveTest extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
+    OpenCvWebcam webcam;
     int parkLocation;
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         // TODO: Fix "User OpMode was stuck in stop(), but was able to be force stopped s/o restarting the app. It appears
         // TODO: Continued... this awas a linear OPMODE; wmake sure you are calling opModelIsActive() in any loops.
         /*
@@ -50,6 +62,7 @@ public class MecDriveTest extends LinearOpMode {
          */
 
         // Camera checks sleeve...stores parking location??
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -102,4 +115,24 @@ public class MecDriveTest extends LinearOpMode {
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
 
+    //TODO: check if camera angle works
+    private class DetectionAlgorithm extends OpenCvPipeline {
+        Mat original;
+        Mat changed;
+
+        @Override
+        public Mat processFrame(Mat input) {
+            input.copyTo(original);
+            changed = new Mat();
+            if(original.empty()) {
+                return input;
+            }
+            // cyan magenta yellow
+            Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
+            // magenta 255, 0, 255
+            Core.inRange(changed, new Scalar(240, 0 ,240), new Scalar(255, 0, 255), changed);
+            return null;
+        }
+    }
 }
+
