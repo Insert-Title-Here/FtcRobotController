@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
@@ -14,6 +15,8 @@ public class TestTeleOp extends LinearOpMode {
 
     //TODO: Move scoring system stuff to its own class
     DcMotor lift;
+    Servo clawl;
+    Servo clawr;
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.6;
@@ -26,9 +29,14 @@ public class TestTeleOp extends LinearOpMode {
 
         drive = new MecanumDrive(hardwareMap, telemetry);
         lift = hardwareMap.get(DcMotor.class, "lift");
+        clawl = hardwareMap.get(Servo.class, "clawl");
+        clawr = hardwareMap.get(Servo.class, "clawr");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        clawl.setPosition(0);
+        clawr.setPosition(0.6);
 
         waitForStart();
 
@@ -50,6 +58,16 @@ public class TestTeleOp extends LinearOpMode {
                 lift.setPower(-gamepad1.right_trigger / 2);
             } else {
                 lift.setPower(0);
+            }
+
+            if(gamepad1.left_bumper){
+                clawl.setPosition(0);
+                clawr.setPosition(0.6);
+            }
+
+            if(gamepad1.right_bumper){
+                clawr.setPosition(0);
+                clawl.setPosition(0.6);
             }
 
 
