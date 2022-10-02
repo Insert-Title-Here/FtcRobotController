@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -18,7 +19,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class MecDriveTest extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
-    OpenCvWebcam webcam;
+    //OpenCvWebcam webcam;
     int parkLocation;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -29,7 +30,8 @@ public class MecDriveTest extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        // TODO: Fix "User OpMode was stuck in stop(), but was able to be force stopped s/o restarting the app. It appears
+
+
         // TODO: Continued... this awas a linear OPMODE; wmake sure you are calling opModelIsActive() in any loops.
         /*
         -put cone on pole, get new cone, repeat
@@ -141,5 +143,7 @@ public class MecDriveTest extends LinearOpMode {
             return null;
         }
     }
+
+
 }
 

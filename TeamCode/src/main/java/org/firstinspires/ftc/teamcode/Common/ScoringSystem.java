@@ -34,8 +34,8 @@ public class ScoringSystem {
         if (motorPosition > tics) {
             power *= -1;
         }
-        //TODO: I believe this while loop needs to be fixed (will infintely run??)
-        while ((Math.abs(motorPosition - tics) > 10)) {
+
+        while ((Math.abs(tics)-motorPosition) > 0) {
 
             liftMotor.setPower(power);
 
