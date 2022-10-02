@@ -22,6 +22,8 @@ public class ColorTest extends LinearOpMode {
         color = hardwareMap.get(ColorRangeSensor.class, "color");
         servo = hardwareMap.get(Servo.class, "servo");
 
+        servo.setPosition(0.8);
+
         waitForStart();
 
         //When alpha is above 70 then clamp then maybe once its above 200 then lift (maybe dont need the second part)

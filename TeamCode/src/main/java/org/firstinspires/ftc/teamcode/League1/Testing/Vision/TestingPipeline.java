@@ -3,11 +3,15 @@ package org.firstinspires.ftc.teamcode.League1.Testing.Vision;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestingPipeline extends OpenCvPipeline {
 
@@ -29,15 +33,33 @@ public class TestingPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        /*
         Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
 
-        Core.inRange(temp, new Scalar(50, 100, 100), new Scalar(60, 255, 255), temp);
+        Core.inRange(temp, new Scalar(25, 180, 50), new Scalar(27, 255, 255), temp);
 
-        double mean = Core.mean(temp).val[0];
 
-        telemetry.addData("mean ", mean);
-        telemetry.update();
-        //Imgproc.threshold(temp, temp, 100, 255, 0);
+        List<MatOfPoint> contours = new ArrayList<>();
+
+        MatOfPoint contour1 = contours.get(0);
+        MatOfPoint contour2;
+
+        //Find out last two things
+        Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
+
+        for(int i = 0; i < contours.size(); i++)
+            telemetry.addData("contour" + i + ": ", contours.get(i).toArray().length);
+        }
+
+         */
+
+        return temp;
+
+
+
+
+    //Imgproc.threshold(temp, temp, 100, 255, 0);
 
 
 
@@ -85,6 +107,5 @@ public class TestingPipeline extends OpenCvPipeline {
 
 
 
-        return temp;
     }
 }

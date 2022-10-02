@@ -1,0 +1,122 @@
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ServoTester.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ServoTester.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ArmTester.java
+rename from TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ServoTester.java
+rename to TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ArmTester.java
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ServoTester.java	(revision 6a9d959bd110e6e74dd0fa3b53621845a456895e)
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ArmTester.java	(date 1664649214791)
+@@ -1,22 +1,42 @@
+ package org.firstinspires.ftc.teamcode.League1.Testing;
+ 
+ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
++import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
++import com.qualcomm.robotcore.hardware.DcMotor;
+ import com.qualcomm.robotcore.hardware.Servo;
+ 
+ import org.firstinspires.ftc.teamcode.League1.Common.OpModeWrapper;
+ 
+ import java.io.FileNotFoundException;
+ 
+-@Autonomous
+-public class ServoTester extends OpModeWrapper {
+-    Servo rServo, lServo;
++@TeleOp
++public class ArmTester extends OpModeWrapper {
++    Servo lServo, rServo, grabber;
++    DcMotor rMotor, lMotor;
++
+     @Override
+     protected void onInitialize() throws FileNotFoundException {
+-        rServo = hardwareMap.get(Servo.class, "rLinkage");
+-        lServo = hardwareMap.get(Servo.class, "lLinkage");
++
++
++
++
++        rServo = hardwareMap.get(Servo.class, "right");
++        lServo = hardwareMap.get(Servo.class, "left");
++        grabber = hardwareMap.get(Servo.class, "grabber");
+ 
+         rServo.setPosition(0);
+         lServo.setPosition(0);
++        grabber.setPosition(0.8);
++
++        rMotor = hardwareMap.get(DcMotor.class, "rightM");
++        lMotor = hardwareMap.get(DcMotor.class, "leftM");
++
++        rMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
++        lMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
++
++        rMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
++        lMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
++
+ 
+ 
+ 
+@@ -25,18 +45,42 @@
+     @Override
+     protected void onStart() {
+ 
+-        for(int i = 0; i <= 1; i += 0.1){
++
++        /*
++        while(opModeIsActive()){
++
++            if(gamepad1.right_trigger > 0.1){
++                rMotor.setPower(gamepad1.right_trigger);
++                lMotor.setPower(-gamepad1.right_trigger);
++
++            }else if(gamepad1.left_trigger > 0.1){
++                rMotor.setPower(-gamepad1.left_trigger);
++                lMotor.setPower(gamepad1.left_trigger);
++            }else{
++                rMotor.setPower(0);
++                lMotor.setPower(0);
++            }
++
++        }
++
++         */
++
++        /*for(int i = 0; i <= 1; i += 0.1){
+             rServo.setPosition(i);
+             lServo.setPosition(i);
+             sleep(1000);
+         }
++
++         */
+         
+     }
+ 
+     @Override
+     protected void onStop() {
+-        rServo.setPosition(0);
++        /*rServo.setPosition(0);
+         lServo.setPosition(0);
+ 
++         */
++
+     }
+ }
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ColorTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.League1.Testing;\r\n\r\nimport android.media.MediaPlayer;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\nimport com.qualcomm.robotcore.hardware.ColorRangeSensor;\r\nimport com.qualcomm.robotcore.hardware.Servo;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;\r\nimport org.firstinspires.ftc.teamcode.R;\r\n\r\n@TeleOp\r\npublic class ColorTest extends LinearOpMode {\r\n    ColorRangeSensor color;\r\n    Servo servo;\r\n\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n        color = hardwareMap.get(ColorRangeSensor.class, \"color\");\r\n        servo = hardwareMap.get(Servo.class, \"servo\");\r\n\r\n        waitForStart();\r\n\r\n        //When alpha is above 70 then clamp then maybe once its above 200 then lift (maybe dont need the second part)\r\n\r\n        while(opModeIsActive()){\r\n            telemetry.addData(\"red\", color.red());\r\n            telemetry.addData(\"blue\", color.blue());\r\n            telemetry.addData(\"green\", color.green());\r\n            telemetry.addData(\"alpha\", color.alpha());\r\n            telemetry.addData(\"distance\", color.getDistance(DistanceUnit.CM));\r\n            telemetry.update();\r\n\r\n            if(gamepad1.right_trigger > 0.1){\r\n                servo.setPosition(0.8);\r\n            }else if(color.getDistance(DistanceUnit.CM) < 6.8){\r\n                //Closed\r\n                servo.setPosition(0);\r\n            }else{\r\n                servo.setPosition(0.8);\r\n            }\r\n\r\n        }\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ColorTest.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ColorTest.java
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ColorTest.java	(revision 6a9d959bd110e6e74dd0fa3b53621845a456895e)
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/League1/Testing/ColorTest.java	(date 1664572833855)
+@@ -22,6 +22,8 @@
+         color = hardwareMap.get(ColorRangeSensor.class, "color");
+         servo = hardwareMap.get(Servo.class, "servo");
+ 
++        servo.setPosition(0.8);
++
+         waitForStart();
+ 
+         //When alpha is above 70 then clamp then maybe once its above 200 then lift (maybe dont need the second part)
