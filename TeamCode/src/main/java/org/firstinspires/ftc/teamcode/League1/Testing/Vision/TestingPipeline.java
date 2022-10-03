@@ -17,14 +17,15 @@ public class TestingPipeline extends OpenCvPipeline {
 
     Telemetry telemetry;
     Mat temp = new Mat();
-    Mat red = new Mat();
+    Mat purple = new Mat();
     Mat green = new Mat();
-    Mat blue = new Mat();
+    Mat brown = new Mat();
+    Mat black = new Mat();
 
 
     static final Rect MIDDLE = new Rect(
-            new Point(100, 0),
-            new Point(200, 100)
+            new Point(125, 70),
+            new Point(180, 150)
     );
 
     public TestingPipeline(Telemetry telemetry){
@@ -33,10 +34,30 @@ public class TestingPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        /*
-        Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
 
-        Core.inRange(temp, new Scalar(25, 180, 50), new Scalar(27, 255, 255), temp);
+        //Core.extractChannel(input, green, 1);
+        //Core.inRange(green, new Scalar(254), new Scalar(255), green);
+        //Core.inRange(input, new Scalar(255, 255, 255), new Scalar(0, 0, 0), green);
+
+        Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, black, Imgproc.COLOR_RGB2GRAY);
+
+        //Yellow
+        //Core.inRange(temp, new Scalar(25, 180, 50), new Scalar(27, 255, 255), temp);
+
+        //Green
+        Core.inRange(temp, new Scalar(70, 60, 60), new Scalar(100, 255, 255), green);
+
+        //Purple
+        Core.inRange(temp, new Scalar(120, 60, 60), new Scalar(130, 255, 255), purple);
+
+        //Brown
+        Core.inRange(temp, new Scalar(30, 0, 0), new Scalar(40, 80, 50), brown);
+
+
+        //Black
+        Core.inRange(black, new Scalar(0), new Scalar(25), black);
+        /*
 
 
         List<MatOfPoint> contours = new ArrayList<>();
@@ -52,9 +73,77 @@ public class TestingPipeline extends OpenCvPipeline {
             telemetry.addData("contour" + i + ": ", contours.get(i).toArray().length);
         }
 
+
          */
 
-        return temp;
+
+        double countGreen = Core.mean(green.submat(MIDDLE)).val[0];
+        double countPurple = Core.mean(purple.submat(MIDDLE)).val[0];
+        double countBrown = Core.mean(brown.submat(MIDDLE)).val[0];
+        double countBlack = Core.mean(black.submat(MIDDLE)).val[0];
+
+
+        telemetry.addData("green", countGreen);
+        telemetry.addData("purple", countPurple);
+        telemetry.addData("brown", countBrown);
+        telemetry.addData("black", countBlack);
+
+
+
+        telemetry.update();
+
+
+
+        if(countGreen > 50){
+            Imgproc.rectangle(
+                    input,
+                    MIDDLE,
+                    new Scalar(0, 255, 0),
+                    3
+
+            );
+
+        }else if(countPurple > 50){
+            Imgproc.rectangle(
+                    input,
+                    MIDDLE,
+                    new Scalar(255, 0, 255),
+                    3
+
+            );
+
+        }else if(countBrown > 17){
+            Imgproc.rectangle(
+                    input,
+                    MIDDLE,
+                    new Scalar(130, 70, 0),
+                    3
+
+            );
+
+        }else if(countBlack > 150){
+            Imgproc.rectangle(
+                    input,
+                    MIDDLE,
+                    new Scalar(0, 0, 0),
+                    3
+
+            );
+
+        }else {
+            Imgproc.rectangle(
+                    input,
+                    MIDDLE,
+                    new Scalar(255, 255, 255),
+                    3
+
+            );
+        }
+
+
+
+
+        return input;
 
 
 
