@@ -13,7 +13,8 @@ public class Constants {
 
     //Grabber Positions (tuned)
     public static final double grabbing = 0;
-    public static final double open = 0.75;
+    public static final double openAuto = 0.75;
+    public static final double openTeleOp = 0.8;
 
 
 }
