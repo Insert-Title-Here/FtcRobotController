@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -19,7 +19,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class MecDriveTest extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
-    //OpenCvWebcam webcam;
+    DetectionAlgorithm detect;
+    String position; //temp
+
+    OpenCvWebcam webcam;
     int parkLocation;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,7 +31,11 @@ public class MecDriveTest extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        webcam.setPipeline(detect);
+        webcam.startStreaming(320, 176);
+        telemetry.addData("position", position);
         telemetry.addData("Status", "Initialized");
+
         telemetry.update();
 
 
@@ -72,6 +79,7 @@ public class MecDriveTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
+        webcam.stopStreaming();
         //close claw
         score.setClawPosition(0.48);
 
@@ -138,9 +146,17 @@ public class MecDriveTest extends LinearOpMode {
             }
             // cyan magenta yellow
             Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
+            Imgproc.GaussianBlur(changed, changed, new Size(2,2), 0);
+            /* submatrices
+            Mat pixel_section = original.submat(rowStart, rowEnd, colStart, colEnd)l
+
+             */
+
+
+
             // magenta 255, 0, 255
             Core.inRange(changed, new Scalar(240, 0 ,240), new Scalar(255, 0, 255), changed);
-            return null;
+            return changed;
         }
     }
 
