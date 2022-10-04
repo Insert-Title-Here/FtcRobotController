@@ -40,6 +40,8 @@ public class SimpleScoringSystemTest extends LinearOpMode {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         color = hardwareMap.get(ColorRangeSensor.class, "color");
 
+        color.setGain(300);
+
 
         waitForStart();
 

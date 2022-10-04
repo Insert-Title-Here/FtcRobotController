@@ -23,6 +23,12 @@ public class TestingContourPipeline extends OpenCvPipeline {
     private ArrayList<Integer> xList, yList;
 
 
+    static final Rect MIDDLE = new Rect(
+            new Point(90, 0),
+            new Point(250, 176)
+    );
+
+
 
     public TestingContourPipeline(Telemetry telemetry){
         this.telemetry = telemetry;
@@ -39,6 +45,12 @@ public class TestingContourPipeline extends OpenCvPipeline {
 
         Imgproc.GaussianBlur(temp, temp, new Size(5, 5), 0);
 
+        Mat thing = temp.submat(MIDDLE);
+        Imgproc.rectangle(input, MIDDLE, new Scalar(0, 0, 0), 3);
+
+        //Imgproc.GaussianBlur(thing, thing, new Size(101, 101), 0);
+
+
 
 
 
@@ -48,10 +60,12 @@ public class TestingContourPipeline extends OpenCvPipeline {
         MatOfPoint contour2;
 */
         //Find out last two things
-        Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(thing, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
         Imgproc.drawContours(input, contours, -1, new Scalar(26, 230, 200));
 
+
+        /*
         ArrayList<Point> pointList = new ArrayList<>();
 
         xList = new ArrayList<>();
@@ -74,10 +88,10 @@ public class TestingContourPipeline extends OpenCvPipeline {
 
 
         telemetry.update();
+*/
 
 
-
-        return temp;
+        return input;
 
 
 

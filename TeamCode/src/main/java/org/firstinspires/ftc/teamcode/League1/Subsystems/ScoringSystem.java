@@ -28,7 +28,7 @@ public class ScoringSystem {
 
     //TODO: See if this is what we are actually using
     DcMotorEx rLift, lLift;
-    Servo grabber, linkage; //dont know whether there are two linkage servos or one
+    Servo grabber, rLinkage, lLinkage; //dont know whether there are two linkage servos or one
     private Robot robot;
 
 
@@ -79,8 +79,8 @@ public class ScoringSystem {
         correctMotors();
 
 
-        //lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
-        linkage = hardwareMap.get(Servo.class, "Linkage");
+        lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
+        rLinkage = hardwareMap.get(Servo.class, "RightLinkage");
 
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
@@ -106,12 +106,14 @@ public class ScoringSystem {
         correctMotors();
 
 
-        //lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
-        linkage = hardwareMap.get(Servo.class, "Linkage");
+        lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
+        rLinkage = hardwareMap.get(Servo.class, "RightLinkage");
 
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
-        linkage.setPosition(constants.linkageDown);
+
+        lLinkage.setPosition(0);
+        rLinkage.setPosition(0);
         grabber.setPosition(constants.openAuto);
 
 
@@ -300,9 +302,8 @@ public class ScoringSystem {
 
     public void setLinkagePosition(double position){
         //TODO: tune position values
-        /*lLinkage.setPosition();
-        rLinkage.setPosition();*/
-        linkage.setPosition(position);
+        rLinkage.setPosition(position);
+        //lLinkage.setPosition(position);
     }
 
     public void linkageAutomated(boolean up){
