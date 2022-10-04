@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
-
+/*
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -14,6 +14,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
+
+ */
 
 @Autonomous
 public class MecDriveTest extends LinearOpMode {
@@ -25,11 +27,13 @@ public class MecDriveTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
-
+        /*
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+         */
+
 
 
         // TODO: Continued... this awas a linear OPMODE; wmake sure you are calling opModelIsActive() in any loops.
@@ -47,10 +51,10 @@ public class MecDriveTest extends LinearOpMode {
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 5000);
 
         //Left
-        drive.goToPosition(0.3, -0.3, 0.3, -0.3, 5000);
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, 5000);
 
         //Right
-        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, 5000);
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, 5000);
 
         //Forward-Left Diagonal
         drive.goToPosition(0.3, 0, 0, 0.3, 3000);
@@ -67,49 +71,52 @@ public class MecDriveTest extends LinearOpMode {
 
         // Camera checks sleeve...stores parking location??
         score.setClawPosition(0.9);
-
+        //score.goToPosition(0, 0.3);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
         //close claw
-        score.setClawPosition(0.48);
+        score.setClawPosition(0.45);
 
 
         //lift claw a little bit
-        //score.goToPosition(300, 0.3);
-        drive.goToPosition(-0.1, -0.1, 0.1, 0.1, 1000, "forward");
-        /*
+        score.goToPosition(50, 0.3);
+        sleep(1000);
         // move forward a square
-        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, avgPosition(-1235, -1198, 1204, 1144)/4, "forward");
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1235, 1198, 1204, 1144), "forward");
         sleep(50);
         //strafe left
-        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(1448, -1398, 1598, -1500), "strafe right");
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1448, 1398, 1598, -1500), "strafe right");
         sleep(50);
-        // turn -> 406, -397, -438, 440
+        // turn
+        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-387, 397, -400, 368), "turn to pole");
         // move arm max
-        score.goToPosition(2390, 1);
-
-        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, avgPosition(-326, -300, 330, 304), "move to pole");
+        score.goToPosition(2390, 0.7);
+        sleep(500);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(-326, -300, -330, -304), "move to pole");
         score.setClawPosition(0.9);
-        score.goToPosition(0, 0.5);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(-326, -300, -330, -304), "move to pole");
+        score.goToPosition(50, 0.5);
         sleep(50);
-
+        /*
         //1 (far left) (general code)
-        drive.goToPosition(0.3, 0.3, -0.3, -0.3, avgPosition(498, 506, -557, -565), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back from pole");
         sleep(50);
-        //turn -> -395, 368, 413, -410
-        drive.goToPosition(-0.3, -0.3, 0.3, 0.3, avgPosition(-98, -95, 105, 92), "move forward a bit");
+        //turn -> 395, -368, 413, -410
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(98, 95, 105, 92), "move forward a bit");
         sleep(50);
 
          */
 
+
+
         /*
         //2
-        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-1267, 1251, -1246, 304), "strafe right");
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1267, -1251, -1246, 304), "strafe right");
         sleep(50);
         //3
-        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-1152, 1177, -1164, 1196), "strafe right");
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
 
         sleep(50);
     */
@@ -123,7 +130,7 @@ public class MecDriveTest extends LinearOpMode {
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
-
+    /*
     //TODO: check if camera angle works
     private class DetectionAlgorithm extends OpenCvPipeline {
         Mat original;
@@ -142,8 +149,10 @@ public class MecDriveTest extends LinearOpMode {
             Core.inRange(changed, new Scalar(240, 0 ,240), new Scalar(255, 0, 255), changed);
             return null;
         }
-    }
 
+
+    }
+    */
 
 }
 

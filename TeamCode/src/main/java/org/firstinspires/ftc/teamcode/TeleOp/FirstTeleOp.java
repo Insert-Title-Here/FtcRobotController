@@ -51,18 +51,25 @@ public class FirstTeleOp extends LinearOpMode {
             else {
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
+            //disable trigger as you can use left right down up pad instead(pressing left trigger too much will mess up encoder values for lift system
 
             if(gamepad1.right_trigger > 0.1){
                 score.setPower(gamepad1.right_trigger/2);
             }else if(gamepad1.left_trigger > 0.1){
-                score.setPower(-gamepad1.left_trigger/2);
+                if(score.getEncoderPosition() < 40){
+                    score.setPower(0);
+                }else{
+                    score.setPower(-gamepad1.left_trigger/2);
+                }
             }else{
                 score.setPower(0);
             }
 
+
+
             if(gamepad1.b){
                 //Closed
-                score.setClawPosition(0.48);
+                score.setClawPosition(0.45);
 
 
             //2220
@@ -86,7 +93,8 @@ public class FirstTeleOp extends LinearOpMode {
 
             if(gamepad1.dpad_down) {
                 //reset
-                score.goToPosition(0, 1);
+                // 50 not zero b/c 435 motor does not have enough torque to stop the gravitational drop to zero tics
+                score.goToPosition(50, 1);
             }
 
             if (gamepad1.dpad_left) {

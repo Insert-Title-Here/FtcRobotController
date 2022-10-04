@@ -35,7 +35,7 @@ public class ScoringSystem {
             power *= -1;
         }
 
-        while ((Math.abs(tics)-motorPosition) > 0) {
+        while (Math.abs((Math.abs(tics)-motorPosition)) > 10) {
 
             liftMotor.setPower(power);
 
