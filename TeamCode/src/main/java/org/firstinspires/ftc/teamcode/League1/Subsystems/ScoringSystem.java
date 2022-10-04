@@ -351,6 +351,10 @@ public class ScoringSystem {
         grabber.setPosition(position);
     }
 
+    public double getGrabberPosition(){
+        return grabber.getPosition();
+    }
+
 
     public void grabberOpenAndClose(boolean close){
         if(close) {
