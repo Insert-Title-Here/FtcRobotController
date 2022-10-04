@@ -50,6 +50,8 @@ public class TestingContourPipeline extends OpenCvPipeline {
         //Find out last two things
         Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        Imgproc.drawContours(input, contours, -1, new Scalar(26, 230, 200));
+
         ArrayList<Point> pointList = new ArrayList<>();
 
         xList = new ArrayList<>();
