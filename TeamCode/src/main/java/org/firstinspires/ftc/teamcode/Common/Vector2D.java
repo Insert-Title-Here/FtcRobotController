@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.Common;
  * Represents an immutable 2-dimensional vector.
  * This class is immutable.
  */
-public final class Vector2D implements Cloneable {
+public final class   Vector2D implements Cloneable {
 
     private double x;
     private double y;

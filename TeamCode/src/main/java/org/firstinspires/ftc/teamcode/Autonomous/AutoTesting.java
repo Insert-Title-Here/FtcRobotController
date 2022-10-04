@@ -1,15 +1,14 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.Autonomous;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
-@TeleOp
-public class TestTeleOp extends LinearOpMode {
+public class AutoTesting extends LinearOpMode {
 
     MecanumDrive drive;
 
@@ -41,12 +40,11 @@ public class TestTeleOp extends LinearOpMode {
         waitForStart();
 
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
 
             if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(gamepad1.right_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.left_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-            }
-            else {
+            } else {
                 drive.setPower(new Vector2D(gamepad1.right_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.left_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
@@ -58,16 +56,15 @@ public class TestTeleOp extends LinearOpMode {
                 lift.setPower(0);
             }
 
-            if(gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
                 clawl.setPosition(0);
                 clawr.setPosition(0.6);
             }
 
-            if(gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
                 clawr.setPosition(0);
                 clawl.setPosition(0.6);
             }
-
 
 
             telemetry.addData("flPos", drive.getFLPosition());
