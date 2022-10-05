@@ -57,6 +57,7 @@ public class FirstTeleOp extends LinearOpMode {
                 score.setPower(gamepad1.right_trigger/2);
             }else if(gamepad1.left_trigger > 0.1){
                 //TODO: Create method I can call that will calibrate based off of how many tics, the "40" position below
+                calibrateLiftBottom(score.getEncoderPosition());
                 if(score.getEncoderPosition() < 40){
                     score.setPower(0);
                 }else{
@@ -96,6 +97,9 @@ public class FirstTeleOp extends LinearOpMode {
                 //reset
                 // 50 not zero b/c 435 motor does not have enough torque to stop the gravitational drop to zero tics
                 score.goToPosition(50, 1);
+                //Test this callibration
+                int aimedPos = (int)(Math.sqrt(50) * 1.5);
+                score.goToPosition(aimedPos, 1);
             }
 
             if (gamepad1.dpad_left) {
@@ -118,7 +122,6 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());
             telemetry.addData("liftPos", score.getEncoderPosition());
-            telemetry.addData("servoPosition", drive.getPosition()); // expected pos.
             telemetry.update();
 
 
@@ -128,4 +131,14 @@ public class FirstTeleOp extends LinearOpMode {
         score.setPower(0);
         score.setClawPosition(0.9);
     }
+    //Test this out
+    public void calibrateLiftBottom(int tics){
+        if(tics < 70){
+            int aimedPos = (int)(Math.sqrt(tics) / 9);
+            score.setPower(aimedPos);
+        }
+
+
+    }
+
 }
