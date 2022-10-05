@@ -24,7 +24,7 @@ public class TestingContourPipeline extends OpenCvPipeline {
 
 
     static final Rect MIDDLE = new Rect(
-            new Point(90, 0),
+            new Point(70, 0),
             new Point(250, 176)
     );
 
@@ -60,11 +60,24 @@ public class TestingContourPipeline extends OpenCvPipeline {
         MatOfPoint contour2;
 */
         //Find out last two things
-        Imgproc.findContours(thing, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        Imgproc.drawContours(input, contours, -1, new Scalar(26, 230, 200));
+        //Imgproc.drawContours(input, contours, -1, new Scalar(26, 230, 200));
 
+        for(int i = 0; i < contours.size(); i++){
+            if(contours.get(i).toArray().length > 6){
+                Imgproc.drawContours(input, contours, i, new Scalar(230, 191, 254));
 
+                /*ArrayList<Point> pointList = new ArrayList<>();
+                Converters.Mat_to_vector_Point(contours.get(i), pointList);
+                for(int j = 0; j < pointList.size(); j++){
+                    pointList.get(j).x += 90;
+                }
+                contours.get(i).
+
+                 */
+            }
+        }
         /*
         ArrayList<Point> pointList = new ArrayList<>();
 
