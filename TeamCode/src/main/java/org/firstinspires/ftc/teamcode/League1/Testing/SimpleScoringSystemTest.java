@@ -58,7 +58,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
 
 
-
+            /*
             if(gamepad1.right_trigger > 0.1){
                 score.setPower(gamepad1.right_trigger);
 
@@ -75,6 +75,8 @@ public class SimpleScoringSystemTest extends LinearOpMode {
             if(gamepad1.a){
                 score.moveToPosition(0, 0.5);
             }
+
+             */
 
 
             if(gamepad1.left_bumper){

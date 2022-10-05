@@ -20,22 +20,22 @@ public class ArmTester extends OpModeWrapper {
 
 
 
-        rServo = hardwareMap.get(Servo.class, "right");
-        lServo = hardwareMap.get(Servo.class, "left");
-        grabber = hardwareMap.get(Servo.class, "grabber");
+        rServo = hardwareMap.get(Servo.class, "RightLinkage");
+        lServo = hardwareMap.get(Servo.class, "LeftLinkage");
+        grabber = hardwareMap.get(Servo.class, "Grabber");
 
-        rServo.setPosition(0);
-        lServo.setPosition(0);
+        rServo.setPosition(0.03);
+        lServo.setPosition(0.03);
         grabber.setPosition(0.8);
 
-        rMotor = hardwareMap.get(DcMotor.class, "rightM");
-        lMotor = hardwareMap.get(DcMotor.class, "leftM");
+        //rMotor = hardwareMap.get(DcMotor.class, "rightM");
+        //lMotor = hardwareMap.get(DcMotor.class, "leftM");
 
-        rMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //lMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //rMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //lMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -46,8 +46,9 @@ public class ArmTester extends OpModeWrapper {
     protected void onStart() {
 
 
-        /*
-        while(opModeIsActive()){
+
+        while(opModeIsActive()) {
+            /*
 
             if(gamepad1.right_trigger > 0.1){
                 rMotor.setPower(gamepad1.right_trigger);
@@ -61,9 +62,42 @@ public class ArmTester extends OpModeWrapper {
                 lMotor.setPower(0);
             }
 
+             */
+
+            if(gamepad1.dpad_up) {
+                rServo.setPosition(0.7);
+                lServo.setPosition(0.7);
+            }
+
+            if(gamepad1.dpad_right) {
+                rServo.setPosition(1);
+                lServo.setPosition(1);
+            }
+
+            if(gamepad1.dpad_down) {
+                rServo.setPosition(0.1);
+                lServo.setPosition(0.1);
+
+                sleep(1000);
+
+                rServo.setPosition(0.03);
+                lServo.setPosition(0.03);
+
+
+
+            }
+
+            if(gamepad1.dpad_left) {
+                grabber.setPosition(0.5);
+            }
+
+            telemetry.addData("Linkage Pos:", rServo.getPosition());
+            telemetry.addData("Grabber Pos:", grabber.getPosition());
+            telemetry.update();
+
         }
 
-         */
+
 
         /*for(int i = 0; i <= 1; i += 0.1){
             rServo.setPosition(i);

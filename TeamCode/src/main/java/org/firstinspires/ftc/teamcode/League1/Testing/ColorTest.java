@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.checkerframework.checker.signedness.qual.Constant;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 import org.firstinspires.ftc.teamcode.R;
 
 @TeleOp
@@ -24,14 +25,15 @@ public class ColorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         constants = new Constants();
+        ScoringSystem score = new ScoringSystem(hardwareMap, constants, false);
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         color.setGain(300);
 
-        servo = hardwareMap.get(Servo.class, "servo");
+        //servo = hardwareMap.get(Servo.class, "Grabber");
 
-        servo.setPosition(constants.openAuto);
+        score.setGrabberPosition(constants.openAuto);
 
         waitForStart();
 
@@ -48,12 +50,14 @@ public class ColorTest extends LinearOpMode {
             telemetry.update();
 
             if(gamepad1.right_trigger > 0.1){
-                servo.setPosition(constants.openAuto);
+                score.setGrabberPosition(constants.openAuto);
             }else if(distance.getDistance(DistanceUnit.CM) < 6.3){
                 //Closed
-                servo.setPosition(0);
+                score.setGrabberPosition(0);
+                sleep(200);
+                score.setLinkagePosition(0.7);
             }else{
-                servo.setPosition(constants.openAuto);
+                score.setGrabberPosition(constants.openAuto);
             }
 
         }
