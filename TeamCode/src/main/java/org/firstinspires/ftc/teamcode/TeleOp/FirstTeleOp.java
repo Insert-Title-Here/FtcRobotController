@@ -57,11 +57,15 @@ public class FirstTeleOp extends LinearOpMode {
                 score.setPower(gamepad1.right_trigger/2);
             }else if(gamepad1.left_trigger > 0.1){
                 //TODO: Create method I can call that will calibrate based off of how many tics, the "40" position below
-                calibrateLiftBottom(score.getEncoderPosition());
                 if(score.getEncoderPosition() < 40){
-                    score.setPower(0);
+                    calibrateLiftBottom(score.getEncoderPosition());
                 }else{
-                    score.setPower(-gamepad1.left_trigger/2);
+                    if(score.getEncoderPosition() < 100){
+                        score.goToPosition(0,0.3);
+                    }else{
+                        score.setPower(-gamepad1.left_trigger/2);
+
+                    }
                 }
             }else{
                 score.setPower(0);
@@ -96,10 +100,18 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.dpad_down) {
                 //reset
                 // 50 not zero b/c 435 motor does not have enough torque to stop the gravitational drop to zero tics
-                score.goToPosition(50, 1);
+                //score.goToPosition(50, 1);
                 //Test this callibration
-                int aimedPos = (int)(Math.sqrt(50) * 1.5);
-                score.goToPosition(aimedPos, 1);
+                /*
+                while(score.getEncoderPosition() > 700 && score.getEncoderPosition() < 200){
+                    int aimedPos = (int)(Math.sqrt(score.getEncoderPosition()));
+                    score.goToPosition(aimedPos, 1);
+                }
+
+                 */
+                score.goToPosition(0, 0.3);
+
+
             }
 
             if (gamepad1.dpad_left) {
@@ -134,8 +146,8 @@ public class FirstTeleOp extends LinearOpMode {
     //Test this out
     public void calibrateLiftBottom(int tics){
         if(tics < 70){
-            int aimedPos = (int)(Math.sqrt(tics) / 9);
-            score.setPower(aimedPos);
+            int aimedPow = (int)(Math.sqrt(tics) / 15);
+            score.setPower(aimedPow);
         }
 
 
