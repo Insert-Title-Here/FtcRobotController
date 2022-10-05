@@ -152,13 +152,9 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    //Method used for testing purposes
 
-    public int getPosition(){
-        int position = (int)(fl.getCurrentPosition() + fr.getCurrentPosition() + bl.getCurrentPosition() +
-                br.getCurrentPosition()) / 4;
-        return position;
-    }
+
+
 
     // logs string into file
     public void writeLoggerToFile(){

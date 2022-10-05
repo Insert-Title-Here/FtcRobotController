@@ -37,7 +37,6 @@ public class MecDriveTest extends LinearOpMode {
 
 
 
-        // TODO: Continued... this awas a linear OPMODE; wmake sure you are calling opModelIsActive() in any loops.
         /*
         -put cone on pole, get new cone, repeat
         -read custom sleeve, remember place to park accordingly
@@ -89,6 +88,7 @@ public class MecDriveTest extends LinearOpMode {
         //liftThread.start();
         //close claw
         //TODO: Possibly change turns from encoder to IMU angles
+        //TODO: Work on auto for the left side(make different methods for right side and left side?)
         //lift claw a little bit
         score.goToPosition(80, 0.7);
         sleep(200);
