@@ -93,7 +93,6 @@ public class MecanumDrive {
     }
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
-        // change these to neg for tele (top 2)
         fl.setPower(flPow);
         fr.setPower(frPow);
         bl.setPower(blPow);
@@ -128,6 +127,7 @@ public class MecanumDrive {
             position = (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                     Math.abs(br.getCurrentPosition())) / 4;
         }
+
         loggingString += action.toUpperCase() + "/n";
         loggingString += "FL Position: " + getFLPosition() + "/n";
         loggingString += "FR Position: " + getFRPosition() + "/n";
