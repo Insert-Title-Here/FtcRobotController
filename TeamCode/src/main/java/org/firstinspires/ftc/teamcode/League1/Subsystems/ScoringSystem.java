@@ -112,8 +112,8 @@ public class ScoringSystem {
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
 
-        lLinkage.setPosition(0);
-        rLinkage.setPosition(0);
+        lLinkage.setPosition(0.03);
+        rLinkage.setPosition(0.03);
         grabber.setPosition(constants.openAuto);
 
 
@@ -303,7 +303,7 @@ public class ScoringSystem {
     public void setLinkagePosition(double position){
         //TODO: tune position values
         rLinkage.setPosition(position);
-        //lLinkage.setPosition(position);
+        lLinkage.setPosition(position);
     }
 
     public void linkageAutomated(boolean up){
