@@ -56,6 +56,7 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.right_trigger > 0.1){
                 score.setPower(gamepad1.right_trigger/2);
             }else if(gamepad1.left_trigger > 0.1){
+                //TODO: Create method I can call that will calibrate based off of how many tics, the "40" position below
                 if(score.getEncoderPosition() < 40){
                     score.setPower(0);
                 }else{

@@ -22,6 +22,7 @@ public class MecDriveTest extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     //OpenCvWebcam webcam;
+    //Thread liftThread;
     int parkLocation;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,55 +71,57 @@ public class MecDriveTest extends LinearOpMode {
          */
 
         // Camera checks sleeve...stores parking location??
-        score.setClawPosition(0.9);
-        //score.goToPosition(0, 0.3);
+        score.setClawPosition(0.45);
+        //TODO: Work on threading
+        /*
+        liftThread = new Thread(){
+            @Override
+            public void run(){
+
+            }
+        };
+
+         */
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
+        //liftThread.start();
         //close claw
-        score.setClawPosition(0.45);
-
-
+        //TODO: Possibly change turns from encoder to IMU angles
         //lift claw a little bit
-        score.goToPosition(50, 0.3);
-        sleep(1000);
+        score.goToPosition(80, 0.7);
+        sleep(200);
         // move forward a square
         drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1235, 1198, 1204, 1144), "forward");
-        sleep(50);
         //strafe left
         drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1448, 1398, 1598, -1500), "strafe right");
-        sleep(50);
         // turn
-        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-387, 397, -400, 368), "turn to pole");
+        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
         // move arm max
-        score.goToPosition(2390, 0.7);
-        sleep(500);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(-326, -300, -330, -304), "move to pole");
+        score.goToPosition(2350, 0.7);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(326, 300, 330, 304), "move to pole");
         score.setClawPosition(0.9);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(-326, -300, -330, -304), "move to pole");
-        score.goToPosition(50, 0.5);
-        sleep(50);
-        /*
-        //1 (far left) (general code)
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back from pole");
-        sleep(50);
-        //turn -> 395, -368, 413, -410
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(98, 95, 105, 92), "move forward a bit");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-326, -300, -330, -304), "move back from pole");
+        // lowers arm after scoring first cone
+        score.goToPosition(50, 0.3);
         sleep(50);
 
-         */
+        //1 (far left) (general code)
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
+        sleep(50);
+        //turn -> 395, -368, 413, -410
+        drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn straight");
+        sleep(50);
 
 
 
         /*
         //2
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1267, -1251, -1246, 304), "strafe right");
-        sleep(50);
         //3
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
 
-        sleep(50);
     */
 
 

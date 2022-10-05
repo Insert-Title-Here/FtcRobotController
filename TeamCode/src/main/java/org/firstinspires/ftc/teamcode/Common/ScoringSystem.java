@@ -8,12 +8,13 @@ public class ScoringSystem {
     private DcMotor liftMotor;
     private Servo claw;
 
+
     public ScoringSystem(HardwareMap hardwareMap) {
         /* the below is init*/
         claw = hardwareMap.get(Servo.class, "claw");
         liftMotor = hardwareMap.get(DcMotor.class, "motor");
 
-        // reset encoder's tics for liftMotor
+        // reset encoder's tics for liftMotor (leave commented unless you need to reset the encoder for
         //liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
@@ -38,10 +39,11 @@ public class ScoringSystem {
         while (Math.abs((Math.abs(tics)-motorPosition)) > 10) {
 
             liftMotor.setPower(power);
-
             motorPosition = liftMotor.getCurrentPosition();
+            //TODO: use elaspeTime or smth to set power to zero if tics pretty high and power continually being used
 
         }
+
 
         liftMotor.setPower(0);
 
