@@ -24,11 +24,8 @@ public class ScoringSystem {
         ZERO
     }
 
-
-
-    //TODO: See if this is what we are actually using
-    DcMotorEx rLift, lLift;
-    Servo grabber, rLinkage, lLinkage; //dont know whether there are two linkage servos or one
+    public DcMotorEx rLift, lLift;
+    public Servo grabber, rLinkage, lLinkage; //dont know whether there are two linkage servos or one
     private Robot robot;
 
 
@@ -88,12 +85,15 @@ public class ScoringSystem {
 
     public ScoringSystem(HardwareMap hardwareMap, Constants constants, boolean pid){
         this.constants = constants;
-        rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
-        lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
+        //rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
+        //lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
+
+        //rLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //lLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        rLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //lLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //TODO: Initialize Servos to correct position
 
@@ -103,7 +103,7 @@ public class ScoringSystem {
 
 
 
-        correctMotors();
+        //correctMotors();
 
 
         lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
@@ -116,6 +116,16 @@ public class ScoringSystem {
         rLinkage.setPosition(0.03);
         grabber.setPosition(constants.openAuto);
 
+
+    }
+
+    public void resetAndRunWithoutEncoders(){
+        rLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        rLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -157,6 +167,41 @@ public class ScoringSystem {
         }
 
 
+
+    }
+
+
+    public void moveToPositionNew(int tics, double power){
+
+        int rLiftPos = rLift.getCurrentPosition();
+        //int lLiftPos = lLift.getCurrentPosition() * -1;
+
+        if(tics < /*(*/rLiftPos/* + lLiftPos) / 2*/){
+            power *= -1;
+        }
+
+
+
+
+        //Dont know if need the != condition
+        //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
+
+        //TODO: Check if logic for encoder positions works
+        while (/*opModeIsRunning() && */Math.abs(rLiftPos - tics) > 20 /*&& Math.abs(lLiftPos - tics) > 20*/) {
+
+            //TODO: figure out if we need to negate either of them
+            rLiftPos = rLift.getCurrentPosition();
+            //lLiftPos = lLift.getCurrentPosition() * -1;
+
+            setPower(power);
+
+
+
+
+        }
+
+        setPower(0);
+        //}
 
     }
 
@@ -251,7 +296,7 @@ public class ScoringSystem {
         return OpModeWrapper.currentOpMode().opModeIsActive() && !OpModeWrapper.currentOpMode().isStopRequested();
     }
 
-    private void brake(){
+    public void brake(){
         robot.setShouldUpdate(false);
         setPower(0);
         rLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -263,7 +308,7 @@ public class ScoringSystem {
         robot.setShouldUpdate(true);
     }
 
-    private void correctMotors(){
+    public void correctMotors(){
         rLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
@@ -296,14 +341,22 @@ public class ScoringSystem {
     }
 
     private void setVelocity(int velocity){
-        rLift.setVelocity(velocity);
-        lLift.setVelocity(velocity);
+        //rLift.setVelocity(velocity);
+        //lLift.setVelocity(velocity);
     }
 
     public void setLinkagePosition(double position){
         //TODO: tune position values
         rLinkage.setPosition(position);
         lLinkage.setPosition(position);
+    }
+
+    public double getRightLinkage(){
+        return rLinkage.getPosition();
+    }
+
+    public double getLeftLinkage(){
+        return lLinkage.getPosition();
     }
 
     public void linkageAutomated(boolean up){

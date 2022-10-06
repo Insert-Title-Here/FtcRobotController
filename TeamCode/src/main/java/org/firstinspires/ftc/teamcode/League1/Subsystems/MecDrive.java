@@ -67,6 +67,37 @@ public class MecDrive {
         CorrectMotors();
     }
 
+    public MecDrive(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry){
+        fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
+        fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
+        bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
+        br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
+        this.pidEnabled = pidEnabled;
+        this.telemetry = telemetry;
+
+        //robot.setShouldUpdate(false);
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //robot.setShouldUpdate(true);
+
+
+
+
+
+
+
+        CorrectMotors();
+    }
+
+
+
     public void rotate(double angle, double power){
         if(angle < 0){
             power *= -1;

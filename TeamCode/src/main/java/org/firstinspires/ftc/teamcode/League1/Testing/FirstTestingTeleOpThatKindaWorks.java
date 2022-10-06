@@ -19,66 +19,81 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 //TODO: figure out bulk read
 
 @TeleOp
-public class SimpleScoringSystemTest extends LinearOpMode {
+public class FirstTestingTeleOpThatKindaWorks extends LinearOpMode {
+
 
     private final double NORMAL_LINEAR_MODIFIER = 0.5;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
-    DcMotorEx rLift, lLift;
 
-
+    Constants constants = new Constants();
     ScoringSystem2 score;
-    Constants constants;
-    Robot robot;
     MecDrive drive;
+    //Robot robot;
     ColorRangeSensor distance, color;
 
     boolean autoLinkageFlag = true;
     boolean grabFlag = true;
 
+    Thread liftThread;
+
+
+
+
+
+
+
     @Override
     public void runOpMode() throws InterruptedException {
-        constants = new Constants();
+
+        liftThread = new Thread(){
+            @Override
+            public void run() {
+                while(opModeIsActive()){
+                    if(gamepad1.right_trigger > 0.1){
+                        score.setPower(gamepad1.right_trigger);
+
+                    }else if(gamepad1.left_trigger > 0.1){
+                        score.setPower(-gamepad1.left_trigger / 4);
+                    }else{
+                        score.setPower(0);
+                    }
+
+                    if(gamepad1.b){
+                        score.moveToPosition(900, 0.8);
+                    }
+
+                    if(gamepad1.a){
+                        score.moveToPosition(0, 0.5);
+                    }
+
+
+
+
+
+                }
+
+            }
+        };
         score = new ScoringSystem2(hardwareMap, constants);
-        robot = new Robot(hardwareMap);
-        drive = new MecDrive(hardwareMap, robot, false, telemetry);
-        distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //robot = new Robot(hardwareMap);
+        drive = new MecDrive(hardwareMap,false, telemetry);
 
-        rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
-        lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
-
-        rLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        rLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        color.setGain(300);
-        distance.setGain(300);
 
         score.setLinkagePosition(0.03);
         score.setGrabberPosition(0.75);
 
-        /*score.lLift = hardwareMap.get(DcMotor.class, "LeftLift");
-        score.rLift = hardwareMap.get(DcMotor.class, "RightLift");*/
-
-        //score.resetAndRunWithoutEncoders();
-
-        //score.correctMotors();
-
-
-
+        distance = hardwareMap.get(ColorRangeSensor.class, "distance");
+        color = hardwareMap.get(ColorRangeSensor.class, "color");
 
 
         waitForStart();
 
-        while(opModeIsActive()){
+        liftThread.start();
 
+        while(opModeIsActive()){
 
 
             if (gamepad1.right_bumper) {
@@ -90,24 +105,6 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
 
 
-
-            if(gamepad1.right_trigger > 0.1){
-                setPower(gamepad1.right_trigger);
-
-            }else if(gamepad1.left_trigger > 0.1){
-                setPower(-gamepad1.left_trigger);
-            }else{
-                setPower(0);
-            }
-
-
-            if(gamepad1.b){
-                score.moveToPosition(200, 0.8);
-            }
-
-            if(gamepad1.a){
-                score.moveToPosition(0, 0.5);
-            }
 
 
 
@@ -149,8 +146,9 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
 
 
+            //telemetry.addData("rMotor", rLift.getCurrentPosition());
+            telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
-            telemetry.addData("lMotor", score.getLeftEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
             telemetry.addData("distanceRed", distance.getNormalizedColors().red);
             telemetry.addData("distanceBlue", distance.getNormalizedColors().blue);
@@ -160,21 +158,21 @@ public class SimpleScoringSystemTest extends LinearOpMode {
             telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);
             telemetry.update();
 
+
+
         }
 
         drive.setPower(0, 0, 0, 0);
-        score.setLinkagePosition(0.5);
+        score.setLinkagePosition(0.2);
         sleep(500);
-        score.setLinkagePosition(0.05);
-        score.moveToPosition(0, 0.5);
+        score.setLinkagePosition(0.03);
         score.setGrabberPosition(constants.openAuto);
 
+
+
     }
 
-    public void setPower(double power){
-        rLift.setPower(power);
-        lLift.setPower(-power);
-    }
+
 
 
 
