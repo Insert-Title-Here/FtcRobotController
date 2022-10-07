@@ -27,7 +27,7 @@ public class ScoringSystem {
 
     }
 
-    // goes to given tics at given power -> max tics for arm raising = 4906 -> go for 4800
+    //goes to given tics
     public void goToPosition(int tics, double power) {
 
         int motorPosition = liftMotor.getCurrentPosition();
@@ -38,7 +38,7 @@ public class ScoringSystem {
         long time = System.currentTimeMillis();
         while (Math.abs((Math.abs(tics)-motorPosition)) > 10) {
             //set power to zero if tics pretty high and power continually being used
-            if((Math.abs(System.currentTimeMillis() - time) > 2000) && (tics > 2100)){
+            if((Math.abs(System.currentTimeMillis() - time) > 6000) && (tics > 2100)){
                 break;
             }
             liftMotor.setPower(power);
