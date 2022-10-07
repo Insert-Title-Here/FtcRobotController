@@ -72,10 +72,10 @@ public class DetectionAlgorithm extends OpenCvPipeline {
 
 
         input.copyTo(original);
-//
-//        if(original.empty()) {
-//            return input;
-//        }
+
+        if(original.empty()) {
+            return input;
+        }
         // cyan magenta yellow
 
         /* colors (scalars):
@@ -83,7 +83,7 @@ public class DetectionAlgorithm extends OpenCvPipeline {
             yellow -> new Scalar(255, 255, 0)
             cyan -> new Scalar(0, 255, 255)
          */
-//        changed = original.submat(new Rect(box_top_left, box_bottom_right));
+        changed = original.submat(new Rect(box_top_left, box_bottom_right));
 
         //Core.extractChannel(changed, changed, 1);
         //Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
@@ -100,11 +100,11 @@ public class DetectionAlgorithm extends OpenCvPipeline {
              */
 
         // yellow
-        Core.inRange(input, upper_yellow_bounds, lower_yellow_bounds, yelMat);
+        Core.inRange(changed, lower_yellow_bounds, upper_yellow_bounds, yelMat);
         // cyan
-        Core.inRange(input, upper_cyan_bounds, lower_cyan_bounds, cyaMat);
+        Core.inRange(changed, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
         // magenta
-        Core.inRange(input, upper_magenta_bounds, lower_magenta_bounds, magMat);
+        Core.inRange(changed, lower_magenta_bounds, upper_magenta_bounds, magMat);
 
 
 
