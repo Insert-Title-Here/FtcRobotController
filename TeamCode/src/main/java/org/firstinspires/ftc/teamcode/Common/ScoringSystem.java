@@ -70,6 +70,10 @@ public class ScoringSystem {
          liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
+    public boolean isBusy(){
+        return liftMotor.isBusy();
+    }
+
 }
 
 

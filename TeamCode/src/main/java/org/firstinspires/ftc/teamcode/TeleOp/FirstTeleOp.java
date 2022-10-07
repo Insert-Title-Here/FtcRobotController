@@ -14,6 +14,8 @@ public class FirstTeleOp extends LinearOpMode {
     //TODO: change names if you want to
     MecanumDrive drive;
     ScoringSystem score;
+    Thread liftThread;
+    boolean cont = true;
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.5;
@@ -35,14 +37,23 @@ public class FirstTeleOp extends LinearOpMode {
 
         //Open
         score.setClawPosition(0.9);
+        liftThread = new Thread(){
+            @Override
+            public void run(){
+                while(score.getEncoderPosition() > 1200 && /*cont*/ !score.isBusy()){
+                    score.setPower(0.15);
+                }
+                score.setPower(0);
 
+            }
+        };
 
 
         waitForStart();
 
 
         while(opModeIsActive()){
-
+            liftThread.start();
 
             //TODO: Decide if you want sprint capability
             if (gamepad1.right_bumper) { // replace this with a button for sprint
@@ -54,8 +65,11 @@ public class FirstTeleOp extends LinearOpMode {
             //disable trigger as you can use left right down up pad instead(pressing left trigger too much will mess up encoder values for lift system
 
             if(gamepad1.right_trigger > 0.1){
+                cont = false;
                 score.setPower(gamepad1.right_trigger/2);
+                cont = true;
             }else if(gamepad1.left_trigger > 0.1){
+                cont = false;
                 //TODO: Create method I can call that will calibrate based off of how many tics, the "40" position below
                 if(score.getEncoderPosition() < 40){
                     calibrateLiftBottom(score.getEncoderPosition());
@@ -67,13 +81,17 @@ public class FirstTeleOp extends LinearOpMode {
 
                     }
                 }
+                cont = true;
             }else{
-                score.setPower(0);
+                cont = true;
             }
 
 
 
+
+
             if(gamepad1.b){
+
                 //Closed
                 score.setClawPosition(0.45);
 
@@ -87,9 +105,10 @@ public class FirstTeleOp extends LinearOpMode {
             }
             if(gamepad1.a){
                 drive.resetEncoders();
+                //score.resetLiftEncoder();
             }
             if(gamepad1.y){
-                score.resetLiftEncoder();
+                cont = false;
             }
 
             // reset   gamepad1.dpad_down
@@ -98,6 +117,7 @@ public class FirstTeleOp extends LinearOpMode {
             // high cone, 33 in, 2390 gamepad1.dpad_right
 
             if(gamepad1.dpad_down) {
+                cont = false;
                 //reset
                 // 50 not zero b/c 435 motor does not have enough torque to stop the gravitational drop to zero tics
                 //score.goToPosition(50, 1);
@@ -111,22 +131,25 @@ public class FirstTeleOp extends LinearOpMode {
                  */
                 score.goToPosition(0, 0.3);
 
-
             }
 
             if (gamepad1.dpad_left) {
+
                 //low cone
                 score.goToPosition(1209, 1);
+                contFlip();
             }
 
             if (gamepad1.dpad_up) {
                 //medium cone
                 score.goToPosition(1795, 1);
+                contFlip();
             }
 
             if (gamepad1.dpad_right) {
                 //high cone
                 score.goToPosition(2390, 1);
+                contFlip();
             }
 
             telemetry.addData("flPos", drive.getFLPosition());
@@ -151,6 +174,13 @@ public class FirstTeleOp extends LinearOpMode {
         }
 
 
+    }
+    public void contFlip(){
+        if(cont){
+            cont = false;
+        }else{
+            cont = true;
+        }
     }
 
 }

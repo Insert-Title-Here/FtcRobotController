@@ -51,7 +51,7 @@ public class MecDriveTest extends LinearOpMode {
                 while(true){
                     if(score.getEncoderPosition() > 1200){
                         //TODO
-                        score.setPower(5);
+                        score.setPower(0.1);
                     }
                 }
 
