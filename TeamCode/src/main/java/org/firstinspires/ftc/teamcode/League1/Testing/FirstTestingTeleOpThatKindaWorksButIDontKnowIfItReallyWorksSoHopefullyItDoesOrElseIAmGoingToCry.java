@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
@@ -34,10 +35,14 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
     //Robot robot;
     ColorRangeSensor distance, color;
 
+    EndgameSystems systems;
+
+    boolean previousLeft, previousRight, previousUp, previousDown;
     boolean autoLinkageFlag = true;
     boolean grabFlag = true;
 
     Thread liftThread;
+    Thread capThread;
 
 
 
@@ -47,6 +52,24 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        score = new ScoringSystem2(hardwareMap, constants);
+        //robot = new Robot(hardwareMap);
+        drive = new MecDrive(hardwareMap,false, telemetry);
+        systems = new EndgameSystems(hardwareMap);
+
+
+
+
+        score.setLinkagePosition(0.03);
+        score.setGrabberPosition(0.75);
+
+        distance = hardwareMap.get(ColorRangeSensor.class, "distance");
+        color = hardwareMap.get(ColorRangeSensor.class, "color");
+
+        color.setGain(300);
+        distance.setGain(300);
+
 
         liftThread = new Thread(){
             @Override
@@ -77,23 +100,59 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
             }
         };
-        score = new ScoringSystem2(hardwareMap, constants);
-        //robot = new Robot(hardwareMap);
-        drive = new MecDrive(hardwareMap,false, telemetry);
 
 
-        score.setLinkagePosition(0.03);
-        score.setGrabberPosition(0.75);
+        capThread = new Thread(){
 
-        distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
 
-        color.setGain(300);
-        distance.setGain(300);
+            @Override
+            public void run() {
+                while(opModeIsActive()){
+
+                    if(gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
+                        double val = gamepad2.right_trigger - gamepad2.left_trigger;
+                        systems.setCapstoneExtensionPower(val);
+                    } else if (gamepad2.right_bumper) {
+                        systems.setCapstoneExtensionPower(0.5);
+                    } else if (gamepad2.left_bumper) {
+                        systems.setCapstoneExtensionPower(-0.5);
+                    } else{
+                        systems.setCapstoneExtensionPower(0);
+                    }
+
+
+
+                    double yPos = systems.getYCapPosition();
+                    systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
+
+                    systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.0010, 0.0010));
+
+                    if (gamepad2.x) {
+                        systems.zeroCap();
+                    } else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
+                        systems.setXCapSpeedDivisor(7);
+                    } else if (gamepad2.dpad_left && previousLeft != gamepad2.dpad_left) {
+                        systems.setXCapSpeedDivisor(4);
+                    }
+
+                    previousLeft = gamepad2.dpad_left;
+                    previousRight = gamepad2.dpad_right;
+                    previousUp = gamepad2.dpad_up;
+                    previousDown = gamepad2.dpad_down;
+                }
+
+                systems.zeroCap();
+                systems.setXCapstoneRotatePower(0);
+                systems.setCapstoneExtensionPower(0);
+
+
+            }
+        };
 
         waitForStart();
 
         liftThread.start();
+        capThread.start();
 
         while(opModeIsActive()){
 
@@ -103,12 +162,6 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             } else {
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
-
-
-
-
-
-
 
 
             if(gamepad1.left_bumper){
@@ -149,7 +202,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
 
             //telemetry.addData("rMotor", rLift.getCurrentPosition());
-            telemetry.addData("lMotor", score.getLeftEncoderPos());
+            telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
             telemetry.addData("distanceRed", distance.getNormalizedColors().red);

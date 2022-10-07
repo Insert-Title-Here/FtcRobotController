@@ -41,12 +41,12 @@ public class ScoringSystem2 {
     }
     public void setPower(double power) {
         rLift.setPower(power);
-        lLift.setPower(power);
+        lLift.setPower(-power);
     }
 
     public void setPower(double rightPower, double leftPower){
         rLift.setPower(rightPower);
-        lLift.setPower(leftPower);
+        lLift.setPower(-leftPower);
     }
     public int getLeftEncoderPos() {
         return lLift.getCurrentPosition();
@@ -55,10 +55,13 @@ public class ScoringSystem2 {
     public int getRightEncoderPos() {
         return rLift.getCurrentPosition();
     }
+
+
+
     public void moveToPosition(int tics, double power){
 
         int rLiftPos = rLift.getCurrentPosition();
-        int lLiftPos = lLift.getCurrentPosition();
+        int lLiftPos = -1 * lLift.getCurrentPosition();
 
 
         if(tics < /*(*/rLiftPos/* + lLiftPos) / 2*/){
@@ -88,7 +91,7 @@ public class ScoringSystem2 {
 
 
             rLiftPos = rLift.getCurrentPosition();
-            lLiftPos = lLift.getCurrentPosition();
+            lLiftPos = -1 * lLift.getCurrentPosition();
 
             setPower(rightPower, leftPower);
 
