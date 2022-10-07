@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -10,10 +13,15 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 //TODO: check if camera angle works
 public class DetectionAlgorithmTest extends OpenCvPipeline {
-
-
-    Mat original;
-    private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat();
+    Telemetry telemetry;
+    /*
+   YELLOW  = Parking Left
+   CYAN    = Parking Middle
+   MAGENTA = Parking Right
+    */
+    // Mat defined/instantiated, percents (for each color) instantiated
+    private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
+    private double yelPercent, cyaPercent, magPercent;
 
     // top left point of submat
     public static final Point BOX_TOPLEFT = new Point(100,176);
@@ -27,6 +35,9 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         CENTER,
         RIGHT
     }
+
+    // Running variable storing the parking position
+    private volatile ParkingPosition position = ParkingPosition.LEFT;
 
     // submat to center cone
     Point box_top_left = new Point(
@@ -45,12 +56,20 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
             lower_magenta_bounds = new Scalar(170, 0, 170, 255),
             upper_magenta_bounds = new Scalar(255, 60, 255, 255);
 
-    // Running variable storing the parking position
-    private volatile ParkingPosition position = ParkingPosition.LEFT;
+    // Color definitions
+    private final Scalar
+            YELLOW  = new Scalar(255, 255, 0),
+            CYAN    = new Scalar(0, 255, 255),
+            MAGENTA = new Scalar(255, 0, 255);
+
+    public DetectionAlgorithmTest(Telemetry telemetry){
+        this.telemetry = telemetry;
+    }
+
 
     @Override
     public Mat processFrame(Mat input) {
-        original = new Mat();
+
 
         input.copyTo(original);
 
@@ -64,13 +83,20 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
             yellow -> new Scalar(255, 255, 0)
             cyan -> new Scalar(0, 255, 255)
          */
-        changed = original.submat(new Rect(box_top_left, box_bottom_right));
+
 
         //Core.extractChannel(changed, changed, 1);
-        //Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
-        Imgproc.GaussianBlur(changed, changed, new Size(3,3), 0);
-        Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 3);
-        Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 3);
+        //Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2HSV);
+        Imgproc.GaussianBlur(original, changed, new Size(5,5), 0);
+        Imgproc.erode(original, changed, new Mat(), new Point(-1, -1), 2);
+        Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
+
+        changed = changed.submat(new Rect(box_top_left, box_bottom_right));
+
+        // Apply Morphology
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+        Imgproc.morphologyEx(changed, changed, Imgproc.MORPH_CLOSE, kernel);
+
 
 
             /* submatrices
@@ -78,12 +104,59 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
 
              */
 
+        // yellow
+        Core.inRange(changed, upper_yellow_bounds, lower_yellow_bounds, yelMat);
+        // cyan
+        Core.inRange(changed, upper_cyan_bounds, lower_cyan_bounds, cyaMat);
+        // magenta
+        Core.inRange(changed, upper_magenta_bounds, lower_magenta_bounds, magMat);
 
 
-        // magenta 255, 0, 255
-        //Core.inRange(changed, new Scalar(240, 0 ,240), new Scalar(255, 0, 255), changed);
 
-        Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), new Scalar(255, 0, 255));
+        // percent "abundance" for each color
+        yelPercent = Core.countNonZero(yelMat);
+        cyaPercent = Core.countNonZero(cyaMat);
+        magPercent = Core.countNonZero(magMat);
+        telemetry.addData("yelPercent", yelPercent);
+        telemetry.addData("cyaPercent", cyaPercent);
+        telemetry.addData("magPercent", magPercent);
+        telemetry.update();
+
+        // decides parking position, highlights margin according to greatest abundance color
+        if (yelPercent > cyaPercent) {
+            if (yelPercent > magPercent) {
+                // yellow greatest, position left
+                position = ParkingPosition.LEFT;
+                telemetry.addData("park position", position);
+                Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), YELLOW, 2);
+            } else {
+                // magenta greatest, position right
+                position = ParkingPosition.RIGHT;
+                telemetry.addData("park position", position);
+                Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
+            }
+        } else if(cyaPercent > magPercent) {
+            // cyan greatest, position center
+            position = ParkingPosition.CENTER;
+            telemetry.addData("park position", position);
+            Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
+        } else {
+            /*
+            // magenta greatest, position right
+            position = ParkingPosition.RIGHT;
+            telemetry.addData("park position", position);
+            Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
+            */
+        }
+        telemetry.update();
+
+        // Memory cleanup
+        //changed.release();
+        //original.release();
+        yelMat.release();
+        cyaMat.release();
+        magMat.release();
+
         return changed;
     }
 

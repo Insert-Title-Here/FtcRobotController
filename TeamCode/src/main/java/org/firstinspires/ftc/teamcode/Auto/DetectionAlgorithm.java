@@ -72,10 +72,10 @@ public class DetectionAlgorithm extends OpenCvPipeline {
 
 
         input.copyTo(original);
-
-        if(original.empty()) {
-            return input;
-        }
+//
+//        if(original.empty()) {
+//            return input;
+//        }
         // cyan magenta yellow
 
         /* colors (scalars):
@@ -83,16 +83,16 @@ public class DetectionAlgorithm extends OpenCvPipeline {
             yellow -> new Scalar(255, 255, 0)
             cyan -> new Scalar(0, 255, 255)
          */
-        changed = original.submat(new Rect(box_top_left, box_bottom_right));
+//        changed = original.submat(new Rect(box_top_left, box_bottom_right));
 
         //Core.extractChannel(changed, changed, 1);
         //Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
-        Imgproc.GaussianBlur(changed, changed, new Size(3,3), 0);
-        Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 3);
-        Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 3);
+        Imgproc.GaussianBlur(changed, changed, new Size(5,5), 0);
+        Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 2);
+        Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
 
         // container
-        Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), new Scalar(0, 0, 0));
+        //Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), new Scalar(255, 153, 204));
 
             /* submatrices
             Mat pixel_section = original.submat(rowStart, rowEnd, colStart, colEnd)l
@@ -100,11 +100,11 @@ public class DetectionAlgorithm extends OpenCvPipeline {
              */
 
         // yellow
-        Core.inRange(changed, upper_yellow_bounds, lower_yellow_bounds, yelMat);
+        Core.inRange(input, upper_yellow_bounds, lower_yellow_bounds, yelMat);
         // cyan
-        Core.inRange(changed, upper_cyan_bounds, lower_cyan_bounds, cyaMat);
+        Core.inRange(input, upper_cyan_bounds, lower_cyan_bounds, cyaMat);
         // magenta
-        Core.inRange(changed, upper_magenta_bounds, lower_magenta_bounds, magMat);
+        Core.inRange(input, upper_magenta_bounds, lower_magenta_bounds, magMat);
 
 
 
@@ -112,6 +112,10 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         yelPercent = Core.countNonZero(yelMat);
         cyaPercent = Core.countNonZero(cyaMat);
         magPercent = Core.countNonZero(magMat);
+        telemetry.addData("yelPercent", yelPercent);
+        telemetry.addData("cyaPercent", cyaPercent);
+        telemetry.addData("magPercent", magPercent);
+        telemetry.update();
 
         // decides parking position, highlights margin according to greatest abundance color
         if (yelPercent > cyaPercent) {
@@ -132,10 +136,12 @@ public class DetectionAlgorithm extends OpenCvPipeline {
             telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
         } else {
+            /*
             // magenta greatest, position right
             position = ParkingPosition.RIGHT;
             telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
+            */
         }
         telemetry.update();
 
