@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class TestingVisionAuto extends LinearOpMode {
 
     OpenCvWebcam camera;
-    TestingContourPipeline pipeline;
+    TestingPipeline pipeline;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,7 +22,7 @@ public class TestingVisionAuto extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new TestingContourPipeline(telemetry);
+        pipeline = new TestingPipeline(telemetry);
 
         camera.setPipeline(pipeline);
 

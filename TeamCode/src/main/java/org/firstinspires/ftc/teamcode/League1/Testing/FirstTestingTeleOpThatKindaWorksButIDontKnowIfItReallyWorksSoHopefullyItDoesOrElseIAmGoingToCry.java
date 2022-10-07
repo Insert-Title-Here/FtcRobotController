@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 //TODO: figure out bulk read
 
 @TeleOp
-public class FirstTestingTeleOpThatKindaWorks extends LinearOpMode {
+public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefullyItDoesOrElseIAmGoingToCry extends LinearOpMode {
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.5;
@@ -62,7 +62,7 @@ public class FirstTestingTeleOpThatKindaWorks extends LinearOpMode {
                     }
 
                     if(gamepad1.b){
-                        score.moveToPosition(900, 0.8);
+                        score.moveToPosition(800, 1);
                     }
 
                     if(gamepad1.a){
@@ -88,6 +88,8 @@ public class FirstTestingTeleOpThatKindaWorks extends LinearOpMode {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         color = hardwareMap.get(ColorRangeSensor.class, "color");
 
+        color.setGain(300);
+        distance.setGain(300);
 
         waitForStart();
 
@@ -147,7 +149,7 @@ public class FirstTestingTeleOpThatKindaWorks extends LinearOpMode {
 
 
             //telemetry.addData("rMotor", rLift.getCurrentPosition());
-            telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
+            telemetry.addData("lMotor", score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
             telemetry.addData("distanceRed", distance.getNormalizedColors().red);
@@ -156,6 +158,8 @@ public class FirstTestingTeleOpThatKindaWorks extends LinearOpMode {
             telemetry.addData("grabbingFlag", grabFlag);
             telemetry.addData("colorRed: ", color.getNormalizedColors().red);
             telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);
+            telemetry.addData("rightServoTarget", score.getRightLinkage());
+            telemetry.addData("leftServoTarget", score.getLeftLinkage());
             telemetry.update();
 
 

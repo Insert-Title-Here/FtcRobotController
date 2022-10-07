@@ -25,6 +25,9 @@ public class ScoringSystem2 {
         rLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+        rLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
         rLinkage = hardwareMap.get(Servo.class, "RightLinkage");
 
@@ -38,12 +41,12 @@ public class ScoringSystem2 {
     }
     public void setPower(double power) {
         rLift.setPower(power);
-        lLift.setPower(-power);
+        lLift.setPower(power);
     }
 
     public void setPower(double rightPower, double leftPower){
         rLift.setPower(rightPower);
-        lLift.setPower(-leftPower);
+        lLift.setPower(leftPower);
     }
     public int getLeftEncoderPos() {
         return lLift.getCurrentPosition();
@@ -55,7 +58,7 @@ public class ScoringSystem2 {
     public void moveToPosition(int tics, double power){
 
         int rLiftPos = rLift.getCurrentPosition();
-        int lLiftPos = lLift.getCurrentPosition() * -1;
+        int lLiftPos = lLift.getCurrentPosition();
 
 
         if(tics < /*(*/rLiftPos/* + lLiftPos) / 2*/){
@@ -85,7 +88,7 @@ public class ScoringSystem2 {
 
 
             rLiftPos = rLift.getCurrentPosition();
-            lLiftPos = lLift.getCurrentPosition() * -1;
+            lLiftPos = lLift.getCurrentPosition();
 
             setPower(rightPower, leftPower);
 

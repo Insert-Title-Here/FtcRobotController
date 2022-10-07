@@ -17,6 +17,7 @@ public class TestingPipeline extends OpenCvPipeline {
 
     Telemetry telemetry;
     Mat temp = new Mat();
+    Mat ycrcb = new Mat();
     Mat purple = new Mat();
     Mat green = new Mat();
     Mat brown = new Mat();
@@ -24,8 +25,8 @@ public class TestingPipeline extends OpenCvPipeline {
 
 
     static final Rect MIDDLE = new Rect(
-            new Point(125, 70),
-            new Point(180, 150)
+            new Point(125, 50),
+            new Point(225, 150)
     );
 
     public TestingPipeline(Telemetry telemetry){
@@ -39,24 +40,32 @@ public class TestingPipeline extends OpenCvPipeline {
         //Core.inRange(green, new Scalar(254), new Scalar(255), green);
         //Core.inRange(input, new Scalar(255, 255, 255), new Scalar(0, 0, 0), green);
 
-        Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
-        Imgproc.cvtColor(input, black, Imgproc.COLOR_RGB2GRAY);
+        //Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(ycrcb, temp, 0);
+        Core.inRange(temp, new Scalar(200), new Scalar(255), temp);
+
+
+        double countY = Core.mean(temp.submat(MIDDLE)).val[0];
+
+        telemetry.addData("countY", countY);
+        //Imgproc.cvtColor(input, black, Imgproc.COLOR_RGB2GRAY);
 
         //Yellow
-        //Core.inRange(temp, new Scalar(25, 180, 50), new Scalar(27, 255, 255), temp);
+        //Core.inRange(temp, new Scalar(25, 120, 120), new Scalar(40, 255, 255), temp);
 
         //Green
-        Core.inRange(temp, new Scalar(70, 60, 60), new Scalar(100, 255, 255), green);
+        //Core.inRange(temp, new Scalar(70, 60, 60), new Scalar(100, 255, 255), green);
 
         //Purple
-        Core.inRange(temp, new Scalar(120, 60, 60), new Scalar(130, 255, 255), purple);
+        //Core.inRange(temp, new Scalar(120, 60, 60), new Scalar(130, 255, 255), purple);
 
         //Brown
-        Core.inRange(temp, new Scalar(30, 0, 0), new Scalar(40, 80, 50), brown);
+        //Core.inRange(temp, new Scalar(30, 0, 0), new Scalar(40, 80, 50), brown);
 
 
         //Black
-        Core.inRange(black, new Scalar(0), new Scalar(25), black);
+        //Core.inRange(black, new Scalar(0), new Scalar(25), black);
         /*
 
 
@@ -77,6 +86,7 @@ public class TestingPipeline extends OpenCvPipeline {
          */
 
 
+        /*
         double countGreen = Core.mean(green.submat(MIDDLE)).val[0];
         double countPurple = Core.mean(purple.submat(MIDDLE)).val[0];
         double countBrown = Core.mean(brown.submat(MIDDLE)).val[0];
@@ -88,12 +98,35 @@ public class TestingPipeline extends OpenCvPipeline {
         telemetry.addData("brown", countBrown);
         telemetry.addData("black", countBlack);
 
+         */
+
 
 
         telemetry.update();
 
 
+        if(countY > 20){
+            Imgproc.rectangle(
+                    input,
+                    MIDDLE,
+                    new Scalar(0, 255, 0),
+                    3
 
+            );
+
+        }else{
+            Imgproc.rectangle(
+                    input,
+                    MIDDLE,
+                    new Scalar(0, 0, 0),
+                    3
+
+            );
+
+        }
+
+
+/*
         if(countGreen > 50){
             Imgproc.rectangle(
                     input,
@@ -139,6 +172,8 @@ public class TestingPipeline extends OpenCvPipeline {
 
             );
         }
+
+ */
 
 
 
