@@ -38,33 +38,21 @@ public class AutoTesting extends LinearOpMode {
         clawr.setPosition(0.6);
 
         waitForStart();
+        drive.setPower(new Vector2D(gamepad1.right_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.left_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+        //lift.setPower();
+        //lift.setPower();
+        lift.setPower(0);
 
+        for(int i = 0; i < 20; i++) {
+            clawl.setPosition(0);
+            clawr.setPosition(0.6);
+            sleep(200);
+            clawr.setPosition(0);
+            clawl.setPosition(0.6);
+            sleep(200);
 
-        while (opModeIsActive()) {
+        }
 
-            if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(gamepad1.right_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.left_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-            } else {
-                drive.setPower(new Vector2D(gamepad1.right_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.left_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
-            }
-
-            if (gamepad1.left_trigger > 0.1) {
-                lift.setPower(gamepad1.left_trigger / 2);
-            } else if (gamepad1.right_trigger > 0.1) {
-                lift.setPower(-gamepad1.right_trigger / 2);
-            } else {
-                lift.setPower(0);
-            }
-
-            if (gamepad1.left_bumper) {
-                clawl.setPosition(0);
-                clawr.setPosition(0.6);
-            }
-
-            if (gamepad1.right_bumper) {
-                clawr.setPosition(0);
-                clawl.setPosition(0.6);
-            }
 
 
             telemetry.addData("flPos", drive.getFLPosition());
@@ -74,8 +62,7 @@ public class AutoTesting extends LinearOpMode {
             telemetry.update();
 
 
-        }
 
-        drive.setPower(0, 0, 0, 0);
+        drive.setPower(0,0,0,0);
     }
 }

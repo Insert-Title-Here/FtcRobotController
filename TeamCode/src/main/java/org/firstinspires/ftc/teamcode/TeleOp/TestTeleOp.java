@@ -74,6 +74,7 @@ public class TestTeleOp extends LinearOpMode {
             telemetry.addData("frPos", drive.getFRPosition());
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());
+            telemetry.addData("liftPos", lift.getCurrentPosition());
             telemetry.update();
 
 
