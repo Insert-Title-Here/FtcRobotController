@@ -83,20 +83,24 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
             yellow -> new Scalar(255, 255, 0)
             cyan -> new Scalar(0, 255, 255)
          */
+        changed = original.submat(new Rect(box_top_left, box_bottom_right));
 
 
         //Core.extractChannel(changed, changed, 1);
-        //Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2HSV);
-        Imgproc.GaussianBlur(original, changed, new Size(5,5), 0);
-        Imgproc.erode(original, changed, new Mat(), new Point(-1, -1), 2);
+
+        Imgproc.GaussianBlur(changed, changed, new Size(5,5), 0);
+        Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 2);
         Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
+        Imgproc.cvtColor(changed, changed, Imgproc.COLOR_RGB2YCrCb);
 
-        changed = changed.submat(new Rect(box_top_left, box_bottom_right));
-
-        // Apply Morphology
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
-        Imgproc.morphologyEx(changed, changed, Imgproc.MORPH_CLOSE, kernel);
-
+        //Y -> brightness, Cr -> red - brightness, Cb -> blue - brightness
+        Core.extractChannel(changed, yelMat, 0);
+        Core.extractChannel(changed, cyaMat, 2);
+        Core.extractChannel(changed, magMat, 1);
+//        // Apply Morphology
+//        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+//        Imgproc.morphologyEx(changed, changed, Imgproc.MORPH_CLOSE, kernel);
+//
 
 
             /* submatrices
@@ -104,12 +108,13 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
 
              */
 
+        // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
         // yellow
-        Core.inRange(changed, upper_yellow_bounds, lower_yellow_bounds, yelMat);
+        Core.inRange(changed, lower_yellow_bounds, upper_yellow_bounds, yelMat);
         // cyan
-        Core.inRange(changed, upper_cyan_bounds, lower_cyan_bounds, cyaMat);
+        Core.inRange(changed, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
         // magenta
-        Core.inRange(changed, upper_magenta_bounds, lower_magenta_bounds, magMat);
+        Core.inRange(changed, lower_magenta_bounds, upper_magenta_bounds, magMat);
 
 
 
@@ -141,12 +146,12 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
             telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
         } else {
-            /*
+
             // magenta greatest, position right
             position = ParkingPosition.RIGHT;
             telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
-            */
+
         }
         telemetry.update();
 

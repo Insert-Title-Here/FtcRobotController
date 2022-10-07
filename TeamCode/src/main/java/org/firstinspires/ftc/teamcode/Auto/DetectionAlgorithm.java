@@ -19,15 +19,15 @@ public class DetectionAlgorithm extends OpenCvPipeline {
    CYAN    = Parking Middle
    MAGENTA = Parking Right
     */
-    // Mat defined/instantiated, percents (for each color) instantiated
+    // Mat defined/instantiated, percent    s (for each color) instantiated
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
-    // top left point of submat
+    // top left point of submat (original 320, 176)
     public static final Point BOX_TOPLEFT = new Point(100,176);
 
     // width and height of submat
-    public static int BOX_WIDTH = 150;
+    public static int BOX_WIDTH = 100;
     public static int BOX_HEIGHT = -88;
 
     enum ParkingPosition {
@@ -136,12 +136,12 @@ public class DetectionAlgorithm extends OpenCvPipeline {
             telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
         } else {
-            /*
+
             // magenta greatest, position right
             position = ParkingPosition.RIGHT;
             telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
-            */
+
         }
         telemetry.update();
 

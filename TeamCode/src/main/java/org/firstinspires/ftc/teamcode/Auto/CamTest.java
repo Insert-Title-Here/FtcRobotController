@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
 public class CamTest extends LinearOpMode {
-    DetectionAlgorithm detect;
+    DetectionAlgorithmTest detect;
     String position; //temp
     OpenCvWebcam webcam;
     int parkLocation;
@@ -19,7 +19,7 @@ public class CamTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new DetectionAlgorithm(telemetry);
+        detect = new DetectionAlgorithmTest(telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
