@@ -175,13 +175,9 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             if(Math.abs(leftStickX) > Math.abs(leftStickY)){
                 leftStickY = 0;
 
-                //Makes it go to 1/-1 (multiply by reciprocal) and using abs val of reciprocal so it stays negative if its negative
-                leftStickX *= Math.abs(1/leftStickX);
             }else if(leftStickY > leftStickX){
                 leftStickX = 0;
 
-                //Makes it go to 1/-1 (multiply by reciprocal) and using abs val of reciprocal so it stays negative if its negative
-                leftStickY *= Math.abs(1/leftStickY);
             }else{
                 leftStickY = 0;
                 leftStickX = 0;

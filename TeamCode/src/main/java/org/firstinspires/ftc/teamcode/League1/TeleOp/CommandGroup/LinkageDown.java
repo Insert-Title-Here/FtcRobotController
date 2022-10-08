@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.GrabCommand;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.LinkageCommand;
 
 public class LinkageDown extends SequentialCommandGroup {
 
 
-    public LinkageDown(ScoringSystem score){
+    public LinkageDown(ScoringSystem2 score){
         super(
             new InstantCommand(() -> score.setLinkagePosition(0.4)),
             new WaitCommand(500),

@@ -4,12 +4,12 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 
 public class LinkageUp extends SequentialCommandGroup {
 
 
-    public LinkageUp(ScoringSystem score){
+    public LinkageUp(ScoringSystem2 score){
         super(
             new InstantCommand(() -> score.setLinkagePosition(0.6)),
             new WaitCommand(500),

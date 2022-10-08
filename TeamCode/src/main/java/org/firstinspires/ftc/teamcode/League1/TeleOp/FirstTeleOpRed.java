@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.LiftCommand;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.GrabAndLinkageUpGroup;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.LinkageDown;
@@ -36,17 +37,23 @@ public class FirstTeleOpRed extends CommandOpMode {
     GamepadEx beaconMechDriver;
 
 
-    private Robot robot;
     public MecDrive drive;
-    public ScoringSystem lift;
+    public ScoringSystem2 lift;
     public EndgameSystems endgameSystem;
     Constants constants;
+    ScoringMode score;
+
+    private enum ScoringMode{
+        HIGH,
+        MEDIUM,
+        LOW,
+        GROUND
+    }
 
 
     @Override
     public void initialize() {
-
-        robot.start();
+        ScoringMode score = ScoringMode.HIGH;
 
         //Gamepad extensions
         driver = new GamepadEx(gamepad1);
@@ -76,9 +83,8 @@ public class FirstTeleOpRed extends CommandOpMode {
 
         //Initializing objects
         constants = new Constants();
-        robot = new Robot(hardwareMap);
-        drive = new MecDrive(hardwareMap, robot, false, telemetry);
-        lift = new ScoringSystem(hardwareMap, robot, constants,false);
+        drive = new MecDrive(hardwareMap, false, telemetry);
+        lift = new ScoringSystem2(hardwareMap, constants);
         endgameSystem = new EndgameSystems(hardwareMap);
 
 
@@ -91,6 +97,7 @@ public class FirstTeleOpRed extends CommandOpMode {
 
     @Override
     public void run() {
+
         super.run();
 
 
