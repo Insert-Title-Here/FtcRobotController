@@ -19,11 +19,11 @@ public abstract class OpModeWrapper extends LinearOpMode {
             onInitialize();
             waitForStart();
             onStart();
-            onStop();
+            onStop(); //cleanup, garbage collection, thread cleanup, debugging (metadata to logs)
         } catch (Exception e) {
             telemetry.addData("", e);
             telemetry.update();
-            // give time to read exception
+            //give time to read exception
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException interruptedException) {

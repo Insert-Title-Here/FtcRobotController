@@ -70,7 +70,6 @@ public class RobotClassUpdateTest extends OpModeWrapper {
                     }else{
                         //memory leaks are bad
                     }
-
                 }
 
             }
@@ -105,7 +104,5 @@ public class RobotClassUpdateTest extends OpModeWrapper {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
-
 }

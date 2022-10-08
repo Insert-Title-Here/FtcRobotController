@@ -41,6 +41,9 @@ public class Robot extends Thread{
         ehData = eh.getBulkData();
         imuAngle = imu.getAngularOrientation();
 
+        //math
+        //write to some fields
+        //position
         //rgba = color.getNormalizedColors();
 
         eh.clearBulkCache();
