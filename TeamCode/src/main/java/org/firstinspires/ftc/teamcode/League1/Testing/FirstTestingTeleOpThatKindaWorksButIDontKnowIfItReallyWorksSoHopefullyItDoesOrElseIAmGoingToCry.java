@@ -54,21 +54,15 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
     }
 
 
-
-
-
-
-
     @Override
     public void runOpMode() throws InterruptedException {
+        //Initialization
         passive = PassivePower.ZERO;
 
         score = new ScoringSystem2(hardwareMap, constants);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         systems = new EndgameSystems(hardwareMap);
-
-
 
 
         score.setLinkagePosition(0.03);
@@ -80,7 +74,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         color.setGain(300);
         distance.setGain(300);
 
-
+        //Lift Thread
         liftThread = new Thread(){
             @Override
             public void run() {
@@ -119,7 +113,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             }
         };
 
-
+        //CapThread
         capThread = new Thread(){
 
 
@@ -174,14 +168,32 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
         while(opModeIsActive()){
 
+            //N S E W Drive
+            double leftStickX = gamepad1.left_stick_x;
+            double leftStickY = gamepad1.left_stick_y;
 
-            if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-            } else {
-                drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+            if(Math.abs(leftStickX) > Math.abs(leftStickY)){
+                leftStickY = 0;
+
+                //Makes it go to 1/-1 (multiply by reciprocal) and using abs val of reciprocal so it stays negative if its negative
+                leftStickX *= Math.abs(1/leftStickX);
+            }else if(leftStickY > leftStickX){
+                leftStickX = 0;
+
+                //Makes it go to 1/-1 (multiply by reciprocal) and using abs val of reciprocal so it stays negative if its negative
+                leftStickY *= Math.abs(1/leftStickY);
+            }else{
+                leftStickY = 0;
+                leftStickX = 0;
             }
 
+            if (gamepad1.right_bumper) {
+                drive.setPower(new Vector2D(leftStickX * SPRINT_LINEAR_MODIFIER, leftStickY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+            } else {
+                drive.setPower(new Vector2D(leftStickX * NORMAL_LINEAR_MODIFIER, leftStickY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+            }
 
+            //Linkage Positions
             if(gamepad1.left_bumper){
                 //score.linkageAutomated(false);
                 score.setLinkagePosition(0.7);
@@ -198,8 +210,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                 autoLinkageFlag = true;
             }
 
-
-
+            //Automated Grab and Score
             if(gamepad1.dpad_right){
                 score.setGrabberPosition(constants.openAuto);
                 sleep(300);
@@ -226,10 +237,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                 autoLinkageFlag = false;
             }
 
-
-
-
-            //telemetry.addData("rMotor", rLift.getCurrentPosition());
+            //Telemetry
             telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
@@ -244,24 +252,12 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             telemetry.addData("passive", passive);
             telemetry.update();
 
-
-
         }
-
+        //Stop
         drive.setPower(0, 0, 0, 0);
         score.setLinkagePosition(0.2);
         sleep(500);
         score.setLinkagePosition(0.03);
         score.setGrabberPosition(constants.openAuto);
-
-
-
     }
-
-
-
-
-
-
-
 }
