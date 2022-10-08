@@ -43,14 +43,32 @@ public class TestingPipeline extends OpenCvPipeline {
         //Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
         Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(ycrcb, temp, 0);
-        Core.inRange(temp, new Scalar(200), new Scalar(255), temp);
+        Core.inRange(temp, new Scalar(120), new Scalar(150), temp);
 
 
         double countY = Core.mean(temp.submat(MIDDLE)).val[0];
 
         telemetry.addData("countY", countY);
-        //Imgproc.cvtColor(input, black, Imgproc.COLOR_RGB2GRAY);
 
+        Core.extractChannel(ycrcb, temp, 1);
+        Core.inRange(temp, new Scalar(130), new Scalar(200), temp);
+        double countCr = Core.mean(temp.submat(MIDDLE)).val[0];
+        telemetry.addData("countCr", countCr);
+
+        Core.extractChannel(ycrcb, temp, 2);
+        Core.inRange(temp, new Scalar(130), new Scalar(170), temp);
+        double countCb = Core.mean(temp.submat(MIDDLE)).val[0];
+        telemetry.addData("countCb", countCb);
+
+        if(countY > 100 && countCb < 100) {
+            telemetry.addData("Color", "Yellow");
+        } else if(countCr > 200 && countCb > 200) {
+            telemetry.addData("Color", "Magenta");
+        } else {
+            telemetry.addData("Color", "Cyan");
+        }
+
+        //Imgproc.cvtColor(input, black, Imgproc.COLOR_RGB2GRAY);
         //Yellow
         //Core.inRange(temp, new Scalar(25, 120, 120), new Scalar(40, 255, 255), temp);
 
