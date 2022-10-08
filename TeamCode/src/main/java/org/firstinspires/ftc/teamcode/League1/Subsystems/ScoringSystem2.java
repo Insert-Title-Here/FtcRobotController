@@ -64,7 +64,7 @@ public class ScoringSystem2 {
         int lLiftPos = -1 * lLift.getCurrentPosition();
 
 
-        if(tics < /*(*/rLiftPos/* + lLiftPos) / 2*/){
+        if(tics < ((rLiftPos + lLiftPos) / 2)){
             power *= -1;
         }
 

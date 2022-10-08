@@ -37,12 +37,21 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
     EndgameSystems systems;
 
+    PassivePower passive;
+
     boolean previousLeft, previousRight, previousUp, previousDown;
     boolean autoLinkageFlag = true;
     boolean grabFlag = true;
 
     Thread liftThread;
     Thread capThread;
+
+    public enum PassivePower{
+        EXTENDED,
+        DOWN,
+        ZERO,
+
+    }
 
 
 
@@ -52,6 +61,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
     @Override
     public void runOpMode() throws InterruptedException {
+        passive = PassivePower.ZERO;
 
         score = new ScoringSystem2(hardwareMap, constants);
         //robot = new Robot(hardwareMap);
@@ -79,17 +89,25 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                         score.setPower(gamepad1.right_trigger);
 
                     }else if(gamepad1.left_trigger > 0.1){
-                        score.setPower(-gamepad1.left_trigger / 4);
-                    }else{
-                        score.setPower(0);
-                    }
+                        score.setPower(-gamepad1.left_trigger / 3);
+                    }else if(gamepad1.b){
+                        score.moveToPosition(850, 0.8);
 
-                    if(gamepad1.b){
-                        score.moveToPosition(800, 1);
-                    }
+                        score.setLinkagePosition(0.95);
+                        passive = PassivePower.EXTENDED;
+                    }else if(gamepad1.a){
 
-                    if(gamepad1.a){
+                        //Maybe test this
                         score.moveToPosition(0, 0.5);
+                        passive = PassivePower.ZERO;
+                    }else {
+                        if(passive == PassivePower.EXTENDED){
+                            score.setPower(0.2);
+                        }else if(passive == PassivePower.DOWN){
+
+                        }else if(passive == PassivePower.ZERO){
+                            score.setPower(0);
+                        }
                     }
 
 
@@ -170,7 +188,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             }
 
             if(gamepad1.right_bumper){
-                score.setLinkagePosition(1);
+                score.setLinkagePosition(0.95);
             }
 
             if(gamepad1.start){
@@ -184,11 +202,21 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
             if(gamepad1.dpad_right){
                 score.setGrabberPosition(constants.openAuto);
+                sleep(300);
+                score.setLinkagePosition(0.7);
+                sleep(300);
+                passive = PassivePower.DOWN;
+                score.moveToPosition(0, 0.5);
+                passive = PassivePower.ZERO;
+                sleep(500);
+                score.setLinkagePosition(0.03);
+                autoLinkageFlag = true;
                 grabFlag = true;
             }else if((gamepad1.dpad_left ||  distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
                 score.setGrabberPosition(constants.grabbing);
-                grabFlag = false;
 
+                grabFlag = false;
+                sleep(200);
 
             }
 
@@ -209,10 +237,11 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             telemetry.addData("distanceBlue", distance.getNormalizedColors().blue);
             telemetry.addData("autoLinkageFlag", autoLinkageFlag);
             telemetry.addData("grabbingFlag", grabFlag);
-            telemetry.addData("colorRed: ", color.getNormalizedColors().red);
-            telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);
+            /*telemetry.addData("colorRed: ", color.getNormalizedColors().red);
+            telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);*/
             telemetry.addData("rightServoTarget", score.getRightLinkage());
             telemetry.addData("leftServoTarget", score.getLeftLinkage());
+            telemetry.addData("passive", passive);
             telemetry.update();
 
 
