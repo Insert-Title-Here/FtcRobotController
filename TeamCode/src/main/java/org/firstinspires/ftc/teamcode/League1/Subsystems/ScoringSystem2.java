@@ -7,12 +7,22 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 
-public class ScoringSystem2 {
+public class ScoringSystem2{
     DcMotorEx lLift, rLift;
     public Servo grabber, rLinkage, lLinkage;
+    public ScoringMode height;
+    private boolean grabbing, linkageUp;
     Constants constants;
 
+    public enum ScoringMode{
+        HIGH,
+        MEDIUM,
+        LOW,
+        GROUND
+    }
+
     public ScoringSystem2(HardwareMap hardwareMap, Constants constants) {
+        height = ScoringMode.HIGH;
         this.constants = constants;
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
@@ -54,6 +64,32 @@ public class ScoringSystem2 {
 
     public int getRightEncoderPos() {
         return rLift.getCurrentPosition();
+    }
+
+    public void changeMode(ScoringMode score){
+        height = score;
+    }
+
+    public void autoGoToPosition(){
+        if(height == ScoringMode.HIGH){
+            moveToPosition(850, 0.8);
+
+        }else if(height == ScoringMode.MEDIUM){
+
+            //TODO: Find tic value
+            moveToPosition(550, 0.8);
+
+
+        }else if(height == ScoringMode.LOW){
+            //TODO: Find tic value
+            moveToPosition(250, 0.8);
+
+        }else{
+            //Ground
+
+            //Probably no slides
+
+        }
     }
 
 
@@ -175,6 +211,22 @@ public class ScoringSystem2 {
         }else{
             setGrabberPosition(constants.openAuto);
         }
+    }
+
+    public void setGrabbing(boolean grabbing) {
+        this.grabbing = grabbing;
+    }
+
+    public void setLinkageUp(boolean linkageUp) {
+        this.linkageUp = linkageUp;
+    }
+
+    public boolean isGrabbing() {
+        return grabbing;
+    }
+
+    public boolean isLinkageUp() {
+        return linkageUp;
     }
 
     public boolean bothBusy(){

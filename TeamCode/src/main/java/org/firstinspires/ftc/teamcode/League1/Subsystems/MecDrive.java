@@ -33,6 +33,14 @@ public class MecDrive {
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
     String loggingString;
 
+    public enum MovementType{
+        STRAIGHT,
+        STRAFE,
+        ROTATE,
+        LDIAGONAL,
+        RDIAGONAL
+    }
+
     /*
     localizer -> Arm/actuator -> drive
      */
@@ -247,10 +255,29 @@ public class MecDrive {
         }
     }
 
+    //TODO: Test this
+    public void simpleMoveToPosition(int tics, MovementType movement, double power){
+
+        if(avgPos() > tics){
+            power *= -1;
+        }
+        while(avgPos() < Math.abs(tics)){
+            setPowerAuto(power, movement);
+        }
+
+        brake();
+
+    }
+
+    private double avgPos(){
+        return (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition())
+                + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
+    }
 
 
 
-        public void moveToPosition(Point p, double velocity){
+
+    public void moveToPosition(Point p, double velocity){
 
         double robotDirection = robot.getDirection();
         double direction = Utils.wrapAngle(p.getDirection()) - Utils.wrapAngle(robotDirection);
@@ -580,23 +607,23 @@ public class MecDrive {
         }
     }
 
-/*
-    public double setPowerAuto(double power, MecanumDriveTrain.MovementType movement) {
-        if(movement == MecanumDriveTrain.MovementType.STRAIGHT) {
+
+    public double setPowerAuto(double power, MecDrive.MovementType movement) {
+        if(movement == MecDrive.MovementType.STRAIGHT) {
             setPower(power, power, power, power);
-        }else if(movement == MecanumDriveTrain.MovementType.STRAFE){
+        }else if(movement == MecDrive.MovementType.STRAFE){
             setPower(power, -power, -power, power);
-        }else if(movement == MecanumDriveTrain.MovementType.ROTATE){
+        }else if(movement == MecDrive.MovementType.ROTATE){
             setPower(power, -power, power, -power);
-        }else if(movement == MecanumDriveTrain.MovementType.LDIAGONAL){
+        }else if(movement == MecDrive.MovementType.LDIAGONAL){
             setPower(power, 0, 0, power);
-        }else if(movement == MecanumDriveTrain.MovementType.RDIAGONAL){
+        }else if(movement == MecDrive.MovementType.RDIAGONAL){
             setPower(0, power, power, 0);
         }
         return power;
     }
 
- */
+
     //random comment
     private double TIC_TOLERANCE = 25;
     private boolean isFar(int tics){

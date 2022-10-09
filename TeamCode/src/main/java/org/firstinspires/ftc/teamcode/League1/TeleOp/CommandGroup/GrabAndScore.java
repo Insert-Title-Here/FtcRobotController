@@ -11,32 +11,29 @@ import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.GrabCommand;
-import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.LiftCommand;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.LinkageCommand;
 
-public class ResetScoringGroup extends SequentialCommandGroup {
+public class GrabAndScore extends SequentialCommandGroup {
 
 
-    public ResetScoringGroup(ScoringSystem2 score, Constants constants){
+    public GrabAndScore(ScoringSystem2 score, Constants constants){
         super(
 
-                new InstantCommand(() -> score.setGrabberPosition(constants.openAuto)),
+                new InstantCommand(() -> score.setGrabberPosition(constants.grabbing)),
 
                 new WaitCommand(200),
 
                 new ParallelCommandGroup(
-                        new InstantCommand(() -> score.moveToPosition(0, 0.5)),
+                        new InstantCommand(() -> score.autoGoToPosition()),
 
                         //TODO: Test how this works
-                        new LinkageDown(score)
+                        new LinkageScore(score)
                 )
-
 
 
         );
 
-        score.setGrabbing(false);
-        score.setLinkageUp(false);
-
+        score.setGrabbing(true);
+        score.setLinkageUp(true);
     }
 }

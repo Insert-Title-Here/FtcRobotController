@@ -6,21 +6,21 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
-import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.LiftCommand;
-import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.GrabAndLinkageUpGroup;
-import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.LinkageDown;
-import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.LinkageUp;
+import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.GrabAndScore;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.ResetScoringGroup;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 //TODO: FIX THIS
 
@@ -28,36 +28,42 @@ import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.ResetScoringGr
 @TeleOp
 public class FirstTeleOpRed extends CommandOpMode {
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.5;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
-    private final double SPRINT_LINEAR_MODIFIER = 1;
-    private final double SPRINT_ROTATIONAL_MODIFIER = 1;
-
-    GamepadEx driver;
-    GamepadEx beaconMechDriver;
+    private GamepadEx driver, beaconMechDriver;
+    //AtomicBoolean initializeRobot;
+    //Robot robot;
 
 
-    public MecDrive drive;
-    public ScoringSystem2 lift;
-    public EndgameSystems endgameSystem;
-    Constants constants;
-    ScoringMode score;
+    private MecDrive drive;
+    private ScoringSystem2 lift;
+    private EndgameSystems endgameSystem;
+    private Constants constants;
+    private ColorRangeSensor distance, color;
 
-    private enum ScoringMode{
-        HIGH,
-        MEDIUM,
-        LOW,
-        GROUND
-    }
+
+
 
 
     @Override
     public void initialize() {
-        ScoringMode score = ScoringMode.HIGH;
+        /*initializeRobot = new AtomicBoolean(true);
+        robot = new Robot(hardwareMap);*/
 
         //Gamepad extensions
         driver = new GamepadEx(gamepad1);
         beaconMechDriver = new GamepadEx(gamepad2);
+
+        //Initializing objects
+        constants = new Constants();
+        drive = new MecDrive(hardwareMap, false, telemetry);
+        lift = new ScoringSystem2(hardwareMap, constants);
+        endgameSystem = new EndgameSystems(hardwareMap);
+
+        distance = hardwareMap.get(ColorRangeSensor.class, "distance");
+        color = hardwareMap.get(ColorRangeSensor.class, "color");
+
+        //TODO: might need to decrease gain by some
+        color.setGain(300);
+        distance.setGain(300);
 
 
         //TODO: Check all the commands and command groups
@@ -74,22 +80,16 @@ public class FirstTeleOpRed extends CommandOpMode {
         //driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ResetScoringGroup(lift, constants, hardwareMap, robot));
 
         //Testing value for up linkage
-        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new LinkageUp(lift));
-        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new LinkageDown(lift));
-        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(() -> lift.grabberOpenAndClose(true)));
-        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(() -> lift.grabberOpenAndClose(false)));
+        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new ResetScoringGroup(lift, constants));
+        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new GrabAndScore(lift, constants));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.LOW)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.MEDIUM)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.HIGH)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.GROUND)));
 
 
-
-        //Initializing objects
-        constants = new Constants();
-        drive = new MecDrive(hardwareMap, false, telemetry);
-        lift = new ScoringSystem2(hardwareMap, constants);
-        endgameSystem = new EndgameSystems(hardwareMap);
-
-
-        //TODO: Fix this (wont need this if we have mechanical rest)
-        //lift.setLinkagePosition(0.05);
+        lift.setLinkagePosition(constants.linkageDown);
+        lift.setGrabberPosition(constants.openAuto);
 
     }
 
@@ -97,17 +97,38 @@ public class FirstTeleOpRed extends CommandOpMode {
 
     @Override
     public void run() {
+        /*if(initializeRobot.get()){
+            robot.start;
+            initializeRobot.set(false);
+        }*/
+
+
 
         super.run();
 
 
+        //NSEW DRIVE
+        double leftStickX = driver.getLeftX();
+        double leftStickY = driver.getLeftY();
 
-        //Drive code
-        if (gamepad1.right_bumper) {
-            drive.setPower(new Vector2D(driver.getLeftX() * SPRINT_LINEAR_MODIFIER, driver.getLeftY() * SPRINT_LINEAR_MODIFIER), driver.getRightX() * SPRINT_ROTATIONAL_MODIFIER, false);
-        } else {
-            drive.setPower(new Vector2D(driver.getLeftX() * NORMAL_LINEAR_MODIFIER, driver.getLeftY() * NORMAL_LINEAR_MODIFIER), driver.getRightX() * NORMAL_ROTATIONAL_MODIFIER, false);
+        if(Math.abs(leftStickX) > Math.abs(leftStickY)){
+            leftStickY = 0;
+
+        }else if(leftStickY > leftStickX){
+            leftStickX = 0;
+
+        }else{
+            leftStickY = 0;
+            leftStickX = 0;
         }
+
+        //Could try out a ramp up sprint
+        if (driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.1) {
+            drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+        } else {
+            drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
+        }
+
 
         /*
         //TODO:Tune this value later
@@ -116,6 +137,13 @@ public class FirstTeleOpRed extends CommandOpMode {
 
         }
         */
+
+        //Trying out taking out distance
+        if(/*distance.getDistance(DistanceUnit.CM) < 6.5*/distance.getNormalizedColors().red > 0.7 && distance.getNormalizedColors().blue > 0.7
+                && !lift.isGrabbing() && !lift.isLinkageUp()){
+            schedule(new GrabAndScore(lift, constants));
+
+        }
 
 
         telemetry.update();

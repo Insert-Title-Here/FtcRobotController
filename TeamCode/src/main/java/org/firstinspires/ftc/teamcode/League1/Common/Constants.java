@@ -16,5 +16,11 @@ public class Constants {
     public static final double openAuto = 0.75;
     public static final double openTeleOp = 0.8;
 
+    //Drive Modifiers
+    public static final double NORMAL_LINEAR_MODIFIER = 0.5;
+    public static final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
+    public static final double SPRINT_LINEAR_MODIFIER = 1;
+    public static final double SPRINT_ROTATIONAL_MODIFIER = 1;
+
 
 }
