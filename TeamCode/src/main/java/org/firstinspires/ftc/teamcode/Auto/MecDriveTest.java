@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 /*
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -22,12 +24,15 @@ public class MecDriveTest extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     //OpenCvWebcam webcam;
-    //Thread liftThread;
+    AtomicBoolean cont;
+    Thread liftThread;
     int parkLocation;
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
+        cont = new AtomicBoolean();
+        cont.set(false);
         /*
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
@@ -41,32 +46,26 @@ public class MecDriveTest extends LinearOpMode {
 
         // Camera checks sleeve...stores parking location??
 
-        //TODO: Work on threading
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
 
-        /*
         liftThread = new Thread(){
             @Override
             public void run(){
-                while(true){
-                    if(score.getEncoderPosition() > 1200){
-                        //TODO
-                        score.setPower(0.1);
-                    }
+                while(cont.get()){
+                    score.setPower(0.1);
                 }
 
             }
         };
-
-         */
 
 
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
-        //liftThread.start();
+
+        liftThread.start();
 
         // POV is from the middle blue triangle side or the red middle triangle
         blueRight();
@@ -100,15 +99,20 @@ public class MecDriveTest extends LinearOpMode {
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
 
         // move arm max
-        score.goToPosition(2380, 0.5);
+
+        score.goToPosition(2380, 0.7);
+        cont.set(true);
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 55, 66, 87), "move to pole");
         sleep(1000);
+
         score.goToPosition(1800, 0.4);
+
         sleep(1000);
         score.setClawPosition(0.9);
         sleep(1000);
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
+        cont.set(false);
         score.goToPosition(0, 0.3);
         sleep(1000);
 
