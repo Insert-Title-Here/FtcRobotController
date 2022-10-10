@@ -22,7 +22,7 @@ public class MecDriveTest extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     //OpenCvWebcam webcam;
-    Thread liftThread;
+    //Thread liftThread;
     int parkLocation;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,6 +45,7 @@ public class MecDriveTest extends LinearOpMode {
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
 
+        /*
         liftThread = new Thread(){
             @Override
             public void run(){
@@ -58,12 +59,14 @@ public class MecDriveTest extends LinearOpMode {
             }
         };
 
+         */
+
 
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
-        liftThread.start();
+        //liftThread.start();
 
         // POV is from the middle blue triangle side or the red middle triangle
         blueRight();
