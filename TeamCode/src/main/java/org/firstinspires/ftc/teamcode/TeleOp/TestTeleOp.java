@@ -24,6 +24,7 @@ public class TestTeleOp extends LinearOpMode {
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.6;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
+    private final double =
 
 
     boolean liftIsUp = false;
@@ -38,9 +39,7 @@ public class TestTeleOp extends LinearOpMode {
         lift = hardwareMap.get(DcMotor.class, "lift");
         clawl = hardwareMap.get(Servo.class, "clawl");
         clawr = hardwareMap.get(Servo.class, "clawr");
-
-        int origliftPos = lift.getCurrentPosition();
-        int liftPos = lift.getCurrentPosition();
+        origLiftPos = lift.getCurrentPosition();
 
 
         telemetry.addData("Status", "Initialized");
@@ -63,26 +62,52 @@ public class TestTeleOp extends LinearOpMode {
                 drive.setPower(new Vector2D(gamepad1.right_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.left_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
+            if(gamepad1.dpad_left){
+                while(lift.getCurrentPosition()<origLiftPos+2120){
+                    lift.setPower(1);
+                }
+
+                while(lift.getCurrentPosition()>origLiftPos+2160){
+                    lift.setPower(-1);
+                }
+            } else if(gamepad1.dpad_up){
+                while(lift.getCurrentPosition()<origLiftPos+4100){
+                    lift.setPower(1);
+                }
+
+                while(lift.getCurrentPosition()>origLiftPos+4140){
+                    lift.setPower(-1);
+                }
+            } else if(gamepad1.dpad_down){
+                while(lift.getCurrentPosition()>origLiftPos) {
+                    lift.setPower(-1);
+                }
+            }
+
             if (gamepad1.left_trigger > 0.1) {
                 lift.setPower(gamepad1.left_trigger*0.8);
                 liftPos = lift.getCurrentPosition();
                 liftIsUp = true;
-            } else if (gamepad1.right_trigger > 0.1) {
-                lift.setPower(-gamepad1.right_trigger*0.5);
-                liftPos = lift.getCurrentPosition();
-                liftIsUp = true;
+                telemetry.addData("liftPos", lift.getCurrentPosition());
+                telemetry.update();
+            } else if (gamepad1.right_trigger > 0.1 && lift.getCurrentPosition()>-1500) {
+                lift.setPower(-gamepad1.right_trigger*0.8);
+                //liftPos = lift.getCurrentPosition();
+                //liftIsUp = true;
+                telemetry.addData("liftPos", lift.getCurrentPosition());
+                telemetry.update();
             } else {
-                if(liftIsUp){
+                /*if(liftIsUp){
                     while(opModeIsActive()&&lift.getCurrentPosition()<(liftPos-50)) {
                         lift.setPower(0.1);
                         telemetry.addData("Looping", "Adjusting lift position");
                     }
-                }
+                }*/
                 lift.setPower(0);
             }
 
             if(lift.getCurrentPosition()==origLiftPos){
-                liftIsUp=false;
+                //liftIsUp=false;
             }
 
             if(gamepad1.left_bumper){
@@ -109,7 +134,9 @@ public class TestTeleOp extends LinearOpMode {
 
 
         }
-
+        while(lift.getCurrentPosition()>-origLiftPos) {
+            lift.setPower(-1);
+        }
         drive.setPower(0, 0, 0, 0);
     }
 }
