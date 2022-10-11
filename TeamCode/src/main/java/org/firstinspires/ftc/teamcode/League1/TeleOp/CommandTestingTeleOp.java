@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @TeleOp
-public class FirstTeleOpRed extends CommandOpMode {
+public class CommandTestingTeleOp extends CommandOpMode {
 
     private GamepadEx driver, beaconMechDriver;
     //AtomicBoolean initializeRobot;
@@ -109,12 +109,12 @@ public class FirstTeleOpRed extends CommandOpMode {
 
         //NSEW DRIVE
         double leftStickX = driver.getLeftX();
-        double leftStickY = driver.getLeftY();
+        double leftStickY = -1 * driver.getLeftY();
 
         if(Math.abs(leftStickX) > Math.abs(leftStickY)){
             leftStickY = 0;
 
-        }else if(leftStickY > leftStickX){
+        }else if(Math.abs(leftStickY) > Math.abs(leftStickX)){
             leftStickX = 0;
 
         }else{

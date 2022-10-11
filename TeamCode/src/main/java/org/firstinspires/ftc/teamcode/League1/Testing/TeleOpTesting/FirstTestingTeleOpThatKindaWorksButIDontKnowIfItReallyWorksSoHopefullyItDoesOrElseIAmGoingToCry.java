@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.League1.Testing;
+package org.firstinspires.ftc.teamcode.League1.Testing.TeleOpTesting;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -65,7 +65,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         systems = new EndgameSystems(hardwareMap);
 
 
-        score.setLinkagePosition(0.03);
+        score.setLinkagePosition(0.05);
         score.setGrabberPosition(0.75);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -85,7 +85,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                     }else if(gamepad1.left_trigger > 0.1){
                         score.setPower(-gamepad1.left_trigger / 3);
                     }else if(gamepad1.b){
-                        score.moveToPosition(850, 0.8);
+                        score.moveToPosition(850, 1);
 
                         score.setLinkagePosition(0.95);
                         passive = PassivePower.EXTENDED;
@@ -175,7 +175,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             if(Math.abs(leftStickX) > Math.abs(leftStickY)){
                 leftStickY = 0;
 
-            }else if(leftStickY > leftStickX){
+            }else if(Math.abs(leftStickY) > Math.abs(leftStickX)){
                 leftStickX = 0;
 
             }else{
@@ -202,7 +202,8 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             if(gamepad1.start){
                 score.setLinkagePosition(0.2);
                 sleep(200);
-                score.setLinkagePosition(0.03);
+                score.setLinkagePosition(0.05);
+
                 autoLinkageFlag = true;
             }
 
@@ -215,8 +216,8 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                 passive = PassivePower.DOWN;
                 score.moveToPosition(0, 0.5);
                 passive = PassivePower.ZERO;
-                sleep(500);
-                score.setLinkagePosition(0.03);
+                score.setLinkagePosition(0.05);
+
                 autoLinkageFlag = true;
                 grabFlag = true;
             }else if((gamepad1.dpad_left ||  distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
@@ -234,6 +235,8 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             }
 
             //Telemetry
+            telemetry.addData("leftStickX", gamepad1.left_stick_x);
+            telemetry.addData("leftStickY", gamepad1.left_stick_y);
             telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
@@ -253,7 +256,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         drive.setPower(0, 0, 0, 0);
         score.setLinkagePosition(0.2);
         sleep(500);
-        score.setLinkagePosition(0.03);
+        score.setLinkagePosition(0.05);
         score.setGrabberPosition(constants.openAuto);
     }
 }

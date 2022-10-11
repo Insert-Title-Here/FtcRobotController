@@ -265,7 +265,7 @@ public class MecDrive {
             setPowerAuto(power, movement);
         }
 
-        brake();
+        simpleBrake();
 
     }
 
@@ -340,6 +340,21 @@ public class MecDrive {
             brake();
         }
     }
+
+    public void simpleBrake() {
+        setPower(0,0,0,0);
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    }
+
 
     private void brake() {
         robot.setShouldUpdate(false);

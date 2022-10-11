@@ -15,6 +15,7 @@ public class LinkageDown extends SequentialCommandGroup {
 
 
     public LinkageDown(ScoringSystem2 score){
+
         super(
                 new InstantCommand(() -> score.setLinkagePosition(0.7)),
                 new WaitCommand(20),

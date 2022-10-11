@@ -25,8 +25,8 @@ public class TestingPipeline extends OpenCvPipeline {
 
 
     static final Rect MIDDLE = new Rect(
-            new Point(125, 50),
-            new Point(225, 150)
+            new Point(125, 35),
+            new Point(160, 95)
     );
 
     public TestingPipeline(Telemetry telemetry){
@@ -43,7 +43,7 @@ public class TestingPipeline extends OpenCvPipeline {
         //Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
         Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(ycrcb, temp, 0);
-        Core.inRange(temp, new Scalar(120), new Scalar(150), temp);
+        Core.inRange(temp, new Scalar(160), new Scalar(190), temp);
 
 
         double countY = Core.mean(temp.submat(MIDDLE)).val[0];
