@@ -52,7 +52,7 @@ public class TestingNormalization extends LinearOpMode {
                 while(opModeIsActive()) {
                     if(armUp.get()) {
                         hold.set(false);
-                        score.moveToPosition(830, 0.8);
+                        score.moveToPosition(830, 1);
                         score.setLinkagePosition(0.95);
                         armUp.set(false);
                         hold.set(true);
@@ -106,29 +106,34 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.3);
+        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.4);
         tankRotate(Math.PI / 4, 0.4);
 
         armUp.set(true);
 
-        drive.simpleMoveToPosition(-100, MecDrive.MovementType.STRAIGHT, 0.1);
+        drive.simpleMoveToPosition(-130, MecDrive.MovementType.STRAIGHT, 0.4);
+        sleep(1000);
         score.setGrabberPosition(0.7);
         sleep(500);
+        score.setGrabberPosition(constants.grabbing);
 
         armDown.set(true);
 
-        drive.simpleMoveToPosition(100, MecDrive.MovementType.STRAIGHT, 0.1);
+        drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.4);
 
-        tankRotate(Math.PI / 2, 0.3);
+        tankRotate(Math.PI / 2, 0.4);
+
+        score.setGrabberPosition(0.7);
+
 
 
 
 
 
         //Dont know if need to check multiple time
-        while(color.getNormalizedColors().red < 0.52 && color.getNormalizedColors().blue < 0.65){
+        while(color.getNormalizedColors().red < 0.42 && color.getNormalizedColors().blue < 0.65){
 
-            drive.setPowerAuto(0.15, MecDrive.MovementType.STRAIGHT);
+            drive.setPowerAuto(0.4, MecDrive.MovementType.STRAIGHT);
             telemetry.addData("blue", color.getNormalizedColors().blue);
             telemetry.addData("red", color.getNormalizedColors().red);
             telemetry.update();
@@ -138,7 +143,7 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAFE, 0.3);
+        drive.simpleMoveToPosition(-60, MecDrive.MovementType.STRAFE, 0.4);
 
         score.setGrabberPosition(0.7);
 
@@ -147,8 +152,8 @@ public class TestingNormalization extends LinearOpMode {
             score.setLinkagePosition(0.2 - (i * 0.03));
 
 
-            while (distance.getDistance(DistanceUnit.CM) > 4.5) {
-                drive.setPowerAuto(0.15, MecDrive.MovementType.STRAIGHT);
+            while (distance.getDistance(DistanceUnit.CM) > 4.3) {
+                drive.setPowerAuto(0.4, MecDrive.MovementType.STRAIGHT);
 
                 telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                 telemetry.update();
@@ -158,27 +163,29 @@ public class TestingNormalization extends LinearOpMode {
 
 
             score.setGrabberPosition(constants.grabbing);
-            sleep(300);
+            sleep(600);
 
-            score.moveToPosition(200, 0.5);
+            score.moveToPosition(200, 1);
             hold.set(true);
 
-            drive.simpleMoveToPosition(-675, MecDrive.MovementType.STRAIGHT, 0.3);
+            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.4);
             score.setLinkagePosition(0.7);
 
-            tankRotate(Math.PI / 4, 0.3);
+            tankRotate(Math.PI / 4.35, 0.4);
 
             armUp.set(true);
 
-            drive.simpleMoveToPosition(-70, MecDrive.MovementType.STRAIGHT, 0.1);
+            drive.simpleMoveToPosition(-80, MecDrive.MovementType.STRAIGHT, 0.4);
+
+            sleep(1000);
             score.setGrabberPosition(0.7);
             sleep(500);
 
             armDown.set(true);
 
-            drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.1);
+            drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            tankRotate(Math.PI / 2, 0.3);
+            tankRotate(Math.PI / 2, 0.5);
         }
 
         //Will have to check if this aligns straight already (need color sensor or not) ->
