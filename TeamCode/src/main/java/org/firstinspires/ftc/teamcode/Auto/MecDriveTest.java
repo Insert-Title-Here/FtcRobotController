@@ -56,6 +56,7 @@ public class MecDriveTest extends LinearOpMode {
                     score.setPower(0.1);
                 }
 
+
             }
         };
 
@@ -147,16 +148,16 @@ public class MecDriveTest extends LinearOpMode {
         score.goToPosition(100, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1235, 1198, 1204, 1144), "forward");
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3,  avgPosition(1100, 1100, 1088, 1066), "forward");
         //strafe right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1448, -1398, -1598, 1500), "strafe right");
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1954, -1686, -1820, 1987), "strafe right");
         // turn
-        drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn to pole");
+        //drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn to pole");
         // move arm max
         score.goToPosition(2350, 0.7);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(326, 300, 330, 304), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 55, 66, 87), "move to pole");
         score.setClawPosition(0.9);
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-326, -300, -330, -304), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
         score.goToPosition(50, 0.3);
         sleep(50);
@@ -181,7 +182,61 @@ public class MecDriveTest extends LinearOpMode {
     */
     }
     public void redRight(){
+        //close claw
+        score.setClawPosition(0.45);
+        sleep(1000);
+        //lift claw a little bit
+        score.goToPosition(100, 0.7);
+        sleep(200);
+        // move forward a square
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1088, 1066), "forward");
 
+        //strafe left
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1954, 1686, 1820, -1987), "strafe right");
+        sleep(1000);
+        // turn
+        //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
+
+        // move arm max
+
+        score.goToPosition(2380, 0.7);
+        cont.set(true);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 55, 66, 87), "move to pole");
+        sleep(1000);
+
+        score.goToPosition(1800, 0.4);
+
+        sleep(1000);
+        score.setClawPosition(0.9);
+        sleep(1000);
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
+        // lowers arm after scoring first cone
+        cont.set(false);
+        score.goToPosition(0, 0.3);
+        sleep(1000);
+
+        //1 (far left) (general code)
+        // drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
+        // sleep(50);
+        //turn right a little(straighten out)
+        // drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn straight");
+        //sleep(50);
+        //drive forward a little
+        //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
+        // go left
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
+
+
+
+
+
+        /*
+        //2 middle
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1267, -1251, -1246, 304), "strafe right");
+        //3 far right
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
+
+    */
     }
     public void redLeft(){
         //close claw
@@ -191,28 +246,28 @@ public class MecDriveTest extends LinearOpMode {
         score.goToPosition(100, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1235, 1198, 1204, 1144), "forward");
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3,  avgPosition(1100, 1100, 1088, 1066), "forward");
         //strafe right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1448, -1398, -1598, 1500), "strafe right");
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1954, -1686, -1820, 1987), "strafe right");
         // turn
-        drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(300, -310, 280, -322), "turn to pole");
+        //drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn to pole");
         // move arm max
-        score.goToPosition(2400, 1);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(326, 300, 330, 304), "move to pole");
+        score.goToPosition(2350, 0.7);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 55, 66, 87), "move to pole");
         score.setClawPosition(0.9);
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-326, -300, -330, -304), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
-        score.goToPosition(0, 0.3);
+        score.goToPosition(50, 0.3);
         sleep(50);
 
         //1 (far right) (general code)
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
-        sleep(50);
+        sleep(0);
         //turn left a little (straighten out)
         drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-271, 280, -260, 290), "turn straight");
         sleep(50);
         //drive forward a little
-        drive.goToPosition(0.3,0.3,0.3,0.3, avgPosition(310, 380, 320, 290), "drive forward a little");
+        drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
 
 
 

@@ -44,10 +44,14 @@ public class FirstTeleOp extends LinearOpMode {
         liftThread = new Thread(){
             @Override
             public void run(){
-                while(cont.get() && !score.isBusy()){
+                //removed !score.isBusy() from the while statement
+                while(cont.get()){
                     score.setPower(0.1);
                 }
-
+                //test this out
+                if(cont.get() == false && score.isBusy()){
+                    score.setPower(0);
+                }
             }
         };
 
@@ -69,15 +73,17 @@ public class FirstTeleOp extends LinearOpMode {
 
             if(gamepad1.right_trigger > 0.1){
                 cont.set(false);
+                sleep(30);
                 while(gamepad1.right_trigger > 0.1){
                     score.setPower(gamepad1.right_trigger/1.7);
                 }
             }else if(gamepad1.left_trigger > 0.1){
                 cont.set(false);
-
+                sleep(30);
                 //TODO: Create method I can call that will calibrate based off of how many tics, the "40" position below
                 while(gamepad1.left_trigger > 0.1){
                     if(score.getEncoderPosition() < 40){
+                        //calibrate will set power
                         calibrateLiftBottom(score.getEncoderPosition());
                     }else{
                         if(score.getEncoderPosition() < 100){
@@ -124,6 +130,7 @@ public class FirstTeleOp extends LinearOpMode {
 
             if(gamepad1.dpad_down) {
                 cont.set(false);
+                sleep(30);
                 //reset
                 // 50 not zero b/c 435 motor does not have enough torque to stop the gravitational drop to zero tics
                 //score.goToPosition(50, 1);
@@ -141,6 +148,7 @@ public class FirstTeleOp extends LinearOpMode {
 
             if (gamepad1.dpad_left) {
                 cont.set(false);
+                sleep(30);
                 //low cone
                 score.goToPosition(1209, 1);
                 cont.set(true);
@@ -148,6 +156,7 @@ public class FirstTeleOp extends LinearOpMode {
 
             if (gamepad1.dpad_up) {
                 cont.set(false);
+                sleep(30);
                 //medium cone
                 score.goToPosition(1795, 1);
                 cont.set(true);
@@ -155,6 +164,7 @@ public class FirstTeleOp extends LinearOpMode {
 
             if (gamepad1.dpad_right) {
                 cont.set(false);
+                sleep(30);
                 //high cone
                 score.goToPosition(2390, 1);
                 cont.set(true);
