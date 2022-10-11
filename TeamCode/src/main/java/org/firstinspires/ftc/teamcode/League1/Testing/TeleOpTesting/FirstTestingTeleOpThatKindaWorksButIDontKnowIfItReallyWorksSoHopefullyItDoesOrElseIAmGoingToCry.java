@@ -87,20 +87,26 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             @Override
             public void run() {
                 while(opModeIsActive()){
-                    if(gamepad1.left_trigger > 0.1){
+                    if(gamepad1.right_trigger > 0.1){
+                        score.setPower(gamepad1.right_trigger / 3);
+                    }else if(gamepad1.left_trigger > 0.1){
                         score.setPower(-gamepad1.left_trigger / 3);
                     }else if(gamepad1.right_bumper){
                         score.moveToPosition(850, 1);
 
                         score.setLinkagePosition(0.95);
                         passive = PassivePower.EXTENDED;
-                    }else if(gamepad1.a){
+                    }else if(gamepad1.y){
                         //TODO: Make this medium height
-                        score.moveToPosition(0, 0.5);
+                        score.moveToPosition(500, 1);
+                        score.setLinkagePosition(0.95);
+
                         passive = PassivePower.EXTENDED;
                     }else if(gamepad1.b){
                         //TODO: Make this low height
-                        score.moveToPosition(0, 0.5);
+                        score.moveToPosition(190, 1);
+                        score.setLinkagePosition(0.95);
+
                         passive = PassivePower.EXTENDED;
                     }else {
                         if(passive == PassivePower.EXTENDED){

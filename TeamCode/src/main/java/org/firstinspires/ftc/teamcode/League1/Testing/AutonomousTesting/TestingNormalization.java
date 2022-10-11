@@ -18,8 +18,8 @@ public class TestingNormalization extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
-    Thread armUpThread, armDownThread, feedForward;
-    AtomicBoolean hold;
+    Thread armThread, feedForward;
+    AtomicBoolean hold, armUp, armDown;
 
     BNO055IMU imu;
     ColorRangeSensor distance, color;
@@ -33,6 +33,8 @@ public class TestingNormalization extends LinearOpMode {
         constants = new Constants();
         score = new ScoringSystem2(hardwareMap, constants);
         hold = new AtomicBoolean(false);
+        armUp = new AtomicBoolean(false);
+        armDown = new AtomicBoolean(false);
 
         score.setLinkagePosition(0.03);
         score.setGrabberPosition(constants.grabbing);
@@ -43,28 +45,32 @@ public class TestingNormalization extends LinearOpMode {
         color.setGain(600);
         distance.setGain(300);
 
-        armUpThread = new Thread(){
+        armThread = new Thread(){
             @Override
             public void run() {
                 //score.setLinkagePosition(0.7);
-                score.moveToPosition(830, 0.8);
-                score.setLinkagePosition(0.95);
+                while(opModeIsActive()) {
+                    if(armUp.get()) {
+                        hold.set(false);
+                        score.moveToPosition(830, 0.8);
+                        score.setLinkagePosition(0.95);
+                        armUp.set(false);
+                        hold.set(true);
+                    }else if(armDown.get()){
+                        hold.set(false);
+                        score.setLinkagePosition(0.7);
+                        score.moveToPosition(0, 0.5);
+                        score.setLinkagePosition(0.05);
+                        armDown.set(false);
+                    }
+                }
 
                 //Might need this
                 //hold.set(true);
             }
         };
 
-        armDownThread = new Thread(){
-            @Override
-            public void run() {
-                hold.set(false);
-                score.setLinkagePosition(0.7);
-                score.moveToPosition(0, 0.5);
-                score.setLinkagePosition(0.05);
 
-            }
-        };
 
         feedForward = new Thread(){
             @Override
@@ -95,12 +101,27 @@ public class TestingNormalization extends LinearOpMode {
 
         waitForStart();
 
+        armThread.start();
         feedForward.start();
 
 
 
         drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.3);
-        tankRotate(Math.PI / 2, 0.4);
+        tankRotate(Math.PI / 4, 0.4);
+
+        armUp.set(true);
+
+        drive.simpleMoveToPosition(-100, MecDrive.MovementType.STRAIGHT, 0.1);
+        score.setGrabberPosition(0.7);
+        sleep(500);
+
+        armDown.set(true);
+
+        drive.simpleMoveToPosition(100, MecDrive.MovementType.STRAIGHT, 0.1);
+
+        tankRotate(Math.PI / 2, 0.3);
+
+
 
 
 
@@ -117,16 +138,16 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.3);
+        drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAFE, 0.3);
 
-        score.setGrabberPosition(constants.openAuto);
+        score.setGrabberPosition(0.7);
 
         for(int i = 0; i < 3; i++) {
 
             score.setLinkagePosition(0.2 - (i * 0.03));
 
 
-            while (distance.getDistance(DistanceUnit.CM) > 6.2) {
+            while (distance.getDistance(DistanceUnit.CM) > 4.5) {
                 drive.setPowerAuto(0.15, MecDrive.MovementType.STRAIGHT);
 
                 telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
@@ -139,19 +160,23 @@ public class TestingNormalization extends LinearOpMode {
             score.setGrabberPosition(constants.grabbing);
             sleep(300);
 
-            score.moveToPosition(100, 0.5);
+            score.moveToPosition(200, 0.5);
             hold.set(true);
 
             drive.simpleMoveToPosition(-675, MecDrive.MovementType.STRAIGHT, 0.3);
             score.setLinkagePosition(0.7);
 
-            tankRotate(Math.PI / 5.2, 0.3);
+            tankRotate(Math.PI / 4, 0.3);
 
-            armUpThread.start();
+            armUp.set(true);
 
-            score.setGrabberPosition(constants.openAuto);
+            drive.simpleMoveToPosition(-70, MecDrive.MovementType.STRAIGHT, 0.1);
+            score.setGrabberPosition(0.7);
+            sleep(500);
 
-            armDownThread.start();
+            armDown.set(true);
+
+            drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.1);
 
             tankRotate(Math.PI / 2, 0.3);
         }
