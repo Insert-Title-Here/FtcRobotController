@@ -41,6 +41,7 @@ public class FirstTeleOp extends LinearOpMode {
 
         //Open
         score.setClawPosition(0.9);
+
         liftThread = new Thread(){
             @Override
             public void run(){
@@ -54,6 +55,68 @@ public class FirstTeleOp extends LinearOpMode {
                 }
             }
         };
+        //TODO: Test below Out
+        //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
+        /*
+        liftThread = new Thread(){
+            @Override
+            public void run(){
+                //removed !score.isBusy() from the while statement
+                while(opModeIsActive()){
+                    if(gamepad1.right_trigger > 0.1){
+                        while(gamepad1.right_trigger > 0.1){
+                            score.setPower(gamepad1.right_trigger/1.6);
+                        }
+                    }else if(gamepad1.left_trigger > 0.1){
+                        while(gamepad1.left_trigger > 0.1){
+                            if(score.getEncoderPosition() < 40){
+                                //calibrate will set power
+                                calibrateLiftBottom(score.getEncoderPosition());
+                            }else{
+                                if(score.getEncoderPosition() < 100){
+                                    score.goToPosition(0,0.3);
+                                }else{
+                                    score.setPower(-gamepad1.left_trigger/2);
+
+                                }
+                            }
+                        }
+                    }else{
+                        score.setPower(0.1);
+                    }
+                    // reset   gamepad1.dpad_down
+                    // low cone, 13 in, 1209  gamenpad1.dpad_left
+                    // medium cone, 23 in, 1795 gamepad1.dpad_up
+                    // high cone, 33 in, 2390 gamepad1.dpad_right
+
+                    if(gamepad1.dpad_down) {
+                        score.goToPosition(0, 0.3);
+
+                    }
+
+                    if (gamepad1.dpad_left) {
+                        //low cone
+                        score.goToPosition(1209, 1);
+                        score.setPower(0.1);
+                    }
+
+                    if (gamepad1.dpad_up) {
+                        //medium cone
+                        score.goToPosition(1795, 1);
+                        score.setPower(0.1);
+                    }
+
+                    if (gamepad1.dpad_right) {
+                        //high cone
+                        score.goToPosition(2390, 1);
+                        score.setPower(0.1)
+                    }
+                }
+            }
+        };
+         */
+
+
 
 
         waitForStart();
@@ -69,18 +132,15 @@ public class FirstTeleOp extends LinearOpMode {
             else {
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
-            //disable trigger as you can use left right down up pad instead(pressing left trigger too much will mess up encoder values for lift system
-
             if(gamepad1.right_trigger > 0.1){
                 cont.set(false);
                 sleep(30);
                 while(gamepad1.right_trigger > 0.1){
-                    score.setPower(gamepad1.right_trigger/1.7);
+                    score.setPower(gamepad1.right_trigger/1.6);
                 }
             }else if(gamepad1.left_trigger > 0.1){
                 cont.set(false);
                 sleep(30);
-                //TODO: Create method I can call that will calibrate based off of how many tics, the "40" position below
                 while(gamepad1.left_trigger > 0.1){
                     if(score.getEncoderPosition() < 40){
                         //calibrate will set power
@@ -97,10 +157,6 @@ public class FirstTeleOp extends LinearOpMode {
             }else{
                 cont.set(true);
             }
-
-
-
-
 
             if(gamepad1.b){
 
