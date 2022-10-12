@@ -51,8 +51,6 @@ public class MecDriveTest extends LinearOpMode {
                 while(cont.get()){
                     score.setPower(0.1);
                 }
-
-
             }
         };
 

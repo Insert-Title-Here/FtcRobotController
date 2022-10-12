@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
+@Autonomous
 public class BlueRight extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
@@ -38,7 +40,6 @@ public class BlueRight extends LinearOpMode {
                 while(cont.get()){
                     score.setPower(0.1);
                 }
-
 
             }
         };

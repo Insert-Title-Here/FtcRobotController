@@ -41,49 +41,30 @@ public class FirstTeleOp extends LinearOpMode {
         //Open
         score.setClawPosition(0.9);
 
-        // driver hub: Expansion Hub 1, Control Hub temporarily stopped responding to commands while an OpMode was running
 
-        liftThread = new Thread(){
-            @Override
-            public void run(){
-                //removed !score.isBusy() from the while statement
-                while(cont.get()){
-                    score.setPower(0.1);
-                }
-                //test this out
-                if(cont.get() == false && score.isBusy()){
-                    score.setPower(0);
-                }
-            }
-        };
         //TODO: Test below Out
         //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
-        /*
+
         liftThread = new Thread(){
             @Override
             public void run(){
                 //removed !score.isBusy() from the while statement
                 while(opModeIsActive()){
                     if(gamepad1.right_trigger > 0.1){
-                        while(gamepad1.right_trigger > 0.1){
-                            score.setPower(gamepad1.right_trigger/1.6);
-                        }
-                    }else if(gamepad1.left_trigger > 0.1){
-                        while(gamepad1.left_trigger > 0.1){
-                            if(score.getEncoderPosition() < 40){
-                                //calibrate will set power
-                                calibrateLiftBottom(score.getEncoderPosition());
-                            }else{
-                                if(score.getEncoderPosition() < 100){
-                                    score.goToPosition(0,0.3);
-                                }else{
-                                    score.setPower(-gamepad1.left_trigger/2);
-
-                                }
+                        score.setPower(gamepad1.right_trigger/1.6);
+                    }else if(gamepad1.left_trigger > 0.1) {
+                        if (score.getEncoderPosition() < 40) {
+                            //calibrate will set power
+                            calibrateLiftBottom(score.getEncoderPosition());
+                        } else {
+                            if (score.getEncoderPosition() < 100) {
+                                score.goToPosition(0, 0.3);
+                            } else {
+                                score.setPower(-gamepad1.left_trigger / 2);
                             }
                         }
                     }else{
-                        score.setPower(0.1);
+                        score.setPower(0.08);
                     }
                     // reset   gamepad1.dpad_down
                     // low cone, 13 in, 1209  gamenpad1.dpad_left
@@ -92,39 +73,38 @@ public class FirstTeleOp extends LinearOpMode {
 
                     if(gamepad1.dpad_down) {
                         score.goToPosition(0, 0.3);
-
                     }
 
                     if (gamepad1.dpad_left) {
                         //low cone
                         score.goToPosition(1209, 1);
-                        score.setPower(0.1);
+                        score.setPower(0.08);
                     }
 
                     if (gamepad1.dpad_up) {
                         //medium cone
                         score.goToPosition(1795, 1);
-                        score.setPower(0.1);
+                        score.setPower(0.08);
                     }
 
                     if (gamepad1.dpad_right) {
                         //high cone
-                        score.goToPosition(2390, 1);
-                        score.setPower(0.1)
+                        score.goToPosition(2360, 1);
+                        score.setPower(0.08);
                     }
                 }
             }
         };
-         */
+
 
 
 
 
         waitForStart();
-
+        liftThread.start();
 
         while(opModeIsActive()){
-            liftThread.start();
+
 
             //TODO: Decide if you want sprint capability
             if (gamepad1.right_bumper) { // replace this with a button for sprint
@@ -133,31 +113,30 @@ public class FirstTeleOp extends LinearOpMode {
             else {
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
+            /*
             if(gamepad1.right_trigger > 0.1){
                 cont.set(false);
                 sleep(30);
-                while(gamepad1.right_trigger > 0.1){
-                    score.setPower(gamepad1.right_trigger/1.6);
-                }
+                score.setPower(gamepad1.right_trigger/1.6);
             }else if(gamepad1.left_trigger > 0.1){
                 cont.set(false);
                 sleep(30);
-                while(gamepad1.left_trigger > 0.1){
-                    if(score.getEncoderPosition() < 40){
-                        //calibrate will set power
-                        calibrateLiftBottom(score.getEncoderPosition());
+                if(score.getEncoderPosition() < 40){
+                    //calibrate will set power
+                    calibrateLiftBottom(score.getEncoderPosition());
+                }else{
+                    if(score.getEncoderPosition() < 100){
+                        score.goToPosition(0,0.3);
                     }else{
-                        if(score.getEncoderPosition() < 100){
-                            score.goToPosition(0,0.3);
-                        }else{
-                            score.setPower(-gamepad1.left_trigger/2);
+                        score.setPower(-gamepad1.left_trigger/2);
 
-                        }
                     }
                 }
             }else{
                 cont.set(true);
             }
+
+             */
 
             if(gamepad1.b){
 
@@ -184,7 +163,7 @@ public class FirstTeleOp extends LinearOpMode {
             // low cone, 13 in, 1209  gamenpad1.dpad_left
             // medium cone, 23 in, 1795 gamepad1.dpad_up
             // high cone, 33 in, 2390 gamepad1.dpad_right
-
+            /*
             if(gamepad1.dpad_down) {
                 cont.set(false);
                 sleep(30);
@@ -192,13 +171,13 @@ public class FirstTeleOp extends LinearOpMode {
                 // 50 not zero b/c 435 motor does not have enough torque to stop the gravitational drop to zero tics
                 //score.goToPosition(50, 1);
                 //Test this callibration
-                /*
+
                 while(score.getEncoderPosition() > 700 && score.getEncoderPosition() < 200){
                     int aimedPos = (int)(Math.sqrt(score.getEncoderPosition()));
                     score.goToPosition(aimedPos, 1);
                 }
 
-                 */
+
                 score.goToPosition(0, 0.3);
 
             }
@@ -226,6 +205,8 @@ public class FirstTeleOp extends LinearOpMode {
                 score.goToPosition(2390, 1);
                 cont.set(true);
             }
+
+             */
 
             telemetry.addData("flPos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());
