@@ -42,7 +42,7 @@ public class FirstTeleOp extends LinearOpMode {
         score.setClawPosition(0.9);
 
         // driver hub: Expansion Hub 1, Control Hub temporarily stopped responding to commands while an OpMode was running
-        
+
         liftThread = new Thread(){
             @Override
             public void run(){
