@@ -49,12 +49,30 @@ public class DetectionAlgorithmTest2 extends OpenCvPipeline {
 
     // Lower and upper boundaries for colors -> HSV
     private static final Scalar
-            lower_yellow_bounds  = new Scalar(200, 200, 0, 255),
-            upper_yellow_bounds  = new Scalar(255, 255, 130, 255),
-            lower_cyan_bounds    = new Scalar(0, 200, 200, 255),
-            upper_cyan_bounds    = new Scalar(150, 255, 255, 255),
-            lower_magenta_bounds = new Scalar(170, 0, 170, 255),
-            upper_magenta_bounds = new Scalar(255, 60, 255, 255);
+            lower_yellow_bounds  = new Scalar(
+                    convertToHSV(200, 200, 0)[0],
+                    convertToHSV(200, 200, 0)[1],
+                    convertToHSV(200, 200, 0)[2]),
+            upper_yellow_bounds  = new Scalar(
+                    convertToHSV(255, 255, 130)[0],
+                    convertToHSV(255, 255, 130)[1],
+                    convertToHSV(255, 255, 130)[2]),
+            lower_cyan_bounds    = new Scalar(
+                    convertToHSV(0, 200, 200)[0],
+                    convertToHSV(0, 200, 200)[1],
+                    convertToHSV(0, 200, 200)[2]),
+            upper_cyan_bounds    = new Scalar(
+                    convertToHSV(150, 255, 255)[0],
+                    convertToHSV(150, 255, 255)[1],
+                    convertToHSV(150, 255, 255)[2]),
+            lower_magenta_bounds = new Scalar(
+                    convertToHSV(170, 0, 170)[0],
+                    convertToHSV(170, 0, 170)[1],
+                    convertToHSV(170, 0, 170)[2]),
+            upper_magenta_bounds = new Scalar(
+                    convertToHSV(255, 60, 255)[0],
+                    convertToHSV(255, 60, 255)[1],
+                    convertToHSV(255, 60, 255)[2]);
 
     // Color definitions -> RGB
     private final Scalar
@@ -91,12 +109,9 @@ public class DetectionAlgorithmTest2 extends OpenCvPipeline {
         Imgproc.GaussianBlur(changed, changed, new Size(5,5), 0);
         Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 2);
         Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
-        Imgproc.cvtColor(changed, changed, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(changed, changed, Imgproc.COLOR_RGB2HSV);
 
-        //Y -> brightness, Cr -> red - brightness, Cb -> blue - brightness
-        Core.extractChannel(changed, yelMat, 0);
-        Core.extractChannel(changed, cyaMat, 2);
-        Core.extractChannel(changed, magMat, 1);
+        //h -> Hue, S -> Saturation, V -> Value
 //        // Apply Morphology
 //        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
 //        Imgproc.morphologyEx(changed, changed, Imgproc.MORPH_CLOSE, kernel);
@@ -110,11 +125,11 @@ public class DetectionAlgorithmTest2 extends OpenCvPipeline {
 
         // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
         // yellow
-        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
+        Core.inRange(changed, lower_yellow_bounds, upper_yellow_bounds, yelMat);
         // cyan
-        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
+        Core.inRange(changed, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
         // magenta
-        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
+        Core.inRange(changed, lower_magenta_bounds, upper_magenta_bounds, magMat);
 
 
 
@@ -147,7 +162,7 @@ public class DetectionAlgorithmTest2 extends OpenCvPipeline {
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
         } else {
 
-            // magenta greatest, positio    n right
+            // magenta greatest, position right
             position = ParkingPosition.RIGHT;
             telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
@@ -158,16 +173,16 @@ public class DetectionAlgorithmTest2 extends OpenCvPipeline {
         // Memory cleanup
         //changed.release();
         //original.release();
-        yelMat.release();
+        //yelMat.release();
         cyaMat.release();
         magMat.release();
 
-        return befChange;
+        return yelMat;
     }
 
 
     public static Double[] convertToHSV(double r, double g, double b) {
-        // https://www.geeksforgeeks.org/program-change-rgb-color-model-hsv-color-model/
+        // https://www.geeksforgeeks.org/program-change-rgb-color-model-hsv-color-model/ with my own customizations
 
         // R, G, B values are divided by 255
         // to change the range from 0..255 to 0..1
@@ -187,21 +202,21 @@ public class DetectionAlgorithmTest2 extends OpenCvPipeline {
 
             // if cmax equal r then compute h
         else if (cmax == r)
-            h = (60 * ((g - b) / diff) + 360) % 360;
+            h = ((60 * ((g - b) / diff) + 360) % 360 ) ;
 
             // if cmax equal g then compute h
         else if (cmax == g)
-            h = (60 * ((b - r) / diff) + 120) % 360;
+            h = ((60 * ((b - r) / diff) + 120) % 360 ) ;
 
             // if cmax equal b then compute h
         else if (cmax == b)
-            h = (60 * ((r - g) / diff) + 240) % 360;
+            h = ((60 * ((r - g) / diff) + 240) % 360 ) ;
 
         // if cmax equal zero
         if (cmax == 0)
             s = 0;
         else
-            s = (diff / cmax) * 100;
+            s = ((diff / cmax) * 100 );
 
         // compute v
         double v = cmax * 100;

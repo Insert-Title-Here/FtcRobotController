@@ -132,25 +132,25 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
             if (yelPercent > magPercent) {
                 // yellow greatest, position left
                 position = ParkingPosition.LEFT;
-                telemetry.addData("park position", position);
-                Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), YELLOW, 2);
+                //telemetry.addData("park position", position);
+                Imgproc.rectangle(befChange, new Rect(0,0,100,88), YELLOW, 2);
             } else {
                 // magenta greatest, position right
                 position = ParkingPosition.RIGHT;
-                telemetry.addData("park position", position);
-                Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
+                //telemetry.addData("park position", position);
+                Imgproc.rectangle(befChange, new Rect(0,0,100,88), MAGENTA, 2);
             }
         } else if(cyaPercent > magPercent) {
             // cyan greatest, position center
             position = ParkingPosition.CENTER;
-            telemetry.addData("park position", position);
-            Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
+            //telemetry.addData("park position", position);
+            Imgproc.rectangle(befChange, new Rect(0,0,100,88), CYAN, 2);
         } else {
 
             // magenta greatest, positio    n right
             position = ParkingPosition.RIGHT;
-            telemetry.addData("park position", position);
-            Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
+            //telemetry.addData("park position", position);
+            Imgproc.rectangle(befChange, new Rect(0,0,100,88), MAGENTA, 2);
 
         }
         telemetry.update();
