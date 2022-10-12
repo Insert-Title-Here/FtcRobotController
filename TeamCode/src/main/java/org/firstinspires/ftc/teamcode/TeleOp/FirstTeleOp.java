@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -42,6 +41,8 @@ public class FirstTeleOp extends LinearOpMode {
         //Open
         score.setClawPosition(0.9);
 
+        // driver hub: Expansion Hub 1, Control Hub temporarily stopped responding to commands while an OpMode was running
+        
         liftThread = new Thread(){
             @Override
             public void run(){
