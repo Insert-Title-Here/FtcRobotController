@@ -40,10 +40,6 @@ public class MecDriveTest extends LinearOpMode {
         telemetry.update();
          */
 
-
-
-
-
         // Camera checks sleeve...stores parking location??
 
         //TODO: Possibly change turns from encoder to IMU angles
