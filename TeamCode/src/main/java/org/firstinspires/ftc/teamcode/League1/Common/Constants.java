@@ -10,6 +10,7 @@ public class Constants {
     //Linkage Positions
     public static final double linkageDown = 0;
     public static final double linkageUp = 0;
+    public static final double linkageScore = 1;
 
     //Grabber Positions (tuned)
     public static final double grabbing = 0;

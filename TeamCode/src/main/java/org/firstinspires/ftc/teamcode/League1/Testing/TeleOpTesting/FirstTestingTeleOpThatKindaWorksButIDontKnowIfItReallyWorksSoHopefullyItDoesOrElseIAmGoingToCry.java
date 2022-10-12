@@ -94,18 +94,18 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                     }else if(gamepad1.right_bumper){
                         score.moveToPosition(850, 1);
 
-                        score.setLinkagePosition(0.95);
+                        score.setLinkagePosition(constants.linkageScore);
                         passive = PassivePower.EXTENDED;
                     }else if(gamepad1.y){
                         //TODO: Make this medium height
                         score.moveToPosition(500, 1);
-                        score.setLinkagePosition(0.95);
+                        score.setLinkagePosition(constants.linkageScore);
 
                         passive = PassivePower.EXTENDED;
                     }else if(gamepad1.b){
                         //TODO: Make this low height
                         score.moveToPosition(190, 1);
-                        score.setLinkagePosition(0.95);
+                        score.setLinkagePosition(constants.linkageScore);
 
                         passive = PassivePower.EXTENDED;
                     }else {
