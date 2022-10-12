@@ -9,6 +9,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import org.firstinspires.ftc.teamcode.Auto.DetectionAlgorithm.ParkingPosition;
+
 @Autonomous
 public class Cam extends LinearOpMode {
     DetectionAlgorithm detect;
@@ -47,5 +49,12 @@ public class Cam extends LinearOpMode {
         waitForStart();
         webcam.stopStreaming();
 
+        if (detect.getPosition() == ParkingPosition.LEFT) {
+
+        } else if (detect.getPosition() == ParkingPosition.CENTER) {
+
+        } else {
+
+        }
     }
 }
