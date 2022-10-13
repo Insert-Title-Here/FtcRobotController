@@ -111,7 +111,7 @@ public class TestingNormalization extends LinearOpMode {
 
         armUp.set(true);
 
-        drive.simpleMoveToPosition(-110, MecDrive.MovementType.STRAIGHT, 0.2);
+        drive.simpleMoveToPosition(60, MecDrive.MovementType.STRAIGHT, 0.2);
         sleep(1000);
         score.setGrabberPosition(0.7);
         sleep(1000);
@@ -119,7 +119,7 @@ public class TestingNormalization extends LinearOpMode {
 
         armDown.set(true);
 
-        drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
+        //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
 
         tankRotate(Math.PI / 2, 0.3);
 

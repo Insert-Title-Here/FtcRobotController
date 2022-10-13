@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefullyItDoesOrElseIAmGoingToCry extends LinearOpMode {
 
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.5;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
+    private final double NORMAL_LINEAR_MODIFIER = 0.75;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.75;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
@@ -72,7 +72,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         systems = new EndgameSystems(hardwareMap);
 
 
-        score.setLinkagePosition(0.05);
+        score.setLinkagePosition(0.03);
         score.setGrabberPosition(0.75);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -140,7 +140,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                         passive = PassivePower.DOWN;
                         score.moveToPosition(0, 0.5);
                         passive = PassivePower.ZERO;
-                        score.setLinkagePosition(0.05);
+                        score.setLinkagePosition(0.03);
 
                         autoLinkageFlag = true;
                         grabFlag = true;
@@ -242,7 +242,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             if(gamepad1.start){
                 score.setLinkagePosition(0.2);
                 sleep(200);
-                score.setLinkagePosition(0.05);
+                score.setLinkagePosition(0.03);
 
                 autoLinkageFlag = true;
             }
@@ -304,7 +304,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         drive.setPower(0, 0, 0, 0);
         score.setLinkagePosition(0.2);
         sleep(500);
-        score.setLinkagePosition(0.05);
+        score.setLinkagePosition(0.03);
         score.setGrabberPosition(constants.openAuto);
     }
 }
