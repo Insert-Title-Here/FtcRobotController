@@ -21,6 +21,8 @@ public class TestingContourPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     Mat temp = new Mat();
     private ArrayList<Integer> xList, yList;
+    int cX, cY;
+    Moments M;
 
 
     static final Rect MIDDLE = new Rect(
@@ -67,6 +69,16 @@ public class TestingContourPipeline extends OpenCvPipeline {
         for(int i = 0; i < contours.size(); i++){
             if(contours.get(i).toArray().length > 6){
                 Imgproc.drawContours(input, contours, i, new Scalar(230, 191, 254));
+
+                M = Imgproc.moments(contours.get(i));
+
+                cX = (int)(M.m10 / M.m00);
+                cY = (int)(M.m01 / M.m00);
+
+                Imgproc.circle(input, new Point(cX, cY), 3, new Scalar(0, 255, 0));
+
+                telemetry.addData("Centroid " + i, cX + ", " + cY);
+                telemetry.update();
 
                 /*ArrayList<Point> pointList = new ArrayList<>();
                 Converters.Mat_to_vector_Point(contours.get(i), pointList);

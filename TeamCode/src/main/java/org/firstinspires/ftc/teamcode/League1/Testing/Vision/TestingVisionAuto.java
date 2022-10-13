@@ -43,16 +43,10 @@ public class TestingVisionAuto extends LinearOpMode {
 
         waitForStart();
 
-        SignalPipeline.ParkPos position = pipeline.getPosition();
+        //SignalPipeline.ParkPos position = pipeline.getPosition();
 
         while(opModeIsActive()){
-            if(position == SignalPipeline.ParkPos.RIGHT) {
-                telemetry.addData("Position: ", "Right");
-            } else if (position == SignalPipeline.ParkPos.LEFT) {
-                telemetry.addData("Position: ", "Left");
-            } else {
-                telemetry.addData("Position: ", "Center");
-            }
+
         }
 
         camera.closeCameraDevice();
