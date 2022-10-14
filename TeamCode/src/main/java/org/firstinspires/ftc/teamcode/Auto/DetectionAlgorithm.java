@@ -19,16 +19,16 @@ public class DetectionAlgorithm extends OpenCvPipeline {
    CYAN    = Parking Middle
    MAGENTA = Parking Right
     */
-    // Mat defined/instantiated, percent    s (for each color) instantiated
+    // Mat defined/instantiated, percents (for each color) instantiated
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
     // top left point of submat (original 320, 176)
-    public static final Point BOX_TOPLEFT = new Point(100,176);
+    public static final Point BOX_BOTTOMLEFT = new Point(175,150);
 
     // width and height of submat
-    public static int BOX_WIDTH = 100;
-    public static int BOX_HEIGHT = -88;
+    public static int BOX_WIDTH = 30;
+    public static int BOX_HEIGHT = -35;
 
     enum ParkingPosition {
         LEFT,
@@ -41,17 +41,17 @@ public class DetectionAlgorithm extends OpenCvPipeline {
 
     // submat to center cone
     Point box_top_left = new Point(
-            BOX_TOPLEFT.x,
-            BOX_TOPLEFT.y);
+            BOX_BOTTOMLEFT.x,
+            BOX_BOTTOMLEFT.y);
     Point box_bottom_right = new Point(
-            BOX_TOPLEFT.x + BOX_WIDTH,
-            BOX_TOPLEFT.y + BOX_HEIGHT);
+            BOX_BOTTOMLEFT.x + BOX_WIDTH,
+            BOX_BOTTOMLEFT.y + BOX_HEIGHT);
 
     // Lower and upper boundaries for colors
     private static final Scalar
-            lower_yellow_bounds  = new Scalar(200, 200, 0, 255),
-            upper_yellow_bounds  = new Scalar(255, 255, 130, 255),
-            lower_cyan_bounds    = new Scalar(0, 200, 200, 255),
+            lower_yellow_bounds  = new Scalar(218, 218, 0, 255),
+            upper_yellow_bounds  = new Scalar(255, 255, 135, 255),
+            lower_cyan_bounds    = new Scalar(0, 176, 176, 255),
             upper_cyan_bounds    = new Scalar(150, 255, 255, 255),
             lower_magenta_bounds = new Scalar(170, 0, 170, 255),
             upper_magenta_bounds = new Scalar(255, 95, 255, 255);
@@ -95,7 +95,11 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         Imgproc.cvtColor(changed, magCr, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(magCr, magMat, 1);
         Core.inRange(magMat, new Scalar(190), new Scalar(240), magMat);
+
+
+
         // container
+
         //Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), new Scalar(255, 153, 204));
 
             /* submatrices
@@ -152,11 +156,11 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         // Memory cleanup
         //changed.release();
         //original.release();
-        yelMat.release();
-        cyaMat.release();
-        magMat.release();
+        //yelMat.release();
+        //cyaMat.release();
+        //magMat.release();
 
-        return changed;
+        return yelMat;
     }
 
     // Returns an enum being the current position where the robot will park
