@@ -122,24 +122,24 @@ public class DetectionAlgorithm extends OpenCvPipeline {
             if (yelPercent > magPercent) {
                 // yellow greatest, position left
                 position = ParkingPosition.LEFT;
-                telemetry.addData("park position", position);
+//                telemetry.addData("park position", position);
                 Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), YELLOW, 2);
             } else {
                 // magenta greatest, position right
                 position = ParkingPosition.RIGHT;
-                telemetry.addData("park position", position);
+//                telemetry.addData("park position", position);
                 Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
             }
         } else if(cyaPercent > magPercent) {
             // cyan greatest, position center
             position = ParkingPosition.CENTER;
-            telemetry.addData("park position", position);
+//            telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
         } else {
 
             // magenta greatest, position right
             position = ParkingPosition.RIGHT;
-            telemetry.addData("park position", position);
+//            telemetry.addData("park position", position);
             Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
 
         }

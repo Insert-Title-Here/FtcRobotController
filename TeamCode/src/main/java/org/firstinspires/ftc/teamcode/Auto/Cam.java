@@ -50,11 +50,11 @@ public class Cam extends LinearOpMode {
         webcam.stopStreaming();
 
         if (detect.getPosition() == ParkingPosition.LEFT) {
-
+            // move to left
         } else if (detect.getPosition() == ParkingPosition.CENTER) {
-
+            // move to center
         } else {
-
+            // move to right
         }
     }
 }
