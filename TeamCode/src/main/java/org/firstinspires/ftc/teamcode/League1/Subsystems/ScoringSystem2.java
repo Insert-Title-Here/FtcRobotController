@@ -49,6 +49,19 @@ public class ScoringSystem2{
         grabber.setPosition(constants.openAuto);
 
     }
+
+    public int getHeight(){
+       if(height == ScoringMode.HIGH){
+           return 850;
+       }else if(height == ScoringMode.MEDIUM){
+           return 500;
+       }else if(height == ScoringMode.LOW){
+           return 190;
+       }
+
+       return 0;
+    }
+
     public void setPower(double power) {
         rLift.setPower(power);
         lLift.setPower(-power);
@@ -72,17 +85,17 @@ public class ScoringSystem2{
 
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH){
-            moveToPosition(850, 0.8);
+            moveToPosition(850, 1);
 
         }else if(height == ScoringMode.MEDIUM){
 
             //TODO: Find tic value
-            moveToPosition(550, 0.8);
+            moveToPosition(500, 1);
 
 
         }else if(height == ScoringMode.LOW){
             //TODO: Find tic value
-            moveToPosition(250, 0.8);
+            moveToPosition(190, 1);
 
         }else{
             //Ground
@@ -91,6 +104,30 @@ public class ScoringSystem2{
 
         }
     }
+
+    public void autoGoToPosition(ScoringMode height) {
+        this.height = height;
+        if (height == ScoringMode.HIGH) {
+            moveToPosition(850, 1);
+
+        } else if (height == ScoringMode.MEDIUM) {
+
+            //TODO: Find tic value
+            moveToPosition(500, 1);
+
+
+        } else if (height == ScoringMode.LOW) {
+            //TODO: Find tic value
+            moveToPosition(190, 1);
+
+        } else {
+            //Ground
+
+            //Probably no slides
+
+        }
+    }
+
 
 
 

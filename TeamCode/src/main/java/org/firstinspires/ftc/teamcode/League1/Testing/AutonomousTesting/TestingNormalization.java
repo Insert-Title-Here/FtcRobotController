@@ -5,6 +5,8 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
@@ -18,7 +20,8 @@ public class TestingNormalization extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
-    Thread armThread, feedForward;
+    Thread armThread, feedForward, idController;
+    PIDCoefficients pid = new PIDCoefficients(0, 0, 0);
     AtomicBoolean hold, armUp, armDown;
 
     BNO055IMU imu;
@@ -36,7 +39,7 @@ public class TestingNormalization extends LinearOpMode {
         armUp = new AtomicBoolean(false);
         armDown = new AtomicBoolean(false);
 
-        score.setLinkagePosition(0.03);
+        score.setLinkagePosition(0.1);
         score.setGrabberPosition(constants.grabbing);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -44,6 +47,75 @@ public class TestingNormalization extends LinearOpMode {
 
         color.setGain(600);
         distance.setGain(300);
+
+        /*
+        idController = new Thread(){
+            @Override
+            public void run() {
+
+
+
+                while(opModeIsActive()){
+                    if(hold.get()){
+                        ElapsedTime time = new ElapsedTime();
+                        double startTime = time.milliseconds();
+
+                        int leftIntegralSum = 0;
+                        int rightIntegralSum = 0;
+
+
+                        int rLiftPos = score.getRightEncoderPos();
+                        int lLiftPos = -1 * score.getLeftEncoderPos();
+
+                        int tics = score.getHeight();
+
+                        int leftPreviousError = Math.abs(tics - lLiftPos);
+                        int rightPreviousError = Math.abs(tics - rLiftPos);
+
+                        while(hold.get()){
+
+                            rLiftPos = score.getRightEncoderPos();
+                            lLiftPos = -1 * score.getLeftEncoderPos();
+
+                            double currentTime = time.milliseconds();
+
+                            int leftError = tics - lLiftPos;
+                            int rightError = tics - rLiftPos;
+
+                            leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
+                            rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
+
+                            double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
+                            double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
+
+                            double leftPower = (pid.i * leftIntegralSum) + (pid.d * leftDerivative);
+                            double rightPower = (pid.i * rightIntegralSum) + (pid.d * rightDerivative);
+
+                            if(tics < ((rLiftPos + lLiftPos) / 2)){
+                                leftPower *= -1;
+                                rightPower *= -1;
+                            }
+
+                            score.setPower(rightPower, leftPower);
+
+
+                            startTime = currentTime;
+                            leftPreviousError = leftError;
+                            rightPreviousError = rightError;
+
+
+
+                        }
+
+
+
+
+                    }
+                }
+            }
+        };
+
+         */
 
         armThread = new Thread(){
             @Override
@@ -60,7 +132,7 @@ public class TestingNormalization extends LinearOpMode {
                         hold.set(false);
                         score.setLinkagePosition(0.7);
                         score.moveToPosition(0, 0.5);
-                        score.setLinkagePosition(0.05);
+                        score.setLinkagePosition(0.1);
                         armDown.set(false);
                     }
                 }
@@ -86,6 +158,8 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
+
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -107,11 +181,11 @@ public class TestingNormalization extends LinearOpMode {
 
 
         drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.3);
-        tankRotate(Math.PI / 4, 0.3);
+        tankRotate(Math.PI / 4.25, 0.3);
 
         armUp.set(true);
 
-        drive.simpleMoveToPosition(60, MecDrive.MovementType.STRAIGHT, 0.2);
+        drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.2);
         sleep(1000);
         score.setGrabberPosition(0.7);
         sleep(1000);
@@ -143,7 +217,8 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-60, MecDrive.MovementType.STRAFE, 0.3);
+
+        drive.simpleMoveToPosition(-70, MecDrive.MovementType.STRAFE, 0.3);
 
         score.setGrabberPosition(0.7);
 
@@ -160,6 +235,9 @@ public class TestingNormalization extends LinearOpMode {
 
                 drive.simpleBrake();
 
+                tankRotate(Math.PI/2, 0.3);
+
+
 
 
                 drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.3);
@@ -167,7 +245,7 @@ public class TestingNormalization extends LinearOpMode {
 
             }
 
-            score.setLinkagePosition(0.2 - (i * 0.03));
+            score.setLinkagePosition(0.24 - (i * 0.03));
 
 
             while (distance.getDistance(DistanceUnit.CM) > 4.3) {
@@ -185,6 +263,7 @@ public class TestingNormalization extends LinearOpMode {
 
             score.moveToPosition(200, 1);
             hold.set(true);
+            sleep(300);
 
             drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.3);
             score.setLinkagePosition(0.7);
@@ -216,11 +295,15 @@ public class TestingNormalization extends LinearOpMode {
 
 
     public void tankRotate(double radians, double power){
+
         if(radians > imu.getAngularOrientation().firstAngle){
             power *= -1;
         }
 
-        while(Math.abs(imu.getAngularOrientation().firstAngle - radians) > (Math.PI/32)){
+        while(Math.abs(imu.getAngularOrientation().firstAngle) < Math.abs(radians)){
+            telemetry.addData("target", radians);
+            telemetry.addData("current", imu.getAngularOrientation().firstAngle);
+            telemetry.update();
             drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
         }
 
