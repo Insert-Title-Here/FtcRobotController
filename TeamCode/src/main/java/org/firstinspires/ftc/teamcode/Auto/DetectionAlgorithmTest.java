@@ -112,10 +112,11 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         // yellow
         Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
         // cyan
-        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
+//        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
+        Core.inRange(cyaMat, new Scalar(190), new Scalar(240), cyaMat);
         // magenta
-        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
-
+//        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
+        Core.inRange(magMat, new Scalar(190), new Scalar(240), magMat);
 
 
         // percent "abundance" for each color
@@ -147,7 +148,7 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
             Imgproc.rectangle(befChange, new Rect(0,0,100,88), CYAN, 2);
         } else {
 
-            // magenta greatest, positio    n right
+            // magenta greatest, position right
             position = ParkingPosition.RIGHT;
             //telemetry.addData("park position", position);
             Imgproc.rectangle(befChange, new Rect(0,0,100,88), MAGENTA, 2);
@@ -156,13 +157,13 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         telemetry.update();
 
         // Memory cleanup
-        //changed.release();
-        //original.release();
+        changed.release();
+        original.release();
         yelMat.release();
-        cyaMat.release();
+        //cyaMat.release();
         magMat.release();
 
-        return befChange;
+        return cyaMat;
     }
     public static double convertToY(int r, int g, int b) {
         return 16 + (65.738 * r + 129.057 * g + 25.064 * b) / 256;
