@@ -51,7 +51,9 @@ public class FirstTeleOp extends LinearOpMode {
                 //removed !score.isBusy() from the while statement
                 while(opModeIsActive()){
                     if(gamepad1.right_trigger > 0.1){
-                        score.setPower(gamepad1.right_trigger/1.6);
+                        if(!(score.getEncoderPosition() > 2400)){
+                            score.setPower(gamepad1.right_trigger/1.5);
+                        }
                     }else if(gamepad1.left_trigger > 0.1) {
                         if (score.getEncoderPosition() < 40) {
                             //calibrate will set power

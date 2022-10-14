@@ -37,25 +37,29 @@ public class BlueRight extends LinearOpMode {
         liftThread = new Thread(){
             @Override
             public void run(){
-                while(cont.get()){
-                    score.setPower(0.1);
+                while(opModeIsActive()){
+                    if(score.getEncoderPosition() > 1200){
+                        score.setPower(0.1);
+                    }
                 }
 
             }
         };
-
+        //TRY SETTING THE COMMANDS INSIDE THE THREAD AND SEE IF IT WORKS THAT WAY
 
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
-
         liftThread.start();
+
         //TODO: Consider whethere or not to just have the code laid out here or by just calling the method
         //If changed above, then must do for all
-        blueRight();
+        //blueRight();
+        blueRightDefense();
     }
     public void blueRight(){
+
         //close claw
         score.setClawPosition(0.45);
         sleep(1000);
@@ -72,10 +76,9 @@ public class BlueRight extends LinearOpMode {
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
 
         // move arm max
-
-        score.goToPosition(2380, 0.7);
-        cont.set(true);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 55, 66, 87), "move to pole");
+        //cont.set(true);
+        score.goToPosition(2380, 0.85);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 88, 79, 87), "move to pole");
         sleep(1000);
 
         score.goToPosition(1800, 0.4);
@@ -85,7 +88,6 @@ public class BlueRight extends LinearOpMode {
         sleep(1000);
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
-        cont.set(false);
         score.goToPosition(0, 0.3);
         sleep(1000);
 
@@ -99,7 +101,7 @@ public class BlueRight extends LinearOpMode {
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
         // go left
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
-
+        //cont.set(false);
 
 
 
@@ -111,6 +113,53 @@ public class BlueRight extends LinearOpMode {
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
 
     */
+    }
+    public void blueRightDefense(){
+        //close claw
+        score.setClawPosition(0.45);
+        sleep(500);
+        //lift claw a little bit
+        score.goToPosition(100, 0.7);
+        sleep(200);
+        // move forward 3 squares
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(2307, 2203, 2230, 2313), "forward");
+
+        //strafe left
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-658, 700, 714, -639), "strafe right");
+        sleep(100);
+        // turn
+        //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
+
+        // move arm max
+        //cont.set(true);
+        score.goToPosition(2380, 0.85);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(291, 260, 277, 263), "move to pole");
+        sleep(100);
+        //TODO: Continue testing from here
+        score.setClawPosition(0.9);
+        sleep(200);
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
+        // lowers arm after scoring first cone
+        score.goToPosition(0, 0.3);
+        sleep(200);
+
+        //1 (far left) (general code)
+        //drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
+        //cont.set(false);
+
+
+
+
+
+        //2 middle
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1267, -1251, -1246, 1304), "strafe right");
+        drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(1100,1100,1100,1100),"drive forward");
+        //3 far right
+        //drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
+
+
+
+
     }
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
