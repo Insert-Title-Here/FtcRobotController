@@ -11,18 +11,22 @@ public class ScoringSystem2{
     DcMotorEx lLift, rLift;
     public Servo grabber, rLinkage, lLinkage;
     public ScoringMode height;
-    private boolean grabbing, linkageUp;
+    private boolean grabbing, linkageUp, extended;
     Constants constants;
+
+
+
 
     public enum ScoringMode{
         HIGH,
         MEDIUM,
         LOW,
-        GROUND
+        ULTRA
     }
 
     public ScoringSystem2(HardwareMap hardwareMap, Constants constants) {
         height = ScoringMode.HIGH;
+        extended = false;
         this.constants = constants;
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
@@ -48,6 +52,22 @@ public class ScoringSystem2{
         rLinkage.setPosition(0.03);
         grabber.setPosition(constants.openAuto);
 
+    }
+
+    public boolean isExtended() {
+        return extended;
+    }
+
+    public void setExtended(boolean extended) {
+        this.extended = extended;
+    }
+
+    public void setScoringMode(ScoringMode height){
+        this.height = height;
+    }
+
+    public ScoringMode getScoringMode(){
+        return height;
     }
 
     public int getHeight(){
@@ -98,11 +118,12 @@ public class ScoringSystem2{
             moveToPosition(190, 1);
 
         }else{
-            //Ground
+            //Ultra
 
-            //Probably no slides
 
         }
+
+        extended = true;
     }
 
     public void autoGoToPosition(ScoringMode height) {
@@ -126,6 +147,8 @@ public class ScoringSystem2{
             //Probably no slides
 
         }
+
+
     }
 
 
@@ -198,6 +221,19 @@ public class ScoringSystem2{
             setLinkagePosition(constants.linkageDown);
 
         }
+    }
+
+    //TODO: Tune this
+    public void shiftLinkagePosition(){
+        double setHeight = getGrabberPosition() - 0.04;
+
+        if(setHeight < 0.09){
+            setHeight = 0.25;
+        }else if(setHeight > 0.25){
+            setHeight = 0.25;
+        }
+
+        setLinkagePosition(setHeight);
     }
 
     public void linkageUpAndDown(boolean up){

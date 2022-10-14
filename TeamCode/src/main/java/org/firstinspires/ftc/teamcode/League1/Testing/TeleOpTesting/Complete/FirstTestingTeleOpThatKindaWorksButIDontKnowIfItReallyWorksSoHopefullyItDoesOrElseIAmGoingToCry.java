@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.League1.Testing.TeleOpTesting;
+package org.firstinspires.ftc.teamcode.League1.Testing.TeleOpTesting.Complete;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -87,9 +87,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             @Override
             public void run() {
                 while(opModeIsActive()){
-                    if(gamepad1.right_trigger > 0.1){
-                        score.setPower(gamepad1.right_trigger / 3);
-                    }else if(gamepad1.left_trigger > 0.1){
+                    if(gamepad1.left_trigger > 0.1){
                         score.setPower(-gamepad1.left_trigger / 3);
                     }else if(gamepad1.right_bumper){
                         score.moveToPosition(850, 1);

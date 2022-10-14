@@ -85,7 +85,7 @@ public class CommandTestingTeleOp extends CommandOpMode {
         driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.LOW)));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.MEDIUM)));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.HIGH)));
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.GROUND)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.ULTRA)));
 
 
         lift.setLinkagePosition(constants.linkageDown);
