@@ -142,18 +142,28 @@ public class NewUltraTeleOp extends LinearOpMode {
                         }
 
                     }
+
                     //TODO: fix this logic
                     if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
                         score.setLinkagePosition(0.7);
                         autoLinkageFlag = false;
-                        telemetry.addData("Is this trippin", "yes");
+                        //telemetry.addData("Is this trippin", "yes");
 
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.ULTRA){
-                            score.moveToPosition(850, 1);
+                            score.autoGoToPosition();
                             score.setLinkagePosition(constants.linkageScore);
 
                         }
                     }
+
+                    //Auto cone heights
+                    if(gamepad1.left_bumper && shiftLinkageFlag){
+                        score.shiftLinkagePosition();
+                        shiftLinkageFlag = false;
+                    }else{
+                        shiftLinkageFlag = true;
+                    }
+
 
 
                     //Manual open and close grabber
@@ -277,31 +287,14 @@ public class NewUltraTeleOp extends LinearOpMode {
             if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(leftStickX * SPRINT_LINEAR_MODIFIER, leftStickY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             } else if(score.isExtended()){
+                //Slow down when slides are extended
                 drive.setPower(new Vector2D(leftStickX * EXTENDED_LINEAR_MODIFIER, leftStickY * EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * EXTENDED_ROTATIONAL_MODIFIER, false);
-
             } else{
                 drive.setPower(new Vector2D(leftStickX * NORMAL_LINEAR_MODIFIER, leftStickY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
-
-
-
-
-
-
-
-            //Auto cone heights
-            if(gamepad1.left_bumper && shiftLinkageFlag){
-                score.shiftLinkagePosition();
-                shiftLinkageFlag = false;
-            }else{
-                shiftLinkageFlag = true;
-            }
-
             //Telemetry
-            telemetry.addData("leftStickX", gamepad1.left_stick_x);
-            telemetry.addData("leftStickY", gamepad1.left_stick_y);
             telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
@@ -309,6 +302,9 @@ public class NewUltraTeleOp extends LinearOpMode {
             telemetry.addData("distanceBlue", distance.getNormalizedColors().blue);
             telemetry.addData("autoLinkageFlag", autoLinkageFlag);
             telemetry.addData("grabbingFlag", grabFlag);
+            telemetry.addData("manualFlag", manualFlag);
+            telemetry.addData("shiftLinkageFlag", shiftLinkageFlag);
+            telemetry.addData("extended", score.isExtended());
             /*telemetry.addData("colorRed: ", color.getNormalizedColors().red);
             telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);*/
             telemetry.addData("rightServoTarget", score.getRightLinkage());

@@ -281,8 +281,6 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             }
 
             //Telemetry
-            telemetry.addData("leftStickX", gamepad1.left_stick_x);
-            telemetry.addData("leftStickY", gamepad1.left_stick_y);
             telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
