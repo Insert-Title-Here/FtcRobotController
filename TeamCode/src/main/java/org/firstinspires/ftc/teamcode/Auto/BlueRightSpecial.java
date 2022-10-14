@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous
-public class BlueRight extends LinearOpMode {
+public class BlueRightSpecial extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     //OpenCvWebcam webcam;
@@ -58,68 +58,61 @@ public class BlueRight extends LinearOpMode {
         waitForStart();
         liftThread.start();
 
-        //TODO: Consider whethere or not to just have the code laid out here or by just calling the method
-        //If changed above, then must do for all
-        blueRight();
+        blueRightDefense();
     }
-    public void blueRight(){
-
+    public void blueRightDefense(){
         //close claw
         score.setClawPosition(0.45);
         sleep(1000);
         //lift claw a little bit
         score.goToPosition(100, 0.7);
         sleep(200);
-        // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1088, 1066), "forward");
+        // move forward 3 squares
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(2307, 2203, 2230, 2313), "forward");
 
         //strafe left
-        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1954, 1686, 1820, -1987), "strafe right");
-        sleep(1000);
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-758, 700, 714, -816), "strafe right");
+        sleep(100);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
 
         // move arm max
         score.goToPosition(2380, 0.85);
         cont.set(true);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 88, 79, 87), "move to pole");
-        sleep(1000);
-
-        score.goToPosition(1800, 0.3);
-
-        sleep(1000);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(291, 260, 277, 263), "move to pole");
+        sleep(100);
+        //TODO: Continue testing from here
         score.setClawPosition(0.9);
-        sleep(1000);
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
+        sleep(200);
+        score.setClawPosition(0.45);
+        sleep(200);
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-200, -197, -211, -298), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
         score.goToPosition(0, 0.3);
-        sleep(1000);
-
+        sleep(200);
+        drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(200,300,250,220),"Drive forward");
+        sleep(5000);
+        drive.goToPosition(-0.3,-0.3,-0.3,-0.3, avgPosition(-388,-312,-388,-388),"drive backward");
+        drive.goToPosition(-0.3, 0.3, 0.3,-0.3, avgPosition(-670,649,774,-715),"strafe left");
         //1 (far left) (general code)
-        // drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
-        // sleep(50);
-        //turn right a little(straighten out)
-        // drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn straight");
-        //sleep(50);
-        //drive forward a little
-        //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
-        // go left
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
+        //drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
         //cont.set(false);
 
 
 
 
-        /*
+
         //2 middle
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1267, -1251, -1246, 304), "strafe right");
         //3 far right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
+        //drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
 
-    */
+
+
+
+
+
     }
-
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
