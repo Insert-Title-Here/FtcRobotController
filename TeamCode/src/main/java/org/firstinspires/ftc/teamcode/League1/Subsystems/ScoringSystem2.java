@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 
@@ -142,7 +143,12 @@ public class ScoringSystem2{
 
 
 
+
+
     public void moveToPosition(int tics, double power){
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
 
         int rLiftPos = rLift.getCurrentPosition();
         int lLiftPos = -1 * lLift.getCurrentPosition();
@@ -163,7 +169,7 @@ public class ScoringSystem2{
         //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
 
         //TODO: Check if logic for encoder positions works
-        while (Math.abs(rLiftPos - tics) > 20 || Math.abs(lLiftPos - tics) > 20) {
+        while ((time.seconds() - startTime) < 3 && Math.abs(rLiftPos - tics) > 20 || Math.abs(lLiftPos - tics) > 20) {
 
             //TODO: figure out if we need to negate either of them
 

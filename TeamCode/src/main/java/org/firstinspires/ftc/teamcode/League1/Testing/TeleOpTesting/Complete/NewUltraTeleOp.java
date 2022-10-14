@@ -92,6 +92,7 @@ public class NewUltraTeleOp extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         score.autoGoToPosition();
                         score.setLinkagePosition(constants.linkageScore);
+                        passive = PassivePower.EXTENDED;
 
                     }else {
                         if(passive == PassivePower.EXTENDED){
@@ -129,6 +130,7 @@ public class NewUltraTeleOp extends LinearOpMode {
 
                         autoLinkageFlag = true;
                         grabFlag = true;
+                        score.setExtended(false);
 
                         //Automated Grab and Score
                     }else if((distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
@@ -152,6 +154,8 @@ public class NewUltraTeleOp extends LinearOpMode {
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.ULTRA){
                             score.autoGoToPosition();
                             score.setLinkagePosition(constants.linkageScore);
+                            passive = PassivePower.EXTENDED;
+
 
                         }
                     }
