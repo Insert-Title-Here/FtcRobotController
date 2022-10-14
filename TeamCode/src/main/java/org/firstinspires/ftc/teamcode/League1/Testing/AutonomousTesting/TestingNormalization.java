@@ -310,7 +310,7 @@ public class TestingNormalization extends LinearOpMode {
             power *= -1;
         }
 
-        while(Math.abs(imu.getAngularOrientation().firstAngle) < Math.abs(radians)){
+        while(Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) < Math.abs(radians)){
             telemetry.addData("target", radians);
             telemetry.addData("current", imu.getAngularOrientation().firstAngle);
             telemetry.update();
