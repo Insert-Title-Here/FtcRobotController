@@ -19,8 +19,8 @@ public class FirstTeleOp extends LinearOpMode {
     AtomicBoolean cont;
 
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.5;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
+    private final double NORMAL_LINEAR_MODIFIER = 0.8;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.8;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
@@ -94,6 +94,7 @@ public class FirstTeleOp extends LinearOpMode {
                         score.goToPosition(2360, 1);
                         score.setPower(0.08);
                     }
+
                 }
             }
         };
@@ -160,7 +161,9 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.y){
                 cont.set(false);
             }
-
+            if(gamepad1.options){
+                score.resetLiftEncoder();
+            }
             // reset   gamepad1.dpad_down
             // low cone, 13 in, 1209  gamenpad1.dpad_left
             // medium cone, 23 in, 1795 gamepad1.dpad_up
@@ -215,6 +218,7 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());
             telemetry.addData("liftPos", score.getEncoderPosition());
+            telemetry.addData("liftPow", score.getPower());
             telemetry.update();
 
 

@@ -54,6 +54,9 @@ public class ScoringSystem {
     public void setPower(double power){
         liftMotor.setPower(power);
     }
+    public double getPower(){
+        return liftMotor.getPower();
+    }
 
     public void setClawPosition(double position) {
         claw.setPosition(position);
