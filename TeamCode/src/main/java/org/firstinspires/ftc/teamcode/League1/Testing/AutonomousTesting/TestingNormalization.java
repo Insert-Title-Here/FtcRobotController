@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
@@ -135,6 +138,11 @@ public class TestingNormalization extends LinearOpMode {
                         score.setLinkagePosition(0.1);
                         armDown.set(false);
                     }
+
+                    telemetry.addData("orientation:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
+                    telemetry.addData("Math.Pi/2", Math.PI/2);
+                    telemetry.addData("Math.Pi/4", Math.PI/4);
+                    telemetry.update();
                 }
 
                 //Might need this
@@ -170,6 +178,8 @@ public class TestingNormalization extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+
 
 
 

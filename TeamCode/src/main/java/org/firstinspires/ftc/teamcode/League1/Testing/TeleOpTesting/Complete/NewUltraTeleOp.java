@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 //TODO: figure out bulk read
 
-@TeleOp
+@TeleOp (name = "KevinGodMode")
 public class NewUltraTeleOp extends LinearOpMode {
 
 
