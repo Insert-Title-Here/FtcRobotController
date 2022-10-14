@@ -160,10 +160,10 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         changed.release();
         original.release();
         yelMat.release();
-        //cyaMat.release();
+        cyaMat.release();
         magMat.release();
 
-        return cyaMat;
+        return befChange;
     }
     public static double convertToY(int r, int g, int b) {
         return 16 + (65.738 * r + 129.057 * g + 25.064 * b) / 256;

@@ -54,7 +54,7 @@ public class DetectionAlgorithm extends OpenCvPipeline {
             lower_cyan_bounds    = new Scalar(0, 200, 200, 255),
             upper_cyan_bounds    = new Scalar(150, 255, 255, 255),
             lower_magenta_bounds = new Scalar(170, 0, 170, 255),
-            upper_magenta_bounds = new Scalar(255, 60, 255, 255);
+            upper_magenta_bounds = new Scalar(255, 95, 255, 255);
 
     // Color definitions
     private final Scalar
@@ -69,7 +69,7 @@ public class DetectionAlgorithm extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-
+        Mat magCr = new Mat();
 
         input.copyTo(original);
 
@@ -91,6 +91,10 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 2);
         Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
 
+        // magenta (ycrcb worked better for magenta)
+        Imgproc.cvtColor(changed, magCr, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(magCr, magMat, 1);
+        Core.inRange(magMat, new Scalar(190), new Scalar(240), magMat);
         // container
         //Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), new Scalar(255, 153, 204));
 
@@ -104,7 +108,7 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         // cyan
         Core.inRange(changed, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
         // magenta
-        Core.inRange(changed, lower_magenta_bounds, upper_magenta_bounds, magMat);
+        //Core.inRange(changed, lower_magenta_bounds, upper_magenta_bounds, magMat);
 
 
 
