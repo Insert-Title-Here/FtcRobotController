@@ -8,8 +8,9 @@ import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+//TODO:Needs testing
 @Autonomous
-public class BlueRightSpecial extends LinearOpMode {
+public class BlueLeftSpecial extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     //OpenCvWebcam webcam;
@@ -30,9 +31,6 @@ public class BlueRightSpecial extends LinearOpMode {
          */
 
         // Camera checks sleeve...stores parking location??
-
-        //TODO: Possibly change turns from encoder to IMU angles
-        //TODO: Work on auto for all the side (make different methods for each side?)
 
         liftThread = new Thread(){
             @Override
@@ -58,9 +56,9 @@ public class BlueRightSpecial extends LinearOpMode {
         waitForStart();
         liftThread.start();
 
-        blueRightDefense();
+        blueLeftDefense();
     }
-    public void blueRightDefense(){
+    public void blueLeftDefense(){
         //close claw
         score.setClawPosition(0.45);
         sleep(1000);
@@ -70,8 +68,8 @@ public class BlueRightSpecial extends LinearOpMode {
         // move forward 3 squares
         drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(2307, 2203, 2230, 2313), "forward");
 
-        //strafe left
-        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-758, 700, 714, -816), "strafe left");
+        //strafe right
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(758, -700, -714, 816), "strafe right");
         sleep(100);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -93,7 +91,7 @@ public class BlueRightSpecial extends LinearOpMode {
         drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(200,300,250,220),"Drive forward");
         sleep(5000);
         drive.goToPosition(-0.3,-0.3,-0.3,-0.3, avgPosition(-388,-312,-388,-388),"drive backward");
-        drive.goToPosition(-0.3, 0.3, 0.3,-0.3, avgPosition(-670,649,774,-715),"strafe left");
+        drive.goToPosition(0.3, -0.3, -0.3,0.3, avgPosition(670,-649,-774,715),"strafe right");
         //1 (far left) (general code)
         //drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
         //cont.set(false);

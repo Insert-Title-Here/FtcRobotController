@@ -141,7 +141,7 @@ public class FirstTeleOp extends LinearOpMode {
 
              */
 
-            if(gamepad1.b){
+            if(gamepad1.x){
 
                 //Closed
                 score.setClawPosition(0.45);
@@ -149,7 +149,7 @@ public class FirstTeleOp extends LinearOpMode {
 
             //2220
 
-            }else if(gamepad1.x){
+            }else if(gamepad1.b){
                 //Open
                 score.setClawPosition(0.9);
 
