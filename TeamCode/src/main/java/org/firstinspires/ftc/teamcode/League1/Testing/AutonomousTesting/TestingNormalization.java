@@ -8,13 +8,20 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.ContourPipeline;
+import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.SignalPipeline;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -29,6 +36,9 @@ public class TestingNormalization extends LinearOpMode {
 
     BNO055IMU imu;
     ColorRangeSensor distance, color;
+
+    OpenCvWebcam camera;
+    ContourPipeline pipeline;
 
 
 
@@ -181,6 +191,28 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        pipeline = new ContourPipeline(telemetry);
+
+        camera.setPipeline(pipeline);
+
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+
+            }
+        });
+
 
 
         waitForStart();
@@ -192,6 +224,9 @@ public class TestingNormalization extends LinearOpMode {
 
         drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.3);
         tankRotate(Math.PI / 4.25, 0.3);
+
+        normalizeToPole(0.3, 155, 165);
+
 
         armUp.set(true);
 
@@ -322,5 +357,15 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
+    }
+
+    public void normalizeToPole(double power, int xMin, int xMax) {
+        while(pipeline.getPolePosition() > xMax || pipeline.getPolePosition() < xMin) {
+            if(pipeline.getPolePosition() > xMax) {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            }
+        }
     }
 }
