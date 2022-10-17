@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -71,7 +70,7 @@ public class BlueRightSpecial extends LinearOpMode {
         drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(2307, 2203, 2230, 2313), "forward");
 
         //strafe left
-        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-758, 700, 714, -816), "strafe left");
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-658, 700, 714, -659), "strafe left");
         sleep(100);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -93,7 +92,7 @@ public class BlueRightSpecial extends LinearOpMode {
         drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(200,300,250,220),"Drive forward");
         sleep(5000);
         drive.goToPosition(-0.3,-0.3,-0.3,-0.3, avgPosition(-388,-312,-388,-388),"drive backward");
-        drive.goToPosition(-0.3, 0.3, 0.3,-0.3, avgPosition(-670,649,774,-715),"strafe left");
+        drive.goToPosition(-0.3, 0.3, 0.3,-0.3, avgPosition(-670,649,610,-630),"strafe left");
         //1 (far left) (general code)
         //drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
         //cont.set(false);

@@ -156,11 +156,11 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         // Memory cleanup
         //changed.release();
         //original.release();
-        //yelMat.release();
-        //cyaMat.release();
-        //magMat.release();
+        yelMat.release();
+        cyaMat.release();
+        magMat.release();
 
-        return yelMat;
+        return original;
     }
 
     // Returns an enum being the current position where the robot will park
