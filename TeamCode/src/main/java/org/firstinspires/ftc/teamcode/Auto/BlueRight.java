@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous
@@ -15,21 +19,41 @@ public class BlueRight extends LinearOpMode {
     //OpenCvWebcam webcam;
     AtomicBoolean cont;
     Thread liftThread;
-    int parkLocation;
+    String parkLocation;
+    DetectionAlgorithm detect;
+    OpenCvWebcam webcam;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        detect = new DetectionAlgorithm(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         cont = new AtomicBoolean();
         cont.set(false);
-        /*
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-         */
 
-        // Camera checks sleeve...stores parking location??
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.setPipeline(detect);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
+
+        telemetry.addData("position", parkLocation);
+        telemetry.addData("Status", "Initialized");
+
+        telemetry.update();
+
 
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
@@ -55,7 +79,9 @@ public class BlueRight extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
         waitForStart();
+        webcam.stopStreaming();
         liftThread.start();
 
         //TODO: Consider whethere or not to just have the code laid out here or by just calling the method
@@ -104,9 +130,18 @@ public class BlueRight extends LinearOpMode {
         //sleep(50);
         //drive forward a little
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
-        // go left
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
-        //cont.set(false);
+        if (detect.getPosition() == DetectionAlgorithm.ParkingPosition.LEFT) {
+            // move to left
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
+        } else if (detect.getPosition() == DetectionAlgorithm.ParkingPosition.CENTER) {
+            // move to center TODO: measure drive encoder values
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right (center)");
+        } else {
+            // move to right TODO: measure drive encoder values
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right (center)");
+
+        }
+
 
 
 
