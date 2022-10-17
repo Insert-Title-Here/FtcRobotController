@@ -331,6 +331,8 @@ public class TestingNormalization extends LinearOpMode {
             sleep(500);
         }
 
+        camera.closeCameraDevice();
+
         //Will have to check if this aligns straight already (need color sensor or not) ->
         // may need to turn into slight diagonal instead of straight to check color
         //drive.simpleMoveToPosition(675, MecDrive.MovementType.STRAIGHT, 0.3);
