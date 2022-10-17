@@ -114,7 +114,7 @@ public class ScoringSystem {
 
         lLinkage.setPosition(0.03);
         rLinkage.setPosition(0.03);
-        grabber.setPosition(constants.openAuto);
+        grabber.setPosition(constants.open);
 
 
     }
@@ -313,14 +313,6 @@ public class ScoringSystem {
         lLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void extend(ExtensionHeight height){
-        if(height == ExtensionHeight.HIGH){
-            moveToPosition(constants.highHeight, 0.2);
-        }else{
-            moveToPosition(constants.mediumHeight, 0.2);
-        }
-
-    }
 
     public void setPower(double power){
         rLift.setPower(power);
@@ -414,7 +406,7 @@ public class ScoringSystem {
         if(close) {
             setGrabberPosition(constants.grabbing);
         }else{
-            setGrabberPosition(constants.openAuto);
+            setGrabberPosition(constants.open);
         }
     }
 }

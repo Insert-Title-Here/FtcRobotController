@@ -14,6 +14,7 @@ public class ScoringSystem2{
     public ScoringMode height;
     private boolean grabbing, linkageUp, extended;
     Constants constants;
+    private int coneStack;
 
 
 
@@ -26,6 +27,7 @@ public class ScoringSystem2{
     }
 
     public ScoringSystem2(HardwareMap hardwareMap, Constants constants) {
+        coneStack = 5;
         height = ScoringMode.HIGH;
         extended = false;
         this.constants = constants;
@@ -51,8 +53,39 @@ public class ScoringSystem2{
 
         lLinkage.setPosition(0.03);
         rLinkage.setPosition(0.03);
-        grabber.setPosition(constants.openAuto);
+        grabber.setPosition(constants.open);
 
+    }
+
+    public int getConeStack(){
+        return coneStack;
+    }
+
+    public void lowerConeStack(){
+        if(coneStack - 1 > 0) {
+            coneStack -= 1;
+        }
+    }
+
+    public void raiseConeStack(){
+        if(coneStack + 1 < 6) {
+            coneStack += 1;
+        }
+    }
+
+    //TODO: tune this
+    public void setLinkageConeStack(){
+        if(coneStack == 5){
+            setLinkagePosition(0.24);
+        }else if(coneStack == 4){
+            setLinkagePosition(0.21);
+        }else if(coneStack == 3){
+            setLinkagePosition(0.18);
+        }else if(coneStack == 2){
+            setLinkagePosition(0.15);
+        }else if(coneStack == 1){
+            setLinkagePosition(0.12);
+        }
     }
 
     public boolean isExtended() {
@@ -276,7 +309,7 @@ public class ScoringSystem2{
         if(close) {
             setGrabberPosition(constants.grabbing);
         }else{
-            setGrabberPosition(constants.openAuto);
+            setGrabberPosition(constants.open);
         }
     }
 

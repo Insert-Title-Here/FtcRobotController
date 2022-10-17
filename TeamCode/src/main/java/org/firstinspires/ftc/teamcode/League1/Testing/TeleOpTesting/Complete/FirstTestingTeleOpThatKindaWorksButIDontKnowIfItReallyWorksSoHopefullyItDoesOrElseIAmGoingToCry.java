@@ -119,7 +119,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
                     //
                     if(goDown.get()) {
-                        score.setGrabberPosition(constants.openAuto);
+                        score.setGrabberPosition(constants.open);
 
                         try {
                             sleep(300);
@@ -232,7 +232,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             }
 
             if(gamepad1.x){
-                score.setGrabberPosition(constants.openAuto);
+                score.setGrabberPosition(constants.open);
                 grabFlag = true;
             }
 
@@ -301,6 +301,6 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         score.setLinkagePosition(0.2);
         sleep(500);
         score.setLinkagePosition(0.1);
-        score.setGrabberPosition(constants.openAuto);
+        score.setGrabberPosition(constants.open);
     }
 }
