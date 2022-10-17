@@ -22,9 +22,10 @@ public class ContourPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     Mat temp = new Mat();
     private ArrayList<Integer> xList, yList, contourLengths = new ArrayList<Integer>();
-    int cX, cY, longestContourX;
+    int cX, cY;
     int maxLength = 0;
     int maxLengthIndex = 0;
+    int longestContourX = 0;
     Moments M;
 
 
@@ -102,9 +103,12 @@ public class ContourPipeline extends OpenCvPipeline {
             }
         }
 
-        longestContourX = xList.get(maxLengthIndex);
+        if(contourLengths.size() > 0) {
+            longestContourX = xList.get(maxLengthIndex);
+            Imgproc.circle(input, new Point(xList.get(maxLengthIndex), yList.get(maxLengthIndex)), 3, new Scalar(0, 255, 0));
+        }
 
-        Imgproc.circle(input, new Point(xList.get(maxLengthIndex), yList.get(maxLengthIndex)), 3, new Scalar(0, 255, 0));
+        telemetry.addData("Contour X Pos", longestContourX);
 
         contourLengths.clear();
         xList.clear();
