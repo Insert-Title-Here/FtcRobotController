@@ -33,7 +33,7 @@ public class ColorTest extends LinearOpMode {
 
         //servo = hardwareMap.get(Servo.class, "Grabber");
 
-        score.setGrabberPosition(constants.openAuto);
+        score.setGrabberPosition(constants.open);
 
         waitForStart();
 
@@ -50,14 +50,14 @@ public class ColorTest extends LinearOpMode {
             telemetry.update();
 
             if(gamepad1.right_trigger > 0.1){
-                score.setGrabberPosition(constants.openAuto);
+                score.setGrabberPosition(constants.open);
             }else if(distance.getDistance(DistanceUnit.CM) < 6.3){
                 //Closed
                 score.setGrabberPosition(0);
                 sleep(200);
                 score.setLinkagePosition(0.7);
             }else{
-                score.setGrabberPosition(constants.openAuto);
+                score.setGrabberPosition(constants.open);
             }
 
         }

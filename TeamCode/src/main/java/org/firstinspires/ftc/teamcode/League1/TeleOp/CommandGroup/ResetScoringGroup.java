@@ -20,7 +20,7 @@ public class ResetScoringGroup extends SequentialCommandGroup {
     public ResetScoringGroup(ScoringSystem2 score, Constants constants){
         super(
 
-                new InstantCommand(() -> score.setGrabberPosition(constants.openAuto)),
+                new InstantCommand(() -> score.setGrabberPosition(constants.open)),
 
                 new WaitCommand(200),
 

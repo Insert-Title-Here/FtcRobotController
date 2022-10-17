@@ -42,6 +42,7 @@ public class ContourPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
+
         Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
 
 
@@ -65,6 +66,8 @@ public class ContourPipeline extends OpenCvPipeline {
         MatOfPoint contour2;
 */
         //Find out last two things
+
+
         Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
         //Imgproc.drawContours(input, contours, -1, new Scalar(26, 230, 200));
@@ -80,6 +83,7 @@ public class ContourPipeline extends OpenCvPipeline {
 
                 Imgproc.circle(input, new Point(cX, cY), 3, new Scalar(0, 0, 255));
 
+                //Problem with one of the next 3 lines probably
                 contourLengths.add(i, contours.get(i).toArray().length);
                 xList.add(i, cX);
                 yList.add(i, cY);
@@ -89,6 +93,7 @@ public class ContourPipeline extends OpenCvPipeline {
 
             }
         }
+
 
         for(int i = 0; i < contourLengths.size(); i++) {
             if(contourLengths.get(i) > maxLength) {
@@ -104,6 +109,7 @@ public class ContourPipeline extends OpenCvPipeline {
         contourLengths.clear();
         xList.clear();
         yList.clear();
+
 
         return input;
 

@@ -89,7 +89,7 @@ public class CommandTestingTeleOp extends CommandOpMode {
 
 
         lift.setLinkagePosition(constants.linkageDown);
-        lift.setGrabberPosition(constants.openAuto);
+        lift.setGrabberPosition(constants.open);
 
     }
 

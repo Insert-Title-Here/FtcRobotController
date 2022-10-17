@@ -131,7 +131,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
 
             if(gamepad1.dpad_right){
-                score.setGrabberPosition(constants.openAuto);
+                score.setGrabberPosition(constants.open);
                 grabFlag = true;
             }else if((gamepad1.dpad_left ||  distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
                 score.setGrabberPosition(constants.grabbing);
@@ -167,7 +167,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
         sleep(500);
         score.setLinkagePosition(0.05);
         score.moveToPosition(0, 0.5);
-        score.setGrabberPosition(constants.openAuto);
+        score.setGrabberPosition(constants.open);
 
     }
 

@@ -96,6 +96,11 @@ public class NewUltraTeleOp extends LinearOpMode {
                         score.setGrabberPosition(constants.open);
 
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.LOW && score.isExtended()) {
+                            try {
+                                sleep(500);
+                            } catch (InterruptedException e) {
+
+                            }
                             passive = PassivePower.ZERO;
                             score.moveToPosition(constants.lowOperation, 1);
                             passive = PassivePower.EXTENDED;
@@ -164,15 +169,23 @@ public class NewUltraTeleOp extends LinearOpMode {
 
                     //TODO: test this
                     //Linkage stack cone heights with dpad up and down
-                    if(gamepad1.dpad_up && changeStackFlag){
-                        score.raiseConeStack();
-                        score.setLinkageConeStack();
-                        changeStackFlag = false;
+                    if((gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
+                        if(gamepad1.dpad_up) {
+                            score.raiseConeStack();
+                            score.setLinkageConeStack();
+                            changeStackFlag = false;
+                        }else if(gamepad1.dpad_down){
+                            score.lowerConeStack();
+                            score.setLinkageConeStack();
+                            changeStackFlag = false;
 
-                    }else if(gamepad1.dpad_down && changeStackFlag){
-                        score.lowerConeStack();
-                        score.setLinkageConeStack();
-                        changeStackFlag = false;
+                        }
+
+                        try {
+                            sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
                     }else{
                         changeStackFlag = true;
@@ -188,7 +201,6 @@ public class NewUltraTeleOp extends LinearOpMode {
 
 
                     //Manual open and close grabber
-                    //TODO: check if this works
                     if(gamepad1.start && manualFlag){
                         if(score.getGrabberPosition() != constants.open) {
                             score.setGrabberPosition(constants.open);
