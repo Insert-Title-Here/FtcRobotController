@@ -27,11 +27,11 @@ public class MasonTest extends OpenCvPipeline {
     }
 
     // TOPLEFT anchor point for the bounding box
-    private static Point SLEEVE_TOPLEFT_ANCHOR_POINT = new Point(100,176);
+    private static Point SLEEVE_TOPLEFT_ANCHOR_POINT = new Point(175,150);
 
     // Width and height for the bounding box
-    public static int REGION_WIDTH = 150;
-    public static int REGION_HEIGHT = -88;
+    public static int REGION_WIDTH = 30;
+    public static int REGION_HEIGHT = -35;
 
     // Lower and upper boundaries for colors
     private static final Scalar

@@ -112,11 +112,11 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         // yellow
         Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
         // cyan
-//        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-        Core.inRange(cyaMat, new Scalar(190), new Scalar(240), cyaMat);
+        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
+//        Core.inRange(cyaMat, new Scalar(190), new Scalar(240), cyaMat);
         // magenta
-//        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
-        Core.inRange(magMat, new Scalar(190), new Scalar(240), magMat);
+        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
+//        Core.inRange(magMat, new Scalar(190), new Scalar(240), magMat);
 
 
         // percent "abundance" for each color
