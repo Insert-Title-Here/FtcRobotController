@@ -39,7 +39,7 @@ public class FirstTeleOp extends LinearOpMode {
         //score = new ScoringSystem(hardwareMap);
 
         //Open
-        score.setClawPosition(0.9);
+        //score.setClawPosition(0.9);
 
 
         //TODO: Test below Out
@@ -142,16 +142,16 @@ public class FirstTeleOp extends LinearOpMode {
              */
 
             if(gamepad1.x){
-
+                //TODO: Test this value / change all auto claw positions
                 //Closed
-                score.setClawPosition(0.45);
+                score.setClawPosition(0.25);
 
 
             //2220
 
             }else if(gamepad1.b){
                 //Open
-                score.setClawPosition(0.9);
+                score.setClawPosition(1);
 
             }
             if(gamepad1.a){
@@ -219,6 +219,7 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("brPos", drive.getBRPosition());
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("liftPow", score.getPower());
+            telemetry.addData("clawPos", score.getClawPosition());
             telemetry.update();
 
 

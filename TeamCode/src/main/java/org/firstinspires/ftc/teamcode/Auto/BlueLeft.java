@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
+@Autonomous
 public class BlueLeft extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
@@ -35,10 +36,16 @@ public class BlueLeft extends LinearOpMode {
         liftThread = new Thread(){
             @Override
             public void run(){
-                while(cont.get()){
-                    score.setPower(0.1);
-                }
+                while(opModeIsActive()){
+                    if((score.getEncoderPosition() > 1200 && cont.get())){
+                        score.setPower(0.1);
+                    }
 
+
+                    telemetry.addData("liftPow", score.getPower());
+                    telemetry.addData("liftPos", score.getEncoderPosition());
+                    telemetry.update();
+                }
 
             }
         };
@@ -60,20 +67,29 @@ public class BlueLeft extends LinearOpMode {
         score.goToPosition(100, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3,  avgPosition(1100, 1100, 1088, 1066), "forward");
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1250, 1250, 1249, 1266), "forward");
+
         //strafe right
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1954, -1686, -1820, 1987), "strafe right");
+        sleep(1000);
         // turn
-        //drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn to pole");
+        //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
+
         // move arm max
-        score.goToPosition(2350, 0.7);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 55, 66, 87), "move to pole");
+        score.goToPosition(2380, 0.85);
+        cont.set(true);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 100, 98, 87), "move to pole");
+        sleep(1200);
         score.setClawPosition(0.9);
+        sleep(1000);
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
-        score.goToPosition(50, 0.3);
-        sleep(50);
+        cont.set(false);
+        score.goToPosition(0, 0.3);
+        sleep(1000);
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(700,-600,-600,700), "strafe right (center)");
 
+        /*
         //1 (far right) (general code)
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
         sleep(0);
@@ -85,7 +101,7 @@ public class BlueLeft extends LinearOpMode {
 
 
 
-        /*
+
         //2
         drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1267, 1251, 1246, -304), "strafe left");
         //3

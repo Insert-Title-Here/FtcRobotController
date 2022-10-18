@@ -108,12 +108,10 @@ public class BlueRight extends LinearOpMode {
         // move arm max
         score.goToPosition(2380, 0.85);
         cont.set(true);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 88, 79, 87), "move to pole");
-        sleep(1000);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 100, 98, 87), "move to pole");
+        sleep(1200);
 
-        score.goToPosition(1800, 0.3);
 
-        sleep(1000);
         score.setClawPosition(0.9);
         sleep(1000);
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
