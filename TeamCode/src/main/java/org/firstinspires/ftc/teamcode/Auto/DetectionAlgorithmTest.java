@@ -23,12 +23,12 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
-    // top left point of submat
-    public static final Point BOX_TOPLEFT = new Point(100,176);
+    // top left point of submat (original 320, 176)
+    public static final Point BOX_TOPLEFT = new Point(175,150);
 
     // width and height of submat
-    public static int BOX_WIDTH = 100;
-    public static int BOX_HEIGHT = -88;
+    public static int BOX_WIDTH = 30;
+    public static int BOX_HEIGHT = -35;
 
     enum ParkingPosition {
         LEFT,
@@ -115,8 +115,8 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
 //        Core.inRange(cyaMat, new Scalar(190), new Scalar(240), cyaMat);
         // magenta
-        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
-//        Core.inRange(magMat, new Scalar(190), new Scalar(240), magMat);
+//        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
+        Core.inRange(magMat, new Scalar(190), new Scalar(210), magMat);
 
 
         // percent "abundance" for each color
@@ -126,6 +126,7 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         telemetry.addData("yelPercent", yelPercent);
         telemetry.addData("cyaPercent", cyaPercent);
         telemetry.addData("magPercent", magPercent);
+        telemetry.addData("cyanColor", changed.get(175, 150));
         telemetry.update();
 
         // decides parking position, highlights margin according to greatest abundance color
@@ -134,36 +135,36 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
                 // yellow greatest, position left
                 position = ParkingPosition.LEFT;
                 //telemetry.addData("park position", position);
-                Imgproc.rectangle(befChange, new Rect(0,0,100,88), YELLOW, 2);
+                Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), YELLOW, 2);
             } else {
                 // magenta greatest, position right
                 position = ParkingPosition.RIGHT;
                 //telemetry.addData("park position", position);
-                Imgproc.rectangle(befChange, new Rect(0,0,100,88), MAGENTA, 2);
+                Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
             }
         } else if(cyaPercent > magPercent) {
             // cyan greatest, position center
             position = ParkingPosition.CENTER;
             //telemetry.addData("park position", position);
-            Imgproc.rectangle(befChange, new Rect(0,0,100,88), CYAN, 2);
+            Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
         } else {
 
             // magenta greatest, position right
             position = ParkingPosition.RIGHT;
             //telemetry.addData("park position", position);
-            Imgproc.rectangle(befChange, new Rect(0,0,100,88), MAGENTA, 2);
+            Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
 
         }
         telemetry.update();
 
         // Memory cleanup
         changed.release();
-        original.release();
+        //original.release();
         yelMat.release();
         cyaMat.release();
         magMat.release();
 
-        return befChange;
+        return original;
     }
     public static double convertToY(int r, int g, int b) {
         return 16 + (65.738 * r + 129.057 * g + 25.064 * b) / 256;
