@@ -30,7 +30,7 @@ public class AutoVisionTest extends LinearOpMode {
 
         camera.setPipeline(pipeline);
 
-        servo.setPosition(1);
+        servo.setPosition(.73);
 
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

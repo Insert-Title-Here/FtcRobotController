@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -17,11 +19,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Config
 public class ContourPipeline extends OpenCvPipeline {
+
+    public static int H1 = 23;
+    public static int S1 = 50;
+    public static int V1 = 50;
+    public static int H2 = 33;
+    public static int S2 = 200;
+    public static int V2 = 200;
 
     Telemetry telemetry;
     Mat temp = new Mat();
-    private ArrayList<Integer> xList, yList, contourLengths = new ArrayList<Integer>();
+    private ArrayList<Integer> xList, yList, contourLengths;
     int cX, cY;
     int maxLength = 0;
     int maxLengthIndex = 0;
@@ -37,6 +47,10 @@ public class ContourPipeline extends OpenCvPipeline {
 
 
     public ContourPipeline(Telemetry telemetry){
+
+        xList = new ArrayList<>();
+        yList = new ArrayList<>();
+        contourLengths = new ArrayList<>();
         this.telemetry = telemetry;
     }
 
@@ -48,7 +62,7 @@ public class ContourPipeline extends OpenCvPipeline {
 
 
         //Yellow
-        Core.inRange(temp, new Scalar(25, 180, 50), new Scalar(27, 255, 255), temp);
+        Core.inRange(temp, new Scalar(H1, S1, V1), new Scalar(H2, S2, V2), temp);
 
         Imgproc.GaussianBlur(temp, temp, new Size(5, 5), 0);
 
@@ -85,9 +99,9 @@ public class ContourPipeline extends OpenCvPipeline {
                 Imgproc.circle(input, new Point(cX, cY), 3, new Scalar(0, 0, 255));
 
                 //Problem with one of the next 3 lines probably
-                contourLengths.add(i, contours.get(i).toArray().length);
-                xList.add(i, cX);
-                yList.add(i, cY);
+                contourLengths.add(contours.get(i).toArray().length);
+                xList.add(cX);
+                yList.add(cY);
 
                 telemetry.addData("Centroid " + i, cX + ", " + cY);
                 telemetry.update();
@@ -95,13 +109,14 @@ public class ContourPipeline extends OpenCvPipeline {
             }
         }
 
-
-        for(int i = 0; i < contourLengths.size(); i++) {
+        for(int i = 0; i < xList.size() && i < contourLengths.size() && i < yList.size(); i++) {
             if(contourLengths.get(i) > maxLength) {
                 maxLength = contourLengths.get(i);
                 maxLengthIndex = i;
             }
         }
+
+
 
         if(contourLengths.size() > 0) {
             longestContourX = xList.get(maxLengthIndex);
@@ -110,9 +125,16 @@ public class ContourPipeline extends OpenCvPipeline {
 
         telemetry.addData("Contour X Pos", longestContourX);
 
+
+
+        telemetry.addData("Contours", contourLengths.size());
+        telemetry.addData("X", xList.size());
+        telemetry.addData("Y", yList.size());
+        telemetry.update();
         contourLengths.clear();
         xList.clear();
         yList.clear();
+        maxLength = 0;
 
 
         return input;

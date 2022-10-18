@@ -634,7 +634,7 @@ public class MecDrive {
             setPower(power, 0, 0, power);
         }else if(movement == MecDrive.MovementType.RDIAGONAL){
             //setPower(0, power, power, 0);
-            setPower(power, power/2, power/2, power);
+            setPower(power, 0, 0, power);
         }
         return power;
     }
