@@ -38,7 +38,8 @@ public class MecDrive {
         STRAFE,
         ROTATE,
         LDIAGONAL,
-        RDIAGONAL
+        RDIAGONAL,
+        RDIAGONALLESS
     }
 
     /*
@@ -635,6 +636,9 @@ public class MecDrive {
         }else if(movement == MecDrive.MovementType.RDIAGONAL){
             //setPower(0, power, power, 0);
             setPower(power, 0, 0, power);
+        }else if(movement == MecDrive.MovementType.RDIAGONALLESS){
+            //setPower(0, power, power, 0);
+            setPower(power, power/1.35, power/1.35, power);
         }
         return power;
     }

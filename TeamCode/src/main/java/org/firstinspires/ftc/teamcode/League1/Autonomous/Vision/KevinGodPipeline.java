@@ -30,6 +30,14 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int S2 = 200;
     public static int V2 = 200;
 
+    // Config variables for signal pipeline
+    public static int YUpper = 0;
+    public static int YLower = 0;
+    public static int CrUpper = 0;
+    public static int CrLower = 0;
+    public static int CbUpper = 0;
+    public static int CbLower = 0;
+
     // Define mats
     Mat ycrcb = new Mat();
     Mat temp = new Mat();
@@ -68,7 +76,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
     );
 
     // Sets default values for pipelineMode and position
-    PipelineMode pipelineMode = PipelineMode.SIGNAL;
+    //PipelineMode pipelineMode = PipelineMode.SIGNAL;
+    boolean sleeveSense = true;
     volatile SignalPipeline.ParkPos position = SignalPipeline.ParkPos.CENTER;
 
     public KevinGodPipeline(Telemetry telemetry){
@@ -82,7 +91,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Check pipelineMode and run corresponding image processing
-        if(pipelineMode == PipelineMode.SIGNAL) {
+        if(sleeveSense) {
 
             // Convert image to YCrCb color space and extract the Y channel
             Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
@@ -231,8 +240,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
     }
 
     // Set mode of pipeline to signal (innit) or contour (after start)
-    public void setMode(PipelineMode mode) {
-        pipelineMode = mode;
+    public void setMode(boolean mode) {
+        sleeveSense = mode;
     }
 
     // Get parking position determined by signal mode
