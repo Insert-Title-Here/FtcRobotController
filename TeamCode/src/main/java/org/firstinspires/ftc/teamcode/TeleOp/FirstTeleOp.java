@@ -19,8 +19,8 @@ public class FirstTeleOp extends LinearOpMode {
     AtomicBoolean cont;
 
 
-    private final double NORMAL_LINEAR_MODIFIER = 0.8;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.8;
+    private final double NORMAL_LINEAR_MODIFIER = 0.7;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
@@ -39,7 +39,7 @@ public class FirstTeleOp extends LinearOpMode {
         //score = new ScoringSystem(hardwareMap);
 
         //Open
-        //score.setClawPosition(0.9);
+        score.setClawPosition(1);
 
 
         //TODO: Test below Out
@@ -79,19 +79,19 @@ public class FirstTeleOp extends LinearOpMode {
 
                     if (gamepad1.dpad_left) {
                         //low cone
-                        score.goToPosition(1209, 1);
+                        score.goToPosition(1055, 1);
                         score.setPower(0.08);
                     }
 
                     if (gamepad1.dpad_up) {
                         //medium cone
-                        score.goToPosition(1795, 1);
+                        score.goToPosition(1720, 1);
                         score.setPower(0.08);
                     }
 
                     if (gamepad1.dpad_right) {
                         //high cone
-                        score.goToPosition(2360, 1);
+                        score.goToPosition(2340, 1);
                         score.setPower(0.08);
                     }
 
@@ -112,9 +112,12 @@ public class FirstTeleOp extends LinearOpMode {
             //TODO: Decide if you want sprint capability
             if (gamepad1.right_bumper) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-            }
-            else {
-                drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+            }else {
+                if(score.getEncoderPosition() > 1000){
+                    drive.setPower(new Vector2D(gamepad1.left_stick_x * 0.5, gamepad1.left_stick_y * 0.5), gamepad1.right_stick_x * 0.5, false);
+                }else{
+                    drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                }
             }
             /*
             if(gamepad1.right_trigger > 0.1){
@@ -144,7 +147,7 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.x){
                 //TODO: Test this value / change all auto claw positions
                 //Closed
-                score.setClawPosition(0.25);
+                score.setClawPosition(0.47);
 
 
             //2220
@@ -217,9 +220,10 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("frPos", drive.getFRPosition());
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());
+            telemetry.addData("flPow", drive.getPower());
             telemetry.addData("liftPos", score.getEncoderPosition());
-            telemetry.addData("liftPow", score.getPower());
             telemetry.addData("clawPos", score.getClawPosition());
+            telemetry.addData("liftPow", score.getPower());
             telemetry.update();
 
 
@@ -227,7 +231,7 @@ public class FirstTeleOp extends LinearOpMode {
 
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
-        score.setClawPosition(0.9);
+        score.setClawPosition(1);
     }
     //Test this out
     public void calibrateLiftBottom(int tics){
@@ -236,6 +240,10 @@ public class FirstTeleOp extends LinearOpMode {
             score.setPower(aimedPow);
         }
 
+
+    }
+
+    public void decreaseMotorPow(){
 
     }
 
