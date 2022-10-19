@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.Vision;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.SignalPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -15,7 +18,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class TestingVisionAuto extends LinearOpMode {
 
     OpenCvWebcam camera;
-    SignalPipeline pipeline;
+    KevinGodPipeline pipeline;
+    Servo cameraServo;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,7 +27,8 @@ public class TestingVisionAuto extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new SignalPipeline(telemetry);
+        cameraServo = hardwareMap.get(Servo.class, "camera");
+        pipeline = new KevinGodPipeline(telemetry);
 
         camera.setPipeline(pipeline);
 
@@ -41,6 +46,11 @@ public class TestingVisionAuto extends LinearOpMode {
 
             }
         });
+
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
+
+        cameraServo.setPosition(0.73);
+        pipeline.setMode(false);
 
         waitForStart();
 

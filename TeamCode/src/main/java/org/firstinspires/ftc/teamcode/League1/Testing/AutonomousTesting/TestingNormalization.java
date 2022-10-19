@@ -155,10 +155,7 @@ public class TestingNormalization extends LinearOpMode {
                         armDown.set(false);
                     }
 
-                    telemetry.addData("orientation:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
-                    telemetry.addData("Math.Pi/2", Math.PI/2);
-                    telemetry.addData("Math.Pi/4", Math.PI/4);
-                    telemetry.update();
+
                 }
 
                 //Might need this
@@ -200,7 +197,7 @@ public class TestingNormalization extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipeline(telemetry);
+        pipeline = new KevinGodPipeline(telemetry, drive);
 
         camera.setPipeline(pipeline);
 
@@ -233,16 +230,16 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.6);
+        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.4);
         //tankRotate(Math.PI / 4.25, 0.3);
 
-        drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.6);
-        normalizeToPole(0.3, 160, 170);
+        drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
+        pipeline.normalizeToPole(0.3, 165, 5);
 
 
         armUp.set(true);
 
-        drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.6);
+        drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.3);
         while(armUp.get()){
 
         }
@@ -255,7 +252,9 @@ public class TestingNormalization extends LinearOpMode {
 
         //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
 
-        tankRotate(Math.PI / 2, 0.3);
+        //tankRotate(Math.PI / 2, 0.3);
+        drive.simpleMoveToPosition(-350, MecDrive.MovementType.ROTATE, 0.4);
+        pipeline.normalizeToPole(0.3, 82, 10);
 
         score.setGrabberPosition(0.7);
 
@@ -263,11 +262,12 @@ public class TestingNormalization extends LinearOpMode {
 
 
 
+        /*
 
         //Dont know if need to check multiple time
         while(color.getNormalizedColors().red < 0.6 && color.getNormalizedColors().blue < 0.65){
 
-            drive.setPowerAuto(0.6, MecDrive.MovementType.RDIAGONALLESS);
+            drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONALLESS);
             telemetry.addData("blue", color.getNormalizedColors().blue);
             telemetry.addData("red", color.getNormalizedColors().red);
             telemetry.update();
@@ -275,19 +275,25 @@ public class TestingNormalization extends LinearOpMode {
 
         drive.simpleBrake();
 
+         */
 
 
 
-        drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.6);
+
+        drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.3);
+
+
 
         score.setGrabberPosition(0.7);
 
         for(int i = 0; i < 3; i++) {
 
-            if(i != 0){
-                while(color.getNormalizedColors().red < 0.42 && color.getNormalizedColors().blue < 0.65){
 
-                    drive.setPowerAuto(0.6, MecDrive.MovementType.RDIAGONAL);
+            //TODO: Logic doesnt work
+            if(i != 0){
+                while(color.getNormalizedColors().red < 0.45 && color.getNormalizedColors().blue < 0.65){
+
+                    drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONAL);
                     telemetry.addData("blue", color.getNormalizedColors().blue);
                     telemetry.addData("red", color.getNormalizedColors().red);
                     telemetry.update();
@@ -295,21 +301,20 @@ public class TestingNormalization extends LinearOpMode {
 
                 drive.simpleBrake();
 
-                tankRotate(Math.PI/2, 0.3);
 
 
-
-
-                drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.6);
+                drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.3);
 
 
             }
+
+
 
             score.setLinkagePosition(0.24 - (i * 0.03));
 
 
             while (distance.getDistance(DistanceUnit.CM) > 4.3) {
-                drive.setPowerAuto(0.6, MecDrive.MovementType.STRAIGHT);
+                drive.setPowerAuto(0.3, MecDrive.MovementType.STRAIGHT);
 
                 telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                 telemetry.update();
@@ -325,17 +330,17 @@ public class TestingNormalization extends LinearOpMode {
             hold.set(true);
             sleep(300);
 
-            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.6);
+            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.5);
             score.setLinkagePosition(0.7);
 
             //tankRotate(Math.PI / 4.35, 0.3);
-            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.6);
-            normalizeToPole(0.3, 160, 170);
+            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.4);
+            pipeline.normalizeToPole(0.3, 165, 10);
 
 
             armUp.set(true);
 
-            drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.6);
+            drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
@@ -348,8 +353,10 @@ public class TestingNormalization extends LinearOpMode {
 
             //drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            tankRotate(Math.PI / 2, 0.3);
-            sleep(500);
+            //tankRotate(Math.PI / 2, 0.3);
+            drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.4);
+            pipeline.normalizeToPole(0.3, 82, 10);
+
         }
 
         camera.closeCameraDevice();

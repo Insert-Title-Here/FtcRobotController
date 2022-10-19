@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -44,6 +45,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
     // Define telemetry variable
     Telemetry telemetry;
+    MecDrive drive;
 
     // Define lists
     private ArrayList<Integer> xList, yList, contourLengths;
@@ -86,6 +88,15 @@ public class KevinGodPipeline extends OpenCvPipeline {
         yList = new ArrayList<>();
         contourLengths = new ArrayList<>();
         this.telemetry = telemetry;
+    }
+
+    public KevinGodPipeline(Telemetry telemetry, MecDrive drive){
+        // Set up lists and telemetry
+        xList = new ArrayList<>();
+        yList = new ArrayList<>();
+        contourLengths = new ArrayList<>();
+        this.telemetry = telemetry;
+        this.drive = drive;
     }
 
     @Override
@@ -247,6 +258,20 @@ public class KevinGodPipeline extends OpenCvPipeline {
     // Get parking position determined by signal mode
     public SignalPipeline.ParkPos getPosition() {
         return position;
+    }
+
+    public void normalizeToPole(double power, int target, int tolerance) {
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        while(getPolePosition() > xMax || getPolePosition() < xMin) {
+            if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }
+        }
+
+        drive.simpleBrake();
     }
 
 }
