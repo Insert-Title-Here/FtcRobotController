@@ -55,6 +55,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
     int maxLength = 0;
     int maxLengthIndex = 0;
     int longestContourX = 0;
+    int longestContourY = 0;
+
 
     // Don't really know what this thing is, but we're defining it
     Moments M;
@@ -228,6 +230,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
             if(contourLengths.size() > 0) {
                 // Find x coordinate of largest contour and display it on the screen
                 longestContourX = xList.get(maxLengthIndex);
+                longestContourY = yList.get(maxLengthIndex);
                 Imgproc.circle(input, new Point(xList.get(maxLengthIndex), yList.get(maxLengthIndex)), 3, new Scalar(0, 255, 0));
             }
 
@@ -248,6 +251,10 @@ public class KevinGodPipeline extends OpenCvPipeline {
     // Get x coordinate of center of largest contour (pole)
     public int getPolePosition() {
         return longestContourX;
+    }
+
+    public int getPoleYPos(){
+        return longestContourY;
     }
 
     // Set mode of pipeline to signal (innit) or contour (after start)
@@ -272,6 +279,18 @@ public class KevinGodPipeline extends OpenCvPipeline {
         }
 
         drive.simpleBrake();
+    }
+
+    public void Ynormalize(double power, int target, int tolerance){
+        int yMax = target + tolerance;
+        int yMin = target - tolerance;
+        while(getPoleYPos() > yMax || getPoleYPos() < yMin) {
+            if(getPoleYPos() > yMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.STRAIGHT);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }
+        }
     }
 
 }

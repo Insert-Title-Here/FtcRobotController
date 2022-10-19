@@ -151,7 +151,7 @@ public class TestingNormalization extends LinearOpMode {
                         hold.set(false);
                         score.setLinkagePosition(0.7);
                         score.moveToPosition(0, 0.5);
-                        score.setLinkagePosition(0.1);
+                        score.setLinkagePosition(0.12);
                         armDown.set(false);
                     }
 
@@ -235,6 +235,7 @@ public class TestingNormalization extends LinearOpMode {
 
         drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
         pipeline.normalizeToPole(0.3, 165, 5);
+        pipeline.Ynormalize(0.2, 95, 5);
 
 
         armUp.set(true);
@@ -291,19 +292,23 @@ public class TestingNormalization extends LinearOpMode {
 
             //TODO: Logic doesnt work
             if(i != 0){
-                while(color.getNormalizedColors().red < 0.45 && color.getNormalizedColors().blue < 0.65){
+                //score.setLinkagePosition(0.12);
 
-                    drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONAL);
+                /*drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONAL);
+
+                while(color.getNormalizedColors().red < 0.23){
+
                     telemetry.addData("blue", color.getNormalizedColors().blue);
                     telemetry.addData("red", color.getNormalizedColors().red);
                     telemetry.update();
                 }
 
+
                 drive.simpleBrake();
+*/
 
 
-
-                drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.3);
+                drive.simpleMoveToPosition(60, MecDrive.MovementType.STRAFE, 0.3);
 
 
             }
@@ -336,6 +341,8 @@ public class TestingNormalization extends LinearOpMode {
             //tankRotate(Math.PI / 4.35, 0.3);
             drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.4);
             pipeline.normalizeToPole(0.3, 165, 10);
+            pipeline.Ynormalize(0.2, 92, 5);
+
 
 
             armUp.set(true);
@@ -355,7 +362,7 @@ public class TestingNormalization extends LinearOpMode {
 
             //tankRotate(Math.PI / 2, 0.3);
             drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.4);
-            pipeline.normalizeToPole(0.3, 82, 10);
+            pipeline.normalizeToPole(0.3, 42, 5);
 
         }
 

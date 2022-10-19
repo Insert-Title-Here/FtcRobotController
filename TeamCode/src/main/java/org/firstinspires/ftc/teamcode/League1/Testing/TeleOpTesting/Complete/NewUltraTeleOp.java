@@ -350,6 +350,8 @@ public class NewUltraTeleOp extends LinearOpMode {
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
             telemetry.addData("distanceRed", distance.getNormalizedColors().red);
             telemetry.addData("distanceBlue", distance.getNormalizedColors().blue);
+            telemetry.addData("colorRed", color.getNormalizedColors().red);
+            telemetry.addData("colorBlue", color.getNormalizedColors().blue);
             telemetry.addData("autoLinkageFlag", autoLinkageFlag);
             telemetry.addData("grabbingFlag", grabFlag);
             telemetry.addData("manualFlag", manualFlag);
