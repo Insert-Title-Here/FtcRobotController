@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -84,7 +85,7 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
             cyan -> new Scalar(0, 255, 255)
          */
         changed = original.submat(new Rect(box_top_left, box_bottom_right));
-        changed.copyTo(befChange);
+
 
         //Core.extractChannel(changed, changed, 1);
 
@@ -92,7 +93,7 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 2);
         Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
         Imgproc.cvtColor(changed, changed, Imgproc.COLOR_RGB2YCrCb);
-
+        changed.copyTo(befChange);
         //Y -> brightness, Cr -> red - brightness, Cb -> blue - brightness
         Core.extractChannel(changed, yelMat, 0);
         Core.extractChannel(changed, cyaMat, 2);
@@ -118,7 +119,9 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
         Core.inRange(magMat, new Scalar(190), new Scalar(210), magMat);
 
-
+        befChange.convertTo(befChange, CvType.CV_64FC3);
+        byte buff[] = new byte[ (int) (befChange.total() * befChange.channels())];
+        byte buff2[] = new byte[3];
         // percent "abundance" for each color
         yelPercent = Core.countNonZero(yelMat);
         cyaPercent = Core.countNonZero(cyaMat);
@@ -126,7 +129,7 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         telemetry.addData("yelPercent", yelPercent);
         telemetry.addData("cyaPercent", cyaPercent);
         telemetry.addData("magPercent", magPercent);
-        telemetry.addData("cyanColor", changed.get(175, 150));
+        telemetry.addData("cyanColor", changed.get(0, 0,buff2));
         telemetry.update();
 
         // decides parking position, highlights margin according to greatest abundance color
