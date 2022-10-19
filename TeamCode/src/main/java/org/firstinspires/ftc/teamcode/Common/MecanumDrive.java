@@ -152,6 +152,9 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    public double getPower(){
+        return fl.getPower();
+    }
 
 
 

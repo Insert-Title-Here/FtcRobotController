@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous
-public class BlueRight extends LinearOpMode {
+public class BlueRightHigh extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     //OpenCvWebcam webcam;
@@ -91,8 +91,8 @@ public class BlueRight extends LinearOpMode {
     public void blueRight(){
 
         //close claw
-        score.setClawPosition(0.45);
-        sleep(1000);
+        score.setClawPosition(0.47);
+        sleep(800);
         //lift claw a little bit
         score.goToPosition(100, 0.7);
         sleep(200);
@@ -101,24 +101,25 @@ public class BlueRight extends LinearOpMode {
 
         //strafe left
         drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1954, 1686, 1820, -1987), "strafe right");
-        sleep(1000);
+        sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
 
         // move arm max
-        score.goToPosition(2380, 0.85);
+        score.goToPosition(2340, 0.85);
         cont.set(true);
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 100, 98, 87), "move to pole");
-        sleep(1200);
-
-
-        score.setClawPosition(0.9);
         sleep(1000);
+
+
+        score.setClawPosition(1);
+        sleep(300);
+        score.setClawPosition(0.47);
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
         score.goToPosition(0, 0.3);
-        sleep(1000);
+        sleep(300);
 
         //1 (far left) (general code)
         // drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
@@ -149,8 +150,8 @@ public class BlueRight extends LinearOpMode {
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1267, -1251, -1246, 304), "strafe right");
         //3 far right
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
-
     */
+        score.setClawPosition(1);
     }
 
     public int avgPosition(int fl, int fr, int bl, int br){
