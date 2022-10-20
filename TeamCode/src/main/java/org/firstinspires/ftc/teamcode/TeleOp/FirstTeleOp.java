@@ -79,19 +79,19 @@ public class FirstTeleOp extends LinearOpMode {
 
                     if (gamepad1.dpad_left) {
                         //low cone
-                        score.goToPosition(1055, 1);
+                        score.goToPosition(1000, 1);
                         score.setPower(0.08);
                     }
 
                     if (gamepad1.dpad_up) {
                         //medium cone
-                        score.goToPosition(1720, 1);
+                        score.goToPosition(1700, 1);
                         score.setPower(0.08);
                     }
 
                     if (gamepad1.dpad_right) {
                         //high cone
-                        score.goToPosition(2340, 1);
+                        score.goToPosition(2320, 1);
                         score.setPower(0.08);
                     }
 

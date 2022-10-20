@@ -92,13 +92,14 @@ public class MecanumDrive {
         }
     }
 
+
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
         fl.setPower(flPow);
         fr.setPower(frPow);
         bl.setPower(blPow);
         br.setPower(brPow);
     }
-
+    //TODO: Change mecanudm drive so that each motor goes same amount of tics??(or ist it already set that way)
     public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics, String action) {
         //fl fr bl br
 

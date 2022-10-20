@@ -79,7 +79,7 @@ public class BlueLeftHigh extends LinearOpMode {
         score.goToPosition(2340, 0.85);
         cont.set(true);
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 100, 98, 87), "move to pole");
-        sleep(1000);
+        sleep(2000);
         score.setClawPosition(1);
         sleep(300);
         score.setClawPosition(0.47);
