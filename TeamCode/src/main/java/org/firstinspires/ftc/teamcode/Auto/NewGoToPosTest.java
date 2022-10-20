@@ -41,9 +41,7 @@ public class NewGoToPosTest extends LinearOpMode {
                     }
 
 
-                    telemetry.addData("liftPow", score.getPower());
-                    telemetry.addData("liftPos", score.getEncoderPosition());
-                    telemetry.update();
+
                 }
 
             }

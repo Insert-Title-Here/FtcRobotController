@@ -27,7 +27,6 @@ public class MecanumDrive {
     public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry){
         this.telemetry = telemetry;
         active = new AtomicBoolean();
-        active.set(false);
         //TODO: Change the deviceName for each
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -149,41 +148,66 @@ public class MecanumDrive {
 
     public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action){
         //fl fr bl br
-
+        active.set(true);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
-
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         driveThread = new Thread(){
             @Override
             public void run(){
+                boolean flDone = false;
+                boolean frDone = false;
+                boolean blDone = false;
+                boolean brDone = false;
 
                 while(active.get()){
-                    if((Math.abs(flTics) - Math.abs(fl.getCurrentPosition())) > 0){
-                        setPower(power, power, power, power);
+                    if(flDone && frDone && blDone && brDone){
+                        active.set(false);
+                    }else{
+                        //fl
+                        if((Math.abs(flTics) - Math.abs(fl.getCurrentPosition())) > 0){
+                            setPower(power, power, power, power);
+                        }else{
+                            flDone = true;
+                        }
+                        //fr
+                        if((Math.abs(frTics) - Math.abs(fr.getCurrentPosition())) > 0){
+                            setPower(power, power, power, power);
+                        }else{
+                            frDone = true;
+                        }
+                        //bl
+                        if((Math.abs(blTics) - Math.abs(bl.getCurrentPosition())) > 0){
+                            setPower(power, power, power, power);
+                        }else{
+                            blDone = true;
+                        }
+                        //br
+                        if((Math.abs(brTics) - Math.abs(br.getCurrentPosition())) > 0){
+                            setPower(power, power, power, power);
+                        }else{
+                            brDone = true;
+                        }
+                        telemetry.addData("flPos", getFLPosition());
+                        telemetry.addData("frPos", getFRPosition());
+                        telemetry.addData("blPos", getBLPosition());
+                        telemetry.addData("brPos", getBRPosition());
+                        telemetry.update();
                     }
-                    if((Math.abs(frTics) - Math.abs(fr.getCurrentPosition())) > 0){
-                        setPower(power, power, power, power);
-                    }
-                    if((Math.abs(blTics) - Math.abs(bl.getCurrentPosition())) > 0){
-                        setPower(power, power, power, power);
-                    }
-                    if((Math.abs(brTics) - Math.abs(br.getCurrentPosition())) > 0){
-                        setPower(power, power, power, power);
-                    }
+
                 }
+                setPower(0,0,0,0);
             }
         };
         driveThread.start();
-        setPower(0,0,0,0);
+
+
     }
 
     public void resetEncoders() {
