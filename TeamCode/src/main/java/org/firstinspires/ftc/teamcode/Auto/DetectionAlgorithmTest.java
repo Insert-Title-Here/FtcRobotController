@@ -110,14 +110,15 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
              */
 
         // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
-        // yellow
-        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
-        // cyan
+        // yellow 190
+//        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
+        Core.inRange(yelMat, new Scalar(175), new Scalar(205), yelMat);
+        // cyan 169
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-        Core.inRange(cyaMat, new Scalar(165), new Scalar(175), cyaMat);
-        // magenta
+        Core.inRange(cyaMat, new Scalar(154), new Scalar(184), cyaMat);
+        // magenta 186
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
-        Core.inRange(magMat, new Scalar(190), new Scalar(210), magMat);
+        Core.inRange(magMat, new Scalar(171), new Scalar(201), magMat);
 
 //        befChange.convertTo(befChange, CvType.CV_64FC3);
 //        byte buff[] = new byte[ (int) (befChange.total() * befChange.channels())];

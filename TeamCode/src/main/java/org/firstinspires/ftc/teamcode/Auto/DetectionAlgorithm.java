@@ -69,7 +69,7 @@ public class DetectionAlgorithm extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        Mat magCr = new Mat();
+        Mat magCr, befChange = new Mat();
 
         input.copyTo(original);
 
@@ -90,11 +90,11 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         Imgproc.GaussianBlur(changed, changed, new Size(5,5), 0);
         Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 2);
         Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
-
-        // magenta (ycrcb worked better for magenta)
-        Imgproc.cvtColor(changed, magCr, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(magCr, magMat, 1);
-        Core.inRange(magMat, new Scalar(190), new Scalar(240), magMat);
+        befChange = changed.submat(new Rect(new Point(11, 11), new Point(12, 12)));
+//        // magenta (ycrcb worked better for magenta)
+//        Imgproc.cvtColor(changed, magCr, Imgproc.COLOR_RGB2YCrCb);
+//        Core.extractChannel(magCr, magMat, 1);
+//        Core.inRange(magMat, new Scalar(190), new Scalar(240), magMat);
 
 
 
@@ -112,7 +112,7 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         // cyan
         Core.inRange(changed, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
         // magenta
-        //Core.inRange(changed, lower_magenta_bounds, upper_magenta_bounds, magMat);
+        Core.inRange(changed, lower_magenta_bounds, upper_magenta_bounds, magMat);
 
 
 
@@ -123,6 +123,9 @@ public class DetectionAlgorithm extends OpenCvPipeline {
         telemetry.addData("yelPercent", yelPercent);
         telemetry.addData("cyaPercent", cyaPercent);
         telemetry.addData("magPercent", magPercent);
+        telemetry.addData("cyanColor", Core.sumElems(befChange).val[2]);
+        telemetry.addData("magColor", Core.sumElems(befChange).val[1]);
+        telemetry.addData("yelColor", Core.sumElems(befChange).val[0]);
         telemetry.update();
 
         // decides parking position, highlights margin according to greatest abundance color
