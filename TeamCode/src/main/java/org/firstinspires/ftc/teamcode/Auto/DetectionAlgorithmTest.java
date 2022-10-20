@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -87,13 +86,14 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         changed = original.submat(new Rect(box_top_left, box_bottom_right));
 
 
+
         //Core.extractChannel(changed, changed, 1);
 
         Imgproc.GaussianBlur(changed, changed, new Size(5,5), 0);
         Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 2);
         Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
         Imgproc.cvtColor(changed, changed, Imgproc.COLOR_RGB2YCrCb);
-        changed.copyTo(befChange);
+        befChange = changed.submat(new Rect(new Point(11, 11), new Point(12, 12)));
         //Y -> brightness, Cr -> red - brightness, Cb -> blue - brightness
         Core.extractChannel(changed, yelMat, 0);
         Core.extractChannel(changed, cyaMat, 2);
@@ -113,15 +113,15 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         // yellow
         Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
         // cyan
-        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-//        Core.inRange(cyaMat, new Scalar(190), new Scalar(240), cyaMat);
+//        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
+        Core.inRange(cyaMat, new Scalar(165), new Scalar(175), cyaMat);
         // magenta
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
         Core.inRange(magMat, new Scalar(190), new Scalar(210), magMat);
 
-        befChange.convertTo(befChange, CvType.CV_64FC3);
-        byte buff[] = new byte[ (int) (befChange.total() * befChange.channels())];
-        byte buff2[] = new byte[3];
+//        befChange.convertTo(befChange, CvType.CV_64FC3);
+//        byte buff[] = new byte[ (int) (befChange.total() * befChange.channels())];
+//        byte buff2[] = new byte[3];
         // percent "abundance" for each color
         yelPercent = Core.countNonZero(yelMat);
         cyaPercent = Core.countNonZero(cyaMat);
@@ -129,7 +129,10 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         telemetry.addData("yelPercent", yelPercent);
         telemetry.addData("cyaPercent", cyaPercent);
         telemetry.addData("magPercent", magPercent);
-        telemetry.addData("cyanColor", changed.get(0, 0,buff2));
+//        telemetry.addData("cyanColor", changed.get(0, 0,buff2));
+        telemetry.addData("cyanColor", Core.sumElems(befChange).val[2]);
+        telemetry.addData("magColor", Core.sumElems(befChange).val[1]);
+        telemetry.addData("yelColor", Core.sumElems(befChange).val[0]);
         telemetry.update();
 
         // decides parking position, highlights margin according to greatest abundance color
