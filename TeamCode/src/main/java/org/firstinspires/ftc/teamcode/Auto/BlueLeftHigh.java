@@ -3,32 +3,49 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous
 public class BlueLeftHigh extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
-    //OpenCvWebcam webcam;
     AtomicBoolean cont;
     Thread liftThread;
-    int parkLocation;
+    DetectionAlgorithmTest detect;
+    OpenCvWebcam webcam;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         cont = new AtomicBoolean();
         cont.set(false);
-        /*
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-         */
 
-        // Camera checks sleeve...stores parking location??
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.setPipeline(detect);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
 
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
@@ -55,7 +72,7 @@ public class BlueLeftHigh extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
-
+        webcam.stopStreaming();
         liftThread.start();
         blueLeft();
     }
@@ -70,7 +87,7 @@ public class BlueLeftHigh extends LinearOpMode {
         drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1250, 1250, 1249, 1266), "forward");
 
         //strafe right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1954, -1686, -1820, 1987), "strafe right");
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1914, -1686, -1820, 1887), "strafe right");
         sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -88,8 +105,19 @@ public class BlueLeftHigh extends LinearOpMode {
         cont.set(false);
         score.goToPosition(0, 0.3);
         sleep(300);
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(700,-600,-600,700), "strafe right (center)");
 
+
+        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+            // move to left
+            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-3007,2941,3226,-3036), "strafe left (more left)");
+        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
+            // move to center TODO: measure drive encoder values
+            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
+        } else {
+            // move to right TODO: measure drive encoder values
+            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
+
+        }
         /*
         //1 (far right) (general code)
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");

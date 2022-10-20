@@ -16,16 +16,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BlueRightHigh extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
-    //OpenCvWebcam webcam;
     AtomicBoolean cont;
     Thread liftThread;
     String parkLocation;
-    DetectionAlgorithm detect;
+    DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new DetectionAlgorithm(telemetry);
+        detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         cont = new AtomicBoolean();
@@ -129,15 +128,15 @@ public class BlueRightHigh extends LinearOpMode {
         //sleep(50);
         //drive forward a little
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
-        if (detect.getPosition() == DetectionAlgorithm.ParkingPosition.LEFT) {
+        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
-        } else if (detect.getPosition() == DetectionAlgorithm.ParkingPosition.CENTER) {
+        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center TODO: measure drive encoder values
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right (center)");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
         } else {
             // move to right TODO: measure drive encoder values
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right (center)");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(3035,-3117,-3114,3226), "strafe right (more right)");
 
         }
 
