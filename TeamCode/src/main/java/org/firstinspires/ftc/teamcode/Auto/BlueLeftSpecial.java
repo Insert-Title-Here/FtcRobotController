@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 //TODO:Needs testing
@@ -13,24 +17,38 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BlueLeftSpecial extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
-    //OpenCvWebcam webcam;
     AtomicBoolean cont;
     Thread liftThread;
-    int parkLocation;
+    DetectionAlgorithmTest detect;
+    OpenCvWebcam webcam;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         cont = new AtomicBoolean();
         cont.set(false);
-        /*
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-         */
 
-        // Camera checks sleeve...stores parking location??
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.setPipeline(detect);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
+
+            // Camera checks sleeve...stores parking location??
 
         liftThread = new Thread(){
             @Override
@@ -54,6 +72,7 @@ public class BlueLeftSpecial extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
+        webcam.stopStreaming();
         liftThread.start();
 
         blueLeftDefense();
@@ -91,7 +110,19 @@ public class BlueLeftSpecial extends LinearOpMode {
         drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(200,300,250,220),"Drive forward");
         sleep(5000);
         drive.goToPosition(-0.3,-0.3,-0.3,-0.3, avgPosition(-388,-312,-388,-388),"drive backward");
-        drive.goToPosition(0.3, -0.3, -0.3,0.3, avgPosition(670,-649,-774,715),"strafe right");
+
+        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+            // move to left TODO: measure drive encoder values
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
+        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
+            // move to center TODO: measure drive encoder values
+            drive.goToPosition(0.3, -0.3, -0.3,0.3, avgPosition(670,-649,-774,715),"strafe right (center)");
+        } else {
+            // move to right TODO: measure drive encoder values
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(3035,-3117,-3114,3226), "strafe right (more right)");
+
+        }
+
         //1 (far left) (general code)
         //drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
         //cont.set(false);

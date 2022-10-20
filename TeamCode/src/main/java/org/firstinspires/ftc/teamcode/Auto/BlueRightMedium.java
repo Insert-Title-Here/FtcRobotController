@@ -20,18 +20,35 @@ public class BlueRightMedium extends LinearOpMode {
     AtomicBoolean cont;
     Thread liftThread;
     String parkLocation;
-    DetectionAlgorithm detect;
+    DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new DetectionAlgorithm(telemetry);
+        detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         cont = new AtomicBoolean();
         cont.set(false);
 
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.setPipeline(detect);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
 
 
         //TODO: Possibly change turns from encoder to IMU angles
@@ -60,7 +77,7 @@ public class BlueRightMedium extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-
+        webcam.stopStreaming();
         liftThread.start();
 
         //TODO: Consider whethere or not to just have the code laid out here or by just calling the method
@@ -108,8 +125,18 @@ public class BlueRightMedium extends LinearOpMode {
         //sleep(50);
         //drive forward a little
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
 
+        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+            // move to left TODO: measure drive encoder values
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
+        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
+            // move to center TODO: measure drive encoder values
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
+        } else {
+            // move to right TODO: measure drive encoder values
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(3035,-3117,-3114,3226), "strafe right (more right)");
+
+        }
 
 
 
