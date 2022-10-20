@@ -4,16 +4,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
+    Thread driveThread;
+    AtomicBoolean active;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -22,7 +26,8 @@ public class MecanumDrive {
 
     public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry){
         this.telemetry = telemetry;
-
+        active = new AtomicBoolean();
+        active.set(false);
         //TODO: Change the deviceName for each
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -140,6 +145,45 @@ public class MecanumDrive {
 
         setPower(0, 0, 0, 0);
 
+    }
+
+    public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action){
+        //fl fr bl br
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        driveThread = new Thread(){
+            @Override
+            public void run(){
+
+                while(active.get()){
+                    if((Math.abs(flTics) - Math.abs(fl.getCurrentPosition())) > 0){
+                        setPower(power, power, power, power);
+                    }
+                    if((Math.abs(frTics) - Math.abs(fr.getCurrentPosition())) > 0){
+                        setPower(power, power, power, power);
+                    }
+                    if((Math.abs(blTics) - Math.abs(bl.getCurrentPosition())) > 0){
+                        setPower(power, power, power, power);
+                    }
+                    if((Math.abs(brTics) - Math.abs(br.getCurrentPosition())) > 0){
+                        setPower(power, power, power, power);
+                    }
+                }
+            }
+        };
+        driveThread.start();
+        setPower(0,0,0,0);
     }
 
     public void resetEncoders() {

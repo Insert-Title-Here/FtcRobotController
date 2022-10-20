@@ -70,7 +70,7 @@ public class BlueLeftHigh extends LinearOpMode {
         drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1250, 1250, 1249, 1266), "forward");
 
         //strafe right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1954, -1686, -1820, 1987), "strafe right");
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1854, -1686, -1820, 1947), "strafe right");
         sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
