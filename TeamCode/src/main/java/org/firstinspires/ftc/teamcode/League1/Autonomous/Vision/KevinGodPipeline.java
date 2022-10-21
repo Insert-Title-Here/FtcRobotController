@@ -82,7 +82,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
     // Sets default values for pipelineMode and position
     //PipelineMode pipelineMode = PipelineMode.SIGNAL;
     boolean sleeveSense = true;
-    volatile SignalPipeline.ParkPos position = SignalPipeline.ParkPos.CENTER;
+    ParkPos position = ParkPos.CENTER;
 
     public KevinGodPipeline(Telemetry telemetry){
         // Set up lists and telemetry
@@ -136,19 +136,19 @@ public class KevinGodPipeline extends OpenCvPipeline {
             // Check if certain channels are within certain ranges to determine color
             if(countY > 100 && countCb < 100) {
                 telemetry.addData("Color", "Yellow");
-                position = SignalPipeline.ParkPos.LEFT;
+                position = ParkPos.LEFT;
             } else if(countCr > 200 && countCb > 200) {
                 telemetry.addData("Color", "Magenta");
-                position = SignalPipeline.ParkPos.RIGHT;
+                position = ParkPos.RIGHT;
             } else {
                 telemetry.addData("Color", "Cyan");
-                position = SignalPipeline.ParkPos.CENTER;
+                position = ParkPos.CENTER;
             }
 
             telemetry.update();
 
             // Display rectangle in detected color
-            if(position == SignalPipeline.ParkPos.LEFT){
+            if(position == ParkPos.LEFT){
                 Imgproc.rectangle(
                         input,
                         MIDDLE,
@@ -157,7 +157,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
                 );
 
-            }else if(position == SignalPipeline.ParkPos.RIGHT){
+            }else if(position == ParkPos.RIGHT){
                 Imgproc.rectangle(
                         input,
                         MIDDLE,
@@ -263,7 +263,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
     }
 
     // Get parking position determined by signal mode
-    public SignalPipeline.ParkPos getPosition() {
+    public ParkPos getPosition() {
         return position;
     }
 
@@ -292,5 +292,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
             }
         }
     }
+
+
 
 }

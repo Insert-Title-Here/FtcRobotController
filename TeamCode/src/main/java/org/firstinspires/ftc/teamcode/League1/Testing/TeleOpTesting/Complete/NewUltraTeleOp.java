@@ -286,7 +286,7 @@ public class NewUltraTeleOp extends LinearOpMode {
 
 
                     double yPos = systems.getYCapPosition();
-                    systems.setXCapstoneRotatePower(gamepad2.left_stick_x);
+                    systems.setXCapstoneRotatePower(gamepad2.right_stick_x);
 
                     systems.setYCapPosition(yPos - systems.map(gamepad2.right_stick_y, -1, 1, -0.0010, 0.0010));
 

@@ -8,16 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.ContourPipeline;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
-import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.SignalPipeline;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
@@ -29,7 +26,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class TestingNormalization extends LinearOpMode {
+public class DuplicateAuto extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
@@ -157,8 +154,6 @@ public class TestingNormalization extends LinearOpMode {
                     }
 
 
-
-
                 }
 
                 //Might need this
@@ -234,19 +229,14 @@ public class TestingNormalization extends LinearOpMode {
         armThread.start();
         feedForward.start();
 
-        drive.addToLoggingString("originalColorRed: " + color.getNormalizedColors().red);
-        drive.addToLoggingString("originalColorBlue: " + color.getNormalizedColors().blue);
-        drive.addToLoggingString("");
-
-
         cameraServo.setPosition(0.73);
 
 
 
-        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.35);
+        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.45);
         //tankRotate(Math.PI / 4.25, 0.3);
 
-        drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
+        drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.45);
         pipeline.normalizeToPole(0.3, 165, 5);
         pipeline.Ynormalize(0.2, 95, 5);
 
@@ -267,8 +257,8 @@ public class TestingNormalization extends LinearOpMode {
         //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
 
         //tankRotate(Math.PI / 2, 0.3);
-        drive.simpleMoveToPosition(-350, MecDrive.MovementType.ROTATE, 0.4);
-        pipeline.normalizeToPole(0.3, 82, 10);
+        drive.simpleMoveToPosition(-500, MecDrive.MovementType.ROTATE, 0.45);
+        pipeline.normalizeToPole(0.3, 65, 5);
 
         score.setGrabberPosition(0.7);
 
@@ -311,11 +301,6 @@ public class TestingNormalization extends LinearOpMode {
 
                 while(color.getNormalizedColors().red < 0.23){
 
-                    drive.addToLoggingString("ColorRed: " + color.getNormalizedColors().red);
-                    drive.addToLoggingString("ColorBlue: " + color.getNormalizedColors().blue);
-                    drive.addToLoggingString("");
-
-
                     telemetry.addData("blue", color.getNormalizedColors().blue);
                     telemetry.addData("red", color.getNormalizedColors().red);
                     telemetry.update();
@@ -326,7 +311,7 @@ public class TestingNormalization extends LinearOpMode {
 */
 
 
-                drive.simpleMoveToPosition(60, MecDrive.MovementType.STRAFE, 0.3);
+                drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAFE, 0.3);
 
 
             }
@@ -353,11 +338,11 @@ public class TestingNormalization extends LinearOpMode {
             hold.set(true);
             sleep(300);
 
-            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.5);
+            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.55);
             score.setLinkagePosition(0.7);
 
             //tankRotate(Math.PI / 4.35, 0.3);
-            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.4);
+            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.45);
             pipeline.normalizeToPole(0.3, 165, 10);
             pipeline.Ynormalize(0.2, 92, 5);
 
@@ -365,7 +350,7 @@ public class TestingNormalization extends LinearOpMode {
 
             armUp.set(true);
 
-            drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
+            drive.simpleMoveToPosition(-20, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
@@ -379,7 +364,7 @@ public class TestingNormalization extends LinearOpMode {
             //drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
 
             //tankRotate(Math.PI / 2, 0.3);
-            drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.4);
+            drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.45);
             pipeline.normalizeToPole(0.3, 42, 5);
 
         }
@@ -387,11 +372,6 @@ public class TestingNormalization extends LinearOpMode {
         score.setGrabberPosition(constants.grabbing);
 
         camera.closeCameraDevice();
-
-        drive.addToLoggingString("endColorRed: " + color.getNormalizedColors().red);
-        drive.addToLoggingString("endColorBlue: " + color.getNormalizedColors().blue);
-        drive.addToLoggingString("");
-
 
 
         if(parkPos == KevinGodPipeline.ParkPos.LEFT){
@@ -401,8 +381,6 @@ public class TestingNormalization extends LinearOpMode {
             drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 0.4);
 
         }
-
-        drive.writeLoggerToFile();
 
         //Will have to check if this aligns straight already (need color sensor or not) ->
         // may need to turn into slight diagonal instead of straight to check color

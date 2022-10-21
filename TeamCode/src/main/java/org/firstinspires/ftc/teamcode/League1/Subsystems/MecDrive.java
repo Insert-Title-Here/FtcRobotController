@@ -653,6 +653,10 @@ public class MecDrive {
                 && Math.abs(tics - data.getMotorCurrentPosition(2)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(3)) > TIC_TOLERANCE;
     }
 
+    public void addToLoggingString(String add){
+        loggingString += (add + "\n");
+    }
+
     public void writeLoggerToFile(){
         try{
             PrintStream toFile = new PrintStream(loggingFile);
