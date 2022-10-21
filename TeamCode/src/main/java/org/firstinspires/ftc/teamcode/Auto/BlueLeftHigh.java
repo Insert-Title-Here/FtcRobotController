@@ -84,7 +84,7 @@ public class BlueLeftHigh extends LinearOpMode {
         score.goToPosition(100, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1250, 1250, 1249, 1266), "forward");
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1149, 1166), "forward");
 
         //strafe right
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1854, -1686, -1820, 1947), "strafe right");
@@ -138,6 +138,7 @@ public class BlueLeftHigh extends LinearOpMode {
 
     */
         score.setClawPosition(1);
+        score.goToPosition(0,0.2);
     }
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
