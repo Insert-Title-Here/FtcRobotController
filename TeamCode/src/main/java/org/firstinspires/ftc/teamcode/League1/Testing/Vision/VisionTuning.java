@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
+package org.firstinspires.ftc.teamcode.League1.Testing.Vision;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -21,7 +21,9 @@ import java.util.Collections;
 import java.util.List;
 
 @Config
-public class KevinGodPipeline extends OpenCvPipeline {
+public class VisionTuning extends OpenCvPipeline {
+
+    public static int channelToReturn = 0;
 
     // Configuration variables for isolating pole color
     public static int H1 = 23;
@@ -42,6 +44,9 @@ public class KevinGodPipeline extends OpenCvPipeline {
     // Define mats
     Mat ycrcb = new Mat();
     Mat temp = new Mat();
+    Mat yellow = new Mat();
+    Mat red = new Mat();
+    Mat blue = new Mat();
 
     // Define telemetry variable
     Telemetry telemetry;
@@ -82,23 +87,14 @@ public class KevinGodPipeline extends OpenCvPipeline {
     // Sets default values for pipelineMode and position
     //PipelineMode pipelineMode = PipelineMode.SIGNAL;
     boolean sleeveSense = true;
-    volatile SignalPipeline.ParkPos position = SignalPipeline.ParkPos.CENTER;
+    volatile ParkPos position = ParkPos.CENTER;
 
-    public KevinGodPipeline(Telemetry telemetry){
+    public VisionTuning(Telemetry telemetry){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
         contourLengths = new ArrayList<>();
         this.telemetry = telemetry;
-    }
-
-    public KevinGodPipeline(Telemetry telemetry, MecDrive drive){
-        // Set up lists and telemetry
-        xList = new ArrayList<>();
-        yList = new ArrayList<>();
-        contourLengths = new ArrayList<>();
-        this.telemetry = telemetry;
-        this.drive = drive;
     }
 
     @Override
@@ -108,25 +104,25 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
             // Convert image to YCrCb color space and extract the Y channel
             Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(ycrcb, temp, 0);
+            Core.extractChannel(ycrcb, yellow, 0);
 
             // Make a binary image of values within the desired range and calculate avg color
-            Core.inRange(temp, new Scalar(160), new Scalar(190), temp);
-            double countY = Core.mean(temp.submat(MIDDLE)).val[0];
+            Core.inRange(yellow, new Scalar(160), new Scalar(190), yellow);
+            double countY = Core.mean(yellow.submat(MIDDLE)).val[0];
 
             // Extract Cr channel
-            Core.extractChannel(ycrcb, temp, 1);
+            Core.extractChannel(ycrcb, red, 1);
 
             // Make binary image and calculate avg color
-            Core.inRange(temp, new Scalar(130), new Scalar(200), temp);
-            double countCr = Core.mean(temp.submat(MIDDLE)).val[0];
+            Core.inRange(red, new Scalar(130), new Scalar(200), red);
+            double countCr = Core.mean(red.submat(MIDDLE)).val[0];
 
             // Extract Cb channel
-            Core.extractChannel(ycrcb, temp, 2);
+            Core.extractChannel(ycrcb, blue, 2);
 
             // Make binary image and calculate avg color
-            Core.inRange(temp, new Scalar(130), new Scalar(170), temp);
-            double countCb = Core.mean(temp.submat(MIDDLE)).val[0];
+            Core.inRange(blue, new Scalar(130), new Scalar(170), blue);
+            double countCb = Core.mean(blue.submat(MIDDLE)).val[0];
 
             // Telemetry
             telemetry.addData("countY", countY);
@@ -136,19 +132,19 @@ public class KevinGodPipeline extends OpenCvPipeline {
             // Check if certain channels are within certain ranges to determine color
             if(countY > 100 && countCb < 100) {
                 telemetry.addData("Color", "Yellow");
-                position = SignalPipeline.ParkPos.LEFT;
+                position = ParkPos.LEFT;
             } else if(countCr > 200 && countCb > 200) {
                 telemetry.addData("Color", "Magenta");
-                position = SignalPipeline.ParkPos.RIGHT;
+                position = ParkPos.RIGHT;
             } else {
                 telemetry.addData("Color", "Cyan");
-                position = SignalPipeline.ParkPos.CENTER;
+                position = ParkPos.CENTER;
             }
 
             telemetry.update();
 
             // Display rectangle in detected color
-            if(position == SignalPipeline.ParkPos.LEFT){
+            if(position == ParkPos.LEFT){
                 Imgproc.rectangle(
                         input,
                         MIDDLE,
@@ -157,7 +153,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
                 );
 
-            }else if(position == SignalPipeline.ParkPos.RIGHT){
+            }else if(position == ParkPos.RIGHT){
                 Imgproc.rectangle(
                         input,
                         MIDDLE,
@@ -245,7 +241,15 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
         }
 
-        return input;
+        if(channelToReturn == 0) {
+            return yellow;
+        } else if(channelToReturn == 1) {
+            return red;
+        } else if(channelToReturn == 2) {
+            return blue;
+        } else {
+            return input;
+        }
     }
 
     // Get x coordinate of center of largest contour (pole)
@@ -263,34 +267,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
     }
 
     // Get parking position determined by signal mode
-    public SignalPipeline.ParkPos getPosition() {
+    public ParkPos getPosition() {
         return position;
-    }
-
-    public void normalizeToPole(double power, int target, int tolerance) {
-        int xMax = target + tolerance;
-        int xMin = target - tolerance;
-        while(getPolePosition() > xMax || getPolePosition() < xMin) {
-            if(getPolePosition() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
-            } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }
-        }
-
-        drive.simpleBrake();
-    }
-
-    public void Ynormalize(double power, int target, int tolerance){
-        int yMax = target + tolerance;
-        int yMin = target - tolerance;
-        while(getPoleYPos() > yMax || getPoleYPos() < yMin) {
-            if(getPoleYPos() > yMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.STRAIGHT);
-            } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }
-        }
     }
 
 }

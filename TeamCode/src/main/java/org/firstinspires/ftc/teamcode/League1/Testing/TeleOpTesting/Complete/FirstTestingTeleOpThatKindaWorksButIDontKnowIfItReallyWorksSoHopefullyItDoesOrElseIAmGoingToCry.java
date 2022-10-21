@@ -127,10 +127,10 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                             e.printStackTrace();
                         }
 
-                        score.setLinkagePosition(0.7);
+                        score.setLinkagePosition(0.95);
 
                         try {
-                            sleep(300);
+                            sleep(2000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -138,7 +138,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                         passive = PassivePower.DOWN;
                         score.moveToPosition(0, 0.5);
                         passive = PassivePower.ZERO;
-                        score.setLinkagePosition(0.1);
+                        score.setLinkagePosition(0.05);
 
                         autoLinkageFlag = true;
                         grabFlag = true;

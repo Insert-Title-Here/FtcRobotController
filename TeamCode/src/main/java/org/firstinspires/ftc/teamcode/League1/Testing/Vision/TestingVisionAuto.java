@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class TestingVisionAuto extends LinearOpMode {
 
     OpenCvWebcam camera;
-    KevinGodPipeline pipeline;
+    VisionTuning pipeline;
     Servo cameraServo;
 
     @Override
@@ -28,7 +28,7 @@ public class TestingVisionAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         cameraServo = hardwareMap.get(Servo.class, "camera");
-        pipeline = new KevinGodPipeline(telemetry);
+        pipeline = new VisionTuning(telemetry);
 
         camera.setPipeline(pipeline);
 

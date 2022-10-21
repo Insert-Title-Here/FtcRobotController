@@ -3,14 +3,17 @@ package org.firstinspires.ftc.teamcode.League1.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 
 public class ScoringSystem2{
     DcMotorEx lLift, rLift;
-    public Servo grabber, rLinkage, lLinkage;
+    public Servo grabber;
+    ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
     private boolean grabbing, linkageUp, extended;
     Constants constants;
@@ -45,8 +48,11 @@ public class ScoringSystem2{
         rLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
-        rLinkage = hardwareMap.get(Servo.class, "RightLinkage");
+        lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
+        rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
+
+        lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
