@@ -104,7 +104,7 @@ public class MecanumDrive {
         br.setPower(brPow);
     }
     //TODO: Change mecanudm drive so that each motor goes same amount of tics??(or ist it already set that way)
-    public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics, String action) {
+    public void goToPosition (double flPow, double frPow, double blPow, double brPow, int tics, String action) {
         //fl fr bl br
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

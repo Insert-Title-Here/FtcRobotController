@@ -39,7 +39,7 @@ public class FirstTeleOp extends LinearOpMode {
         //score = new ScoringSystem(hardwareMap);
 
         //Open
-        score.setClawPosition(1);
+        score.setClawPosition(0);
 
 
         //TODO: Test below Out
@@ -59,7 +59,7 @@ public class FirstTeleOp extends LinearOpMode {
                             score.setPower(-gamepad1.left_trigger/1.8);
                         } else {
                             if(score.getEncoderPosition() < 100) {
-                                if(score.getEncoderPosition() < 10){
+                                if(score.getEncoderPosition() < 2){
                                     score.setPower(0);
                                 }else{
                                     score.setPower(-gamepad1.left_trigger / 4);
@@ -77,8 +77,7 @@ public class FirstTeleOp extends LinearOpMode {
                     // high cone, 33 in, 2390 gamepad1.dpad_right
 
                     if(gamepad1.dpad_down) {
-                        score.goToPosition(200, 0.3);
-                        score.goToPosition(0,0.2);
+                        score.goToPosition(0,0.3);
                     }
 
                     if (gamepad1.dpad_left) {
@@ -151,14 +150,14 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.x){
                 //TODO: Test this value / change all auto claw positions
                 //Closed
-                score.setClawPosition(0.47);
+                score.setClawPosition(0.25);
 
 
             //2220
 
             }else if(gamepad1.b){
                 //Open
-                score.setClawPosition(1);
+                score.setClawPosition(0);
 
             }
             if(gamepad1.a){
