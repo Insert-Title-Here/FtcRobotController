@@ -7,9 +7,19 @@ public class Constants {
     public static final int lowOperation = 300;
 
     //Linkage Positions
+    //Axon Max positions
+    /*
     public static final double linkageDown = 0.12;
     public static final double linkageUp = 0.7;
     public static final double linkageScore = 1;
+
+     */
+
+    //Axon Duo Positions
+    public static final double linkageDown = 0.18;
+    public static final double linkageUp = 0.7;
+    public static final double linkageScore = 0.95;
+
 
     //Grabber Positions (tuned)
     public static final double grabbing = 0;

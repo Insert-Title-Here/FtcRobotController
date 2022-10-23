@@ -23,7 +23,7 @@ import java.util.List;
 @Config
 public class VisionTuning extends OpenCvPipeline {
 
-    public static int channelToReturn = 0;
+    public static int channelToReturn = 2;
 
     // Configuration variables for isolating pole color
     public static int H1 = 23;

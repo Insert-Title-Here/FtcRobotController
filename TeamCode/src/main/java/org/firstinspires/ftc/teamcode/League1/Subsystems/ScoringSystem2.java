@@ -45,8 +45,8 @@ public class ScoringSystem2{
         rLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         lLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        rLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        lLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
         rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
@@ -57,8 +57,8 @@ public class ScoringSystem2{
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
 
-        lLinkage.setPosition(0.03);
-        rLinkage.setPosition(0.03);
+        lLinkage.setPosition(constants.linkageDown);
+        rLinkage.setPosition(constants.linkageDown);
         grabber.setPosition(constants.open);
 
     }
@@ -239,6 +239,31 @@ public class ScoringSystem2{
         lLinkage.setPosition(position);
     }
 
+    public void setLinkagePositionLogistic(double target, int sleepTime) {
+        int resolution = 100;
+        double step = 4.0 / resolution;
+        double start = getLeftLinkage();
+        double startX = -2.0;
+        for(int i = 0; i < resolution; i++) {
+            setLinkagePosition(logistic(startX, start, target));
+            startX += step;
+            sleep(sleepTime / resolution);
+        }
+        setLinkagePosition(target);
+    }
+
+    public void setLinkagePositionLogistic(double target, int sleepTime, int resolution) {
+        double step = 4.0 / resolution;
+        double start = getLeftLinkage();
+        double startX = -2.0;
+        for(int i = 0; i < resolution; i++) {
+            setLinkagePosition(logistic(startX, start, target));
+            startX += step;
+            sleep(sleepTime / resolution);
+        }
+        setLinkagePosition(target);
+    }
+
     public double getRightLinkage(){
         return rLinkage.getPosition();
     }
@@ -316,6 +341,21 @@ public class ScoringSystem2{
             setGrabberPosition(constants.grabbing);
         }else{
             setGrabberPosition(constants.open);
+        }
+    }
+
+    public static double logistic(double x, double lower, double upper) {
+        double k = 2;
+        double x0 = 0;
+        upper -= lower;
+        return (upper / (1 + Math.pow(Math.E, -k * ( x - x0 )))) + lower;
+    }
+
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
