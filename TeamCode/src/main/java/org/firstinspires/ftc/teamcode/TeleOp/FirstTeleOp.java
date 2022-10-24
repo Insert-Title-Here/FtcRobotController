@@ -55,13 +55,16 @@ public class FirstTeleOp extends LinearOpMode {
                             score.setPower(gamepad1.right_trigger/1.5);
                         }
                     }else if(gamepad1.left_trigger > 0.1) {
-                        if (score.getEncoderPosition() < 40) {
-                            //calibrate will set power
-                            calibrateLiftBottom(score.getEncoderPosition());
+                        if (score.getEncoderPosition() > 500) {
+                            score.setPower(-gamepad1.left_trigger/1.8);
                         } else {
-                            if (score.getEncoderPosition() < 100) {
-                                score.goToPosition(0, 0.3);
-                            } else {
+                            if(score.getEncoderPosition() < 100) {
+                                if(score.getEncoderPosition() < 2){
+                                    score.setPower(0);
+                                }else{
+                                    score.setPower(-gamepad1.left_trigger / 4);
+                                }
+                            }else{
                                 score.setPower(-gamepad1.left_trigger / 2);
                             }
                         }
@@ -74,7 +77,7 @@ public class FirstTeleOp extends LinearOpMode {
                     // high cone, 33 in, 2390 gamepad1.dpad_right
 
                     if(gamepad1.dpad_down) {
-                        score.goToPosition(0, 0.3);
+                        score.goToPosition(0,0.3);
                     }
 
                     if (gamepad1.dpad_left) {
@@ -147,7 +150,7 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.x){
                 //TODO: Test this value / change all auto claw positions
                 //Closed
-                score.setClawPosition(0.2);
+                score.setClawPosition(0.25);
 
 
             //2220
@@ -234,14 +237,7 @@ public class FirstTeleOp extends LinearOpMode {
         score.setClawPosition(1);
     }
     //Test this out
-    public void calibrateLiftBottom(int tics){
-        if(tics < 70){
-            int aimedPow = (int)(Math.sqrt(tics) / 15);
-            score.setPower(aimedPow);
-        }
 
-
-    }
 
     public void decreaseMotorPow(){
 
