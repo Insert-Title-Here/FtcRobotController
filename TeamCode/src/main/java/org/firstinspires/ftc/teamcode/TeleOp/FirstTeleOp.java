@@ -95,6 +95,7 @@ public class FirstTeleOp extends LinearOpMode {
                         score.setPower(0.08);
                     }
 
+
                 }
             }
         };
@@ -166,14 +167,16 @@ public class FirstTeleOp extends LinearOpMode {
 
             }
             if(gamepad1.a){
-                drive.resetEncoders();
-                //score.resetLiftEncoder();
+               score.goToPosition(score.getEncoderPosition() - 5, 0.7);
             }
             if(gamepad1.y){
-                cont.set(false);
+                score.goToPosition(20, 0.7);
             }
             if(gamepad1.options){
                 score.resetLiftEncoder();
+            }
+            if (gamepad1.share) {
+                drive.resetEncoders();
             }
             // reset   gamepad1.dpad_down
             // low cone, 13 in, 1209  gamenpad1.dpad_left
