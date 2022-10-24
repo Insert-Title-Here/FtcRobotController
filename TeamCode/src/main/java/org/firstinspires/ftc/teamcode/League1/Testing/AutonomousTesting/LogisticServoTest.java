@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
@@ -30,17 +31,19 @@ public class LogisticServoTest extends LinearOpMode {
 
         score = new ScoringSystem2(hardwareMap, constants);
 
-        score.setLinkagePosition(0.2);
+        score.setLinkagePosition(0.95);
         telemetry.addData("Servo pos", score.getLeftLinkage());
         telemetry.update();
 
         waitForStart();
 
-        score.setLinkagePositionLogistic(0.85, 250);
+        //score.setLinkagePositionLogistic(0.85, 250);
+        score.setTimeServoPosLogistic(0.05, 500);
         telemetry.addData("Servo pos", score.getLeftLinkage());
         telemetry.update();
         sleep(1000);
-        score.setLinkagePositionLogistic(0.2, 500);
+        //score.setLinkagePositionLogistic(0.2, 500);
+        score.setTimeServoPosLogistic(0.05, 500);
         telemetry.addData("Servo pos", score.getLeftLinkage());
         telemetry.update();
 
@@ -50,7 +53,7 @@ public class LogisticServoTest extends LinearOpMode {
         }
 
     }
-    public void setServoPosLogistic(double target, int sleepTime) {
+    /*public void setServoPosLogistic(double target, int sleepTime) {
         int resolution = 100;
         double step = 4.0 / resolution;
         double start = servo.getPosition();
@@ -61,12 +64,15 @@ public class LogisticServoTest extends LinearOpMode {
             sleep(sleepTime);
         }
         servo.setPosition(target);
-    }
+    }*//*
 
-    public static double logistic(double x, double lower, double upper) {
+    public double logistic(double x, double lower, double upper) {
         double k = 2;
         double x0 = 0;
         upper -= lower;
         return (upper / (1 + Math.pow(Math.E, -k * ( x - x0 )))) + lower;
-    }
+    }*/
+
+
+
 }

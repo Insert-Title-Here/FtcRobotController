@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Subsystems;
 
+import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,10 +15,8 @@ import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//TODO: check which port right and left lift are plugged into
-public class ScoringSystem {
+public class ScoringSystem extends SubsystemBase {
 
-    //TODO: Decide whether I want a zero height
     public enum ExtensionHeight{
         HIGH,
         MEDIUM,
@@ -36,6 +35,8 @@ public class ScoringSystem {
     boolean fullyExtended = false;
     boolean isArmOnChub = false;
     boolean pidEnabled;
+
+
 
     public ScoringSystem(HardwareMap hardwareMap, Robot robot, Constants constants, boolean pid){
         this.robot = robot;

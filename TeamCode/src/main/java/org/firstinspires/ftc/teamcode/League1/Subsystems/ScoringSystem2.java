@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 
+import java.io.PrintStream;
+
 public class ScoringSystem2{
     DcMotorEx lLift, rLift;
     public Servo grabber;
@@ -30,6 +32,7 @@ public class ScoringSystem2{
     }
 
     public ScoringSystem2(HardwareMap hardwareMap, Constants constants) {
+
         coneStack = 5;
         height = ScoringMode.HIGH;
         extended = false;
@@ -232,6 +235,33 @@ public class ScoringSystem2{
         setPower(0);
 
     }
+
+    public void setTimeServoPosLogistic(double target, int time) {
+        ElapsedTime timer = new ElapsedTime();
+        double startTime = timer.milliseconds();
+        double endTime = startTime + time;
+        int timeResolution = 20;
+        double start = getLeftLinkage();
+        double b = (1 - start)/ start;
+        double k = (Math.log(((start/target) * (1 - target))/(1 - start)) / time);
+
+
+        while(startTime < endTime) {
+            setLinkagePosition(logisticFormula(start, target, time, b, k));
+            startTime = timer.milliseconds();
+            sleep(timeResolution);
+        }
+        setLinkagePosition(target);
+    }
+
+    private double logisticFormula(double start, double end, int time, double b, double k){
+
+
+
+
+        return 1 / (1 + (b * Math.pow(Math.E, (k * (time / 1000)))));
+    }
+
 
     public void setLinkagePosition(double position){
         //TODO: tune position values

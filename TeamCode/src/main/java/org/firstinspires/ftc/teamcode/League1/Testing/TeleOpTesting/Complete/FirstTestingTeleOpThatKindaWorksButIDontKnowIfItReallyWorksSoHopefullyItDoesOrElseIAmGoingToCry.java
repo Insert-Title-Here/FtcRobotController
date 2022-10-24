@@ -72,7 +72,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         systems = new EndgameSystems(hardwareMap);
 
 
-        score.setLinkagePosition(0.1);
+        score.setLinkagePosition(0.95);
         score.setGrabberPosition(0.75);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -92,18 +92,18 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                     }else if(gamepad1.right_bumper){
                         score.moveToPosition(850, 1);
 
-                        score.setLinkagePosition(constants.linkageScore);
+                        score.setLinkagePosition(0.05);
                         passive = PassivePower.EXTENDED;
                     }else if(gamepad1.y){
                         //TODO: Make this medium height
                         score.moveToPosition(500, 1);
-                        score.setLinkagePosition(constants.linkageScore);
+                        score.setLinkagePosition(0.05);
 
                         passive = PassivePower.EXTENDED;
                     }else if(gamepad1.b){
                         //TODO: Make this low height
                         score.moveToPosition(190, 1);
-                        score.setLinkagePosition(constants.linkageScore);
+                        score.setLinkagePosition(0.05);
 
                         passive = PassivePower.EXTENDED;
                     }else {
@@ -127,7 +127,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                             e.printStackTrace();
                         }
 
-                        score.setLinkagePosition(0.95);
+                        score.setLinkagePosition(0.35);
 
                         try {
                             sleep(2000);
@@ -138,7 +138,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                         passive = PassivePower.DOWN;
                         score.moveToPosition(0, 0.5);
                         passive = PassivePower.ZERO;
-                        score.setLinkagePosition(0.05);
+                        score.setLinkagePosition(0.95);
 
                         autoLinkageFlag = true;
                         grabFlag = true;
@@ -238,9 +238,9 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
 
             if(gamepad1.start){
-                score.setLinkagePosition(0.2);
+                score.setLinkagePosition(0.9);
                 sleep(200);
-                score.setLinkagePosition(0.1);
+                score.setLinkagePosition(0.95);
 
                 autoLinkageFlag = true;
             }
@@ -259,7 +259,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
 
             if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
-                score.setLinkagePosition(0.7);
+                score.setLinkagePosition(0.35);
                 autoLinkageFlag = false;
             }
 
@@ -267,16 +267,16 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             //Auto cone heights
             //TODO: tune this
             if(gamepad1.dpad_up){
-                score.setLinkagePosition(0.2);
+                score.setLinkagePosition(0.84);
 
             }else if(gamepad1.dpad_left){
-                score.setLinkagePosition(0.18);
+                score.setLinkagePosition(0.86);
 
             }else if(gamepad1.dpad_left){
-                score.setLinkagePosition(0.16);
+                score.setLinkagePosition(0.88);
 
             }else if(gamepad1.dpad_left){
-                score.setLinkagePosition(0.14);
+                score.setLinkagePosition(0.9);
 
             }
 
@@ -298,9 +298,9 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         }
         //Stop
         drive.setPower(0, 0, 0, 0);
-        score.setLinkagePosition(0.2);
+        score.setLinkagePosition(0.9);
         sleep(500);
-        score.setLinkagePosition(0.1);
+        score.setLinkagePosition(0.95);
         score.setGrabberPosition(constants.open);
     }
 }
