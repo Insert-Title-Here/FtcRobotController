@@ -20,7 +20,7 @@ public class FirstTeleOp extends LinearOpMode {
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
@@ -55,16 +55,13 @@ public class FirstTeleOp extends LinearOpMode {
                             score.setPower(gamepad1.right_trigger/1.5);
                         }
                     }else if(gamepad1.left_trigger > 0.1) {
-                        if (score.getEncoderPosition() > 500) {
-                            score.setPower(-gamepad1.left_trigger/1.8);
+                        if (score.getEncoderPosition() < 40) {
+                            //calibrate will set power
+                            calibrateLiftBottom(score.getEncoderPosition());
                         } else {
-                            if(score.getEncoderPosition() < 100) {
-                                if(score.getEncoderPosition() < 2){
-                                    score.setPower(0);
-                                }else{
-                                    score.setPower(-gamepad1.left_trigger / 4);
-                                }
-                            }else{
+                            if (score.getEncoderPosition() < 100) {
+                                score.goToPosition(0, 0.3);
+                            } else {
                                 score.setPower(-gamepad1.left_trigger / 2);
                             }
                         }
@@ -77,7 +74,7 @@ public class FirstTeleOp extends LinearOpMode {
                     // high cone, 33 in, 2390 gamepad1.dpad_right
 
                     if(gamepad1.dpad_down) {
-                        score.goToPosition(0,0.3);
+                        score.goToPosition(0, 0.3);
                     }
 
                     if (gamepad1.dpad_left) {
@@ -110,16 +107,24 @@ public class FirstTeleOp extends LinearOpMode {
         liftThread.start();
 
         while(opModeIsActive()){
-
-
+            double gamepadX = gamepad1.left_stick_x;
+            double gamepadY = gamepad1.left_stick_y;
+            if(Math.abs(gamepadX) < Math.abs(gamepadY)){
+                gamepadX = 0;
+            }else if(Math.abs(gamepadX) > Math.abs(gamepadY)){
+                gamepadY = 0;
+            }else{
+                gamepadX = 0;
+                gamepadY = 0;
+            }
             //TODO: Decide if you want sprint capability
             if (gamepad1.right_bumper) { // replace this with a button for sprint
-                drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }else {
                 if(score.getEncoderPosition() > 1000){
-                    drive.setPower(new Vector2D(gamepad1.left_stick_x * 0.5, gamepad1.left_stick_y * 0.5), gamepad1.right_stick_x * 0.5, false);
+                    drive.setPower(new Vector2D(gamepadX * 0.5, gamepadY * 0.5), gamepad1.right_stick_x * 0.5, false);
                 }else{
-                    drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                    drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
             /*
@@ -150,8 +155,8 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.x){
                 //TODO: Test this value / change all auto claw positions
                 //Closed
-                score.setClawPosition(0.25);
-
+                score.setClawPosition(0.2);
+                score.goToPosition(20, 0.8);
 
             //2220
 
@@ -237,11 +242,12 @@ public class FirstTeleOp extends LinearOpMode {
         score.setClawPosition(1);
     }
     //Test this out
-
-
-    public void decreaseMotorPow(){
+    public void calibrateLiftBottom(int tics) {
+        if (tics < 70) {
+            int aimedPow = (int) (Math.sqrt(tics) / 15);
+            score.setPower(aimedPow);
+        }
 
     }
-
 
 }
