@@ -111,10 +111,10 @@ public class BlueLeftHigh extends LinearOpMode {
             // move to left
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-3007,2941,3226,-3036), "strafe left (more left)");
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
-            // move to center TODO: measure drive encoder values
+            // move to center
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
         } else {
-            // move to right TODO: measure drive encoder values
+            // move to right
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
 
         }
