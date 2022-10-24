@@ -39,7 +39,7 @@ public class FirstTeleOp extends LinearOpMode {
         //score = new ScoringSystem(hardwareMap);
 
         //Open
-        score.setClawPosition(1);
+        score.setClawPosition(0);
 
 
         //TODO: Test below Out
@@ -147,14 +147,14 @@ public class FirstTeleOp extends LinearOpMode {
             if(gamepad1.x){
                 //TODO: Test this value / change all auto claw positions
                 //Closed
-                score.setClawPosition(0.47);
+                score.setClawPosition(0.2);
 
 
             //2220
 
             }else if(gamepad1.b){
                 //Open
-                score.setClawPosition(1);
+                score.setClawPosition(0);
 
             }
             if(gamepad1.a){
