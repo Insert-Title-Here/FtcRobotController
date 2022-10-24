@@ -141,7 +141,6 @@ public class BlueLeftMedium extends LinearOpMode {
 
     */
         score.setClawPosition(1);
-        score.goToPosition(0,0.2);
     }
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;

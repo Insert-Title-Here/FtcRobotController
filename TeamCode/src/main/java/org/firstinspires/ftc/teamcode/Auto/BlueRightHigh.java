@@ -151,7 +151,6 @@ public class BlueRightHigh extends LinearOpMode {
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
     */
         score.setClawPosition(1);
-        score.goToPosition(0,0.2);
     }
 
     public int avgPosition(int fl, int fr, int bl, int br){
