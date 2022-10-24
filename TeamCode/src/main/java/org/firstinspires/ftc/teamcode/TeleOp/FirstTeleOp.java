@@ -106,6 +106,8 @@ public class FirstTeleOp extends LinearOpMode {
 
 
 
+
+
         waitForStart();
         liftThread.start();
 
@@ -239,9 +241,7 @@ public class FirstTeleOp extends LinearOpMode {
     //Test this out
 
 
-    public void decreaseMotorPow(){
 
-    }
 
 
 }

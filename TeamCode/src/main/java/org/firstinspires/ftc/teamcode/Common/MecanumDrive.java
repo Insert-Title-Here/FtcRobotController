@@ -16,8 +16,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
-    Thread driveThread;
-    AtomicBoolean active;
+    //Thread driveThread;
+    //AtomicBoolean active;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -26,7 +26,7 @@ public class MecanumDrive {
 
     public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry){
         this.telemetry = telemetry;
-        active = new AtomicBoolean();
+        //active = new AtomicBoolean();
         //TODO: Change the deviceName for each
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -145,7 +145,7 @@ public class MecanumDrive {
         setPower(0, 0, 0, 0);
 
     }
-
+    /*
     public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action){
         //fl fr bl br
         active.set(true);
@@ -209,6 +209,8 @@ public class MecanumDrive {
 
 
     }
+
+     */
 
     public void resetEncoders() {
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
