@@ -60,7 +60,7 @@ public class KevinGodMode2 extends LinearOpMode {
         systems = new EndgameSystems(hardwareMap);
 
 
-        score.setLinkagePositionLogistic(constants.linkageDown, 500);
+        //score.setLinkagePositionLogistic(constants.linkageDown, 500);
         score.setGrabberPosition(constants.open);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");

@@ -60,8 +60,8 @@ public class ScoringSystem2{
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
 
-        lLinkage.setPosition(constants.linkageDown);
-        rLinkage.setPosition(constants.linkageDown);
+        lLinkage.setPosition(Constants.linkageDown);
+        rLinkage.setPosition(Constants.linkageDown);
         grabber.setPosition(constants.open);
 
     }

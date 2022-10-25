@@ -16,9 +16,9 @@ public class Constants {
      */
 
     //Axon Duo Positions
-    public static final double linkageDown = 0.18;
-    public static final double linkageUp = 0.7;
-    public static final double linkageScore = 0.95;
+    public static final double linkageDown = 0.95;
+    public static final double linkageUp = 0.35;
+    public static final double linkageScore = 0.05;
 
 
     //Grabber Positions (tuned)
