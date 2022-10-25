@@ -18,7 +18,6 @@ public class FirstTeleOp extends LinearOpMode {
     Thread liftThread;
     AtomicBoolean cont;
 
-
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
@@ -41,7 +40,6 @@ public class FirstTeleOp extends LinearOpMode {
         //Open
         score.setClawPosition(0);
 
-
         //TODO: Test below Out
         //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
 
@@ -50,20 +48,13 @@ public class FirstTeleOp extends LinearOpMode {
             public void run(){
                 //removed !score.isBusy() from the while statement
                 while(opModeIsActive()){
-                    if(gamepad1.right_trigger > 0.1){
-                        if(!(score.getEncoderPosition() > 2400)){
-                            score.setPower(gamepad1.right_trigger/1.5);
-                        }
-                    }else if(gamepad1.left_trigger > 0.1) {
-                        if (score.getEncoderPosition() < 40) {
-                            //calibrate will set power
-                            calibrateLiftBottom(score.getEncoderPosition());
-                        } else {
-                            if (score.getEncoderPosition() < 100) {
-                                score.goToPosition(0, 0.3);
-                            } else {
-                                score.setPower(-gamepad1.left_trigger / 2);
-                            }
+                    if(gamepad1.right_bumper){
+                        score.setPower(0.7);
+                    }else if(gamepad1.left_bumper) {
+                        if(score.getEncoderPosition() < 2){
+                            score.setPower(0);
+                        }else{
+                            score.setPower(-0.7);
                         }
                     }else{
                         score.setPower(0.08);
@@ -91,18 +82,34 @@ public class FirstTeleOp extends LinearOpMode {
 
                     if (gamepad1.dpad_right) {
                         //high cone
-                        score.goToPosition(2320, 1);
+                        score.goToPosition(2360, 1);
                         score.setPower(0.08);
                     }
 
+                    if(gamepad1.right_trigger > 0.1){
+                        //TODO: Test this value / change all auto claw positions
+                        if(score.getClawPosition() == 0){
+                            if(score.getEncoderPosition() < 100){
+                                score.setClawPosition(0.22);
+                                FirstTeleOp.this.sleep(1000);
+                                score.goToPosition(20, 0.35);
+                            }else{
+                                score.setClawPosition(0.22);
+                            }
 
+                        }else{
+                            score.setClawPosition(0);
+                            score.goToPosition(0, 0.4);
+
+                        }
+
+
+                        //2220
+
+                    }
                 }
             }
         };
-
-
-
-
 
         waitForStart();
         liftThread.start();
@@ -122,7 +129,7 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad1.right_bumper) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }else {
-                if(score.getEncoderPosition() > 1000){
+                if(score.getEncoderPosition() > 900){
                     drive.setPower(new Vector2D(gamepadX * 0.5, gamepadY * 0.5), gamepad1.right_stick_x * 0.5, false);
                 }else{
                     drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
@@ -153,19 +160,7 @@ public class FirstTeleOp extends LinearOpMode {
 
              */
 
-            if(gamepad1.x){
-                //TODO: Test this value / change all auto claw positions
-                //Closed
-                score.setClawPosition(0.2);
-                score.goToPosition(20, 0.8);
 
-            //2220
-
-            }else if(gamepad1.b){
-                //Open
-                score.setClawPosition(0);
-
-            }
             if(gamepad1.a){
                score.goToPosition(score.getEncoderPosition() - 5, 0.7);
             }
