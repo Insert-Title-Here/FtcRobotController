@@ -494,6 +494,129 @@ public class MecDrive {
     }
 
 
+    public void PIDPowerNoBulk(double power, int targetPosition){
+        double flIntegralSum = 0;
+        double flPreviousError = 0;
+        double frIntegralSum = 0;
+        double frPreviousError = 0;
+        double blIntegralSum = 0;
+        double blPreviousError = 0;
+        double brIntegralSum = 0;
+        double brPreviousError = 0;
+
+        double start = OpModeWrapper.currentOpMode().time; //start time
+
+        //TODO: may need to negate some things
+        int flCurr = fl.getCurrentPosition(); //init motor pos'
+        int frCurr = fr.getCurrentPosition();
+        int blCurr = bl.getCurrentPosition();
+        int brCurr = br.getCurrentPosition();
+
+
+        //low pass fields
+//        double tau = 0.8;
+//        double previousFilterEstimate = 0;
+//        double currentFilterEstimate = 0;
+
+        //TODO: change this logic so that forwards and backwards works along with strafing
+        while(opModeIsRunning() && flCurr < targetPosition && frCurr < targetPosition && blCurr < targetPosition && brCurr < targetPosition){
+
+            telemetry.addData("fl", fl.getCurrentPosition());
+            telemetry.addData("fr", fr.getCurrentPosition());
+            telemetry.addData("bl", bl.getCurrentPosition());
+            telemetry.addData("br", br.getCurrentPosition());
+
+
+            //TODO: may need to negate some things
+            flCurr = fl.getCurrentPosition();
+            frCurr = fr.getCurrentPosition();
+            blCurr = bl.getCurrentPosition();
+            brCurr = br.getCurrentPosition();
+
+            double flError = targetPosition - flCurr; //error, P
+            double frError = targetPosition - frCurr;
+            double blError = targetPosition - blCurr;
+            double brError = targetPosition - brCurr;
+
+            telemetry.addData("flError", flError);
+            telemetry.addData("frError", frError);
+            telemetry.addData("blError", blError);
+            telemetry.addData("brError", brError);
+
+
+            //low pass impl, note to write this for ALL motors if implemented, keep Tau constant among all 4 wheels/sensors
+            //currentFilterEstimate = (tau * previousFilterEstimate) + (1-tau) * flError - previousError;
+            //double flDerivative = currentFilterEstimate / elapsedTime;
+
+            double elapsedTime = OpModeWrapper.currentOpMode().time - start; //elapsed time since start of the movement
+
+            double flDerivative = (flError - flPreviousError) / elapsedTime; //Rate of Change, Error/time
+            double frDerivative = (frError - frPreviousError) / elapsedTime;
+            double blDerivative = (blError - blPreviousError) / elapsedTime;
+            double brDerivative = (brError - brPreviousError) / elapsedTime;
+
+            telemetry.addData("flDerivative", flDerivative);
+            telemetry.addData("frDerivative", frDerivative);
+            telemetry.addData("blDerivative", blDerivative);
+            telemetry.addData("brDerivative", brDerivative);
+
+
+            flIntegralSum = flIntegralSum + (flCurr * elapsedTime); //sum of error
+            frIntegralSum = frIntegralSum + (frCurr * elapsedTime);
+            blIntegralSum = blIntegralSum + (blCurr * elapsedTime);
+            brIntegralSum = brIntegralSum + (brCurr * elapsedTime);
+
+            telemetry.addData("flIntegral", flIntegralSum);
+            telemetry.addData("frIntegral", frIntegralSum);
+            telemetry.addData("blIntegral", blIntegralSum);
+            telemetry.addData("brIntegral", brIntegralSum);
+
+            if(flIntegralSum > integralSumLimit){
+                flIntegralSum = integralSumLimit;
+            }else if (flIntegralSum < - integralSumLimit){
+                flIntegralSum = -integralSumLimit;
+            }
+            if(frIntegralSum > integralSumLimit){
+                frIntegralSum = integralSumLimit;
+            }else if (frIntegralSum < - integralSumLimit){
+                frIntegralSum = -integralSumLimit;
+            }
+            if(blIntegralSum > integralSumLimit){
+                blIntegralSum = integralSumLimit;
+            }else if (blIntegralSum < - integralSumLimit){
+                blIntegralSum = -integralSumLimit;
+            }
+            if(brIntegralSum > integralSumLimit){
+                brIntegralSum = integralSumLimit;
+            }else if (brIntegralSum < - integralSumLimit){
+                brIntegralSum = -integralSumLimit;
+            }
+
+
+            double flOut = (P * flError) + (I * flIntegralSum) + (D * flDerivative) + F;
+            double frOut = (P * frError) + (I * frIntegralSum) + (D * frDerivative) + F;
+            double blOut = (P * blError) + (I * blIntegralSum) + (D * blDerivative) + F;
+            double brOut = (P * brError) + (I * brIntegralSum) + (D * brDerivative) + F;
+
+            telemetry.addData("flOut", flOut);
+            telemetry.addData("frOut", frOut);
+            telemetry.addData("blOut", blOut);
+            telemetry.addData("brOut", brOut);
+
+            setMotorPower(flOut * power, frOut * power,blOut * power,brOut * power);
+
+            flPreviousError = flError;
+            frPreviousError = frError;
+            blPreviousError = blError;
+            brPreviousError = brError;
+            //previousFilterEstimate = currentFilterEstimate;
+
+            telemetry.update();
+        }
+        simpleBrake();
+    }
+
+
 
     PIDCoefficients pid = new PIDCoefficients(0,0,0);
 
