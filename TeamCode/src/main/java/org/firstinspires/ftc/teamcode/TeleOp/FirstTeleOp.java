@@ -16,7 +16,7 @@ public class FirstTeleOp extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     Thread liftThread;
-    AtomicBoolean cont;
+    AtomicBoolean pause;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -28,8 +28,8 @@ public class FirstTeleOp extends LinearOpMode {
 
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
-        cont = new AtomicBoolean();
-        cont.set(false);
+        pause = new AtomicBoolean();
+        pause.set(true);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -49,12 +49,12 @@ public class FirstTeleOp extends LinearOpMode {
                 //removed !score.isBusy() from the while statement
                 while(opModeIsActive()){
                     if(gamepad1.right_bumper){
-                        score.setPower(0.7);
+                        score.setPower(1);
                     }else if(gamepad1.left_bumper) {
                         if(score.getEncoderPosition() < 2){
                             score.setPower(0);
                         }else{
-                            score.setPower(-0.7);
+                            score.setPower(-0.5);
                         }
                     }else{
                         score.setPower(0.08);
@@ -65,7 +65,7 @@ public class FirstTeleOp extends LinearOpMode {
                     // high cone, 33 in, 2390 gamepad1.dpad_right
 
                     if(gamepad1.dpad_down) {
-                        score.goToPosition(0, 0.3);
+                        score.goToPosition(0, 0.65);
                     }
 
                     if (gamepad1.dpad_left) {
@@ -85,28 +85,27 @@ public class FirstTeleOp extends LinearOpMode {
                         score.goToPosition(2360, 1);
                         score.setPower(0.08);
                     }
-
-                    if(gamepad1.right_trigger > 0.1){
+                    if(gamepad1.right_trigger > 0.1 && pause.get()){
                         //TODO: Test this value / change all auto claw positions
-                        if(score.getClawPosition() == 0){
-                            if(score.getEncoderPosition() < 100){
-                                score.setClawPosition(0.22);
-                                FirstTeleOp.this.sleep(1000);
-                                score.goToPosition(20, 0.35);
+                        if(0.22 < score.getClawPosition() && score.getClawPosition() < 0.26){
+                            score.setClawPosition(0);
+                            score.goToPosition(0, 0.5);
+                        }else{
+                            if(score.getEncoderPosition() < 200){
+                                score.setClawPosition(0.24);
+                                FirstTeleOp.this.sleep(400);
+                                score.goToPosition(50, 0.35);
                             }else{
-                                score.setClawPosition(0.22);
+                                score.setClawPosition(0.24);
                             }
 
-                        }else{
-                            score.setClawPosition(0);
-                            score.goToPosition(0, 0.4);
-
                         }
-
-
                         //2220
-
+                        pause.set(false);
+                    }else if(gamepad1.right_trigger < 0.1){
+                        pause.set(true);
                     }
+
                 }
             }
         };
@@ -126,7 +125,7 @@ public class FirstTeleOp extends LinearOpMode {
                 gamepadY = 0;
             }
             //TODO: Decide if you want sprint capability
-            if (gamepad1.right_bumper) { // replace this with a button for sprint
+            if (gamepad1.left_trigger > 0.1) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }else {
                 if(score.getEncoderPosition() > 900){
