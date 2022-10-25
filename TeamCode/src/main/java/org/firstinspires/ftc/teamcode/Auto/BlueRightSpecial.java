@@ -107,21 +107,22 @@ public class BlueRightSpecial extends LinearOpMode {
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-200, -197, -211, -298), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
-        score.goToPosition(0, 0.3);
+        score.goToPosition(1000, 0.5);
         sleep(200);
-        drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(390,380,370,490),"Drive forward");
-        sleep(5000);
-        drive.goToPosition(-0.3,-0.3,-0.3,-0.3, avgPosition(-288,-212,-288,-288),"drive backward");
+        drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(386,398,367,371),"Drive forward");
+        sleep(15000);
+        drive.goToPosition(-0.3,-0.3,-0.3,-0.3, avgPosition(-400,-420,-450,-450),"drive backward");
+        score.goToPosition(0, 0.3);
 
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
-            // move to left TODO: measure drive encoder values
-            drive.goToPosition(-0.3, 0.3, 0.3,-0.3, avgPosition(-670,649,610,-630),"strafe left");
+            // move to left
+            drive.goToPosition(-0.3, 0.3, 0.3,-0.3, avgPosition(-633,594,675,-588),"strafe left");
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
-            // move to center TODO: measure drive encoder values
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
+            // move to center
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(611,-684,-700,773), "strafe right (center)");
         } else {
-            // move to right TODO: measure drive encoder values
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(3035,-3117,-3114,3226), "strafe right (more right)");
+            // move to right
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1722,-1894,-1924,2033), "strafe right (more right)");
 
         }
         //1 (far left) (general code)
