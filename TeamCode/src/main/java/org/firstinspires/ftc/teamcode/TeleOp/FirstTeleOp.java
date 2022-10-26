@@ -70,19 +70,19 @@ public class FirstTeleOp extends LinearOpMode {
 
                     if (gamepad1.dpad_left) {
                         //low cone
-                        score.goToPosition(1000, 1);
+                        score.goToPosition(970, 1);
                         score.setPower(0.08);
                     }
 
                     if (gamepad1.dpad_up) {
                         //medium cone
-                        score.goToPosition(1700, 1);
+                        score.goToPosition(1660, 1);
                         score.setPower(0.08);
                     }
 
                     if (gamepad1.dpad_right) {
                         //high cone
-                        score.goToPosition(2360, 1);
+                        score.goToPosition(2330, 1);
                         score.setPower(0.08);
                     }
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
@@ -229,6 +229,7 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
+       
             telemetry.update();
 
 
