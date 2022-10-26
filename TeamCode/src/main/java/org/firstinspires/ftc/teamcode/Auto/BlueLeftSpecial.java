@@ -136,7 +136,7 @@ public class BlueLeftSpecial extends LinearOpMode {
         //3 far right
         //drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
 
-        score.setClawPosition(1);
+        score.setClawPosition(0);
 
     }
     public int avgPosition(int fl, int fr, int bl, int br){
