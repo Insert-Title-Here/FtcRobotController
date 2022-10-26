@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.League1.Testing.AutonomousTesting;
+package org.firstinspires.ftc.teamcode.League1.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -29,7 +29,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class TestingNormalization extends LinearOpMode {
+public class RightRedHigh extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
