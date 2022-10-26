@@ -85,15 +85,15 @@ public class ScoringSystem2{
     //TODO: tune this
     public void setLinkageConeStack(){
         if(coneStack == 5){
-            setLinkagePosition(0.24);
+            setLinkagePosition(0.73);
         }else if(coneStack == 4){
-            setLinkagePosition(0.21);
+            setLinkagePosition(0.76);
         }else if(coneStack == 3){
-            setLinkagePosition(0.18);
+            setLinkagePosition(0.79);
         }else if(coneStack == 2){
-            setLinkagePosition(0.15);
+            setLinkagePosition(0.82);
         }else if(coneStack == 1){
-            setLinkagePosition(0.12);
+            setLinkagePosition(0.875);
         }
     }
 

@@ -86,7 +86,6 @@ public class VisionTuning extends OpenCvPipeline {
 
     // Sets default values for pipelineMode and position
     //PipelineMode pipelineMode = PipelineMode.SIGNAL;
-    boolean sleeveSense = true;
     volatile ParkPos position = ParkPos.CENTER;
 
     public VisionTuning(Telemetry telemetry){
@@ -100,7 +99,7 @@ public class VisionTuning extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Check pipelineMode and run corresponding image processing
-        if(sleeveSense) {
+        if(channelToReturn < 3) {
 
             // Convert image to YCrCb color space and extract the Y channel
             Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
@@ -259,11 +258,6 @@ public class VisionTuning extends OpenCvPipeline {
 
     public int getPoleYPos(){
         return longestContourY;
-    }
-
-    // Set mode of pipeline to signal (innit) or contour (after start)
-    public void setMode(boolean mode) {
-        sleeveSense = mode;
     }
 
     // Get parking position determined by signal mode

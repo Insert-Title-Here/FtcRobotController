@@ -198,7 +198,8 @@ public class KevinGodMode2 extends LinearOpMode {
                             e.printStackTrace();
                         }
 
-                    }else{
+                    }
+                    if(!gamepad1.dpad_down && !gamepad1.dpad_up){
                         changeStackFlag = true;
                     }
 
