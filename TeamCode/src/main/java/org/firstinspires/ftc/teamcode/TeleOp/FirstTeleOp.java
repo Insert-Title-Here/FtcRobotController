@@ -19,7 +19,6 @@ public class FirstTeleOp extends LinearOpMode {
     ScoringSystem score;
     Thread liftThread;
     AtomicBoolean pause;
-    BNO055IMU imu;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -28,21 +27,11 @@ public class FirstTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
 
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         pause = new AtomicBoolean();
         pause.set(true);
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -232,7 +221,7 @@ public class FirstTeleOp extends LinearOpMode {
             }
 
              */
-
+            //TODO: add telemtry for gamepad a and y positions when you press them
             telemetry.addData("flPos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());
             telemetry.addData("blPos", drive.getBLPosition());
@@ -241,12 +230,6 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
-
-            telemetry.addData("xyz", imu.getAngularOrientation().firstAngle);//This is the correct angle to use
-            telemetry.addData("yzx", imu.getAngularOrientation().secondAngle);
-            telemetry.addData("zxy", imu.getAngularOrientation().thirdAngle);
-
-
             telemetry.update();
 
 
