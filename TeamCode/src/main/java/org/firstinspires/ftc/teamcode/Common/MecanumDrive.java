@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Common;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,6 +20,7 @@ public class MecanumDrive {
     Telemetry telemetry;
     Thread driveThread;
     AtomicBoolean active;
+    BNO055IMU imu;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -25,6 +28,16 @@ public class MecanumDrive {
     public String loggingString;
 
     public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
         this.telemetry = telemetry;
         active = new AtomicBoolean();
         //TODO: Change the deviceName for each
@@ -145,7 +158,17 @@ public class MecanumDrive {
         setPower(0, 0, 0, 0);
 
     }
+    public void turn(double radians, double power){
+        double initialAngle = imu.getAngularOrientation().firstAngle;
+        while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
+            if(radians > 0){
+                setPower(power, -power, power, -power);
+            }else{
+                setPower(-power, power, -power, power);
+            }
+        }
 
+    }
     public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action){
         //fl fr bl br
         active.set(true);
