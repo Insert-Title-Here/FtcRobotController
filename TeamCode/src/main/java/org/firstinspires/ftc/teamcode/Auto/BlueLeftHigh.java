@@ -3,8 +3,13 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous
@@ -13,17 +18,17 @@ public class BlueLeftHigh extends LinearOpMode {
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
-//    DetectionAlgorithmTest detect;
-//    OpenCvWebcam webcam;
+    DetectionAlgorithmTest detect;
+    OpenCvWebcam webcam;
 
     @Override
     public void runOpMode() throws InterruptedException {
-//        detect = new DetectionAlgorithmTest(telemetry);
+        detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         cont = new AtomicBoolean();
         cont.set(false);
-/*
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
@@ -41,7 +46,7 @@ public class BlueLeftHigh extends LinearOpMode {
                 telemetry.update();
             }
         });
-*/
+
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
 
@@ -101,7 +106,7 @@ public class BlueLeftHigh extends LinearOpMode {
         score.goToPosition(0, 0.7);
         sleep(300);
 
-/*
+
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-3007,2941,3226,-3036), "strafe left (more left)");
@@ -114,7 +119,7 @@ public class BlueLeftHigh extends LinearOpMode {
 
         }
 
- */
+
         /*
         //1 (far right) (general code)
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");

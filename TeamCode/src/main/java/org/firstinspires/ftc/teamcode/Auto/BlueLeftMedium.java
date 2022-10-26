@@ -82,7 +82,7 @@ public class BlueLeftMedium extends LinearOpMode {
     }
     public void blueLeft(){
         //close claw
-        score.setClawPosition(0.47);
+        score.setClawPosition(0.24);
         sleep(800);
         //lift claw a little bit
         score.goToPosition(100, 0.7);

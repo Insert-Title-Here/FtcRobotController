@@ -24,11 +24,11 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
     private double yelPercent, cyaPercent, magPercent;
 
     // top left point of submat (original 320, 176)
-    public static final Point BOX_TOPLEFT = new Point(175,150);
+    public static final Point BOX_TOPLEFT = new Point(175,114); // 175, 150
 
     // width and height of submat
-    public static int BOX_WIDTH = 30;
-    public static int BOX_HEIGHT = -35;
+    public static int BOX_WIDTH = 29;
+    public static int BOX_HEIGHT = -34;
 
     enum ParkingPosition {
         LEFT,
@@ -112,7 +112,7 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
         // yellow 190
 //        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
-        Core.inRange(yelMat, new Scalar(175), new Scalar(205), yelMat);
+        Core.inRange(yelMat, new Scalar(160), new Scalar(205), yelMat);
         // cyan 169
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
         Core.inRange(cyaMat, new Scalar(154), new Scalar(184), cyaMat);
