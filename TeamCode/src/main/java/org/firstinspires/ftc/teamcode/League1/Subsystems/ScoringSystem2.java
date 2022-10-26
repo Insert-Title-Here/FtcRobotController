@@ -211,30 +211,141 @@ public class ScoringSystem2{
         //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
 
         //TODO: Check if logic for encoder positions works
-        while ((time.seconds() - startTime) < 3 && Math.abs(rLiftPos - tics) > 20 || Math.abs(lLiftPos - tics) > 20) {
 
-            //TODO: figure out if we need to negate either of them
+        if(power > 0) {
+            while ((time.seconds() - startTime) < 3 && rLiftPos < tics || lLiftPos < tics) {
 
-            if(!(Math.abs(rLiftPos - tics) > 20)){
-                rightPower = 0;
-            }else if(!(Math.abs(lLiftPos - tics) > 20)){
-                leftPower = 0;
+                //TODO: figure out if we need to negate either of them
+
+                if (rLiftPos >= tics) {
+                    rightPower = 0;
+                } else if (lLiftPos >= tics) {
+                    leftPower = 0;
+                }
+
+
+                rLiftPos = rLift.getCurrentPosition();
+                lLiftPos = -1 * lLift.getCurrentPosition();
+
+                setPower(rightPower, leftPower);
+
+
             }
+        }else{
+            while ((time.seconds() - startTime) < 3 && rLiftPos > tics || lLiftPos > tics) {
+
+                //TODO: figure out if we need to negate either of them
+
+                if (rLiftPos <= tics) {
+                    rightPower = 0;
+                } else if (lLiftPos <= tics) {
+                    leftPower = 0;
+                }
 
 
-            rLiftPos = rLift.getCurrentPosition();
-            lLiftPos = -1 * lLift.getCurrentPosition();
+                rLiftPos = rLift.getCurrentPosition();
+                lLiftPos = -1 * lLift.getCurrentPosition();
 
-            setPower(rightPower, leftPower);
-
-
+                setPower(rightPower, leftPower);
 
 
+            }
         }
 
         setPower(0);
 
     }
+
+
+
+    public int[] moveToPosition(int tics, double power, boolean isPID){
+
+        int[] intSums = {0, 0};
+
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+
+        int rLiftPos = rLift.getCurrentPosition();
+        int lLiftPos = -1 * lLift.getCurrentPosition();
+
+
+        if(tics < ((rLiftPos + lLiftPos) / 2)){
+            power *= -1;
+        }
+
+        double rightPower = power;
+        double leftPower = power;
+
+
+
+
+
+        //Dont know if need the != condition
+        //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
+
+        //TODO: Check if logic for encoder positions works
+
+        if(power > 0) {
+            while ((time.seconds() - startTime) < 3 && rLiftPos < tics || lLiftPos < tics) {
+
+                //TODO: figure out if we need to negate either of them
+
+                //left
+                intSums[0] += tics - lLiftPos;
+
+                //right
+                intSums[1] += tics - rLiftPos;
+
+
+
+                if (rLiftPos >= tics) {
+                    rightPower = 0;
+                } else if (lLiftPos >= tics) {
+                    leftPower = 0;
+                }
+
+
+                rLiftPos = rLift.getCurrentPosition();
+                lLiftPos = -1 * lLift.getCurrentPosition();
+
+                setPower(rightPower, leftPower);
+
+
+            }
+        }else{
+            while ((time.seconds() - startTime) < 3 && rLiftPos > tics || lLiftPos > tics) {
+
+                //TODO: figure out if we need to negate either of them
+
+                //left
+                intSums[0] += tics - lLiftPos;
+
+                //right
+                intSums[1] += tics - rLiftPos;
+
+                if (rLiftPos <= tics) {
+                    rightPower = 0;
+                } else if (lLiftPos <= tics) {
+                    leftPower = 0;
+                }
+
+
+                rLiftPos = rLift.getCurrentPosition();
+                lLiftPos = -1 * lLift.getCurrentPosition();
+
+                setPower(rightPower, leftPower);
+
+
+            }
+        }
+
+        setPower(0);
+
+        return intSums;
+
+    }
+
 
     public void setTimeServoPosLogistic(double target, int time) {
         ElapsedTime timer = new ElapsedTime();

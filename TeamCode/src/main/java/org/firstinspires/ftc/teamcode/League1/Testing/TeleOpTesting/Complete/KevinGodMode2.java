@@ -84,7 +84,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
                     }else {
                         if(passive == PassivePower.EXTENDED){
-                            score.setPower(0.2);
+                            score.setPower(0.23);
                         }else if(passive == PassivePower.MOVEMENT){
 
                         }else if(passive == PassivePower.ZERO){
@@ -94,7 +94,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
 
                     if(gamepad1.right_trigger > 0.1){
-                        score.setGrabberPosition(constants.open);
+                        score.setGrabberPosition(constants.score);
 
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.LOW && score.isExtended()) {
                             try {
@@ -133,6 +133,8 @@ public class KevinGodMode2 extends LinearOpMode {
                         score.moveToPosition(0, 0.5);
                         passive = PassivePower.ZERO;
                         score.setLinkagePositionLogistic(constants.linkageDown, 300);
+
+                        score.setGrabberPosition(constants.open);
 
                         autoLinkageFlag = true;
                         grabFlag = true;
@@ -229,7 +231,7 @@ public class KevinGodMode2 extends LinearOpMode {
                             grabFlag = false;
                         }
                         manualFlag = false;
-                    }else{
+                    }else if(!gamepad1.start){
                         manualFlag = true;
                     }
 

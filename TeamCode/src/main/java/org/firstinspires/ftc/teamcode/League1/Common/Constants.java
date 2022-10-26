@@ -24,6 +24,7 @@ public class Constants {
     //Grabber Positions (tuned)
     public static final double grabbing = 0;
     public static final double open = 0.75;
+    public static final double score = 0.3;
 
     //Drive Modifiers
     public static final double NORMAL_LINEAR_MODIFIER = 0.5;
