@@ -80,8 +80,8 @@ public class VisionTuning extends OpenCvPipeline {
 
     // The rectangle/submat used to evaluate the signal color
     static final Rect MIDDLE = new Rect(
-            new Point(125, 35),
-            new Point(160, 95)
+            new Point(185, 15),
+            new Point(220, 75)
     );
 
     // Sets default values for pipelineMode and position
