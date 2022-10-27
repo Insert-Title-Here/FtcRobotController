@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
+import java.util.Formattable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp
@@ -75,21 +76,20 @@ public class FirstTeleOp extends LinearOpMode {
                         score.setPower(0.08);
                     }
 
-                    if (gamepad1.dpad_up) {
-                        //medium cone
-                        score.goToPosition(1660, 1);
-                        score.setPower(0.08);
-                    }
-
-                    if (gamepad1.dpad_right) {
+                    if (gamepad1.right_stick_button) {
                         //high cone
                         score.goToPosition(2330, 1);
                         score.setPower(0.08);
                     }
+                    if(gamepad1.left_stick_button){
+                        //medium cone
+                        score.goToPosition(1660, 1);
+                        score.setPower(0.08);
+                    }
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
-                        //TODO: Test this value / change all auto claw positions
                         if(0.22 < score.getClawPosition() && score.getClawPosition() < 0.26){
                             score.setClawPosition(0);
+                            FirstTeleOp.this.sleep(200);
                             score.goToPosition(0, 0.5);
                         }else{
                             if(score.getEncoderPosition() < 200){
@@ -135,30 +135,6 @@ public class FirstTeleOp extends LinearOpMode {
                     drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
-            /*
-            if(gamepad1.right_trigger > 0.1){
-                cont.set(false);
-                sleep(30);
-                score.setPower(gamepad1.right_trigger/1.6);
-            }else if(gamepad1.left_trigger > 0.1){
-                cont.set(false);
-                sleep(30);
-                if(score.getEncoderPosition() < 40){
-                    //calibrate will set power
-                    calibrateLiftBottom(score.getEncoderPosition());
-                }else{
-                    if(score.getEncoderPosition() < 100){
-                        score.goToPosition(0,0.3);
-                    }else{
-                        score.setPower(-gamepad1.left_trigger/2);
-
-                    }
-                }
-            }else{
-                cont.set(true);
-            }
-
-             */
 
 
             if(gamepad1.a){
@@ -173,54 +149,7 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad1.share) {
                 drive.resetEncoders();
             }
-            // reset   gamepad1.dpad_down
-            // low cone, 13 in, 1209  gamenpad1.dpad_left
-            // medium cone, 23 in, 1795 gamepad1.dpad_up
-            // high cone, 33 in, 2390 gamepad1.dpad_right
-            /*
-            if(gamepad1.dpad_down) {
-                cont.set(false);
-                sleep(30);
-                //reset
-                // 50 not zero b/c 435 motor does not have enough torque to stop the gravitational drop to zero tics
-                //score.goToPosition(50, 1);
-                //Test this callibration
 
-                while(score.getEncoderPosition() > 700 && score.getEncoderPosition() < 200){
-                    int aimedPos = (int)(Math.sqrt(score.getEncoderPosition()));
-                    score.goToPosition(aimedPos, 1);
-                }
-
-
-                score.goToPosition(0, 0.3);
-
-            }
-
-            if (gamepad1.dpad_left) {
-                cont.set(false);
-                sleep(30);
-                //low cone
-                score.goToPosition(1209, 1);
-                cont.set(true);
-            }
-
-            if (gamepad1.dpad_up) {
-                cont.set(false);
-                sleep(30);
-                //medium cone
-                score.goToPosition(1795, 1);
-                cont.set(true);
-            }
-
-            if (gamepad1.dpad_right) {
-                cont.set(false);
-                sleep(30);
-                //high cone
-                score.goToPosition(2390, 1);
-                cont.set(true);
-            }
-
-             */
             //TODO: add telemtry for gamepad a and y positions when you press them
             telemetry.addData("flPos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());

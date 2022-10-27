@@ -101,9 +101,9 @@ public class BlueLeftMedium extends LinearOpMode {
         cont.set(true);
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 100, 98, 87), "move to pole");
         sleep(2000);
-        score.setClawPosition(1);
+        score.setClawPosition(0);
         sleep(300);
-        score.setClawPosition(0.47);
+        score.setClawPosition(0.24);
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
@@ -140,7 +140,7 @@ public class BlueLeftMedium extends LinearOpMode {
         drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1152, 1177, 1164, -1196), "strafe left");
 
     */
-        score.setClawPosition(1);
+        score.setClawPosition(0);
     }
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;

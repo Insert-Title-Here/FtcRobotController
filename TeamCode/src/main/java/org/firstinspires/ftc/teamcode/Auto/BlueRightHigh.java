@@ -90,7 +90,7 @@ public class BlueRightHigh extends LinearOpMode {
     public void blueRight(){
 
         //close claw
-        score.setClawPosition(0.47);
+        score.setClawPosition(0.24);
         sleep(800);
         //lift claw a little bit
         score.goToPosition(100, 0.7);
@@ -111,9 +111,9 @@ public class BlueRightHigh extends LinearOpMode {
         sleep(1000);
 
 
-        score.setClawPosition(1);
+        score.setClawPosition(0);
         sleep(300);
-        score.setClawPosition(0.47);
+        score.setClawPosition(0.24);
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
@@ -150,7 +150,7 @@ public class BlueRightHigh extends LinearOpMode {
         //3 far right
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
     */
-        score.setClawPosition(1);
+        score.setClawPosition(0);
     }
 
     public int avgPosition(int fl, int fr, int bl, int br){

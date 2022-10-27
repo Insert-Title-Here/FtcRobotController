@@ -162,11 +162,17 @@ public class MecanumDrive {
         double initialAngle = imu.getAngularOrientation().firstAngle;
         while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
             if(radians > 0){
+                //turn right # of radians
                 setPower(power, -power, power, -power);
             }else{
+                //turn left # of radians
                 setPower(-power, power, -power, power);
             }
         }
+    }
+
+    //TODO: when auto intializes(put this in auto), set current angle/imu to zero degrees/radians, then right before scoreing cone, turn robot to zero degrees
+    public void turnToZero(){
 
     }
     public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action){
