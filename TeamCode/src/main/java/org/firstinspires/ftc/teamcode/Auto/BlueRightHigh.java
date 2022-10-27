@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -21,9 +23,21 @@ public class BlueRightHigh extends LinearOpMode {
     String parkLocation;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
+    BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        double initialRadians;
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
@@ -75,7 +89,7 @@ public class BlueRightHigh extends LinearOpMode {
         };
         //TRY SETTING THE COMMANDS INSIDE THE THREAD AND SEE IF IT WORKS THAT WAY
 
-
+        initialRadians = imu.getAngularOrientation().firstAngle;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 

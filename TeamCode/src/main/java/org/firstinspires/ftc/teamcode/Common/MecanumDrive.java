@@ -172,8 +172,16 @@ public class MecanumDrive {
     }
 
     //TODO: when auto intializes(put this in auto), set current angle/imu to zero degrees/radians, then right before scoreing cone, turn robot to zero degrees
-    public void turnToZero(){
-
+    public void turnToInitialPosition(double initialRadians){
+        while(!(Math.abs(imu.getAngularOrientation().firstAngle) == Math.abs(initialRadians))){
+            if(initialRadians > 0){
+                //turn right # of radians
+                setPower(0.4, -0.4, 0.4, -0.4);
+            }else{
+                //turn left # of radians
+                setPower(-0.4, 0.4, -0.4, 0.4);
+            }
+        }
     }
     public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action){
         //fl fr bl br

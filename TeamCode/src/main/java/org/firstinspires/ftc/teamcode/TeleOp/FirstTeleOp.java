@@ -67,7 +67,7 @@ public class FirstTeleOp extends LinearOpMode {
                     // high cone, 33 in, 2390 gamepad1.dpad_right
 
                     if(gamepad1.dpad_down) {
-                        score.goToPosition(0, 0.65);
+                        score.goToPosition(0, 0.4);
                     }
 
                     if (gamepad1.dpad_left) {
@@ -90,7 +90,7 @@ public class FirstTeleOp extends LinearOpMode {
                         if(0.22 < score.getClawPosition() && score.getClawPosition() < 0.26){
                             score.setClawPosition(0);
                             FirstTeleOp.this.sleep(200);
-                            score.goToPosition(0, 0.5);
+                            score.goToPosition(0, 0.4);
                         }else{
                             if(score.getEncoderPosition() < 200){
                                 score.setClawPosition(0.24);
