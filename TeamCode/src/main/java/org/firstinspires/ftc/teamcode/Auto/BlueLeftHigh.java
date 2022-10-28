@@ -98,10 +98,10 @@ public class BlueLeftHigh extends LinearOpMode {
         score.goToPosition(100, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1090, 1090, 1089, 1060), "forward");
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1109, 1060), "forward");
 
         //strafe right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1954, -1740, -1820, 1947), "strafe right");
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1854, -1740, -1820, 1910), "strafe right");
         sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -109,7 +109,7 @@ public class BlueLeftHigh extends LinearOpMode {
         // move arm max
         score.goToPosition(2340, 0.85);
         cont.set(true);
-        drive.goToPosition( 0.3, 0.3, 0.3, 0.3, avgPosition(95, 50, 98, 87), "move to pole");
+        drive.goToPosition( 0.3, 0.3, 0.3, 0.3, avgPosition(200, 80, 98, 100), "move to pole");
         sleep(2000);
         score.setClawPosition(0);
         sleep(300);
@@ -132,7 +132,7 @@ public class BlueLeftHigh extends LinearOpMode {
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
 
         }
-
+        drive.turnToInitialPosition(0.0);
 
         /*
         //1 (far right) (general code)
