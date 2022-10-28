@@ -16,7 +16,8 @@ public class IDTesting extends LinearOpMode {
     AtomicBoolean hold;
     ScoringSystem2 score;
     Constants constants;
-    PIDCoefficients pid = new PIDCoefficients(0, 0.0005, 0);
+    PIDCoefficients pid = new PIDCoefficients(0, 0.000025, 0.0008);
+    int[] intSums;
 
 
     @Override
@@ -24,7 +25,7 @@ public class IDTesting extends LinearOpMode {
 
         hold = new AtomicBoolean(false);
         constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap, constants, telemetry);
 
 
         idController = new Thread(){
@@ -38,14 +39,14 @@ public class IDTesting extends LinearOpMode {
                         ElapsedTime time = new ElapsedTime();
                         double startTime = time.seconds();
 
-                        int leftIntegralSum = 0;
-                        int rightIntegralSum = 0;
+                        int leftIntegralSum = intSums[0];
+                        int rightIntegralSum = intSums[1];
 
 
                         int rLiftPos = score.getRightEncoderPos();
                         int lLiftPos = -1 * score.getLeftEncoderPos();
 
-                        int tics = score.getHeight();
+                        int tics = 850;
 
                         int leftPreviousError = Math.abs(tics - lLiftPos);
                         int rightPreviousError = Math.abs(tics - rLiftPos);
@@ -77,6 +78,7 @@ public class IDTesting extends LinearOpMode {
                             telemetry.addData("leftIntegral", leftIntegralSum);
 
 
+                            //TODO: look at telemetry and see if we can have new bound
                             if(leftIntegralSum > 20000){
                                 leftIntegralSum = 20000;
                             }else if(leftIntegralSum < -20000){
@@ -140,7 +142,7 @@ public class IDTesting extends LinearOpMode {
         waitForStart();
         idController.start();
 
-        score.autoGoToPosition(ScoringSystem2.ScoringMode.MEDIUM);
+        intSums = score.moveToPosition(850  , 1, false);
         hold.set(true);
         while(opModeIsActive()){
 

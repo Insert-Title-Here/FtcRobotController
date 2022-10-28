@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Subsystems;
 
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 
 import java.io.PrintStream;
@@ -20,6 +22,7 @@ public class ScoringSystem2{
     private boolean grabbing, linkageUp, extended;
     Constants constants;
     private int coneStack;
+    Telemetry telemetry;
 
 
 
@@ -32,6 +35,42 @@ public class ScoringSystem2{
     }
 
     public ScoringSystem2(HardwareMap hardwareMap, Constants constants) {
+
+        coneStack = 5;
+        height = ScoringMode.HIGH;
+        extended = false;
+        this.constants = constants;
+
+        rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
+        lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
+
+        rLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        rLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        rLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        lLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
+        rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
+
+        lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+
+        grabber = hardwareMap.get(Servo.class, "Grabber");
+
+
+        lLinkage.setPosition(Constants.linkageDown);
+        rLinkage.setPosition(Constants.linkageDown);
+        grabber.setPosition(constants.open);
+
+    }
+
+    public ScoringSystem2(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
+        this.telemetry = telemetry;
 
         coneStack = 5;
         height = ScoringMode.HIGH;
@@ -85,7 +124,7 @@ public class ScoringSystem2{
     //TODO: tune this
     public void setLinkageConeStack(){
         if(coneStack == 5){
-            setLinkagePosition(0.73);
+            setLinkagePosition(0.745);
         }else if(coneStack == 4){
             setLinkagePosition(0.76);
         }else if(coneStack == 3){
@@ -93,7 +132,7 @@ public class ScoringSystem2{
         }else if(coneStack == 2){
             setLinkagePosition(0.82);
         }else if(coneStack == 1){
-            setLinkagePosition(0.875);
+            setLinkagePosition(0.89);
         }
     }
 
@@ -265,9 +304,14 @@ public class ScoringSystem2{
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
+        double intStartTime = time.seconds();
 
         int rLiftPos = rLift.getCurrentPosition();
         int lLiftPos = -1 * lLift.getCurrentPosition();
+
+        int leftPreviousError = Math.abs(tics - lLiftPos);
+        int rightPreviousError = Math.abs(tics - rLiftPos);
+
 
 
         if(tics < ((rLiftPos + lLiftPos) / 2)){
@@ -309,7 +353,52 @@ public class ScoringSystem2{
                 rLiftPos = rLift.getCurrentPosition();
                 lLiftPos = -1 * lLift.getCurrentPosition();
 
+                telemetry.addData("rLift", rLiftPos);
+                telemetry.addData("lLift", lLiftPos);
+
+                double currentTime = time.seconds();
+
+                int leftError = tics - lLiftPos;
+                int rightError = tics - rLiftPos;
+
+                telemetry.addData("leftError", leftError);
+                telemetry.addData("rightError", rightError);
+
+                //left
+                intSums[0] += (0.5 * (leftError + leftPreviousError) * (currentTime - intStartTime));
+
+                //right
+                intSums[1] += (0.5 * (rightError + rightPreviousError) * (currentTime - intStartTime));
+
+
+                telemetry.addData("rightIntegral", intSums[0]);
+                telemetry.addData("leftIntegral", intSums[1]);
+
+
+
+
+
+                if(intSums[0] > 20000){
+                    intSums[0] = 20000;
+                }else if(intSums[0] < -20000){
+                    intSums[0] = -20000;
+                }
+
+                if(intSums[1] > 20000){
+                    intSums[1] = 20000;
+                }else if(intSums[1] < -20000){
+                    intSums[1] = -20000;
+                }
+
+
                 setPower(rightPower, leftPower);
+
+                telemetry.update();
+
+
+                intStartTime = currentTime;
+                leftPreviousError = leftError;
+                rightPreviousError = rightError;
 
 
             }
