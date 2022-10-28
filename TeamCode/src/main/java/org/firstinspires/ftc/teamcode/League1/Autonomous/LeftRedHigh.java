@@ -63,7 +63,7 @@ public class LeftRedHigh extends LinearOpMode {
         cameraServo = hardwareMap.get(Servo.class, "camera");
 
 
-        color.setGain(600);
+        color.setGain(300);
         distance.setGain(300);
 
         /*
@@ -133,6 +133,8 @@ public class LeftRedHigh extends LinearOpMode {
             }
         };
 
+         */
+
 
 
         armThread = new Thread(){
@@ -177,7 +179,7 @@ public class LeftRedHigh extends LinearOpMode {
             }
         };
 
-         */
+
 
 
 
@@ -224,6 +226,12 @@ public class LeftRedHigh extends LinearOpMode {
         cameraServo.setPosition(0.5);
 
 
+        while(opModeInInit()){
+            telemetry.addData("red", color.getNormalizedColors().red);
+            telemetry.addData("blue", color.getNormalizedColors().blue);
+            telemetry.update();
+
+        }
 
 
         waitForStart();
@@ -231,8 +239,8 @@ public class LeftRedHigh extends LinearOpMode {
 
         pipeline.setMode(false);
 
-        //armThread.start();
-        //feedForward.start();
+        armThread.start();
+        feedForward.start();
 
         drive.addToLoggingString("originalColorRed: " + color.getNormalizedColors().red);
         drive.addToLoggingString("originalColorBlue: " + color.getNormalizedColors().blue);
@@ -247,16 +255,16 @@ public class LeftRedHigh extends LinearOpMode {
         //tankRotate(Math.PI / 4.25, 0.3);
 
         //TODO: figure out encoder val for this rotate
-        drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
+        drive.simpleMoveToPosition(250, MecDrive.MovementType.ROTATE, 0.4);
         //pipeline.normalizeToPole(0.3, 165, 5);
         //pipeline.Ynormalize(0.2, 95, 5);
 
 
-        //armUp.set(true);
+        armUp.set(true);
 
         drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.3);
 
-        /*
+
         while(armUp.get()){
 
         }
@@ -269,14 +277,14 @@ public class LeftRedHigh extends LinearOpMode {
 
         armDown.set(true);
 
-         */
+
 
         //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
 
         //tankRotate(Math.PI / 2, 0.3);
 
         //TODO: figure out this rotate
-        drive.simpleMoveToPosition(-350, MecDrive.MovementType.ROTATE, 0.4);
+        drive.simpleMoveToPosition(350, MecDrive.MovementType.ROTATE, 0.4);
         //pipeline.normalizeToPole(0.3, 82, 10);
 
         score.setGrabberPosition(0.85);
@@ -359,7 +367,7 @@ public class LeftRedHigh extends LinearOpMode {
             score.setGrabberPosition(constants.grabbing);
             //sleep(600);
 
-            /*
+
             score.moveToPosition(200, 1);
             hold.set(true);
             sleep(300);
@@ -367,10 +375,10 @@ public class LeftRedHigh extends LinearOpMode {
             drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.5);
             score.setLinkagePosition(Constants.linkageUp);
 
-             */
+
 
             //tankRotate(Math.PI / 4.35, 0.3);
-            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.4);
+            drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.4);
             //pipeline.normalizeToPole(0.3, 165, 10);
             //pipeline.Ynormalize(0.2, 92, 5);
 
@@ -380,7 +388,7 @@ public class LeftRedHigh extends LinearOpMode {
 
             drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
 
-            /*
+
             while(armUp.get()){
 
             }
@@ -390,12 +398,12 @@ public class LeftRedHigh extends LinearOpMode {
 
             armDown.set(true);
 
-             */
+
 
             //drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
 
             //tankRotate(Math.PI / 2, 0.3);
-            drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.4);
+            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.4);
             //pipeline.normalizeToPole(0.3, 42, 5);
 
         }
