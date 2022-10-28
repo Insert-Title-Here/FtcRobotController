@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -20,15 +21,25 @@ public class FirstTeleOp extends LinearOpMode {
     ScoringSystem score;
     Thread liftThread;
     AtomicBoolean pause;
-
+    BNO055IMU imu;
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.7;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        double initialAngle;
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
 
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         pause = new AtomicBoolean();
@@ -41,7 +52,6 @@ public class FirstTeleOp extends LinearOpMode {
 
         //Open
         score.setClawPosition(0);
-
         //TODO: Test below Out
         //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
 
@@ -70,38 +80,49 @@ public class FirstTeleOp extends LinearOpMode {
                         score.goToPosition(0, 0.4);
                     }
 
-                    if (gamepad1.dpad_left) {
-                        //low cone
-                        score.goToPosition(970, 1);
-                        score.setPower(0.08);
-                    }
+
 
                     if (gamepad1.right_stick_button) {
                         //high cone
-                        score.goToPosition(2330, 1);
+                        score.goToPosition(2330, 0.95);
                         score.setPower(0.08);
                     }
                     if(gamepad1.left_stick_button){
                         //medium cone
-                        score.goToPosition(1660, 1);
+                        score.goToPosition(1660, 0.95);
                         score.setPower(0.08);
                     }
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
+
                         if(0.22 < score.getClawPosition() && score.getClawPosition() < 0.26){
+                            if(score.getEncoderPosition() > 2000){
+                                score.goToPosition(score.getEncoderPosition() - 300, 0.5);
+                            }
                             score.setClawPosition(0);
-                            FirstTeleOp.this.sleep(200);
+                            try {
+                                Thread.sleep(800);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             score.goToPosition(0, 0.4);
+
                         }else{
+
                             if(score.getEncoderPosition() < 200){
-                                score.setClawPosition(0.24);
-                                FirstTeleOp.this.sleep(400);
-                                score.goToPosition(50, 0.35);
+                                score.setClawPosition(0.25);
+                                try {
+                                    Thread.sleep(300);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                score.goToPosition(120, 0.35);
                             }else{
-                                score.setClawPosition(0.24);
+                                score.setClawPosition(0.25);
                             }
 
                         }
                         //2220
+
                         pause.set(false);
                     }else if(gamepad1.right_trigger < 0.1){
                         pause.set(true);
@@ -113,7 +134,7 @@ public class FirstTeleOp extends LinearOpMode {
 
         waitForStart();
         liftThread.start();
-
+        int stackHeight = 320;
         while(opModeIsActive()){
             double gamepadX = gamepad1.left_stick_x;
             double gamepadY = gamepad1.left_stick_y;
@@ -129,19 +150,28 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad1.left_trigger > 0.1) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }else {
-                if(score.getEncoderPosition() > 900){
-                    drive.setPower(new Vector2D(gamepadX * 0.5, gamepadY * 0.5), gamepad1.right_stick_x * 0.5, false);
+                if(score.getEncoderPosition() > 1000){
+                    drive.setPower(new Vector2D(gamepadX * 0.4, gamepadY * 0.4), gamepad1.right_stick_x * 0.4, false);
                 }else{
                     drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
 
-
+            if (gamepad1.dpad_left) {
+                //turn test
+                drive.turnToInitialPosition();
+            }
             if(gamepad1.a){
-               score.goToPosition(score.getEncoderPosition() - 5, 0.7);
+                if((stackHeight - 40) > 0){
+                    score.goToPosition(stackHeight - 40, 0.7);
+                }
+               stackHeight = stackHeight - 40;
             }
             if(gamepad1.y){
-                score.goToPosition(20, 0.7);
+                score.goToPosition(320, 0.7);
+                if(stackHeight != 320){
+                    stackHeight += 40;
+                }
             }
             if(gamepad1.options){
                 score.resetLiftEncoder();
@@ -159,6 +189,9 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
+            telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
+            telemetry.update();
+            telemetry.update();
             telemetry.update();
 
 

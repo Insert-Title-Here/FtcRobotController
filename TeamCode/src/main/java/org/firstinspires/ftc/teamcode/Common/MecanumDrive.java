@@ -158,6 +158,7 @@ public class MecanumDrive {
         setPower(0, 0, 0, 0);
 
     }
+    //TODO: Needs Testing
     public void turn(double radians, double power){
         double initialAngle = imu.getAngularOrientation().firstAngle;
         while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
@@ -170,16 +171,18 @@ public class MecanumDrive {
             }
         }
     }
-
-    //TODO: when auto intializes(put this in auto), set current angle/imu to zero degrees/radians, then right before scoreing cone, turn robot to zero degrees
-    public void turnToInitialPosition(double initialRadians){
-        while(!(Math.abs(imu.getAngularOrientation().firstAngle) == Math.abs(initialRadians))){
-            if(initialRadians > 0){
+    //TODO: Needs Testing
+    public void turnToInitialPosition(){
+        while((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005){
+            double radians = imu.getAngularOrientation().firstAngle;
+            if(radians > 0.01){
                 //turn right # of radians
                 setPower(0.4, -0.4, 0.4, -0.4);
-            }else{
+            }else if(radians < -0.01){
                 //turn left # of radians
                 setPower(-0.4, 0.4, -0.4, 0.4);
+            }else{
+                break;
             }
         }
     }
