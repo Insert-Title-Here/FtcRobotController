@@ -255,7 +255,7 @@ public class LeftRedHigh extends LinearOpMode {
         //tankRotate(Math.PI / 4.25, 0.3);
 
         //TODO: figure out encoder val for this rotate
-        drive.simpleMoveToPosition(250, MecDrive.MovementType.ROTATE, 0.4);
+        drive.simpleMoveToPosition(230, MecDrive.MovementType.ROTATE, 0.4);
         //pipeline.normalizeToPole(0.3, 165, 5);
         //pipeline.Ynormalize(0.2, 95, 5);
 
@@ -284,7 +284,7 @@ public class LeftRedHigh extends LinearOpMode {
         //tankRotate(Math.PI / 2, 0.3);
 
         //TODO: figure out this rotate
-        drive.simpleMoveToPosition(350, MecDrive.MovementType.ROTATE, 0.4);
+        drive.simpleMoveToPosition(370, MecDrive.MovementType.ROTATE, 0.4);
         //pipeline.normalizeToPole(0.3, 82, 10);
 
         score.setGrabberPosition(0.85);
@@ -293,10 +293,10 @@ public class LeftRedHigh extends LinearOpMode {
 
 
 
-        /*
+
 
         //Dont know if need to check multiple time
-        while(color.getNormalizedColors().red < 0.6 && color.getNormalizedColors().blue < 0.65){
+        while(color.getNormalizedColors().red < 0.38 && color.getNormalizedColors().blue < 0.8){
 
             drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONALLESS);
             telemetry.addData("blue", color.getNormalizedColors().blue);
@@ -306,7 +306,7 @@ public class LeftRedHigh extends LinearOpMode {
 
         drive.simpleBrake();
 
-         */
+
 
 
 
@@ -322,12 +322,11 @@ public class LeftRedHigh extends LinearOpMode {
 
             //TODO: Logic doesnt work
             if(i != 0){
-                //score.setLinkagePosition(0.12);
 
-                /*drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONAL);
 
                 while(color.getNormalizedColors().red < 0.23){
 
+                    drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONAL);
                     drive.addToLoggingString("ColorRed: " + color.getNormalizedColors().red);
                     drive.addToLoggingString("ColorBlue: " + color.getNormalizedColors().blue);
                     drive.addToLoggingString("");
@@ -340,7 +339,7 @@ public class LeftRedHigh extends LinearOpMode {
 
 
                 drive.simpleBrake();
-*/
+
 
 
                 drive.simpleMoveToPosition(60, MecDrive.MovementType.STRAFE, 0.3);

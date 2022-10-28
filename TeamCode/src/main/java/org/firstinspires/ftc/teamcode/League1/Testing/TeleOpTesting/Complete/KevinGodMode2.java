@@ -130,7 +130,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
 
                         try {
-                            sleep(300);
+                            sleep(600);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -322,9 +322,9 @@ public class KevinGodMode2 extends LinearOpMode {
 
                         //Change the speed of x servo rotation
                     } else if (gamepad2.dpad_right && previousRight != gamepad2.dpad_right) {
-                        systems.setXCapSpeedDivisor(7);
+                        systems.setXCapSpeedDivisor(10);
                     } else if (gamepad2.dpad_left && previousLeft != gamepad2.dpad_left) {
-                        systems.setXCapSpeedDivisor(4);
+                        systems.setXCapSpeedDivisor(7);
                     }
 
 

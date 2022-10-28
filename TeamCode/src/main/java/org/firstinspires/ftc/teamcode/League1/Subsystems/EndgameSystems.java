@@ -27,7 +27,7 @@ public class EndgameSystems {
     private CRServo capstoneExtension;
     private boolean isBlue;
 
-    public double xCapSpeedDiv = 7;
+    public double xCapSpeedDiv = 10;
     private double yCapSpeed = -0.15;
 
 
