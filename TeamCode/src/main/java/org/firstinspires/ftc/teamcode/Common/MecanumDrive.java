@@ -160,8 +160,15 @@ public class MecanumDrive {
     }
     //TODO: Needs Testing
     public void turn(double radians, double power){
+        // will be negative 1 or posiive 1
+        double radian = radians / Math.abs(radians);
         double initialAngle = imu.getAngularOrientation().firstAngle;
         while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
+            if(Math.abs(imu.getAngularOrientation().firstAngle) == 3.14159){
+                radians = 3.14159-Math.abs(initialAngle);
+                //if negative, will give negative value
+                radians *= radian;
+            }
             if(radians > 0){
                 //turn right # of radians
                 setPower(power, -power, power, -power);
