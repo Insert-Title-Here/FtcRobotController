@@ -5,6 +5,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -45,10 +46,11 @@ public class ContourMultiScore extends OpenCvPipeline {
         // detects edges
         Imgproc.Canny(contourMat, contourMat, 100, 300);
 
+
         //contours
         Imgproc.findContours(contourMat, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.drawContours(contourMat, contours, -1, new Scalar(0, 255, 255), 2, Imgproc.LINE_8,
-                hierarchy, 2, new Point());
+//        Imgproc.drawContours(contourMat, contours, -1, new Scalar(0, 255, 255), 2, Imgproc.LINE_8,
+//                hierarchy, 2, new Point());
 
         // loop through contours to find max
         int indexOfMax = 0;
@@ -64,16 +66,25 @@ public class ContourMultiScore extends OpenCvPipeline {
         //draws largest contour
         Imgproc.drawContours(contourMat, contours, indexOfMax, new Scalar(255, 255, 0), 2, Imgproc.LINE_8,
                 contourMat, 2, new Point());
+        Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
+        perWidth = boundRect.width;
+
 /*
         int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
         perWidth =
 */
-                //gets the moments of the contour in question ...idk how
+        //gets the moments of the contour in question ...idk how
         M = Imgproc.moments(contours.get(indexOfMax));
         // gets x and y of centroid
         cX = (int)(M.get_m10() / M.get_m00());
         cY = (int) (M.get_m01() / M.get_m00());
 
+/*
+        // another method of finding center of contour
+        Rect boundRect = Imgproc.boundingRect(contour);
+        double centerX = boundRect.x + (boundRect.width / 2)
+        double centerY = boundRect.y + (boundRect.height / 2)
+*/
         //draws circle of centroid
         Imgproc.circle(contourMat, new Point(cX, cY), 4, new Scalar(255,49,0,255), 4);
 
@@ -81,9 +92,13 @@ public class ContourMultiScore extends OpenCvPipeline {
 
         //movement if robot isn't centered to pole
         if (cX < 160) {
-            // turn to the right
+            while (cX < 160) {
+                // turn to the right
+            }
         } else if (cX > 160) {
-            // turn to the left
+            while (cX > 160) {
+                // turn to the left
+            }
         } else { // cX must equal to 160
             // move forward until close enough
         }

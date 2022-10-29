@@ -4,13 +4,11 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
-import java.util.Formattable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp
@@ -95,7 +93,7 @@ public class FirstTeleOp extends LinearOpMode {
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
 
                         if(0.22 < score.getClawPosition() && score.getClawPosition() < 0.26){
-                            if(score.getEncoderPosition() > 2000){
+                            if(score.getEncoderPosition() > 1500){
                                 score.goToPosition(score.getEncoderPosition() - 300, 0.5);
                             }
                             score.setClawPosition(0);
@@ -159,18 +157,19 @@ public class FirstTeleOp extends LinearOpMode {
 
             if (gamepad1.dpad_left) {
                 //turn test
-                drive.turnToInitialPosition();
+                //drive.turnToInitialPosition();
+                drive.turn(1.57, 0.5);
             }
             if(gamepad1.a){
-                if((stackHeight - 40) > 0){
-                    score.goToPosition(stackHeight - 40, 0.7);
+                if((stackHeight - 30) > 0){
+                    score.goToPosition(stackHeight - 30, 0.7);
                 }
-               stackHeight = stackHeight - 40;
+               stackHeight = stackHeight - 30;
             }
             if(gamepad1.y){
                 score.goToPosition(320, 0.7);
                 if(stackHeight != 320){
-                    stackHeight += 40;
+                    stackHeight += 30;
                 }
             }
             if(gamepad1.options){

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -22,12 +20,11 @@ public class BlueLeftHigh extends LinearOpMode {
     Thread liftThread;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
-    BNO055IMU imu;
+//    BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double initialRadians;
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+/*/        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
@@ -37,6 +34,8 @@ public class BlueLeftHigh extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+ */
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
@@ -82,11 +81,10 @@ public class BlueLeftHigh extends LinearOpMode {
         };
 
 
-        initialRadians = imu.getAngularOrientation().firstAngle;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
-//        webcam.stopStreaming();
+        webcam.stopStreaming();
         liftThread.start();
         blueLeft();
     }
@@ -98,10 +96,10 @@ public class BlueLeftHigh extends LinearOpMode {
         score.goToPosition(100, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1109, 1060), "forward");
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1159, 1200), "forward");
 
         //strafe right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1854, -1740, -1820, 1910), "strafe right");
+        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1754, -1640, -1800, 1710), "strafe right");
         sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -109,7 +107,7 @@ public class BlueLeftHigh extends LinearOpMode {
         // move arm max
         score.goToPosition(2340, 0.85);
         cont.set(true);
-        drive.goToPosition( 0.3, 0.3, 0.3, 0.3, avgPosition(200, 80, 98, 100), "move to pole");
+        drive.goToPosition( 0.3, 0.3, 0.3, 0.3, avgPosition(100, 80, 98, 100), "move to pole");
         sleep(2000);
         score.setClawPosition(0);
         sleep(300);
@@ -123,7 +121,7 @@ public class BlueLeftHigh extends LinearOpMode {
 
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-3007,2941,3226,-3036), "strafe left (more left)");
+            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-4007,2941,3226,-3036), "strafe left (more left)");
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
@@ -132,7 +130,7 @@ public class BlueLeftHigh extends LinearOpMode {
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
 
         }
-        drive.turnToInitialPosition(0.0);
+        //drive.turnToInitialPosition();
 
         /*
         //1 (far right) (general code)
@@ -154,33 +152,10 @@ public class BlueLeftHigh extends LinearOpMode {
 
     */
         score.setClawPosition(0);
-        sleep(500);
+
     }
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
-    /*
-    //TODO: check if camera angle works
-    private class DetectionAlgorithm extends OpenCvPipeline {
-        Mat original;
-        Mat changed;
-
-        @Override
-        public Mat processFrame(Mat input) {
-            input.copyTo(original);
-            changed = new Mat();
-            if(original.empty()) {
-                return input;
-            }
-            // cyan magenta yellow
-            Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
-            // magenta 255, 0, 255
-            Core.inRange(changed, new Scalar(240, 0 ,240), new Scalar(255, 0, 255), changed);
-            return null;
-        }
-
-
-    }
-    */
 
 }
