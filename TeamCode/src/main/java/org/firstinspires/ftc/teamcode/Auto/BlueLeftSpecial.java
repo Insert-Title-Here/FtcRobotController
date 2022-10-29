@@ -26,7 +26,6 @@ public class BlueLeftSpecial extends LinearOpMode {
     BNO055IMU imu;
     @Override
     public void runOpMode() throws InterruptedException {
-        double initialRadians;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -81,7 +80,6 @@ public class BlueLeftSpecial extends LinearOpMode {
         };
         //TRY SETTING THE COMMANDS INSIDE THE THREAD AND SEE IF IT WORKS THAT WAY
 
-        initialRadians = imu.getAngularOrientation().firstAngle;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();

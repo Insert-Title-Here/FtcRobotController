@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
@@ -164,12 +163,15 @@ public class MecanumDrive {
         double radian = radians / Math.abs(radians);
         double initialAngle = imu.getAngularOrientation().firstAngle;
         while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
+
             if(Math.abs(imu.getAngularOrientation().firstAngle) == 3.14159){
                 radians = 3.14159-Math.abs(initialAngle);
                 //if negative, will give negative value
                 radians *= radian;
             }
-            if(radians > 0){
+
+            if(radians < 0){
+
                 //turn right # of radians
                 setPower(power, -power, power, -power);
             }else{
@@ -180,18 +182,29 @@ public class MecanumDrive {
     }
     //TODO: Needs Testing
     public void turnToInitialPosition(){
+        double startingRad = imu.getAngularOrientation().firstAngle;
         while((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005){
             double radians = imu.getAngularOrientation().firstAngle;
-            if(radians > 0.01){
+            if(!(0 > radians && radians < 0.01)){
                 //turn right # of radians
-                setPower(0.4, -0.4, 0.4, -0.4);
-            }else if(radians < -0.01){
+                setPower(0.2, -0.2, 0.2, -0.2);
+            }else if(!(-0.01 < radians && radians > 0)){
                 //turn left # of radians
-                setPower(-0.4, 0.4, -0.4, 0.4);
+                setPower(-0.2, 0.2, -0.2, 0.2);
             }else{
                 break;
             }
         }
+        /*
+        if(startingRad > 0){
+            turn(-0.05,0.5);
+        }else if(startingRad < 0){
+            turn(0.05,0.5);
+        }else{
+            //nothing
+        }
+
+         */
     }
     public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action){
         //fl fr bl br

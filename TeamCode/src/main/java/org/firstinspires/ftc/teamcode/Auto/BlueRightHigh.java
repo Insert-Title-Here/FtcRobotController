@@ -27,7 +27,6 @@ public class BlueRightHigh extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double initialRadians;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -89,7 +88,6 @@ public class BlueRightHigh extends LinearOpMode {
         };
         //TRY SETTING THE COMMANDS INSIDE THE THREAD AND SEE IF IT WORKS THAT WAY
 
-        initialRadians = imu.getAngularOrientation().firstAngle;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -110,10 +108,10 @@ public class BlueRightHigh extends LinearOpMode {
         score.goToPosition(100, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1088, 1066), "forward");
-
+        drive.goToPosition(0.4, 0.4,  0.4, 0.4, avgPosition(1000, 1000, 1059, 1000), "forward");
+        //drive.turnToInitialPosition();
         //strafe left
-        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1954, 1686, 1820, -1987), "strafe right");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-1854, 1640, 2160, -1710), "strafe left");
         sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -121,14 +119,15 @@ public class BlueRightHigh extends LinearOpMode {
         // move arm max
         score.goToPosition(2340, 0.85);
         cont.set(true);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 100, 98, 87), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 80, 98, 100), "move to pole");
         sleep(1000);
 
 
+        score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(0);
         sleep(300);
         score.setClawPosition(0.24);
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-30, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
         score.goToPosition(0, 0.3);
@@ -144,13 +143,13 @@ public class BlueRightHigh extends LinearOpMode {
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,600), "strafe right");
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
             drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
         } else {
             // move to right
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(3035,-3117,-3114,3226), "strafe right (more right)");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(4035,-3117,-3114,3226), "strafe right (more right)");
 
         }
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -22,9 +24,21 @@ public class BlueRightMedium extends LinearOpMode {
     String parkLocation;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
+    BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
@@ -93,48 +107,86 @@ public class BlueRightMedium extends LinearOpMode {
         score.goToPosition(100, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1088, 1066), "forward");
-
-        //strafe left
-        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-558, 590, 600, -559), "strafe left");
+        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1346, 1263, 1321, 1206), "forward");
+        // turning to left --> -540, 527, -577, 566
+        double radians = 3.14159 / 4;
+        drive.turn(radians, 0.3);
         sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
 
-        // move arm max
-        score.goToPosition(2340, 0.85);
+        // move arm up
+        score.goToPosition(1660, 0.85);
         cont.set(true);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(95, 100, 98, 87), "move to pole");
+        // move to pole
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-558, 590, 600, -559), "forward");
         sleep(1000);
 
-
+        score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(0);
         sleep(300);
-        score.setClawPosition(0.24);
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -111, -98), "move back from pole");
+
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-558, 590, 600, -559), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
         score.goToPosition(0, 0.3);
+        radians = -3.14159 / 4;
+        // turns back forward
+        drive.turn(radians, 0.3);
+        // moves forward 1 square (perpendicular to cone stack)
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(980, 950, 1016, 937), "move forward a square");
+        // turn toward cone stack (90 degrees)
+        radians = -3.14159 / 2;
+        drive.turn(radians, 0.3);
+
+        // position of highest cone in stack
+        score.goToPosition(320, 0.4);
+        // color sensor movement forward (tape) if not using encoder based
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(900, 900, 1016, 1000), "move forward a square");
+        // grab and lift
+        score.setClawPosition(0);
+        score.goToPosition(600, 0.4);
+        //move backwards a bit
+        drive.goToPosition(-0.4, -0.4, -0.4, -0.4, avgPosition(-500, -500, -500, -500), "move backwards a bit");
+        // turn 180
+        drive.turn(3.14159, 0.3);
+        // move forward a bit more
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(500, 500, 500, 500), "move forward some");
+        // turn left towards medium cone
+        radians = 3.14159 / 4;
+        drive.turn(radians, 0.3);
+        // move arm up
+        score.goToPosition(1660, 0.85);
+        cont.set(true);
+        // move to pole
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-558, 590, 600, -559), "forward");
+        sleep(1000);
+
+        score.goToPosition(score.getEncoderPosition()-300, 0.4);
+        score.setClawPosition(0);
         sleep(300);
 
-        //1 (far left) (general code)
-        // drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
-        // sleep(50);
-        //turn right a little(straighten out)
-        // drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn straight");
-        //sleep(50);
-        //drive forward a little
-        //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
+        // move back from pole
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-558, 590, 600, -559), "move back from pole");
 
+        // lowers arm after scoring first cone
+        cont.set(false);
+        score.goToPosition(0, 0.3);
+
+        //turn
+        radians = -3.14159 / 4;
+        drive.turn(radians, 0.3);
+
+        //park (only have to move forward or backwards...currently in center position (cyan)
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left TODO: measure drive encoder values
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,750), "strafe right");
+            drive.goToPosition(0.3, 0.3, -0.3, 0.3, avgPosition(1000,1000,900,900), "move forward");
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center TODO: measure drive encoder values
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
+//            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
         } else {
             // move to right TODO: measure drive encoder values
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(3035,-3117,-3114,3226), "strafe right (more right)");
+            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-1000,-1000,-1000,1000), "move backwards");
 
         }
 
