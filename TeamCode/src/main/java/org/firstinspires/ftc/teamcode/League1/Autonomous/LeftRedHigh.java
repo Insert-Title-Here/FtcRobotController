@@ -298,7 +298,7 @@ public class LeftRedHigh extends LinearOpMode {
         //Dont know if need to check multiple time
         while(color.getNormalizedColors().red < 0.38 && color.getNormalizedColors().blue < 0.8){
 
-            drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONALLESS);
+            drive.setPowerAuto(0.4, MecDrive.MovementType.LDIAGONALLESS);
             telemetry.addData("blue", color.getNormalizedColors().blue);
             telemetry.addData("red", color.getNormalizedColors().red);
             telemetry.update();
@@ -326,7 +326,7 @@ public class LeftRedHigh extends LinearOpMode {
 
                 while(color.getNormalizedColors().red < 0.23){
 
-                    drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONAL);
+                    drive.setPowerAuto(0.4, MecDrive.MovementType.LDIAGONAL);
                     drive.addToLoggingString("ColorRed: " + color.getNormalizedColors().red);
                     drive.addToLoggingString("ColorBlue: " + color.getNormalizedColors().blue);
                     drive.addToLoggingString("");

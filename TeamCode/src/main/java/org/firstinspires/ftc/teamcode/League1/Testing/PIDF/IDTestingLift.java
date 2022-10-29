@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.League1.Testing;
+package org.firstinspires.ftc.teamcode.League1.Testing.PIDF;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class IDTesting extends LinearOpMode {
+public class IDTestingLift extends LinearOpMode {
     Thread idController;
     AtomicBoolean hold;
     ScoringSystem2 score;
@@ -78,7 +78,7 @@ public class IDTesting extends LinearOpMode {
                             telemetry.addData("leftIntegral", leftIntegralSum);
 
 
-                            //TODO: look at telemetry and see if we can have new bound
+                            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
                             if(leftIntegralSum > 20000){
                                 leftIntegralSum = 20000;
                             }else if(leftIntegralSum < -20000){

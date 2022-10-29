@@ -39,7 +39,8 @@ public class MecDrive {
         ROTATE,
         LDIAGONAL,
         RDIAGONAL,
-        RDIAGONALLESS
+        RDIAGONALLESS,
+        LDIAGONALLESS
     }
 
     /*
@@ -393,7 +394,7 @@ public class MecDrive {
     private double D = 0;
     private double F = 0;
 
-    double integralSumLimit = 0.3;
+    double integralSumLimit = 1000;
 
     /**
      *
@@ -678,6 +679,13 @@ public class MecDrive {
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+    public void coast() {
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
+
 
     /*
     public synchronized void driveAuto(double desiredVelocity, int tics, MecanumDriveTrain.MovementType movement){
@@ -762,6 +770,9 @@ public class MecDrive {
         }else if(movement == MecDrive.MovementType.RDIAGONALLESS){
             //setPower(0, power, power, 0);
             setPower(power, power/1.35, power/1.35, power);
+        }else if(movement == MecDrive.MovementType.LDIAGONALLESS){
+            //setPower(0, power, power, 0);
+            setPower(power/1.35, power, power, power/1.35);
         }
         return power;
     }
