@@ -271,7 +271,7 @@ public class MecDrive {
 
     }
 
-    private double avgPos(){
+    public double avgPos(){
         return (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition())
                 + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
     }
@@ -763,7 +763,7 @@ public class MecDrive {
         }else if(movement == MecDrive.MovementType.ROTATE){
             setPower(power, -power, power, -power);
         }else if(movement == MecDrive.MovementType.LDIAGONAL){
-            setPower(power, 0, 0, power);
+            setPower(0, power, power,0);
         }else if(movement == MecDrive.MovementType.RDIAGONAL){
             //setPower(0, power, power, 0);
             setPower(power, 0, 0, power);

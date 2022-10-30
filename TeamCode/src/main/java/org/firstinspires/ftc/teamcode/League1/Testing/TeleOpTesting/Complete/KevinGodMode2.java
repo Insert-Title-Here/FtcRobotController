@@ -119,7 +119,7 @@ public class KevinGodMode2 extends LinearOpMode {
                         }
 
                         try {
-                            sleep(300);
+                            sleep(600);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -130,7 +130,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
 
                         try {
-                            sleep(600);
+                            sleep(300);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -302,9 +302,9 @@ public class KevinGodMode2 extends LinearOpMode {
 
                         //Fine tune with left and right bumper
                     } else if (gamepad2.right_bumper) {
-                        systems.setCapstoneExtensionPower(0.5);
+                        systems.setCapstoneExtensionPower(0.25);
                     } else if (gamepad2.left_bumper) {
-                        systems.setCapstoneExtensionPower(-0.5);
+                        systems.setCapstoneExtensionPower(-0.25);
                     } else{
                         systems.setCapstoneExtensionPower(0);
                     }

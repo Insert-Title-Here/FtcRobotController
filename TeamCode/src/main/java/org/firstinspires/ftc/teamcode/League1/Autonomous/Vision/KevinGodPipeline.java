@@ -129,19 +129,19 @@ public class KevinGodPipeline extends OpenCvPipeline {
             double countCb = Core.mean(temp.submat(MIDDLE)).val[0];
 
             // Telemetry
-            telemetry.addData("countY", countY);
+            /*telemetry.addData("countY", countY);
             telemetry.addData("countCr", countCr);
             telemetry.addData("countCb", countCb);
-
+*/
             // Check if certain channels are within certain ranges to determine color
             if(countY > 100 && countCb < 100) {
-                telemetry.addData("Color", "Yellow");
+                telemetry.addData("Color", "Yellow - Left");
                 position = ParkPos.LEFT;
             } else if(countCr > 200 && countCb > 200) {
-                telemetry.addData("Color", "Magenta");
+                telemetry.addData("Color", "Magenta - Right");
                 position = ParkPos.RIGHT;
             } else {
-                telemetry.addData("Color", "Cyan");
+                telemetry.addData("Color", "Cyan - Center ");
                 position = ParkPos.CENTER;
             }
 
@@ -235,9 +235,9 @@ public class KevinGodPipeline extends OpenCvPipeline {
             }
 
             // Telemetry stuff
-            telemetry.addData("Contour X Pos", longestContourX);
+            /*telemetry.addData("Contour X Pos", longestContourX);
             telemetry.update();
-
+*/
             // Clear lists
             contourLengths.clear();
             xList.clear();
@@ -267,18 +267,37 @@ public class KevinGodPipeline extends OpenCvPipeline {
         return position;
     }
 
-    public void normalizeToPole(double power, int target, int tolerance) {
+    public int normalizeToPole(double power, int target, int tolerance) {
         int xMax = target + tolerance;
         int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getPolePosition();
+
+        if(startPolePosition < xMax){
+            power *= -1;
+        }
+
         while(getPolePosition() > xMax || getPolePosition() < xMin) {
-            if(getPolePosition() > xMax) {
+            /*if(getPolePosition() > xMax) {
                 drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
             } else {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }
+            }*/
+
+            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+        }
+        drive.simpleBrake();
+
+
+        if(getPolePosition() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
         }
 
-        drive.simpleBrake();
+        return (int)(startPos - drive.avgPos());
+
+
+
     }
 
     public void Ynormalize(double power, int target, int tolerance){
