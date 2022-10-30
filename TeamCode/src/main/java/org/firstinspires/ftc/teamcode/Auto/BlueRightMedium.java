@@ -4,8 +4,10 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Common.ColorSensor;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -24,6 +26,7 @@ public class BlueRightMedium extends LinearOpMode {
     String parkLocation;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
+    ColorSensor color;
     BNO055IMU imu;
 
     @Override
@@ -39,6 +42,7 @@ public class BlueRightMedium extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        color = new ColorSensor(hardwareMap, telemetry);
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
@@ -89,7 +93,7 @@ public class BlueRightMedium extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
+        score.setClawPosition(0.24);
         waitForStart();
         webcam.stopStreaming();
         liftThread.start();
@@ -101,7 +105,6 @@ public class BlueRightMedium extends LinearOpMode {
     public void blueRight(){
 
         //close claw
-        score.setClawPosition(0.24);
         sleep(800);
         //lift claw a little bit
         score.goToPosition(100, 0.7);
@@ -142,14 +145,8 @@ public class BlueRightMedium extends LinearOpMode {
         // position of highest cone in stack
         score.goToPosition(320, 0.4);
         // color sensor movement forward (tape) if not using encoder based
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(900, 900, 1016, 1000), "move forward a square");
-        // grab and lift
-        score.setClawPosition(0);
-        score.goToPosition(600, 0.4);
-        //move backwards a bit
-        drive.goToPosition(-0.4, -0.4, -0.4, -0.4, avgPosition(-500, -500, -500, -500), "move backwards a bit");
-        // turn 180
-        drive.turn(3.14159, 0.3);
+//        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(900, 900, 1016, 1000), "move forward a square");
+        color.findTapeGrabCone();
         // move forward a bit more
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(500, 500, 500, 500), "move forward some");
         // turn left towards medium cone

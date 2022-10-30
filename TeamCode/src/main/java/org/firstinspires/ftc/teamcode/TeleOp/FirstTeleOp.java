@@ -4,7 +4,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.vuforia.COORDINATE_SYSTEM_TYPE;
 
+import org.firstinspires.ftc.teamcode.Common.ColorSensor;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
@@ -20,6 +22,7 @@ public class FirstTeleOp extends LinearOpMode {
     Thread liftThread;
     AtomicBoolean pause;
     BNO055IMU imu;
+    ColorSensor color;
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.7;
     private final double SPRINT_LINEAR_MODIFIER = 1;
@@ -41,6 +44,7 @@ public class FirstTeleOp extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         pause = new AtomicBoolean();
+        color = new ColorSensor(hardwareMap, telemetry);
         pause.set(true);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -59,7 +63,11 @@ public class FirstTeleOp extends LinearOpMode {
                 //removed !score.isBusy() from the while statement
                 while(opModeIsActive()){
                     if(gamepad1.right_bumper){
-                        score.setPower(1);
+                        if(score.getEncoderPosition() > 2390){
+                            score.setPower(0.08);
+                        }else{
+                            score.setPower(1);
+                        }
                     }else if(gamepad1.left_bumper) {
                         if(score.getEncoderPosition() < 2){
                             score.setPower(0);
@@ -172,6 +180,10 @@ public class FirstTeleOp extends LinearOpMode {
                     stackHeight += 30;
                 }
             }
+            if(gamepad1.x){
+                //low position
+               score.goToPosition(1120, 1);
+            }
             if(gamepad1.options){
                 score.resetLiftEncoder();
             }
@@ -189,6 +201,8 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
+            telemetry.addData("blue", color.currentBlueColor());
+            telemetry.addData("red", color.currentRedColor());
             telemetry.update();
             telemetry.update();
             telemetry.update();
