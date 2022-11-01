@@ -147,8 +147,24 @@ public class BlueRightMedium extends LinearOpMode {
         score.goToPosition(320, 0.4);
         // color sensor movement forward (tape) if not using encoder based
 //        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(900, 900, 1016, 1000), "move forward a square");
-        colorTape.findTapeGrabCone();
-        // move forward a bit more
+        colorTape.findTape();
+        //go forward until...
+        while (colorCone.grabCone()) {
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4);
+        }
+        // stop driving
+        drive.setPower(0, 0, 0, 0);
+        // grab cone
+        score.setClawPosition(0.24);
+        // lift up
+        score.goToPosition(600, 0.6);
+        // backup
+        drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 200, "backwards");
+        //turn
+        radians = 3.14 * 7 / 6;
+        drive.turn(radians, 0.5); // TODO: make sure drive.turn works
+        // TODO: implement contours...find pole & distance from pole
+        // move forward some
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(500, 500, 500, 500), "move forward some");
         // turn left towards medium cone
         radians = 3.14159 / 4;

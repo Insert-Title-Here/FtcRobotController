@@ -30,22 +30,29 @@ public class ColorSensor {
         return color.red(); // if current color is really high // 177
     }
 
-    public void findTapeGrabCone() {
+    public void findTape() {
         while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
             drive.goToPosition(0, 0.8, 0, 0.8);
             if (drive.avgPosition() > 700) {
                 drive.goToPosition(0.8, 0, 0.8, 0);
             }
         }
+            telemetry.addData("red", currentRedColor());
+            telemetry.addData("blue", currentBlueColor());
+            telemetry.update();
 
-        drive.goToPosition(0.4, 0.4, 0.4, 0.4);
-        if (color.getDistance(DistanceUnit.CM) < 3) { //blue tape
-            // stop driving
-            drive.setPower(0, 0, 0, 0);
+
+    }
+
+
+
+    public boolean grabCone() {
+        if (color.getDistance(DistanceUnit.CM) < 0.3) {
             // grab cone
             score.setClawPosition(0.24);
             // lift up
             score.goToPosition(600, 0.6);
+
             // backup
             drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 200, "backwards");
             //turn
@@ -54,13 +61,10 @@ public class ColorSensor {
             //telemetry.addData("red", currentConeRedColor());
             //telemetry.addData("blue", currentConeBlueColor());
             telemetry.update();
+
+            return true;
+
         }
-
-    }
-
-
-
-    public void findCone() {
-
+        return false;
     }
 }
