@@ -33,7 +33,7 @@ public class EndgameSystems {
 
 
 
-    public EndgameSystems(HardwareMap hardwareMap){
+    public EndgameSystems(HardwareMap hardwareMap) {
         xCap = hardwareMap.crservo.get("xCap");
         yCap = hardwareMap.servo.get("yCap");
         capstoneExtension = hardwareMap.get(CRServo.class, "extension");
