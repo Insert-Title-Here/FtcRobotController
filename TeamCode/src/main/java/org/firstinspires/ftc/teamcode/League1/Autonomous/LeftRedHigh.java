@@ -220,7 +220,7 @@ public class LeftRedHigh extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipeline(telemetry, drive);
+        pipeline = new KevinGodPipeline(telemetry, drive, true);
 
         camera.setPipeline(pipeline);
 
@@ -317,7 +317,7 @@ public class LeftRedHigh extends LinearOpMode {
 
 
         //Dont know if need to check multiple time
-        while(color.red() < 67 && color.blue() < 200){
+        while(color.red() < 85 && color.blue() < 200){
 
             drive.setPower(0.45, 0, 0, 0.45);
 
@@ -343,7 +343,7 @@ public class LeftRedHigh extends LinearOpMode {
             if(i != 0){
 
 
-                while(color.red() < 67  && color.blue() < 200){
+                while(color.red() < 85  && color.blue() < 200){
 
                     drive.setPower(0.45, 0, 0, 0.45);
                     drive.addToLoggingString("ColorRed: " + color.getNormalizedColors().red);
@@ -366,7 +366,7 @@ public class LeftRedHigh extends LinearOpMode {
 
 
 
-            score.setLinkagePosition(0.795 + (i * 0.03));
+            score.setLinkagePosition(0.77 + (i * 0.03));
 
 
             while (distance.getDistance(DistanceUnit.CM) > 3) {
@@ -427,8 +427,9 @@ public class LeftRedHigh extends LinearOpMode {
                 drive.simpleMoveToPosition(-150, MecDrive.MovementType.STRAFE, 0.4);
                 drive.simpleMoveToPosition(150, MecDrive.MovementType.STRAIGHT, 0.4);
 
-                score.setGrabberPosition(0.7);
+
             }
+            score.setGrabberPosition(0.7);
 
 
             //pipeline.normalizeToPole(0.3, 42, 5);
@@ -446,10 +447,12 @@ public class LeftRedHigh extends LinearOpMode {
 
 
         if(parkPos == KevinGodPipeline.ParkPos.LEFT){
-            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 1);
+            score.setLinkagePosition(0.83);
+            drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 0.5);
+
 
         }else if(parkPos == KevinGodPipeline.ParkPos.RIGHT){
-            drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.5);
 
         }
 

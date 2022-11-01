@@ -39,9 +39,25 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int CbUpper = 130;
     public static int CbLower = 170;
 
+    // Config variables for bounding box
+    public static int topLeftXRight = 125;
+    public static int topLeftYRight = 35;
+    public static int boxWidthRight = 35;
+    public static int boxHeightRight = 60;
+
+    public static int topLeftXLeft = 135;
+    public static int topLeftYLeft = 5;
+    public static int boxWidthLeft = 35;
+    public static int boxHeightLeft = 60;
+
+    boolean left;
+
+    private Rect MIDDLE;
+
     // Define mats
     Mat ycrcb = new Mat();
     Mat temp = new Mat();
+
 
     // Define telemetry variable
     Telemetry telemetry;
@@ -68,15 +84,15 @@ public class KevinGodPipeline extends OpenCvPipeline {
         CENTER
     }
 
-    public enum PipelineMode {
-        CONTOUR,
-        SIGNAL
-    }
-
     // The rectangle/submat used to evaluate the signal color
-    static final Rect MIDDLE = new Rect(
-            new Point(125, 35),
-            new Point(160, 95)
+    static final Rect rightMIDDLE = new Rect(
+            new Point(topLeftXRight, topLeftYRight),
+            new Point(topLeftXRight + boxWidthRight, topLeftYRight + boxHeightRight)
+    );
+
+    static final Rect leftMIDDLE = new Rect(
+            new Point(topLeftXLeft, topLeftYLeft),
+            new Point(topLeftXLeft + boxWidthLeft, topLeftYLeft + boxHeightLeft)
     );
 
     // Sets default values for pipelineMode and position
@@ -99,6 +115,22 @@ public class KevinGodPipeline extends OpenCvPipeline {
         contourLengths = new ArrayList<>();
         this.telemetry = telemetry;
         this.drive = drive;
+    }
+
+
+    public KevinGodPipeline(Telemetry telemetry, MecDrive drive, boolean left){
+        // Set up lists and telemetry
+        xList = new ArrayList<>();
+        yList = new ArrayList<>();
+        contourLengths = new ArrayList<>();
+        this.telemetry = telemetry;
+        this.drive = drive;
+        this.left = left;
+        if(left) {
+            MIDDLE = leftMIDDLE;
+        } else {
+            MIDDLE = rightMIDDLE;
+        }
     }
 
     @Override
