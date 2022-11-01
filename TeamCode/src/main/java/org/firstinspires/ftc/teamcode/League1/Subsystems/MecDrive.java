@@ -229,7 +229,12 @@ public class MecDrive {
             double derivative = (radError - previousError)/(currentTime - startTime);
             telemetry.addData("Derivative", derivative);
 
-            setPowerAuto(((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative)), MecDrive.MovementType.ROTATE);
+
+            //TODO: see if we should multiply by power at the end
+            double newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative)) * power;
+            setPowerAuto(newPower, MecDrive.MovementType.ROTATE);
+
+            telemetry.addData("Power", newPower);
 
             startTime = currentTime;
             previousError = radError;
@@ -729,6 +734,41 @@ public class MecDrive {
             double blPower = (pidf.p * blError) + (pidf.i * blIntegralSum) + (pidf.d * blDerivative) + (pidf.f * power);
             double brPower = (pidf.p * brError) + (pidf.i * brIntegralSum) + (pidf.d * brDerivative) + (pidf.f * power);
 
+
+            //TODO: See if we need this maxing out for power
+
+            /*if(Math.abs(flPower) > Math.abs(power)){
+                if(flPower < 0){
+                    flPower = -power;
+                }else{
+                    flPower = power;
+                }
+            }
+
+            if(Math.abs(frPower) > Math.abs(power)){
+                if(frPower < 0){
+                    frPower = -power;
+                }else{
+                    frPower = power;
+                }
+            }
+
+            if(Math.abs(blPower) > Math.abs(power)){
+                if(blPower < 0){
+                    blPower = -power;
+                }else{
+                    blPower = power;
+                }
+            }
+
+            if(Math.abs(brPower) > Math.abs(power)){
+                if(brPower < 0){
+                    brPower = -power;
+                }else{
+                    brPower = power;
+                }
+            }
+*/
 
             telemetry.addData("flPower", flPower);
             telemetry.addData("frPower", frPower);
