@@ -23,13 +23,20 @@ public class AbsoluteEncoderTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        double max = 0;
+
         encoder = hardwareMap.get(AnalogInput.class, "AbsEncoder");
 
         waitForStart();
 
         while(opModeIsActive()){
+            if(encoder.getVoltage() > max) {
+                max = encoder.getVoltage();
+            }
+            telemetry.addData("Max", max);
             telemetry.addData("Encoder Voltage", encoder.getVoltage());
             telemetry.update();
         }
+        // 3.203 = max = 2pi
     }
 }
