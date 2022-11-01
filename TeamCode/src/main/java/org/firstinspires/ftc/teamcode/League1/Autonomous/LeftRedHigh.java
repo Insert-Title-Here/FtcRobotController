@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -494,6 +495,65 @@ public class LeftRedHigh extends LinearOpMode {
 
 
 
+    }
+
+
+
+    public void tankRotatePID(double radians, double power){
+
+        /*if(radians > imu.getAngularOrientation().firstAngle){
+            power *= -1;
+        }*/
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+
+        radians = wrapAngle(radians);
+        double radError = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians;
+        double previousError = radError;
+        double integralSum = 0;
+
+
+
+
+
+        while(Math.abs(radError) > 0.0001){
+
+            telemetry.addData("target", radians);
+
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+
+            double currentTime = time.seconds();
+
+            radError = currentAngle - radians;
+
+            telemetry.addData("Error", radError);
+
+            integralSum += (radError + previousError)/(currentTime - startTime);
+            double derivative = (radError - previousError)/(currentTime - startTime);
+
+            drive.setPowerAuto(((pid.p * radError) + (pid.i * integralSum) + (pid.d * derivative)), MecDrive.MovementType.ROTATE);
+
+
+        }
+
+        drive.simpleBrake();
+
+
+
+
+    }
+
+    public double wrapAngle(double angle){
+        while(angle > Math.PI){
+            angle -= (2 * Math.PI);
+        }
+
+        while(angle < -Math.PI){
+            angle += (2 * Math.PI);
+        }
+
+        return angle;
     }
 
 
