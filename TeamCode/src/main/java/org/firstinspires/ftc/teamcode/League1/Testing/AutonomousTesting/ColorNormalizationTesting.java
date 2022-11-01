@@ -52,6 +52,11 @@ public class ColorNormalizationTesting extends LinearOpMode {
             telemetry.addData("blue", color.blue());
             telemetry.addData("red", color.red());
             telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
+            telemetry.addData("fl", drive.getFLEncoder());
+            telemetry.addData("fr", drive.getFREncoder());
+            telemetry.addData("bl", drive.getBLEncoder());
+            telemetry.addData("br", drive.getBREncoder());
+
             telemetry.update();
 
 

@@ -357,6 +357,9 @@ public class KevinGodMode2 extends LinearOpMode {
             }
         };
 
+        //TODO: might need to change this
+        score.setLinkagePosition(0.79);
+
         waitForStart();
 
         //Starting Threads

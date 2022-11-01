@@ -36,13 +36,18 @@ public class PIDFTestingDrive extends LinearOpMode {
         waitForStart();
 
         //Straight, Strafe, Encoder Rotate
-        drive.goTOPIDPos(500, 0.5, MecDrive.MovementType.STRAIGHT);
-        sleep(1000);
+        drive.goTOPIDPos(1500, 1, MecDrive.MovementType.STRAIGHT);
+        //sleep(1000);
 
         //IMU Rotate
-        drive.tankRotatePID(Math.PI, 0.5);
+        //drive.tankRotatePID(Math.PI, 0.5);
 
         while(opModeIsActive()){
+            telemetry.addData("fl", drive.getFLEncoder());
+            telemetry.addData("fr", drive.getFREncoder());
+            telemetry.addData("bl", drive.getBLEncoder());
+            telemetry.addData("br", drive.getBREncoder());
+            telemetry.update();
 
         }
 

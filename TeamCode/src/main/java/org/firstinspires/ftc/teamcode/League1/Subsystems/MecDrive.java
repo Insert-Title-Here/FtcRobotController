@@ -34,7 +34,7 @@ public class MecDrive {
     private boolean isDriveOnChub = true;
     private boolean pidEnabled;
     Telemetry telemetry;
-    PIDFCoefficients pidf = new PIDFCoefficients(0.001, 0, 0, 0);
+    PIDFCoefficients pidf = new PIDFCoefficients(0.0007, 0.0001, 0.0002, 0);
     PIDCoefficients rotate = new PIDCoefficients(0.3, 0, 0);
 
 
@@ -634,9 +634,9 @@ public class MecDrive {
 
 
         //TODO: check if we need to negate any
-        int flPos = getFLEncoder();
+        int flPos = -1 * getFLEncoder();
         int frPos = getFREncoder();
-        int blPos = getBLEncoder();
+        int blPos = -1 * getBLEncoder();
         int brPos = getBREncoder();
 
         int flError = tics - flPos;
@@ -655,13 +655,13 @@ public class MecDrive {
         int brIntegralSum = 0;
 
 
-        while(flError > 2 && frError > 2 && blError > 2 && brError > 2){
+        while(flError > 2 || frError > 2 || blError > 2 || brError > 2){
             telemetry.addData("target", tics);
 
             //TODO: check if we need to negate any
-            flPos = getFLEncoder();
+            flPos = -1 * getFLEncoder();
             frPos = getFREncoder();
-            blPos = getBLEncoder();
+            blPos = -1 * getBLEncoder();
             brPos = getBREncoder();
 
             telemetry.addData("flPos", flPos);
@@ -814,8 +814,8 @@ public class MecDrive {
 
         }
 
-
-        simpleBrake();
+        setPower(0,0,0,0);
+        //simpleBrake();
 
     }
 
