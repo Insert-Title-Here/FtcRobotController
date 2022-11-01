@@ -7,14 +7,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ColorSensor {
-    ColorRangeSensor color;
+    ColorRangeSensor colorTape, colorCone;
     Telemetry telemetry;
     MecanumDrive drive;
     ScoringSystem score;
     double radians;
 
     public ColorSensor(HardwareMap hardwareMap, Telemetry telemetry) {
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        colorTape = hardwareMap.get(ColorRangeSensor.class, "color");
+        colorCone = hardwareMap.get(ColorRangeSensor.class, "color");
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         this.telemetry = telemetry;
@@ -23,48 +24,51 @@ public class ColorSensor {
 
 
     public int currentBlueColor() {
-        return color.blue(); // if current color is really high // 410
+        return colorTape.blue(); // if current color is really high // 410
     }
 
     public int currentRedColor() {
-        return color.red(); // if current color is really high // 177
+        return colorTape.red(); // if current color is really high // 177
     }
 
-    public void findTape() {
+    public int currentConeBlueColor() {
+        return colorCone.blue();
+    }
+
+    public int currentConeRedColor() {
+        return colorCone.red();
+    }
+
+
+    public void findTapeGrabCone() {
         while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
             //drive.goToPosition(0, 0.8, 0, 0.8);
-            //if (drive.avgPosition() > 700) {
-            //    drive.goToPosition(0.8, 0, 0.8, 0);
-            }
+           // if (drive.avgPosition() > 700) {
+             //   drive.goToPosition(0.8, 0, 0.8, 0);
+           // }
         }
-           // telemetry.addData("red", currentRedColor());
-            //telemetry.addData("blue", currentBlueColor());
-            //telemetry.update();
 
-
-    }
-
-
-
-    public boolean grabCone() {
-        if (color.getDistance(DistanceUnit.CM) < 0.3) {
+        //drive.goToPosition(0.4, 0.4, 0.4, 0.4);
+        if (colorCone.getDistance(DistanceUnit.CM) < 3) { //blue tape
+            // stop driving
+            drive.setPower(0, 0, 0, 0);
             // grab cone
             score.setClawPosition(0.24);
             // lift up
             score.goToPosition(600, 0.6);
-
             // backup
             drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 200, "backwards");
             //turn
             radians = 3.14 * 7 / 6;
             drive.turn(radians, 0.5); // TODO: make sure drive.turn works
-            //telemetry.addData("red", currentConeRedColor());
-            //telemetry.addData("blue", currentConeBlueColor());
+            telemetry.addData("red", currentConeRedColor());
+            telemetry.addData("blue", currentConeBlueColor());
             telemetry.update();
-
-            return true;
-
         }
-        return false;
+
+    }
+
+    public void findCone() {
+
     }
 }
