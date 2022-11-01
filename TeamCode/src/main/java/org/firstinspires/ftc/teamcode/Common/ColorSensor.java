@@ -51,8 +51,8 @@ public class ColorSensor {
             //turn
             radians = 3.14 * 7 / 6;
             drive.turn(radians, 0.5); // TODO: make sure drive.turn works
-            telemetry.addData("red", currentConeRedColor());
-            telemetry.addData("blue", currentConeBlueColor());
+            //telemetry.addData("red", currentConeRedColor());
+            //telemetry.addData("blue", currentConeBlueColor());
             telemetry.update();
         }
 

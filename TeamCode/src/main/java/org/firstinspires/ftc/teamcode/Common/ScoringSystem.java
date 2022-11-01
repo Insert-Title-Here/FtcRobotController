@@ -35,8 +35,8 @@ public class ScoringSystem {
         if (motorPosition > tics) {
             power *= -1;
         }
-        long time = System.currentTimeMillis();
-        long difference;
+       // long time = System.currentTimeMillis();
+       // long difference;
         while ((Math.abs(tics)-motorPosition) > 10) {
             //set power to zero if tics pretty high and power continually being used
             /*

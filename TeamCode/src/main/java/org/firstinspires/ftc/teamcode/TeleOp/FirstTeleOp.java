@@ -108,19 +108,35 @@ public class FirstTeleOp extends LinearOpMode {
                                 score.goToPosition(score.getEncoderPosition() - 300, 0.5);
                             }
                             score.setClawPosition(0);
-
+                            try {
+                                Thread.sleep(800);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             score.goToPosition(0, 0.4);
 
                         }else{
 
                             if(score.getEncoderPosition() < 200){
-                                score.setClawPosition(0.25);
-                                try {
-                                    Thread.sleep(300);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                                if(discontinue.get()){
+                                    score.setClawPosition(0.25);
+                                    try {
+                                        Thread.sleep(300);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    score.goToPosition(score.getEncoderPosition()+300,0.6);
+                                    discontinue.set(false);
+                                }else{
+                                    score.setClawPosition(0.25);
+                                    try {
+                                        Thread.sleep(300);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    score.goToPosition(120, 0.35);
                                 }
-                                score.goToPosition(120, 0.35);
+
                             }else{
                                 if(discontinue.get()){
                                     score.setClawPosition(0.25);
