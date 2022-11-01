@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Subsystems;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +12,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.League1.Common.OpModeWrapper;
 import org.firstinspires.ftc.teamcode.League1.Common.Point;
@@ -24,11 +29,14 @@ import java.io.PrintStream;
 public class MecDrive {
 
     private DcMotorEx fl, fr, bl, br;
+    BNO055IMU imu;
     private Robot robot;
     private boolean isDriveOnChub = true;
     private boolean pidEnabled;
     Telemetry telemetry;
-    PIDFCoefficients pidf = new PIDFCoefficients(0, 0, 0, 0);
+    PIDFCoefficients pidf = new PIDFCoefficients(0.001, 0, 0, 0);
+    PIDCoefficients rotate = new PIDCoefficients(0.3, 0, 0);
+
 
 
 
@@ -108,6 +116,45 @@ public class MecDrive {
         CorrectMotors();
     }
 
+    public MecDrive(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, boolean usingImu){
+        fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
+        fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
+        bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
+        br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
+        this.pidEnabled = pidEnabled;
+        this.telemetry = telemetry;
+
+        //robot.setShouldUpdate(false);
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //robot.setShouldUpdate(true);
+
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+
+
+        CorrectMotors();
+    }
+
+
+
     public int getFLEncoder(){
         return fl.getCurrentPosition();
     }
@@ -147,6 +194,70 @@ public class MecDrive {
         brake();
 
     }
+
+    public void tankRotatePID(double radians, double power){
+
+        /*if(radians > imu.getAngularOrientation().firstAngle){
+            power *= -1;
+        }*/
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+
+        radians = wrapAngle(radians);
+        double radError = wrapAngle(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians);
+        double previousError = radError;
+        double integralSum = 0;
+
+
+        while(Math.abs(radError) > 0.0001){
+
+            telemetry.addData("target", radians);
+
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+
+            double currentTime = time.seconds();
+
+            radError = wrapAngle(currentAngle - radians);
+            telemetry.addData("Error", radError);
+
+            integralSum += (radError + previousError)/(currentTime - startTime);
+            telemetry.addData("Integral", integralSum);
+
+            //TODO:See if we need an integral limit
+
+            double derivative = (radError - previousError)/(currentTime - startTime);
+            telemetry.addData("Derivative", derivative);
+
+            setPowerAuto(((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative)), MecDrive.MovementType.ROTATE);
+
+            startTime = currentTime;
+            previousError = radError;
+            telemetry.update();
+
+        }
+
+        simpleBrake();
+
+
+
+
+    }
+
+    private double wrapAngle(double angle){
+        while(angle > Math.PI){
+            angle -= (2 * Math.PI);
+        }
+
+        while(angle < -Math.PI){
+            angle += (2 * Math.PI);
+        }
+
+        return angle;
+    }
+
+
+
 
 
 
