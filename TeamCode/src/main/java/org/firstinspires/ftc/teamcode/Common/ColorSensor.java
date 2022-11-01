@@ -32,14 +32,14 @@ public class ColorSensor {
 
     public void findTape() {
         while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
-            drive.goToPosition(0, 0.8, 0, 0.8);
-            if (drive.avgPosition() > 700) {
-                drive.goToPosition(0.8, 0, 0.8, 0);
+            //drive.goToPosition(0, 0.8, 0, 0.8);
+            //if (drive.avgPosition() > 700) {
+            //    drive.goToPosition(0.8, 0, 0.8, 0);
             }
         }
-            telemetry.addData("red", currentRedColor());
-            telemetry.addData("blue", currentBlueColor());
-            telemetry.update();
+           // telemetry.addData("red", currentRedColor());
+            //telemetry.addData("blue", currentBlueColor());
+            //telemetry.update();
 
 
     }

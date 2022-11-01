@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Common.ColorSensor;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -152,7 +153,7 @@ public class BlueRightMedium extends LinearOpMode {
         colorTape.findTape();
         //go forward until...
         while (colorCone.grabCone()) {
-            drive.goToPosition(0.4, 0.4, 0.4, 0.4);
+            //drive.goToPosition(0.4, 0.4, 0.4, 0.4);
         }
         // stop driving
         drive.setPower(0, 0, 0, 0);
