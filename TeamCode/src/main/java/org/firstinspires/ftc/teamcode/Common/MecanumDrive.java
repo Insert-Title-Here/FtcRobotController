@@ -21,7 +21,6 @@ public class MecanumDrive {
     AtomicBoolean active;
     BNO055IMU imu;
 
-
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
     // holds data
@@ -40,8 +39,6 @@ public class MecanumDrive {
         imu.initialize(parameters);
         this.telemetry = telemetry;
         active = new AtomicBoolean();
-
-
         //TODO: Change the deviceName for each
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -70,7 +67,6 @@ public class MecanumDrive {
         br.setDirection(DcMotorSimple.Direction.FORWARD);
 
     }
-
 
     public int getFLPosition(){
         return fl.getCurrentPosition();
@@ -143,7 +139,7 @@ public class MecanumDrive {
         telemetry.addData("motorPosition", position);
         telemetry.update();
 
-        while (((Math.abs(tics)-position) > 0)) {
+        while ((Math.abs(tics)-position) > 0) {
             setPower(flPow, frPow, blPow, brPow);
             position = (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                     Math.abs(br.getCurrentPosition())) / 4;
@@ -160,22 +156,6 @@ public class MecanumDrive {
 
         setPower(0, 0, 0, 0);
 
-    }
-
-    public void goToPosition(double flPow, double frPow, double blPow, double brPow) {
-        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-
-        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        setPower(flPow, frPow, blPow, brPow);
     }
     //TODO: Needs Testing
     public void turn(double radians, double power){
@@ -305,9 +285,7 @@ public class MecanumDrive {
         return fl.getPower();
     }
 
-    public int avgPosition(){
-        return (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition()))/4;
-    }
+
 
 
     // logs string into file
