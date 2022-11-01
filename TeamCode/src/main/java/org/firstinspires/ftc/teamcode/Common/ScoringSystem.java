@@ -36,7 +36,8 @@ public class ScoringSystem {
             power *= -1;
         }
         long time = System.currentTimeMillis();
-        while (Math.abs((Math.abs(tics)-motorPosition)) > 10) {
+        long difference;
+        while ((Math.abs(tics)-motorPosition) > 10) {
             //set power to zero if tics pretty high and power continually being used
             /*
             if(motorPosition < 400){
@@ -45,6 +46,15 @@ public class ScoringSystem {
             }else{
                 liftMotor.setPower(power);
                 motorPosition = liftMotor.getCurrentPosition();
+            }
+
+
+
+            difference =  System.currentTimeMillis() - time;
+            //set power to zero if tics pretty high and power continually being used
+            if((Math.abs(difference) > 5000)){
+                liftMotor.setPower(0);
+                break;
             }
 
              */

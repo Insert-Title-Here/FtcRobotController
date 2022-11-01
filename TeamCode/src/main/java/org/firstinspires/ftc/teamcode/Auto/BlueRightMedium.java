@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.ColorSensor;
@@ -26,7 +25,8 @@ public class BlueRightMedium extends LinearOpMode {
     String parkLocation;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
-    ColorSensor color;
+    ColorSensor colorTape;
+    ColorSensor colorCone;
     BNO055IMU imu;
 
     @Override
@@ -42,7 +42,8 @@ public class BlueRightMedium extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        color = new ColorSensor(hardwareMap, telemetry);
+        colorTape = new ColorSensor(hardwareMap, telemetry);
+        colorCone = new ColorSensor(hardwareMap, telemetry);
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
@@ -146,7 +147,7 @@ public class BlueRightMedium extends LinearOpMode {
         score.goToPosition(320, 0.4);
         // color sensor movement forward (tape) if not using encoder based
 //        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(900, 900, 1016, 1000), "move forward a square");
-        color.findTapeGrabCone();
+        colorTape.findTapeGrabCone();
         // move forward a bit more
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(500, 500, 500, 500), "move forward some");
         // turn left towards medium cone

@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous
-public class BlueRightHigh extends LinearOpMode {
+public class RedRightHigh extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     AtomicBoolean cont;
@@ -63,9 +63,6 @@ public class BlueRightHigh extends LinearOpMode {
 
         telemetry.addData("position", parkLocation);
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("liftPos", score.getEncoderPosition());
-        telemetry.addData("clawPos", score.getClawPosition());
-        telemetry.addData("liftPow", score.getPower());
 
         telemetry.update();
 
@@ -101,9 +98,9 @@ public class BlueRightHigh extends LinearOpMode {
 
         //TODO: Consider whethere or not to just have the code laid out here or by just calling the method
         //If changed above, then must do for all
-        blueRight();
+        redRight();
     }
-    public void blueRight(){
+    public void redRight(){
 
         //lift claw a little bit
         score.goToPosition(100, 0.7);
@@ -112,7 +109,7 @@ public class BlueRightHigh extends LinearOpMode {
         drive.goToPosition(0.4, 0.4,  0.4, 0.4, avgPosition(1000, 1000, 1059, 1000), "forward");
         //drive.turnToInitialPosition();
         //strafe left
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-1854, 1600, 2100, -1710), "strafe left");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-1700, 1600, 2000, -1650), "strafe left");
         sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -144,13 +141,15 @@ public class BlueRightHigh extends LinearOpMode {
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,600), "strafe right");
+            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(750,-750,-750,600), "strafe right");
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
+            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
         } else {
             // move to right
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(4035,-3117,-3114,3226), "strafe right (more right)");
+            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(3035,-2117,-2114,2226), "strafe right (more right)");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, 400, "forward a little");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, 1000, "right");
 
         }
 

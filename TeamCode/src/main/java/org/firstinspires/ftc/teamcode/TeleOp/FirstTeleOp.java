@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.vuforia.COORDINATE_SYSTEM_TYPE;
 
 import org.firstinspires.ftc.teamcode.Common.ColorSensor;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
@@ -21,6 +20,7 @@ public class FirstTeleOp extends LinearOpMode {
     ScoringSystem score;
     Thread liftThread;
     AtomicBoolean pause;
+    AtomicBoolean discontinue;
     BNO055IMU imu;
     ColorSensor color;
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
@@ -44,8 +44,10 @@ public class FirstTeleOp extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
         pause = new AtomicBoolean();
+        discontinue = new AtomicBoolean();
         color = new ColorSensor(hardwareMap, telemetry);
         pause.set(true);
+        discontinue.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -54,6 +56,7 @@ public class FirstTeleOp extends LinearOpMode {
 
         //Open
         score.setClawPosition(0);
+        score.resetLiftEncoder();
         //TODO: Test below Out
         //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
 
@@ -64,9 +67,9 @@ public class FirstTeleOp extends LinearOpMode {
                 while(opModeIsActive()){
                     if(gamepad1.right_bumper){
                         if(score.getEncoderPosition() > 2390){
-                            score.setPower(0.08);
+                            score.setPower(0.1);
                         }else{
-                            score.setPower(1);
+                            score.setPower(0.6);
                         }
                     }else if(gamepad1.left_bumper) {
                         if(score.getEncoderPosition() < 2){
@@ -75,7 +78,7 @@ public class FirstTeleOp extends LinearOpMode {
                             score.setPower(-0.5);
                         }
                     }else{
-                        score.setPower(0.08);
+                        score.setPower(0.1);
                     }
                     // reset   gamepad1.dpad_down
                     // low cone, 13 in, 1209  gamenpad1.dpad_left
@@ -91,12 +94,12 @@ public class FirstTeleOp extends LinearOpMode {
                     if (gamepad1.right_stick_button) {
                         //high cone
                         score.goToPosition(2330, 0.95);
-                        score.setPower(0.08);
+                        score.setPower(0.1);
                     }
                     if(gamepad1.left_stick_button){
                         //medium cone
                         score.goToPosition(1660, 0.95);
-                        score.setPower(0.08);
+                        score.setPower(0.1);
                     }
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
 
@@ -105,11 +108,7 @@ public class FirstTeleOp extends LinearOpMode {
                                 score.goToPosition(score.getEncoderPosition() - 300, 0.5);
                             }
                             score.setClawPosition(0);
-                            try {
-                                Thread.sleep(800);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+
                             score.goToPosition(0, 0.4);
 
                         }else{
@@ -123,10 +122,21 @@ public class FirstTeleOp extends LinearOpMode {
                                 }
                                 score.goToPosition(120, 0.35);
                             }else{
-                                score.setClawPosition(0.25);
+                                if(discontinue.get()){
+                                    score.setClawPosition(0.25);
+                                    try {
+                                        Thread.sleep(300);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    score.goToPosition(score.getEncoderPosition()+300,0.6);
+                                    discontinue.set(false);
+                                }else{
+                                    score.setClawPosition(0.25);
+                                }
                             }
-
                         }
+
                         //2220
 
                         pause.set(false);
@@ -169,15 +179,18 @@ public class FirstTeleOp extends LinearOpMode {
                 drive.turn(1.57, 0.5);
             }
             if(gamepad1.a){
-                if((stackHeight - 30) > 0){
+                discontinue.set(true);
+                if((score.getEncoderPosition() - 30) > 0){
                     score.goToPosition(stackHeight - 30, 0.7);
+                    stackHeight = stackHeight - 30;
                 }
-               stackHeight = stackHeight - 30;
             }
             if(gamepad1.y){
-                score.goToPosition(320, 0.7);
+                discontinue.set(true);
                 if(stackHeight != 320){
                     stackHeight += 30;
+                }else{
+                    score.goToPosition(320, 0.7);
                 }
             }
             if(gamepad1.x){
