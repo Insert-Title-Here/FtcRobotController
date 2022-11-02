@@ -74,7 +74,6 @@ public class BlueRightMedium extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
         score.setClawPosition(0.24);
         waitForStart();
         webcam.stopStreaming();

@@ -47,7 +47,6 @@ public class FirstTeleOp extends LinearOpMode {
         telemetry.update();
         //score = new ScoringSystem(hardwareMap);
         //Open
-        score.setClawPosition(0);
         //TODO: Test below Out
         //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
         liftThread = new Thread(){
@@ -145,6 +144,7 @@ public class FirstTeleOp extends LinearOpMode {
                 }
             }
         };
+        score.setClawPosition(0);
         waitForStart();
         liftThread.start();
         int stackHeight = 300;
