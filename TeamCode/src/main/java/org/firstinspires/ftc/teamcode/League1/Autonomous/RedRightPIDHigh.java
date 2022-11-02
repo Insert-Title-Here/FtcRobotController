@@ -197,7 +197,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
 
-        /*WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         pipeline = new KevinGodPipeline(telemetry, drive);
@@ -221,7 +221,10 @@ public class RedRightPIDHigh extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
-         */
+        pipeline.setMode(false);
+
+
+
 
         cameraServo.setPosition(0.5);
 
@@ -231,9 +234,9 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
         waitForStart();
-        //parkPos = pipeline.getPosition();
+        parkPos = pipeline.getPosition();
 
-        pipeline.setMode(false);
+
 
         armThread.start();
         feedForward.start();
@@ -247,7 +250,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
 
-        drive.goTOPIDPos(-1600, 0.7,MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPos(-2000, 0.7,MecDrive.MovementType.STRAIGHT);
         drive.tankRotatePID(Math.PI / 4, 1);
 
         //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
@@ -288,11 +291,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
         //Dont know if need to check multiple time
-        while(color.red() < 67 && color.blue() < 200){
-
-            drive.setPower(0, 0.45, 0.45, 0);
-
-        }
+        drive.autoDiagonals(false);
 
         drive.simpleBrake();
 
@@ -312,14 +311,8 @@ public class RedRightPIDHigh extends LinearOpMode {
                 //score.setLinkagePosition(0.12);
 
 
-                while(color.red() < 67  && color.blue() < 200){
+                drive.autoDiagonals(false);
 
-
-                    drive.setPower(0, 0.45, 0.45, 0);
-                    telemetry.addData("blue", color.getNormalizedColors().blue);
-                    telemetry.addData("red", color.getNormalizedColors().red);
-                    telemetry.update();
-                }
 
 
                 drive.simpleBrake();

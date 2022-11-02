@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -28,7 +29,7 @@ public class PIDFTestingDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         constants = new Constants();
-        drive = new MecDrive(hardwareMap, true, telemetry, true);
+        drive = new MecDrive(hardwareMap, true, telemetry, hardwareMap.get(ColorRangeSensor.class, "color"));
         score = new ScoringSystem2(hardwareMap, constants, telemetry);
 
 
@@ -37,8 +38,11 @@ public class PIDFTestingDrive extends LinearOpMode {
 
         //Straight, Strafe, Encoder Rotate
         //TODO: return constants
-        drive.goTOPIDPos(-3000, 1, MecDrive.MovementType.STRAIGHT);
-        drive.goTOPIDPosAvg(3000, 1, MecDrive.MovementType.STRAIGHT);
+        //drive.goTOPIDPos(-3000, 1, MecDrive.MovementType.STRAIGHT);
+
+        drive.autoDiagonals(true);
+
+        //drive.goTOPIDPosAvg(3000, 1, MecDrive.MovementType.STRAIGHT);
         //sleep(1000);
 
         //drive.goTOPIDPos(-250, 1, MecDrive.MovementType.STRAFE);

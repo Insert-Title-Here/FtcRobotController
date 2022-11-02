@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,12 +37,13 @@ public class MecDrive {
     private boolean isDriveOnChub = true;
     private boolean pidEnabled;
     Telemetry telemetry;
+    ColorRangeSensor color;
 
     public static double P2 = 0.00075;
     public static double I2 = 0.00003;
     public static double D2 = 0.0003;
 
-    PIDFCoefficients pidf = new PIDFCoefficients(0.00075, 0.000035, 0.0003, 0);
+    PIDFCoefficients pidf = new PIDFCoefficients(0.00042, 0.0002,0.0001, 0);
     PIDCoefficients rotate = new PIDCoefficients(1, 0.00006, 0);
 
 
@@ -154,6 +156,45 @@ public class MecDrive {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+
+
+        CorrectMotors();
+    }
+
+    public MecDrive(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, ColorRangeSensor color){
+        fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
+        fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
+        bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
+        br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
+        this.pidEnabled = pidEnabled;
+        this.telemetry = telemetry;
+
+        //robot.setShouldUpdate(false);
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //robot.setShouldUpdate(true);
+
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+        this.color = color;
 
 
 
@@ -642,6 +683,8 @@ public class MecDrive {
     public void goTOPIDPos(int tics, double power, MovementType movement){
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
+        boolean countTime = true;
+
 
 
 
@@ -675,6 +718,8 @@ public class MecDrive {
             frPos = getFREncoder();
             blPos = -1 * getBLEncoder();
             brPos = getBREncoder();
+
+
 
             telemetry.addData("flPos", flPos);
             telemetry.addData("frPos", frPos);
@@ -826,8 +871,8 @@ public class MecDrive {
 
         }
 
-        //setPower(0,0,0,0);
-        simpleBrake();
+        setPower(0,0,0,0);
+        //simpleBrake();
 
     }
 
@@ -836,6 +881,7 @@ public class MecDrive {
                 + (-1 * bl.getCurrentPosition()) + br.getCurrentPosition()) / 4;
     }
 
+    /*
     public void goTOPIDPosAvg(int tics, double power, MovementType movement){
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
@@ -930,12 +976,11 @@ public class MecDrive {
                     brPower = power;
                 }
             }
-*/
 
-            telemetry.addData("power", finalPower);
+
 
             //TODO: check if we need setting power to negative (I dont think we need it)
-            /*if(tics < flPos){
+            if(tics < flPos){
                 flPower *= -1;
             }
 
@@ -950,7 +995,7 @@ public class MecDrive {
             if(tics < frPos){
                 flPower *= -1;
             }
-*/
+
 
             if(movement == MovementType.STRAIGHT) {
                 setPower(power, power, power, power);
@@ -958,7 +1003,7 @@ public class MecDrive {
                 setPower(flPower, -frPower, blPower, -brPower);
             }else if(movement == MovementType.STRAFE){
                 setPower(flPower, -frPower, -blPower, brPower);
-            }*/
+            }
 
 
             startTime = currentTime;
@@ -973,6 +1018,7 @@ public class MecDrive {
         simpleBrake();
 
     }
+    */
 
 
 
@@ -1268,6 +1314,47 @@ public class MecDrive {
 
         return Math.abs(tics - data.getMotorCurrentPosition(0)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(1)) > TIC_TOLERANCE
                 && Math.abs(tics - data.getMotorCurrentPosition(2)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(3)) > TIC_TOLERANCE;
+    }
+
+    public void autoDiagonals(boolean startGoingLeft){
+        if(startGoingLeft){
+
+            while(color.red() < 75 && color.blue() < 200) {
+                while (avgPosActual() < 400 && (color.red() < 75 && color.blue() < 200)) {
+                    setPower(0, 0.45, 0.45, 0);
+                }
+                simpleBrake();
+
+                while (avgPosActual() < 400 && (color.red() < 75 && color.blue() < 200)) {
+                    setPower(0.45, 0, 0, 0.45);
+                }
+                simpleBrake();
+            }
+
+
+        }else{
+
+            while(color.red() < 75 && color.blue() < 200) {
+                while (avgPosActual() < 400) {
+                    setPower(0.45, 0, 0, 0.45);
+                }
+                simpleBrake();
+
+                while (avgPosActual() < 400 && (color.red() < 75 && color.blue() < 200)) {
+                    setPower(0, 0.45, 0.45, 0);
+                }
+                simpleBrake();
+            }
+
+
+        }
+
+
+    }
+
+    public double avgPosActual(){
+        return (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition())
+                + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
     }
 
     public void addToLoggingString(String add){

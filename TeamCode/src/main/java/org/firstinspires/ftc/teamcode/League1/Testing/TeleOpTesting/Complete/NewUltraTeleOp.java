@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 //TODO: figure out bulk read
 @Disabled
-@TeleOp (name = "KevinGodMode")
+@TeleOp (name = "Nothing")
 public class NewUltraTeleOp extends LinearOpMode {
 
     Constants constants = new Constants();
