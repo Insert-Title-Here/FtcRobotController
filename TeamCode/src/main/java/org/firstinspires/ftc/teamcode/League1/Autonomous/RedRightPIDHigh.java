@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
+package org.firstinspires.ftc.teamcode.League1.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
@@ -24,10 +25,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
-//TODO: Need to mirror
 @Autonomous
-public class LeftBlueHigh extends LinearOpMode {
+public class RedRightPIDHigh extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
@@ -42,6 +41,8 @@ public class LeftBlueHigh extends LinearOpMode {
     OpenCvWebcam camera;
     KevinGodPipeline pipeline;
     KevinGodPipeline.ParkPos parkPos;
+
+    int normalizeDistance;
 
 
 
@@ -65,6 +66,7 @@ public class LeftBlueHigh extends LinearOpMode {
 
         color.setGain(600);
         distance.setGain(300);
+
 
         /*
         idController = new Thread(){
@@ -150,7 +152,7 @@ public class LeftBlueHigh extends LinearOpMode {
                         hold.set(false);
                         score.setLinkagePosition(Constants.linkageUp);
                         score.moveToPosition(0, 0.5);
-                        score.setLinkagePositionLogistic(Constants.linkageDown, 1000, 50);
+                        score.setLinkagePositionLogistic(Constants.linkageDown, 250, 30);
                         armDown.set(false);
                     }
 
@@ -195,7 +197,7 @@ public class LeftBlueHigh extends LinearOpMode {
 
 
 
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        /*WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         pipeline = new KevinGodPipeline(telemetry, drive);
@@ -219,13 +221,17 @@ public class LeftBlueHigh extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
+         */
+
         cameraServo.setPosition(0.5);
 
 
 
 
+
+
         waitForStart();
-        parkPos = pipeline.getPosition();
+        //parkPos = pipeline.getPosition();
 
         pipeline.setMode(false);
 
@@ -241,22 +247,22 @@ public class LeftBlueHigh extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.35);
-        //tankRotate(Math.PI / 4.25, 0.3);
+        drive.goTOPIDPos(-1600, 0.7,MecDrive.MovementType.STRAIGHT);
+        drive.tankRotatePID(Math.PI / 4, 1);
 
-        drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
-        pipeline.normalizeToPole(0.3, 165, 5);
-        pipeline.Ynormalize(0.2, 95, 5);
+        //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
+        normalizeDistance = pipeline.normalizeToPole(0.3, 165, 5);
+        //pipeline.Ynormalize(0.2, 95, 5);
 
 
         armUp.set(true);
 
-        drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.3);
+        //drive.simpleMoveToPosition(30, MecDrive.MovementType.STRAIGHT, 0.3);
         while(armUp.get()){
 
         }
         sleep(500);
-        score.setGrabberPosition(0.7);
+        score.setGrabberPosition(0.3);
         sleep(500);
         score.setGrabberPosition(constants.grabbing);
 
@@ -264,30 +270,33 @@ public class LeftBlueHigh extends LinearOpMode {
 
         //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
 
-        //tankRotate(Math.PI / 2, 0.3);
-        drive.simpleMoveToPosition(-350, MecDrive.MovementType.ROTATE, 0.4);
-        pipeline.normalizeToPole(0.3, 82, 10);
+        drive.tankRotatePID(Math.PI / 2, 1);
+        //drive.simpleMoveToPosition(-370 - normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
+        //pipeline.normalizeToPole(0.3, 82, 10);
 
         score.setGrabberPosition(0.7);
 
 
+        //drive.tankRotatePID(Math.PI/2, 1);            //pipeline.normalizeToPole(0.3, 42, 5);
+
+        drive.simpleMoveToPosition(120, MecDrive.MovementType.STRAFE, 0.4);
+        drive.goTOPIDPos(120, 1, MecDrive.MovementType.STRAIGHT);
 
 
 
-        /*
+
+
 
         //Dont know if need to check multiple time
-        while(color.getNormalizedColors().red < 0.6 && color.getNormalizedColors().blue < 0.65){
+        while(color.red() < 67 && color.blue() < 200){
 
-            drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONALLESS);
-            telemetry.addData("blue", color.getNormalizedColors().blue);
-            telemetry.addData("red", color.getNormalizedColors().red);
-            telemetry.update();
+            drive.setPower(0, 0.45, 0.45, 0);
+
         }
 
         drive.simpleBrake();
 
-         */
+
 
 
 
@@ -295,25 +304,18 @@ public class LeftBlueHigh extends LinearOpMode {
         drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.3);
 
 
-
-        score.setGrabberPosition(0.7);
-
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 2; i++) {
 
 
             //TODO: Logic doesnt work
             if(i != 0){
                 //score.setLinkagePosition(0.12);
 
-                /*drive.setPowerAuto(0.4, MecDrive.MovementType.RDIAGONAL);
 
-                while(color.getNormalizedColors().red < 0.23){
-
-                    drive.addToLoggingString("ColorRed: " + color.getNormalizedColors().red);
-                    drive.addToLoggingString("ColorBlue: " + color.getNormalizedColors().blue);
-                    drive.addToLoggingString("");
+                while(color.red() < 67  && color.blue() < 200){
 
 
+                    drive.setPower(0, 0.45, 0.45, 0);
                     telemetry.addData("blue", color.getNormalizedColors().blue);
                     telemetry.addData("red", color.getNormalizedColors().red);
                     telemetry.update();
@@ -321,21 +323,21 @@ public class LeftBlueHigh extends LinearOpMode {
 
 
                 drive.simpleBrake();
-*/
 
 
-                drive.simpleMoveToPosition(60, MecDrive.MovementType.STRAFE, 0.3);
+
+                drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.3);
 
 
             }
 
 
 
-            score.setLinkagePosition(0.73 + (i * 0.03));
+            score.setLinkagePosition(0.795 + (i * 0.03));
 
 
             while (distance.getDistance(DistanceUnit.CM) > 4.3) {
-                drive.setPowerAuto(0.35, MecDrive.MovementType.STRAIGHT);
+                drive.setPowerAuto(0.3, MecDrive.MovementType.STRAIGHT);
 
                 telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                 telemetry.update();
@@ -351,34 +353,40 @@ public class LeftBlueHigh extends LinearOpMode {
             hold.set(true);
             sleep(300);
 
-            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.5);
+            drive.goTOPIDPos(-650,  0.5, MecDrive.MovementType.STRAIGHT);
             score.setLinkagePosition(Constants.linkageUp);
 
-            //tankRotate(Math.PI / 4.35, 0.3);
-            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.4);
-            pipeline.normalizeToPole(0.3, 165, 10);
-            pipeline.Ynormalize(0.2, 92, 5);
+            drive.tankRotatePID(Math.PI / 4, 1);
+            //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
+            normalizeDistance = pipeline.normalizeToPole(0.2, 172, 3);
 
 
 
             armUp.set(true);
 
-            drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
+            drive.simpleMoveToPosition(-80, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
             }
             sleep(500);
-            score.setGrabberPosition(0.7);
+            score.setGrabberPosition(0.3);
             sleep(500);
 
             armDown.set(true);
 
             //drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            //tankRotate(Math.PI / 2, 0.3);
-            drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.4);
-            pipeline.normalizeToPole(0.3, 42, 5);
+            drive.tankRotatePID(Math.PI / 2, 1);
+            //drive.simpleMoveToPosition(-320 + normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
+            drive.tankRotatePID(Math.PI/2, 1);            //pipeline.normalizeToPole(0.3, 42, 5);
+
+            if(i != 1) {
+                drive.simpleMoveToPosition(150, MecDrive.MovementType.STRAFE, 0.4);
+                drive.goTOPIDPos(150, 1, MecDrive.MovementType.STRAIGHT);
+
+                score.setGrabberPosition(0.7);
+            }
 
         }
 
@@ -391,15 +399,17 @@ public class LeftBlueHigh extends LinearOpMode {
         drive.addToLoggingString("");
 
 
-
+/*
         if(parkPos == KevinGodPipeline.ParkPos.LEFT){
-            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.4);
+            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 1);
 
         }else if(parkPos == KevinGodPipeline.ParkPos.RIGHT){
-            drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 0.4);
+            drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 1);
 
         }
 
+
+ */
         drive.writeLoggerToFile();
 
         //Will have to check if this aligns straight already (need color sensor or not) ->
@@ -410,33 +420,5 @@ public class LeftBlueHigh extends LinearOpMode {
     }
 
 
-    public void tankRotate(double radians, double power){
 
-        if(radians > imu.getAngularOrientation().firstAngle){
-            power *= -1;
-        }
-
-        while(Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) < Math.abs(radians)){
-            telemetry.addData("target", radians);
-            telemetry.addData("current", imu.getAngularOrientation().firstAngle);
-            telemetry.update();
-            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
-        }
-
-        drive.simpleBrake();
-
-
-
-
-    }
-
-    public void normalizeToPole(double power, int xMin, int xMax) {
-        while(pipeline.getPolePosition() > xMax || pipeline.getPolePosition() < xMin) {
-            if(pipeline.getPolePosition() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
-            } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }
-        }
-    }
 }

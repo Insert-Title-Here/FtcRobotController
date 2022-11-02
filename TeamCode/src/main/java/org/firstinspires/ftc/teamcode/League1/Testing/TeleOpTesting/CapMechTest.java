@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.TeleOpTesting;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 
 //TODO: figure out bulk read
 
+@Disabled
 @TeleOp
 public class CapMechTest extends LinearOpMode {
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.TeleOpTesting;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -18,6 +19,8 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 
 //TODO: figure out bulk read
 
+
+@Disabled
 @TeleOp
 public class SimpleScoringSystemTest extends LinearOpMode {
 

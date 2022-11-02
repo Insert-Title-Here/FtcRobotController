@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.TeleOpTesting;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,6 +14,8 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 
 import java.io.FileNotFoundException;
 
+
+@Disabled
 @TeleOp
 public class ArmTester extends OpModeWrapper {
     //Servo lServo, rServo, grabber;

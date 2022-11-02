@@ -1,28 +1,21 @@
-package org.firstinspires.ftc.teamcode.League1.Testing.TeleOpTesting.Complete;
+package org.firstinspires.ftc.teamcode.League1.TeleOp.Using;
 
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
-import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 //TODO: figure out bulk read
 
-@TeleOp (name = "KevinGodMode2")
-public class KevinGodMode2 extends LinearOpMode {
+@TeleOp (name = "KevinIsActuallyInsaneAndWeAreGoingToTotallyBreakTheRobot")
+public class KevinSuperSaiyanMode extends LinearOpMode {
 
     Constants constants = new Constants();
     ScoringSystem2 score;
@@ -350,7 +343,8 @@ public class KevinGodMode2 extends LinearOpMode {
             public void run() {
                 while(opModeIsActive()) {
                     if(linkageUp) {
-                        score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
+                        //score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
+                        score.setLinkagePosition(constants.linkageUp);
                         linkageUp = false;
                     }
                 }

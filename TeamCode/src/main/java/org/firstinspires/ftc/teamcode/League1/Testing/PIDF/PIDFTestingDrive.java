@@ -28,7 +28,7 @@ public class PIDFTestingDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         constants = new Constants();
-        drive = new MecDrive(hardwareMap, true, telemetry);
+        drive = new MecDrive(hardwareMap, true, telemetry, true);
         score = new ScoringSystem2(hardwareMap, constants, telemetry);
 
 
@@ -36,11 +36,14 @@ public class PIDFTestingDrive extends LinearOpMode {
         waitForStart();
 
         //Straight, Strafe, Encoder Rotate
-        drive.goTOPIDPos(1500, 1, MecDrive.MovementType.STRAIGHT);
+        //TODO: return constants
+        drive.goTOPIDPos(-3000, 1, MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPosAvg(3000, 1, MecDrive.MovementType.STRAIGHT);
         //sleep(1000);
 
+        //drive.goTOPIDPos(-250, 1, MecDrive.MovementType.STRAFE);
         //IMU Rotate
-        //drive.tankRotatePID(Math.PI, 0.5);
+        //drive.tankRotatePID(Math.PI/2, 0.5);
 
         while(opModeIsActive()){
             telemetry.addData("fl", drive.getFLEncoder());

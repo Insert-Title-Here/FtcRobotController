@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
+@Config
 public class MecDrive {
 
     private DcMotorEx fl, fr, bl, br;
@@ -34,8 +36,13 @@ public class MecDrive {
     private boolean isDriveOnChub = true;
     private boolean pidEnabled;
     Telemetry telemetry;
-    PIDFCoefficients pidf = new PIDFCoefficients(0.0007, 0.0001, 0.0002, 0);
-    PIDCoefficients rotate = new PIDCoefficients(0.3, 0, 0);
+
+    public static double P2 = 0.00075;
+    public static double I2 = 0.00003;
+    public static double D2 = 0.0003;
+
+    PIDFCoefficients pidf = new PIDFCoefficients(0.00075, 0.000035, 0.0003, 0);
+    PIDCoefficients rotate = new PIDCoefficients(1, 0.00006, 0);
 
 
 
@@ -210,7 +217,7 @@ public class MecDrive {
         double integralSum = 0;
 
 
-        while(Math.abs(radError) > 0.0001){
+        while(Math.abs(radError) > 0.005){
 
             telemetry.addData("target", radians);
 
@@ -225,6 +232,11 @@ public class MecDrive {
             telemetry.addData("Integral", integralSum);
 
             //TODO:See if we need an integral limit
+            if(integralSum > 10000){
+                integralSum = 10000;
+            }else if(integralSum < -10000){
+                integralSum = -10000;
+            }
 
             double derivative = (radError - previousError)/(currentTime - startTime);
             telemetry.addData("Derivative", derivative);
@@ -406,7 +418,7 @@ public class MecDrive {
 
     public double avgPos(){
         return (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition())
-                + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
+                + Math.abs(bl.getCurrentPosition()) /*+ Math.abs(br.getCurrentPosition()))*/) / 4;
     }
 
 
@@ -655,7 +667,7 @@ public class MecDrive {
         int brIntegralSum = 0;
 
 
-        while(flError > 2 || frError > 2 || blError > 2 || brError > 2){
+        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2){
             telemetry.addData("target", tics);
 
             //TODO: check if we need to negate any
@@ -792,7 +804,7 @@ public class MecDrive {
                 flPower *= -1;
             }
 */
-
+            //TODO: Fix rotate and check Strafe
             if(movement == MovementType.STRAIGHT) {
                 setPower(flPower, frPower, blPower, brPower);
             }else if(movement == MovementType.ROTATE){
@@ -814,8 +826,151 @@ public class MecDrive {
 
         }
 
-        setPower(0,0,0,0);
-        //simpleBrake();
+        //setPower(0,0,0,0);
+        simpleBrake();
+
+    }
+
+    public int avgPosPID(){
+        return ((-1 * fl.getCurrentPosition()) + fr.getCurrentPosition()
+                + (-1 * bl.getCurrentPosition()) + br.getCurrentPosition()) / 4;
+    }
+
+    public void goTOPIDPosAvg(int tics, double power, MovementType movement){
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+
+
+
+        //TODO: check if we need to negate any
+        int avgPos = avgPosPID();
+
+        int error = tics - avgPos;
+
+        int previousError = avgPos;
+
+        int integralSum = 0;
+
+        while(Math.abs(error) > 2){
+            telemetry.addData("target", tics);
+
+            //TODO: check if we need to negate any
+            avgPos = avgPosPID();
+
+
+            telemetry.addData("avgPos", avgPos);
+            telemetry.addData("flPos", getFLEncoder());
+            telemetry.addData("frPos", getFREncoder());
+            telemetry.addData("blPos", getBLEncoder());
+            telemetry.addData("brPos", getBREncoder());
+
+
+            error = tics - avgPos;
+
+
+            double currentTime = time.seconds();
+
+            telemetry.addData("error", error);
+
+
+            integralSum += (0.5 * (error + previousError) * (currentTime - startTime));
+
+            telemetry.addData("integralSum", integralSum);
+
+
+
+            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
+            if(integralSum > 20000){
+                integralSum = 20000;
+            }else if(integralSum < -20000){
+                integralSum = -20000;
+            }
+
+
+            double derivative = (error - previousError)/(currentTime - startTime);
+
+
+            telemetry.addData("derivative", derivative);
+
+
+            double finalPower = (pidf.p * error) + (pidf.i * integralSum) + (pidf.d * derivative) + (pidf.f * power);
+
+
+
+            //TODO: See if we need this maxing out for power
+
+            /*if(Math.abs(flPower) > Math.abs(power)){
+                if(flPower < 0){
+                    flPower = -power;
+                }else{
+                    flPower = power;
+                }
+            }
+
+            if(Math.abs(frPower) > Math.abs(power)){
+                if(frPower < 0){
+                    frPower = -power;
+                }else{
+                    frPower = power;
+                }
+            }
+
+            if(Math.abs(blPower) > Math.abs(power)){
+                if(blPower < 0){
+                    blPower = -power;
+                }else{
+                    blPower = power;
+                }
+            }
+
+            if(Math.abs(brPower) > Math.abs(power)){
+                if(brPower < 0){
+                    brPower = -power;
+                }else{
+                    brPower = power;
+                }
+            }
+*/
+
+            telemetry.addData("power", finalPower);
+
+            //TODO: check if we need setting power to negative (I dont think we need it)
+            /*if(tics < flPos){
+                flPower *= -1;
+            }
+
+            if(tics < frPos){
+                flPower *= -1;
+            }
+
+            if(tics < frPos){
+                flPower *= -1;
+            }
+
+            if(tics < frPos){
+                flPower *= -1;
+            }
+*/
+
+            if(movement == MovementType.STRAIGHT) {
+                setPower(power, power, power, power);
+            }/*else if(movement == MovementType.ROTATE){
+                setPower(flPower, -frPower, blPower, -brPower);
+            }else if(movement == MovementType.STRAFE){
+                setPower(flPower, -frPower, -blPower, brPower);
+            }*/
+
+
+            startTime = currentTime;
+            previousError = error;
+            telemetry.update();
+
+
+
+        }
+
+        //setPower(0,0,0,0);
+        simpleBrake();
 
     }
 

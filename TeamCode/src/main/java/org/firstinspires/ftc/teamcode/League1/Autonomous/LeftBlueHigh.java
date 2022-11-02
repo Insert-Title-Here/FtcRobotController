@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.League1.Testing.AutonomousTesting;
+package org.firstinspires.ftc.teamcode.League1.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -26,10 +25,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Disabled
 
+//TODO: Need to mirror
 @Autonomous
-public class DuplicateAuto extends LinearOpMode {
+public class LeftBlueHigh extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
@@ -57,7 +56,7 @@ public class DuplicateAuto extends LinearOpMode {
         armUp = new AtomicBoolean(false);
         armDown = new AtomicBoolean(false);
 
-        score.setLinkagePosition(0.1);
+        score.setLinkagePosition(Constants.linkageDown);
         score.setGrabberPosition(constants.grabbing);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -145,16 +144,18 @@ public class DuplicateAuto extends LinearOpMode {
                     if(armUp.get()) {
                         hold.set(false);
                         score.moveToPosition(830, 1);
-                        score.setLinkagePosition(1);
-                        armUp.set(false);
                         hold.set(true);
+                        score.setLinkagePositionLogistic(Constants.linkageScore, 500, 50);
+                        armUp.set(false);
                     }else if(armDown.get()){
                         hold.set(false);
-                        score.setLinkagePosition(0.7);
+                        score.setLinkagePosition(Constants.linkageUp);
                         score.moveToPosition(0, 0.5);
-                        score.setLinkagePosition(0.12);
+                        score.setLinkagePositionLogistic(Constants.linkageDown, 1000, 50);
                         armDown.set(false);
                     }
+
+
 
 
                 }
@@ -232,14 +233,19 @@ public class DuplicateAuto extends LinearOpMode {
         armThread.start();
         feedForward.start();
 
+        drive.addToLoggingString("originalColorRed: " + color.getNormalizedColors().red);
+        drive.addToLoggingString("originalColorBlue: " + color.getNormalizedColors().blue);
+        drive.addToLoggingString("");
+
+
         cameraServo.setPosition(0.73);
 
 
 
-        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.45);
+        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.35);
         //tankRotate(Math.PI / 4.25, 0.3);
 
-        drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.45);
+        drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
         pipeline.normalizeToPole(0.3, 165, 5);
         pipeline.Ynormalize(0.2, 95, 5);
 
@@ -260,8 +266,8 @@ public class DuplicateAuto extends LinearOpMode {
         //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
 
         //tankRotate(Math.PI / 2, 0.3);
-        drive.simpleMoveToPosition(-500, MecDrive.MovementType.ROTATE, 0.45);
-        pipeline.normalizeToPole(0.3, 65, 5);
+        drive.simpleMoveToPosition(-350, MecDrive.MovementType.ROTATE, 0.4);
+        pipeline.normalizeToPole(0.3, 82, 10);
 
         score.setGrabberPosition(0.7);
 
@@ -304,6 +310,11 @@ public class DuplicateAuto extends LinearOpMode {
 
                 while(color.getNormalizedColors().red < 0.23){
 
+                    drive.addToLoggingString("ColorRed: " + color.getNormalizedColors().red);
+                    drive.addToLoggingString("ColorBlue: " + color.getNormalizedColors().blue);
+                    drive.addToLoggingString("");
+
+
                     telemetry.addData("blue", color.getNormalizedColors().blue);
                     telemetry.addData("red", color.getNormalizedColors().red);
                     telemetry.update();
@@ -314,14 +325,14 @@ public class DuplicateAuto extends LinearOpMode {
 */
 
 
-                drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAFE, 0.3);
+                drive.simpleMoveToPosition(60, MecDrive.MovementType.STRAFE, 0.3);
 
 
             }
 
 
 
-            score.setLinkagePosition(0.24 - (i * 0.03));
+            score.setLinkagePosition(0.73 + (i * 0.03));
 
 
             while (distance.getDistance(DistanceUnit.CM) > 4.3) {
@@ -341,11 +352,11 @@ public class DuplicateAuto extends LinearOpMode {
             hold.set(true);
             sleep(300);
 
-            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.55);
-            score.setLinkagePosition(0.7);
+            drive.simpleMoveToPosition(-650, MecDrive.MovementType.STRAIGHT, 0.5);
+            score.setLinkagePosition(Constants.linkageUp);
 
             //tankRotate(Math.PI / 4.35, 0.3);
-            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.45);
+            drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.4);
             pipeline.normalizeToPole(0.3, 165, 10);
             pipeline.Ynormalize(0.2, 92, 5);
 
@@ -353,7 +364,7 @@ public class DuplicateAuto extends LinearOpMode {
 
             armUp.set(true);
 
-            drive.simpleMoveToPosition(-20, MecDrive.MovementType.STRAIGHT, 0.3);
+            drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
@@ -367,7 +378,7 @@ public class DuplicateAuto extends LinearOpMode {
             //drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
 
             //tankRotate(Math.PI / 2, 0.3);
-            drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.45);
+            drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.4);
             pipeline.normalizeToPole(0.3, 42, 5);
 
         }
@@ -375,6 +386,11 @@ public class DuplicateAuto extends LinearOpMode {
         score.setGrabberPosition(constants.grabbing);
 
         camera.closeCameraDevice();
+
+        drive.addToLoggingString("endColorRed: " + color.getNormalizedColors().red);
+        drive.addToLoggingString("endColorBlue: " + color.getNormalizedColors().blue);
+        drive.addToLoggingString("");
+
 
 
         if(parkPos == KevinGodPipeline.ParkPos.LEFT){
@@ -384,6 +400,8 @@ public class DuplicateAuto extends LinearOpMode {
             drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 0.4);
 
         }
+
+        drive.writeLoggerToFile();
 
         //Will have to check if this aligns straight already (need color sensor or not) ->
         // may need to turn into slight diagonal instead of straight to check color
