@@ -56,20 +56,21 @@ public class FirstTeleOp extends LinearOpMode {
                 //removed !score.isBusy() from the while statement
                 while(opModeIsActive()){
                     if(gamepad1.right_bumper){
-                        score.setPower(0.6);
                         if(score.getEncoderPosition() > 2390){
-                            score.setPower(0.1);
+                            score.setPower(0);
                         }else{
-                            score.setPower(1);
+                            score.setPower(0.6);
                         }
                     }else if(gamepad1.left_bumper) {
                         if(score.getEncoderPosition() < 2){
                             score.setPower(0);
                         }else{
-                            score.setPower(-0.5);
+                            score.setPower(-0.7);
                         }
                     }else{
-                        score.setPower(0.1);
+                        if(!discontinue.get()){
+                            score.setPower(0.1);
+                        }
                     }
                     // reset   gamepad1.dpad_down
                     // low cone, 13 in, 1209  gamenpad1.dpad_left
@@ -177,15 +178,15 @@ public class FirstTeleOp extends LinearOpMode {
                 discontinue.set(true);
                 if((score.getEncoderPosition() - 30) > 0){
                     score.goToPosition(stackHeight - 30, 0.7);
-                    stackHeight = stackHeight - 30;
+                    stackHeight -= 30;
                 }
             }
             if(gamepad1.y){
                 discontinue.set(true);
-                if(stackHeight != 320){
+                if(stackHeight != 300){
                     stackHeight += 30;
                 }else{
-                    score.goToPosition(320, 0.7);
+                    score.goToPosition(stackHeight, 0.7);
                 }
             }
             if(gamepad1.x){
