@@ -32,6 +32,7 @@ public class TestTeleOp extends LinearOpMode {
 
     static boolean liftIsStill = false;
     boolean clawIsClosed = true;
+    static boolean fourbarIsUp = false;
     static int targetPos, rightTargetPos;
     static double origFourbarPos;
 
@@ -67,20 +68,35 @@ public class TestTeleOp extends LinearOpMode {
 
             if(gamepad1.dpad_left){
                 liftIsStill = false;
-                while(lift.getCurrentPosition()<origLiftPos+1500&&opModeIsActive()){
+                while(lift.getCurrentPosition()<origLiftPos+500&&opModeIsActive()){
                     lift.setPower(1);
                     rightLift.setPower(-1);
                 }
 
-                while(lift.getCurrentPosition()>origLiftPos+2700&&opModeIsActive()){
+                while(lift.getCurrentPosition()>origLiftPos+1500&&opModeIsActive()){
                     lift.setPower(-1);
                     rightLift.setPower(1);
                 }
                 maintainLiftPos(origLiftPos+2140, origRightLiftPos-2140);
                 openFourbar();
-                sleep(200);
+                sleep(400);
 
             } else if(gamepad1.dpad_up){
+                liftIsStill = false;
+                while(lift.getCurrentPosition()<origLiftPos+1500&&opModeIsActive()){
+                    lift.setPower(1);
+                    rightLift.setPower(-1);
+                }
+
+                while(lift.getCurrentPosition()>origLiftPos+3000&&opModeIsActive()){
+                    lift.setPower(-1);
+                    rightLift.setPower(1);
+                }
+                maintainLiftPos(origLiftPos+2140, origRightLiftPos-2140);
+                openFourbar();
+                sleep(400);
+
+            } else if(gamepad1.dpad_right){
                 liftIsStill = false;
                 while(lift.getCurrentPosition()<origLiftPos+3300&&opModeIsActive()){
                     lift.setPower(1);
@@ -96,7 +112,7 @@ public class TestTeleOp extends LinearOpMode {
                 }
                 maintainLiftPos(origLiftPos+3800, origRightLiftPos-3800);
                 openFourbar();
-
+                sleep(400);
             } else if(gamepad1.dpad_down){
                 liftIsStill = false;
                 while(lift.getCurrentPosition()<origLiftPos-600&&opModeIsActive()) {
@@ -110,6 +126,7 @@ public class TestTeleOp extends LinearOpMode {
                 }
                 maintainLiftPos(origLiftPos, origRightLiftPos);
                 closeFourbar();
+                sleep(400);
             }
 
             if (gamepad1.left_trigger > 0.1) {
@@ -148,8 +165,13 @@ public class TestTeleOp extends LinearOpMode {
                 }
             }
 
-            if(gamepad1.x){
-                origLiftPos=lift.getCurrentPosition();
+            if(gamepad1.b){
+                if(fourbarIsUp){
+                    closeFourbar();
+                } else{
+                    openFourbar();
+                }
+                sleep(400);
             }
 
             if(lift.getCurrentPosition()==origLiftPos){
@@ -162,7 +184,7 @@ public class TestTeleOp extends LinearOpMode {
                     sleep(200);
                 } else {
                     claw.setPosition(0.6);
-                    sleep(200);
+                    sleep(400);
                 }
                 clawIsClosed = !clawIsClosed;
             }
@@ -219,11 +241,13 @@ public class TestTeleOp extends LinearOpMode {
     }
 
     public static void openFourbar() {
-        fourbar.setPosition(origFourbarPos);
+        fourbar.setPosition(origFourbarPos-0.5);
+        fourbarIsUp = true;
     }
 
     public static void closeFourbar() {
-        fourbar.setPosition(origFourbarPos+0.5);
+        fourbar.setPosition(origFourbarPos+1);
+        fourbarIsUp = false;
     }
 
 }
