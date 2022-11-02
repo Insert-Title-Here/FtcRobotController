@@ -194,25 +194,43 @@ public class MecanumDrive {
     //TODO: Needs Testing
     public void turn(double radians, double power){
         // will be negative 1 or posiive 1
-        double radian = radians / Math.abs(radians);
+        double sign = radians / Math.abs(radians);
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
-
-            if(Math.abs(imu.getAngularOrientation().firstAngle) == 3.14159){
-                radians = 3.14159-Math.abs(initialAngle);
-                //if negative, will give negative value
-                radians *= radian;
+        double before;
+        double after;
+        if(Math.abs(initialAngle + radians) > Math.PI){
+            before = sign*(Math.PI - Math.abs(initialAngle));
+            after = Math.abs((initialAngle + radians) - Math.PI);
+            while(Math.abs(imu.getAngularOrientation().firstAngle - initialAngle) < Math.abs(before)){
+                if(radians < 0){
+                    //turn right # of radians
+                    setPower(power, -power, power, -power);
+                }else{
+                    //turn left # of radians
+                    setPower(-power, power, -power, power);
+                }
             }
-
-            if(radians < 0){
-
-                //turn right # of radians
-                setPower(power, -power, power, -power);
-            }else{
-                //turn left # of radians
-                setPower(-power, power, -power, power);
+            while(Math.abs(imu.getAngularOrientation().firstAngle - initialAngle) < Math.abs(after)){
+                if(radians < 0){
+                    //turn right # of radians
+                    setPower(power, -power, power, -power);
+                }else{
+                    //turn left # of radians
+                    setPower(-power, power, -power, power);
+                }
+            }
+        }else{
+            while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
+                if(radians < 0){
+                    //turn right # of radians
+                    setPower(power, -power, power, -power);
+                }else{
+                    //turn left # of radians
+                    setPower(-power, power, -power, power);
+                }
             }
         }
+
     }
     //TODO: Needs Testing
     public void turnToInitialPosition(){
