@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -24,6 +25,11 @@ public class ContourMultiScore extends OpenCvPipeline {
     private  int cY;
     private ArrayList<MatOfPoint> contours = new ArrayList<>();
     double knownWidth, focalLength, perWidth;
+    Telemetry telemetry;
+
+    public ContourMultiScore (Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
 
     @Override
     public Mat processFrame(Mat input) {

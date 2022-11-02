@@ -3,10 +3,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Common.ColorSensor;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -24,7 +22,6 @@ public class BlueRightMedium extends LinearOpMode {
     String parkLocation;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
-    ColorSensor color;
     BNO055IMU imu;
 
     @Override
@@ -39,7 +36,6 @@ public class BlueRightMedium extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        color = new ColorSensor(hardwareMap, telemetry);
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap);
@@ -136,8 +132,26 @@ public class BlueRightMedium extends LinearOpMode {
         // turn 180
         drive.turn(3.14159, 0.3);
 //        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(900, 900, 1016, 1000), "move forward a square");
-        color.findTapeGrabCone();
+
         // move forward a bit more
+        drive.findTape();
+        //go forward until...
+        while (!score.grabCone()) {
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4);
+        }
+        // stop driving
+        drive.setPower(0, 0, 0, 0);
+        // grab cone
+        score.setClawPosition(0.24);
+        // lift up
+        score.goToPosition(600, 0.6);
+        // backup
+        drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 200, "backwards");
+        //turn
+        radians = 3.14 * 7 / 6;
+        drive.turn(radians, 0.5); // TODO: make sure drive.turn works
+        // TODO: implement contours...find pole & distance from pole
+        // move forward some
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(500, 500, 500, 500), "move forward some");
         // turn left towards medium cone
         radians = 3.14159 / 4;

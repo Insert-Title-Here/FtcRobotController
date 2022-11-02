@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Common;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,6 +21,7 @@ public class MecanumDrive {
     Thread driveThread;
     AtomicBoolean active;
     BNO055IMU imu;
+    ColorRangeSensor colorTape;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -39,6 +41,10 @@ public class MecanumDrive {
         imu.initialize(parameters);
         this.telemetry = telemetry;
         active = new AtomicBoolean();
+        colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
+
+
+
         //TODO: Change the deviceName for each
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -157,6 +163,34 @@ public class MecanumDrive {
         setPower(0, 0, 0, 0);
 
     }
+
+    public void goToPosition (double flPow, double frPow, double blPow, double brPow) {
+        //fl fr bl br
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // won't work for turns, only forward and backward
+
+        int position = (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+                Math.abs(br.getCurrentPosition())) / 4;
+
+        telemetry.addData("motorPosition", position);
+        telemetry.update();
+
+
+        setPower(flPow, frPow, blPow, brPow);
+
+    }
     //TODO: Needs Testing
     public void turn(double radians, double power){
         // will be negative 1 or posiive 1
@@ -258,6 +292,8 @@ public class MecanumDrive {
                         telemetry.addData("frPos", getFRPosition());
                         telemetry.addData("blPos", getBLPosition());
                         telemetry.addData("brPos", getBRPosition());
+                        telemetry.addData("red", currentRedColor());
+                        telemetry.addData("blue", currentBlueColor());
                         telemetry.update();
                     }
 
@@ -298,5 +334,26 @@ public class MecanumDrive {
         }
     }
 
+    public int currentBlueColor() {
+        return colorTape.blue(); // if current color is really high // 410
+    }
 
+    public int currentRedColor() {
+        return colorTape.red(); // if current color is really high // 177
+    }
+
+    public void findTape() {
+        while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
+            goToPosition(0, 0.8, 0, 0.8);
+            if (avgPosition() > 700) {
+                goToPosition(0.8, 0, 0.8, 0);
+            }
+        }
+
+
+
+    }
+    public int avgPosition(){
+        return (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition()))/4;
+    }
 }
