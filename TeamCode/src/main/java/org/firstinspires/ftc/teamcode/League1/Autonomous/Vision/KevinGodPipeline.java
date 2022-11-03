@@ -50,7 +50,6 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int boxWidthLeft = 35;
     public static int boxHeightLeft = 60;
 
-    boolean left;
 
     private Rect MIDDLE;
 
@@ -125,7 +124,6 @@ public class KevinGodPipeline extends OpenCvPipeline {
         contourLengths = new ArrayList<>();
         this.telemetry = telemetry;
         this.drive = drive;
-        this.left = left;
         if(left) {
             MIDDLE = leftMIDDLE;
         } else {
