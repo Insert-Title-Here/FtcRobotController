@@ -13,7 +13,7 @@ public class ClawTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        intake = new ScoringSystem(hardwareMap);
+        intake = new ScoringSystem(hardwareMap, telemetry);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

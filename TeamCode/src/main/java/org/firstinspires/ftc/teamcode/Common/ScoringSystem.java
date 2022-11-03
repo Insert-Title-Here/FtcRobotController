@@ -1,23 +1,27 @@
 package org.firstinspires.ftc.teamcode.Common;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ScoringSystem {
     private DcMotor liftMotor;
     private Servo claw;
     ColorRangeSensor colorCone;
+    Telemetry telemetry;
 
-
-    public ScoringSystem(HardwareMap hardwareMap) {
+    public ScoringSystem(HardwareMap hardwareMap, Telemetry telemetry) {
         /* the below is init*/
         claw = hardwareMap.get(Servo.class, "claw");
         liftMotor = hardwareMap.get(DcMotor.class, "motor");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "colorCone");
+        this.telemetry = telemetry;
         // reset encoder's tics for liftMotor (leave commented unless you need to reset the encoder for
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -111,17 +115,23 @@ public class ScoringSystem {
         return colorCone.red(); // if current color is really high // 177
     }
 
-    public boolean grabCone() {
-        if (colorCone.getDistance(DistanceUnit.CM) < 0.3) {
+    public boolean grabCone() throws InterruptedException {
+        if (colorCone.getDistance(DistanceUnit.CM) < 0.9) {
             // grab cone
             setClawPosition(0.24);
+            sleep(300);
             // lift up
-            goToPosition(600, 0.6);
-
+            goToPosition(200, 0.6);
+            telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
+            telemetry.update();
             return true;
 
         }
         return false;
+    }
+
+    public double getDistance() {
+        return colorCone.getDistance(DistanceUnit.CM);
     }
 }
 

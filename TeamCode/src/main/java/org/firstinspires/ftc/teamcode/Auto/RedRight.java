@@ -17,7 +17,7 @@ public class RedRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, telemetry);
-        score = new ScoringSystem(hardwareMap);
+        score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
         cont.set(false);
         /*

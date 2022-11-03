@@ -37,7 +37,7 @@ public class SecondTeleOp extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         drive = new MecanumDrive(hardwareMap, telemetry);
-        score = new ScoringSystem(hardwareMap);
+        score = new ScoringSystem(hardwareMap, telemetry);
         pause = new AtomicBoolean();
         discontinue = new AtomicBoolean();
         //color = new ColorSensor(hardwareMap, telemetry);
@@ -47,7 +47,6 @@ public class SecondTeleOp extends LinearOpMode {
         telemetry.update();
         //score = new ScoringSystem(hardwareMap);
         //Open
-        score.setClawPosition(0);
         //TODO: Test below Out
         //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
         liftThread = new Thread(){
@@ -56,20 +55,21 @@ public class SecondTeleOp extends LinearOpMode {
                 //removed !score.isBusy() from the while statement
                 while(opModeIsActive()){
                     if(gamepad1.right_bumper){
-                        score.setPower(0.6);
                         if(score.getEncoderPosition() > 2390){
-                            score.setPower(0.1);
+                            score.setPower(0);
                         }else{
-                            score.setPower(1);
+                            score.setPower(0.6);
                         }
                     }else if(gamepad1.left_bumper) {
                         if(score.getEncoderPosition() < 2){
                             score.setPower(0);
                         }else{
-                            score.setPower(-0.5);
+                            score.setPower(-0.7);
                         }
                     }else{
-                        score.setPower(0.1);
+                        if(!discontinue.get()){
+                            score.setPower(0.1);
+                        }
                     }
                     // reset   gamepad1.dpad_down
                     // low cone, 13 in, 1209  gamenpad1.dpad_left
@@ -141,10 +141,18 @@ public class SecondTeleOp extends LinearOpMode {
                     }else if(gamepad1.right_trigger < 0.1){
                         pause.set(true);
                     }
-                    score.grabCone();
+
+                    if (score.getClawPosition() == 0.0) {
+                        try {
+                            score.grabCone();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         };
+        score.setClawPosition(0);
         waitForStart();
         liftThread.start();
         int stackHeight = 300;
@@ -172,21 +180,21 @@ public class SecondTeleOp extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
-                drive.turn(Math.PI/4, 0.3);
+                drive.turn(Math.PI/60, 0.3);
             }
             if(gamepad1.a){
                 discontinue.set(true);
                 if((score.getEncoderPosition() - 30) > 0){
                     score.goToPosition(stackHeight - 30, 0.7);
-                    stackHeight = stackHeight - 30;
+                    stackHeight -= 30;
                 }
             }
             if(gamepad1.y){
                 discontinue.set(true);
-                if(stackHeight != 320){
+                if(stackHeight != 300){
                     stackHeight += 30;
                 }else{
-                    score.goToPosition(320, 0.7);
+                    score.goToPosition(stackHeight, 0.7);
                 }
             }
             if(gamepad1.x){
@@ -199,6 +207,7 @@ public class SecondTeleOp extends LinearOpMode {
             if (gamepad1.share) {
                 drive.resetEncoders();
             }
+            /*
             //TODO: add telemtry for gamepad a and y positions when you press them
             telemetry.addData("flPos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());
@@ -214,6 +223,8 @@ public class SecondTeleOp extends LinearOpMode {
             //  telemetry.update();
             //telemetry.update();
             telemetry.update();
+
+             */
         }
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);

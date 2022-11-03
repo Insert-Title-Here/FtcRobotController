@@ -200,16 +200,24 @@ public class MecanumDrive {
         double after;
 
         while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
+            /*
             if(imu.getAngularOrientation().firstAngle == Math.PI){
                 //before = sign*(Math.PI - Math.abs(initialAngle));
                 after = Math.abs((initialAngle + radians) - Math.PI);
                 radians = after;
                 initialAngle = Math.PI;
+                telemetry.addData("testtt", after);
+                telemetry.update();
             }else if(imu.getAngularOrientation().firstAngle == -Math.PI){
                 after = Math.abs((initialAngle + radians) - Math.PI);
                 radians = after;
                 initialAngle = -Math.PI;
+                telemetry.addData("TESTTT", after);
+                telemetry.update();
             }
+
+             */
+            telemetry.addData("nowork:((","nooooooo");
             if(radians < 0){
                 //turn right # of radians
                 setPower(power, -power, power, -power);
@@ -223,19 +231,22 @@ public class MecanumDrive {
     }
     //TODO: Needs Testing
     public void turnToInitialPosition(){
-        double startingRad = imu.getAngularOrientation().firstAngle;
-        while((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005){
-            double radians = imu.getAngularOrientation().firstAngle;
-            if(!(0 > radians && radians < 0.01)){
-                //turn right # of radians
-                setPower(0.2, -0.2, 0.2, -0.2);
-            }else if(!(-0.01 < radians && radians > 0)){
-                //turn left # of radians
-                setPower(-0.2, 0.2, -0.2, 0.2);
-            }else{
-                break;
+        double rad = imu.getAngularOrientation().firstAngle;
+        if(rad > 0.04 || rad < -0.04){
+            while((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005){
+                double radians = imu.getAngularOrientation().firstAngle;
+                if((0 < radians && radians < 0.01)){
+                    //turn right # of radians
+                    setPower(0.2, -0.2, 0.2, -0.2);
+                }else if((-0.01 < radians && radians < 0)){
+                    //turn left # of radians
+                    setPower(-0.2, 0.2, -0.2, 0.2);
+                }else{
+                    break;
+                }
             }
         }
+
         /*
         if(startingRad > 0){
             turn(-0.05,0.5);

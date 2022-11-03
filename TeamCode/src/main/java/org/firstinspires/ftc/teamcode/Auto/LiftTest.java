@@ -19,7 +19,7 @@ public class LiftTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        score = new ScoringSystem(hardwareMap);
+        score = new ScoringSystem(hardwareMap, telemetry);
         /* the below is init*/
         /*
         liftMotor = hardwareMap.get(DcMotor.class, "motor");

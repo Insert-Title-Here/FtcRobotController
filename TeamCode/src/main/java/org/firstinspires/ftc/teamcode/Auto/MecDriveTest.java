@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
@@ -30,7 +29,7 @@ public class MecDriveTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, telemetry);
-        score = new ScoringSystem(hardwareMap);
+        score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
         cont.set(false);
         /*

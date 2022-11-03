@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.vuforia.COORDINATE_SYSTEM_TYPE;
 
-import org.firstinspires.ftc.teamcode.Common.ColorSensor;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 @TeleOp
 public class FirstTeleOp extends LinearOpMode {
@@ -37,7 +37,7 @@ public class FirstTeleOp extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         drive = new MecanumDrive(hardwareMap, telemetry);
-        score = new ScoringSystem(hardwareMap);
+        score = new ScoringSystem(hardwareMap, telemetry);
         pause = new AtomicBoolean();
         discontinue = new AtomicBoolean();
         //color = new ColorSensor(hardwareMap, telemetry);

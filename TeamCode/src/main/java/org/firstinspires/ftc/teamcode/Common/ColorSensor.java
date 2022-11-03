@@ -17,7 +17,7 @@ public class ColorSensor {
         colorTape = hardwareMap.get(ColorRangeSensor.class, "color");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "color");
         drive = new MecanumDrive(hardwareMap, telemetry);
-        score = new ScoringSystem(hardwareMap);
+        score = new ScoringSystem(hardwareMap, telemetry);
         this.telemetry = telemetry;
 
     }

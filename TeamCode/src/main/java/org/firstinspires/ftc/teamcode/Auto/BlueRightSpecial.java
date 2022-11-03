@@ -37,7 +37,7 @@ public class BlueRightSpecial extends LinearOpMode {
         imu.initialize(parameters);
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
-        score = new ScoringSystem(hardwareMap);
+        score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
         cont.set(false);
 

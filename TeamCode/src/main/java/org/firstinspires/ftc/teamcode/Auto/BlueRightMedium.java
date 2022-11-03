@@ -38,7 +38,7 @@ public class BlueRightMedium extends LinearOpMode {
 
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
-        score = new ScoringSystem(hardwareMap);
+        score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
         cont.set(false);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -82,7 +82,7 @@ public class BlueRightMedium extends LinearOpMode {
         //If changed above, then must do for all
         blueRight();
     }
-    public void blueRight(){
+    public void blueRight() throws InterruptedException {
 
         //close claw
         score.setClawPosition(0.24);
