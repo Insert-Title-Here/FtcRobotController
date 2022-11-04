@@ -77,7 +77,7 @@ public class Test extends LinearOpMode {
 
     public void test() {
          //drive.goToPositionTest(1224, 1228, 1185, 1176, 0.3, "forward");
-         drive.goToPositionTest(1840, -1720, -1786, 1968, 0.3, "right");
+         drive.goToPosition(1840, -1720, -1786, 1968, 3, "right");
     }
 
 }
