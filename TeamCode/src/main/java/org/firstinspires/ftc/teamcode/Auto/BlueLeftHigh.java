@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -20,11 +22,12 @@ public class BlueLeftHigh extends LinearOpMode {
     Thread liftThread;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
-//    BNO055IMU imu;
+    BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-/*/        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        //initializing imu and camera
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
@@ -35,7 +38,7 @@ public class BlueLeftHigh extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
- */
+
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
@@ -62,10 +65,11 @@ public class BlueLeftHigh extends LinearOpMode {
 
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
-
+        //thread for slides
         liftThread = new Thread(){
             @Override
             public void run(){
+                // keeps the slides from sliding down on its own
                 while(opModeIsActive()){
                     if((score.getEncoderPosition() > 1200 && cont.get())){
                         score.setPower(0.1);
@@ -96,9 +100,10 @@ public class BlueLeftHigh extends LinearOpMode {
         //lift claw a little bit
         score.goToPosition(370, 0.7);
         sleep(200);
-        // move forward a square
+        // move forward a square and push sleeved cone out of the way
         drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1400, 1300), "forward");
         sleep(100);
+        // move back a little from pushing the cone out of the way
         drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 100, 200, 100), "forward");
 
         //drive.turnToInitialPosition();
@@ -110,63 +115,47 @@ public class BlueLeftHigh extends LinearOpMode {
         sleep(100);
         // move arm max
         score.goToPosition(2340, 0.85);
+        //begin thread for maintaining height of slides
         cont.set(true);
+        //move forward closer to pole
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 80, 100, 50), "move to pole");
         sleep(1000);
 
-
+        //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(0);
         sleep(300);
         score.setClawPosition(0.24);
+        //move back from pole to strafe right
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-30, -117, -111, -98), "move back from pole");
-        // lowers arm after scoring first cone
         cont.set(false);
+        //moves slides down
         score.goToPosition(0, 0.3);
         sleep(300);
-//        drive.turn(-Math.PI/2, 0.3);
-
+        //drive.turn(-Math.PI/2, 0.3);
+        //moves robot to correct parking position
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-5007,2941,3226,-3036), "strafe left (more left)");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(600,600,600,650), "strafe right");
-//            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 3410, "strafe right");
-//            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, 300, "strafe right");
+            //drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 3410, "strafe right");
+            //drive.goToPosition(-0.3, 0.3, 0.3, -0.3, 300, "strafe right");
 
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
             drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
-//            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1530, "strafe right");
-//            drive.turnToInitialPosition();
+            //drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1530, "strafe right");
+            //drive.turnToInitialPosition();
         } else {
             // move to right
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
-//            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 400, "strafe right");
+            //drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 400, "strafe right");
 
         }
         //drive.turnToInitialPosition();
-
-        /*
-        //1 (far right) (general code)
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
-        sleep(0);
-        //turn left a little (straighten out)
-        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-271, 280, -260, 290), "turn straight");
-        sleep(50);
-        //drive forward a little
-        drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
-
-
-
-
-        //2
-        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1267, 1251, 1246, -304), "strafe left");
-        //3
-        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1152, 1177, 1164, -1196), "strafe left");
-
-    */
+        
         score.setClawPosition(0);
 
     }

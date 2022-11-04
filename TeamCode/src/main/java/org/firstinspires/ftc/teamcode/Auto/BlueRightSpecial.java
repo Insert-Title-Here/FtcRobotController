@@ -25,6 +25,7 @@ public class BlueRightSpecial extends LinearOpMode {
     BNO055IMU imu;
     @Override
     public void runOpMode() throws InterruptedException {
+        //initializing imu and camera
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -63,11 +64,12 @@ public class BlueRightSpecial extends LinearOpMode {
 
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
-
+        //thread for slides
         liftThread = new Thread(){
             @Override
             public void run(){
                 while(opModeIsActive()){
+                    // keeps the slides from sliding down on its own
                     if((score.getEncoderPosition() > 1200 && cont.get())){
                         score.setPower(0.1);
                     }

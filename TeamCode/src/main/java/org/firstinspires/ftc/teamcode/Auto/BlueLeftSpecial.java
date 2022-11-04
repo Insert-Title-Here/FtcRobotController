@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //TODO:Needs testing
 @Autonomous
 public class BlueLeftSpecial extends LinearOpMode {
+
     MecanumDrive drive;
     ScoringSystem score;
     AtomicBoolean cont;
@@ -26,6 +27,7 @@ public class BlueLeftSpecial extends LinearOpMode {
     BNO055IMU imu;
     @Override
     public void runOpMode() throws InterruptedException {
+        //initializing imu and camera
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -59,12 +61,11 @@ public class BlueLeftSpecial extends LinearOpMode {
                 telemetry.update();
             }
         });
-
-            // Camera checks sleeve...stores parking location??
-
+        //thread for slides
         liftThread = new Thread(){
             @Override
             public void run(){
+                // keeps the slides from sliding down on its own
                 while(opModeIsActive()){
                     if((score.getEncoderPosition() > 1200 && cont.get())){
                         score.setPower(0.1);
