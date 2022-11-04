@@ -10,9 +10,6 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
@@ -26,7 +23,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class RedRightPIDHigh extends LinearOpMode {
+public class RedLeftPIDHigh extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
@@ -247,7 +244,7 @@ public class RedRightPIDHigh extends LinearOpMode {
         linkageUp.set(true);
         drive.goTOPIDPos(-2200, 0.5,MecDrive.MovementType.STRAIGHT);
         armUp.set(true);
-        drive.tankRotatePID(Math.PI / 4.5, 0.7, true);
+        drive.tankRotatePID(-Math.PI / 4.5, 0.7, true);
         sleep(500);
 
         //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
@@ -270,7 +267,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
         //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
 
-        drive.tankRotatePID(Math.PI / 2, 0.85, false);
+        drive.tankRotatePID(-Math.PI / 2, 0.85, false);
 
         //drive.simpleMoveToPosition(-370 - normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
         //pipeline.normalizeToPole(0.3, 82, 10);
@@ -342,8 +339,8 @@ public class RedRightPIDHigh extends LinearOpMode {
 
             armUp.set(true);
 
-            //TODO: see if want to change to Math.PI/3.7
-            drive.tankRotatePID(Math.PI / 4, 0.8, true);
+            //TODO: see if want to change to -Math.PI/3.7
+            drive.tankRotatePID(-Math.PI / 4, 0.8, true);
             //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
             normalizeDistance = pipeline.normalizeToPole(0.2, 172, 3);
 
@@ -364,7 +361,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
             //drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            drive.tankRotatePID(Math.PI / 2, 0.85, false);
+            drive.tankRotatePID(-Math.PI / 2, 0.85, false);
             //drive.simpleMoveToPosition(-320 + normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
             //drive.tankRotatePID(Math.PI/2, 1);            //pipeline.normalizeToPole(0.3, 42, 5);
 
@@ -394,6 +391,8 @@ public class RedRightPIDHigh extends LinearOpMode {
             drive.simpleMoveToPosition(500, MecDrive.MovementType.STRAIGHT, 1);
 
         }
+
+
 
 
         //Will have to check if this aligns straight already (need color sensor or not) ->
