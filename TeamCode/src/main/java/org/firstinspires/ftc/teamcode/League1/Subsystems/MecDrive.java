@@ -38,13 +38,21 @@ public class MecDrive {
     private boolean pidEnabled;
     Telemetry telemetry;
     ColorRangeSensor color;
+    double baseRed, baseBlue;
 
-    public static double P2 = 0.00075;
-    public static double I2 = 0.00003;
-    public static double D2 = 0.0003;
 
-    PIDFCoefficients pidf = new PIDFCoefficients(0.00042, 0.0002,0.0001, 0);
-    PIDCoefficients rotate = new PIDCoefficients(1, 0.00006, 0);
+
+    //PIDFCoefficients pidf = new PIDFCoefficients(0.001, 0.0003,0.0001, 0);
+    //PIDCoefficients rotate = new PIDCoefficients(1, 0.00012, 0.08);
+
+    //Slow start
+    PIDFCoefficients pidf = new PIDFCoefficients(0.00075, 0.00042,0.0002, 0);
+
+
+    PIDCoefficients rotate = new PIDCoefficients(0.75, 0.00015, 0.2);
+    PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0.0002, 0.22);
+
+
 
 
 
@@ -195,6 +203,11 @@ public class MecDrive {
         imu.initialize(parameters);
 
         this.color = color;
+        this.color.setGain(200);
+
+        baseBlue = 0.6;
+        baseRed = 0.4;
+
 
 
 
@@ -243,7 +256,7 @@ public class MecDrive {
 
     }
 
-    public void tankRotatePID(double radians, double power){
+    public void tankRotatePID(double radians, double power, boolean slidesUp){
 
         /*if(radians > imu.getAngularOrientation().firstAngle){
             power *= -1;
@@ -258,9 +271,11 @@ public class MecDrive {
         double integralSum = 0;
 
 
-        while(Math.abs(radError) > 0.005){
+        while(Math.abs(radError) > 0.007){
 
             telemetry.addData("target", radians);
+
+            double newPower = 0;
 
             double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
 
@@ -284,7 +299,13 @@ public class MecDrive {
 
 
             //TODO: see if we should multiply by power at the end
-            double newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative)) * power;
+
+
+            if(!slidesUp) {
+                newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative)) * power;
+            }else{
+                newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative)) * power;
+            }
             setPowerAuto(newPower, MecDrive.MovementType.ROTATE);
 
             telemetry.addData("Power", newPower);
@@ -786,10 +807,10 @@ public class MecDrive {
             telemetry.addData("blDerivative", blDerivative);
             telemetry.addData("brDerivative", brDerivative);
 
-            double flPower = (pidf.p * flError) + (pidf.i * flIntegralSum) + (pidf.d * flDerivative) + (pidf.f * power);
-            double frPower = (pidf.p * frError) + (pidf.i * frIntegralSum) + (pidf.d * frDerivative) + (pidf.f * power);
-            double blPower = (pidf.p * blError) + (pidf.i * blIntegralSum) + (pidf.d * blDerivative) + (pidf.f * power);
-            double brPower = (pidf.p * brError) + (pidf.i * brIntegralSum) + (pidf.d * brDerivative) + (pidf.f * power);
+            double flPower = ((pidf.p * flError) + (pidf.i * flIntegralSum) + (pidf.d * flDerivative)) * power;
+            double frPower = ((pidf.p * frError) + (pidf.i * frIntegralSum) + (pidf.d * frDerivative)) * power;
+            double blPower = ((pidf.p * blError) + (pidf.i * blIntegralSum) + (pidf.d * blDerivative)) * power;
+            double brPower = ((pidf.p * brError) + (pidf.i * brIntegralSum) + (pidf.d * brDerivative)) * power;
 
 
             //TODO: See if we need this maxing out for power
@@ -1319,32 +1340,31 @@ public class MecDrive {
     public void autoDiagonals(boolean startGoingLeft){
         if(startGoingLeft){
 
-            while(color.red() < 75 && color.blue() < 200) {
-                while (avgPosActual() < 400 && (color.red() < 75 && color.blue() < 200)) {
-                    setPower(0, 0.45, 0.45, 0);
+                while (avgPosActual() < 350) {
+                    setPower(0.2, 0.7, 0.7, 0.2);
                 }
                 simpleBrake();
 
-                while (avgPosActual() < 400 && (color.red() < 75 && color.blue() < 200)) {
-                    setPower(0.45, 0, 0, 0.45);
+                while (avgPosActual() < 250 && (color.getNormalizedColors().red < baseRed && color.getNormalizedColors().blue < baseBlue)) {
+                    setPower(0.6, 0, 0, 0.6);
                 }
                 simpleBrake();
-            }
+
 
 
         }else{
 
-            while(color.red() < 75 && color.blue() < 200) {
-                while (avgPosActual() < 400) {
-                    setPower(0.45, 0, 0, 0.45);
+
+                while (avgPosActual() < 350) {
+                    setPower(0.9, 0.2, 0.2, 0.9);
                 }
                 simpleBrake();
 
-                while (avgPosActual() < 400 && (color.red() < 75 && color.blue() < 200)) {
-                    setPower(0, 0.45, 0.45, 0);
+                while (avgPosActual() < 250 && (color.getNormalizedColors().red < baseRed && color.getNormalizedColors().blue < baseBlue)) {
+                    setPower(0, 0.6, 0.6, 0);
                 }
                 simpleBrake();
-            }
+
 
 
         }

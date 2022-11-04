@@ -20,7 +20,7 @@ public class ColorNormalizationTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         constants = new Constants();
-        drive = new MecDrive(hardwareMap, false, telemetry);
+        drive = new MecDrive(hardwareMap, false, telemetry, hardwareMap.get(ColorRangeSensor.class, "color"));
         score = new ScoringSystem2(hardwareMap, constants, telemetry);
         color = hardwareMap.get(ColorRangeSensor.class, "color");
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -37,7 +37,9 @@ public class ColorNormalizationTesting extends LinearOpMode {
 
         drive.simpleBrake();
 */
-       color.resetDeviceConfigurationForOpMode();
+       //color.resetDeviceConfigurationForOpMode();
+
+       drive.autoDiagonals(false);
 
 
         while(opModeIsActive()){

@@ -139,7 +139,8 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
 
                         //Open Grabber and reset linkage
                         score.setGrabberPosition(constants.open);
-                        score.setLinkagePositionLogistic(constants.linkageDown, 300);
+                        //score.setLinkagePositionLogistic(constants.linkageDown, 300);
+                        score.setLinkagePosition(constants.linkageDown);
 
 
                         //Resetting flags
@@ -344,6 +345,11 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
                 while(opModeIsActive()) {
                     if(linkageUp) {
                         //score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         score.setLinkagePosition(constants.linkageUp);
                         linkageUp = false;
                     }
@@ -352,7 +358,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
         };
 
         //TODO: might need to change this
-        score.setLinkagePosition(0.79);
+        score.setLinkagePosition(constants.linkageUp);
 
         waitForStart();
 

@@ -174,10 +174,10 @@ public class VisionTuning extends OpenCvPipeline {
         } else {
 
             // Convert to HSV color space
-            Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
+            //Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2YCrCb);
 
             // Make binary image of yellow pixels
-            Core.inRange(temp, new Scalar(H1, S1, V1), new Scalar(H2, S2, V2), temp);
+            Core.inRange(input, new Scalar(H1, S1, V1), new Scalar(H2, S2, V2), temp);
 
             // Blur image to reduce noise
             Imgproc.GaussianBlur(temp, temp, new Size(5, 5), 0);
@@ -246,6 +246,8 @@ public class VisionTuning extends OpenCvPipeline {
             return red;
         } else if(channelToReturn == 2) {
             return blue;
+        } else if(channelToReturn == 3) {
+            return temp;
         } else {
             return input;
         }

@@ -258,10 +258,10 @@ public class KevinGodMode2 extends LinearOpMode {
                     }else if(gamepad1.b){
                         score.setScoringMode(ScoringSystem2.ScoringMode.HIGH);
 
-                    }/*else if(gamepad1.a){
+                    }else if(gamepad1.a){
                         //Ultra
                         score.setScoringMode(ScoringSystem2.ScoringMode.ULTRA);
-                    }*/
+                    }
 
 
                     //Manual slides (dpad right and left)
@@ -350,6 +350,12 @@ public class KevinGodMode2 extends LinearOpMode {
             public void run() {
                 while(opModeIsActive()) {
                     if(linkageUp) {
+
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
                         linkageUp = false;
                     }
@@ -358,7 +364,7 @@ public class KevinGodMode2 extends LinearOpMode {
         };
 
         //TODO: might need to change this
-        score.setLinkagePosition(0.79);
+        score.setLinkagePosition(constants.linkageUp);
 
         waitForStart();
 
