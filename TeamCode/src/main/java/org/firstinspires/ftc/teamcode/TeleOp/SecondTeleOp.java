@@ -45,7 +45,6 @@ public class SecondTeleOp extends LinearOpMode {
         discontinue.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        //score = new ScoringSystem(hardwareMap);
         //Open
         //TODO: Test below Out
         //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
