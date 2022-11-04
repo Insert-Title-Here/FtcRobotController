@@ -116,11 +116,11 @@ public class BlueRightHigh extends LinearOpMode {
         // move forward a square
         drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1359, 1200), "forward");
         sleep(100);
-        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(50, 100, 100, 100), "forward");
+        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 100, 100, 100), "forward");
 
         //drive.turnToInitialPosition();
         //strafe left
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-927-927, 860+820, 1000+1080, -855-855), "strafe left");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-827-827, 860+820, 1000+1080, -955-855), "strafe left");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -152,12 +152,12 @@ public class BlueRightHigh extends LinearOpMode {
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,600), "strafe right");
-            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-700,-600,500), "strafe right");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right"  );
 
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(892+892,-910-910,-905-905,928+928), "strafe right (center)");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(892+892,-900-900,-905-905,900+900), "strafe right (center)");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 
         } else {

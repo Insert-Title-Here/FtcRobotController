@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -20,14 +18,13 @@ public class RedLeftHigh extends LinearOpMode {
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
-    String parkLocation;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
-    BNO055IMU imu;
+//    BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+/*/        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
@@ -37,6 +34,8 @@ public class RedLeftHigh extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+ */
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
@@ -61,12 +60,6 @@ public class RedLeftHigh extends LinearOpMode {
             }
         });
 
-        telemetry.addData("position", parkLocation);
-        telemetry.addData("Status", "Initialized");
-
-        telemetry.update();
-
-
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
 
@@ -86,7 +79,7 @@ public class RedLeftHigh extends LinearOpMode {
 
             }
         };
-        //TRY SETTING THE COMMANDS INSIDE THE THREAD AND SEE IF IT WORKS THAT WAY
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -95,29 +88,30 @@ public class RedLeftHigh extends LinearOpMode {
         waitForStart();
         webcam.stopStreaming();
         liftThread.start();
-
-        //TODO: Consider whethere or not to just have the code laid out here or by just calling the method
-        //If changed above, then must do for all
         redLeft();
     }
     public void redLeft(){
-
+        telemetry.addData("liftPow", score.getPower());
+        telemetry.addData("liftPos", score.getEncoderPosition());telemetry.update();
         //lift claw a little bit
-        score.goToPosition(100, 0.7);
+        score.goToPosition(370, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.4, 0.4,  0.4, 0.4, avgPosition(1000, 1000, 1059, 1000), "forward");
+        drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1400, 1300), "forward");
+        sleep(100);
+        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 100, 200, 100), "forward");
+
         //drive.turnToInitialPosition();
         //strafe right
-        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(1700, -1600, -2000, 1650), "strafe left");
-        sleep(500);
+        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 900+980, -905-755), "strafe right");
+
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
-
+        sleep(100);
         // move arm max
         score.goToPosition(2340, 0.85);
         cont.set(true);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 80, 98, 100), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 160, 100), "move to pole");
         sleep(1000);
 
 
@@ -125,73 +119,59 @@ public class RedLeftHigh extends LinearOpMode {
         score.setClawPosition(0);
         sleep(300);
         score.setClawPosition(0.24);
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-30, -97, -111, -98), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-160, -117, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
         score.goToPosition(0, 0.3);
         sleep(300);
+//        drive.turn(-Math.PI/2, 0.3);
 
-        //1 (far left) (general code)
-        // drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
-        // sleep(50);
-        //turn right a little(straighten out)
-        // drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn straight");
-        //sleep(50);
-        //drive forward a little
-        //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
-        //TODO: These need to be changed(copy pasted from RedRightHigh)
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(750,-750,-750,600), "strafe right");
+            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-5007,2941,3226,-3036), "strafe left (more left)");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(600,600,600,650), "strafe right");
+//            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 3410, "strafe right");
+//            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, 300, "strafe right");
+
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
-            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
+            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
+//            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1530, "strafe right");
+//            drive.turnToInitialPosition();
         } else {
             // move to right
-            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(3035,-2117,-2114,2226), "strafe right (more right)");
-            drive.goToPosition(0.3, 0.3, 0.3, 0.3, 400, "forward a little");
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, 1000, "right");
+            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
+//            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 400, "strafe right");
 
         }
-
-
-
-
+        //drive.turnToInitialPosition();
 
         /*
-        //2 middle
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1267, -1251, -1246, 304), "strafe right");
-        //3 far right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
+        //1 (far right) (general code)
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
+        sleep(0);
+        //turn left a little (straighten out)
+        drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-271, 280, -260, 290), "turn straight");
+        sleep(50);
+        //drive forward a little
+        drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
+
+
+
+
+        //2
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1267, 1251, 1246, -304), "strafe left");
+        //3
+        drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1152, 1177, 1164, -1196), "strafe left");
+
     */
         score.setClawPosition(0);
-    }
 
+    }
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
-    /*
-    //TODO: check if camera angle works
-    private class DetectionAlgorithm extends OpenCvPipeline {
-        Mat original;
-        Mat changed;
-
-        @Override
-        public Mat processFrame(Mat input) {
-            input.copyTo(original);
-            changed = new Mat();
-            if(original.empty()) {
-                return input;
-            }
-            // cyan magenta yellow
-            Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
-            // magenta 255, 0, 255
-            Core.inRange(changed, new Scalar(240, 0 ,240), new Scalar(255, 0, 255), changed);
-            return null;
-        }
-
-
-    }
-    */
 
 }

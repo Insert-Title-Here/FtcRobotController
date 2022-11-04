@@ -116,11 +116,11 @@ public class RedRightHigh extends LinearOpMode {
         // move forward a square
         drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1359, 1200), "forward");
         sleep(100);
-        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(200, 100, 100, 200), "forward");
+        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 50, 50, 50), "backwards");
 
         //drive.turnToInitialPosition();
         //strafe left
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-927-927, 800+820, 1000+1080, -855-855), "strafe left");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-927-927, 800+900, 1000+1280, -805-805), "strafe left");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -152,7 +152,7 @@ public class RedRightHigh extends LinearOpMode {
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,600), "strafe right");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-650,-650,600), "strafe right");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {

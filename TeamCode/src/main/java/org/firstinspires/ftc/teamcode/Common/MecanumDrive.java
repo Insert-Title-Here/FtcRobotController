@@ -149,7 +149,8 @@ public class MecanumDrive {
         //Encoder based gotoposition
         while ((Math.abs(tics) - position) > 0) {
             difference = System.currentTimeMillis() - time;
-            setPower(flPow + additionalPower(difference, flPow), frPow + additionalPower(difference, flPow), blPow + additionalPower(difference, flPow), brPow + additionalPower(difference, flPow      ));
+            setPower(flPow, frPow, blPow, brPow);
+            //setPower(flPow + additionalPower(difference, flPow), frPow + additionalPower(difference, flPow), blPow + additionalPower(difference, flPow), brPow + additionalPower(difference, flPow      ));
             position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                     Math.abs(br.getCurrentPosition())) / 4;
         }
