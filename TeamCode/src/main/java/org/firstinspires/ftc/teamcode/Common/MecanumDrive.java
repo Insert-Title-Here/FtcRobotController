@@ -28,7 +28,7 @@ public class MecanumDrive {
     // holds data
     public String loggingString;
 
-    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry){
+    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -42,7 +42,6 @@ public class MecanumDrive {
         this.telemetry = telemetry;
         active = new AtomicBoolean();
         colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
-
 
 
         //TODO: Change the deviceName for each
@@ -74,38 +73,38 @@ public class MecanumDrive {
 
     }
 
-    public int getFLPosition(){
+    public int getFLPosition() {
         return fl.getCurrentPosition();
     }
 
-    public int getFRPosition(){
+    public int getFRPosition() {
         return fr.getCurrentPosition();
 
     }
 
-    public int getBLPosition(){
+    public int getBLPosition() {
         return bl.getCurrentPosition();
 
     }
 
-    public int getBRPosition(){
+    public int getBRPosition() {
         return br.getCurrentPosition();
 
     }
 
 
-    public void setPower(Vector2D velocity, double turnValue, boolean isSwapped){
+    public void setPower(Vector2D velocity, double turnValue, boolean isSwapped) {
         turnValue = -turnValue;
-        double direction =  velocity.getDirection();
+        double direction = velocity.getDirection();
 
 
         double power = velocity.magnitude();
 
-        double angle = direction + 3*Math.PI / 4.0;
+        double angle = direction + 3 * Math.PI / 4.0;
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        if(!isSwapped) {
+        if (!isSwapped) {
             setPower((power * sin - turnValue), (power * cos + turnValue),
                     (power * cos - turnValue), (power * sin + turnValue));
         } else {
@@ -121,15 +120,15 @@ public class MecanumDrive {
         bl.setPower(blPow);
         br.setPower(brPow);
     }
+
     //TODO: Change mecanudm drive so that each motor goes same amount of tics??(or ist it already set that way)
-    public void goToPosition (double flPow, double frPow, double blPow, double brPow, int tics, String action) {
+    public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics, String action) {
         //fl fr bl br
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
 
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -139,15 +138,17 @@ public class MecanumDrive {
 
         // won't work for turns, only forward and backward
 
-        int position = (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                 Math.abs(br.getCurrentPosition())) / 4;
 
         telemetry.addData("motorPosition", position);
         telemetry.update();
-
-        while ((Math.abs(tics)-position) > 0) {
-            setPower(flPow, frPow, blPow, brPow);
-            position = (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+        long time = System.currentTimeMillis();
+        long difference;
+        while ((Math.abs(tics) - position) > 0) {
+            difference = System.currentTimeMillis() - time;
+            setPower(flPow + additionalPower(difference, flPow), frPow + additionalPower(difference, flPow), blPow + additionalPower(difference, flPow), brPow + additionalPower(difference, flPow      ));
+            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                     Math.abs(br.getCurrentPosition())) / 4;
         }
 
@@ -164,14 +165,13 @@ public class MecanumDrive {
 
     }
 
-    public void goToPosition (double flPow, double frPow, double blPow, double brPow) {
+    public void goToPosition(double flPow, double frPow, double blPow, double brPow) {
         //fl fr bl br
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
 
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -181,7 +181,7 @@ public class MecanumDrive {
 
         // won't work for turns, only forward and backward
 
-        int position = (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                 Math.abs(br.getCurrentPosition())) / 4;
 
         telemetry.addData("motorPosition", position);
@@ -191,15 +191,16 @@ public class MecanumDrive {
         setPower(flPow, frPow, blPow, brPow);
 
     }
+
     //TODO: Needs Testing
-    public void turn(double radians, double power){
+    public void turn(double radians, double power) {
         // will be negative 1 or posiive 1
         //double sign = radians / Math.abs(radians);
         double initialAngle = imu.getAngularOrientation().firstAngle;
         double before;
         double after;
 
-        while(Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)){
+        while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
             /*
             if(imu.getAngularOrientation().firstAngle == Math.PI){
                 //before = sign*(Math.PI - Math.abs(initialAngle));
@@ -217,11 +218,11 @@ public class MecanumDrive {
             }
 
              */
-            telemetry.addData("nowork:((","nooooooo");
-            if(radians < 0){
+            telemetry.addData("nowork:((", "nooooooo");
+            if (radians < 0) {
                 //turn right # of radians
                 setPower(power, -power, power, -power);
-            }else{
+            } else {
                 //turn left # of radians
                 setPower(-power, power, -power, power);
             }
@@ -229,19 +230,20 @@ public class MecanumDrive {
 
 
     }
+
     //TODO: Needs Testing
-    public void turnToInitialPosition(){
+    public void turnToInitialPosition() {
         double rad = imu.getAngularOrientation().firstAngle;
-        if(rad > 0.04 || rad < -0.04){
-            while((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005){
+        if (rad > 0.04 || rad < -0.04) {
+            while ((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005) {
                 double radians = imu.getAngularOrientation().firstAngle;
-                if((0 < radians && radians < 0.01)){
+                if (0 < radians) {
                     //turn right # of radians
                     setPower(0.2, -0.2, 0.2, -0.2);
-                }else if((-0.01 < radians && radians < 0)){
+                } else if (radians < 0) {
                     //turn left # of radians
                     setPower(-0.2, 0.2, -0.2, 0.2);
-                }else{
+                } else {
                     break;
                 }
             }
@@ -258,7 +260,8 @@ public class MecanumDrive {
 
          */
     }
-    public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action){
+
+    public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action) {
         //fl fr bl br
         active.set(true);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -270,40 +273,40 @@ public class MecanumDrive {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        driveThread = new Thread(){
+        driveThread = new Thread() {
             @Override
-            public void run(){
+            public void run() {
                 boolean flDone = false;
                 boolean frDone = false;
                 boolean blDone = false;
                 boolean brDone = false;
 
-                while(active.get()){
-                    if(flDone && frDone && blDone && brDone){
+                while (active.get()) {
+                    if (flDone && frDone && blDone && brDone) {
                         active.set(false);
-                    }else{
+                    } else {
                         //fl
-                        if((Math.abs(flTics) - Math.abs(fl.getCurrentPosition())) > 0){
+                        if ((Math.abs(flTics) - Math.abs(fl.getCurrentPosition())) > 0) {
                             setPower(power, power, power, power);
-                        }else{
+                        } else {
                             flDone = true;
                         }
                         //fr
-                        if((Math.abs(frTics) - Math.abs(fr.getCurrentPosition())) > 0){
+                        if ((Math.abs(frTics) - Math.abs(fr.getCurrentPosition())) > 0) {
                             setPower(power, power, power, power);
-                        }else{
+                        } else {
                             frDone = true;
                         }
                         //bl
-                        if((Math.abs(blTics) - Math.abs(bl.getCurrentPosition())) > 0){
+                        if ((Math.abs(blTics) - Math.abs(bl.getCurrentPosition())) > 0) {
                             setPower(power, power, power, power);
-                        }else{
+                        } else {
                             blDone = true;
                         }
                         //br
-                        if((Math.abs(brTics) - Math.abs(br.getCurrentPosition())) > 0){
+                        if ((Math.abs(brTics) - Math.abs(br.getCurrentPosition())) > 0) {
                             setPower(power, power, power, power);
-                        }else{
+                        } else {
                             brDone = true;
                         }
                         telemetry.addData("flPos", getFLPosition());
@@ -316,12 +319,30 @@ public class MecanumDrive {
                     }
 
                 }
-                setPower(0,0,0,0);
+                setPower(0, 0, 0, 0);
             }
         };
         driveThread.start();
 
 
+    }
+
+    public double additionalPower(double delta_time, double power) {
+        double angleError = imu.getAngularOrientation().firstAngle;
+        double accumulatedError = 0;
+        double output = 0;
+        double proportionCoefficient = 0.8;
+        double integralCoefficient = 0.1;
+        if (angleError > 0.05) {
+            while ((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005) {
+                accumulatedError += angleError * delta_time;
+                output = (angleError * proportionCoefficient) + (accumulatedError * integralCoefficient);
+                return output + power;
+            }
+        } else if (angleError < -0.05) {
+
+        }
+        return output + power;
     }
 
     public void resetEncoders() {
