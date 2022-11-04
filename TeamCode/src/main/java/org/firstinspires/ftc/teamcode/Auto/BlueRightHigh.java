@@ -28,6 +28,7 @@ public class BlueRightHigh extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //initializing imu and camera
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -74,15 +75,15 @@ public class BlueRightHigh extends LinearOpMode {
         //TODO: Possibly change turns from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
 
+        //thread for slides
         liftThread = new Thread(){
             @Override
             public void run(){
                 while(opModeIsActive()){
+                    // keeps the slides from sliding down on its own
                     if((score.getEncoderPosition() > 1200 && cont.get())){
                         score.setPower(0.1);
                     }
-
-
                     telemetry.addData("liftPow", score.getPower());
                     telemetry.addData("liftPos", score.getEncoderPosition());
                     telemetry.addData("anglePos", imu.getAngularOrientation().firstAngle);
@@ -91,8 +92,6 @@ public class BlueRightHigh extends LinearOpMode {
 
             }
         };
-        //TRY SETTING THE COMMANDS INSIDE THE THREAD AND SEE IF IT WORKS THAT WAY
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         //close claw
@@ -100,9 +99,6 @@ public class BlueRightHigh extends LinearOpMode {
         waitForStart();
         webcam.stopStreaming();
         liftThread.start();
-
-        //TODO: Consider whethere or not to just have the code laid out here or by just calling the method
-        //If changed above, then must do for all
         blueRight();
     }
     public void blueRight(){
@@ -113,9 +109,10 @@ public class BlueRightHigh extends LinearOpMode {
         //lift claw a little bit
         score.goToPosition(150, 0.7);
         sleep(200);
-        // move forward a square
+        // move forward a square and push sleeved cone out of the way
         drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1359, 1200), "forward");
         sleep(100);
+        // move back a little from pushing the cone out of the way
         drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 100, 100, 100), "forward");
 
         //drive.turnToInitialPosition();
@@ -125,31 +122,26 @@ public class BlueRightHigh extends LinearOpMode {
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
         sleep(100);
-        // move arm max
+        // move arm to max
         score.goToPosition(2340, 0.85);
+        //begin thread for maintaining height of slides
         cont.set(true);
+        //move forward closer to pole
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 100, 150), "move to pole");
         sleep(1000);
 
-
+        //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(0);
         sleep(300);
         score.setClawPosition(0.24);
+        //move back from pole to strafe right
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-50, -97, -111, -98), "move back from pole");
-        // lowers arm after scoring first cone
         cont.set(false);
+        //moves slides down
         score.goToPosition(0, 0.3);
         sleep(300);
-
-        //1 (far left) (general code)
-        // drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-498, -506, -557, -565), "move back further from pole");
-        // sleep(50);
-        //turn right a little(straighten out)
-        // drive.goToPosition(0.3, -0.3, 0.3, -0.3, avgPosition(311, -325, 345, -333), "turn straight");
-        //sleep(50);
-        //drive forward a little
-        //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
+        //moves robot to correct parking position
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-700,-600,500), "strafe right");
@@ -183,28 +175,6 @@ public class BlueRightHigh extends LinearOpMode {
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
-    /*
-    //TODO: check if camera angle works
-    private class DetectionAlgorithm extends OpenCvPipeline {
-        Mat original;
-        Mat changed;
 
-        @Override
-        public Mat processFrame(Mat input) {
-            input.copyTo(original);
-            changed = new Mat();
-            if(original.empty()) {
-                return input;
-            }
-            // cyan magenta yellow
-            Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
-            // magenta 255, 0, 255
-            Core.inRange(changed, new Scalar(240, 0 ,240), new Scalar(255, 0, 255), changed);
-            return null;
-        }
-
-
-    }
-    */
 
 }
