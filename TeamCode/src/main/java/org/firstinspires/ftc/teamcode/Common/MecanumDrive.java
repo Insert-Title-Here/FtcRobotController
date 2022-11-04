@@ -339,7 +339,7 @@ public class MecanumDrive {
         }
         return output + power;
     }
-
+    // resets encoders
     public void resetEncoders() {
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -351,6 +351,7 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    // returns the power of a mecanum wheel
     public double getPower(){
         return fl.getPower();
     }
@@ -367,11 +368,11 @@ public class MecanumDrive {
             e.printStackTrace();
         }
     }
-
+    // for color sensor, returns the blue color
     public int currentBlueColor() {
         return colorTape.blue(); // if current color is really high // 410
     }
-
+    // for color sensor, returns the blue colo
     public int currentRedColor() {
         return colorTape.red(); // if current color is really high // 177
     }
@@ -387,6 +388,7 @@ public class MecanumDrive {
 
 
     }
+    // returns the average tics for mecanum wheels
     public int avgPosition(){
         return (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition()))/4;
     }

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,6 +14,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous
 public class RedRightHigh extends LinearOpMode {
+    // instantiations
     MecanumDrive drive;
     ScoringSystem score;
     AtomicBoolean cont;
@@ -23,11 +22,13 @@ public class RedRightHigh extends LinearOpMode {
     String parkLocation;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
-    BNO055IMU imu;
-    double radius;
+//    BNO055IMU imu;
+//    double radius;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        /*
+        // imu instantiation etc.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -37,13 +38,16 @@ public class RedRightHigh extends LinearOpMode {
 
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        */
+        // initializations
+//        imu.initialize(parameters);
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
         cont.set(false);
 
+        // camera init
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
@@ -70,10 +74,9 @@ public class RedRightHigh extends LinearOpMode {
 
         telemetry.update();
 
-
         //TODO: Possibly change turns from encoder to IMU angles
-        //TODO: Work on auto for all the side (make different methods for each side?)
 
+        // thread from keeping the slide from going down
         liftThread = new Thread(){
             @Override
             public void run(){
@@ -85,7 +88,7 @@ public class RedRightHigh extends LinearOpMode {
 
                     telemetry.addData("liftPow", score.getPower());
                     telemetry.addData("liftPos", score.getEncoderPosition());
-                    telemetry.addData("anglePos", imu.getAngularOrientation().firstAngle);
+//                    telemetry.addData("anglePos", imu.getAngularOrientation().firstAngle);
                     telemetry.update();
                 }
 
@@ -108,18 +111,19 @@ public class RedRightHigh extends LinearOpMode {
     public void redRight(){
         telemetry.addData("liftPow", score.getPower());
         telemetry.addData("liftPos", score.getEncoderPosition());
-        telemetry.addData("anglePos", imu.getAngularOrientation().firstAngle);
+//        telemetry.addData("anglePos", imu.getAngularOrientation().firstAngle);
         telemetry.update();
         //lift claw a little bit
         score.goToPosition(150, 0.7);
         sleep(200);
-        // move forward a square
+        // move forward a bit more than a square (pushes sleeve out of way)
         drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1359, 1200), "forward");
         sleep(100);
+        // moves back to center-ish of square
         drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 50, 50, 50), "backwards");
 
         //drive.turnToInitialPosition();
-        //strafe left
+        //strafe left to in front of highest pole
         drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-927-927, 800+900, 1000+1280, -805-805), "strafe left");
 
         // turn
@@ -128,17 +132,23 @@ public class RedRightHigh extends LinearOpMode {
         // move arm max
         score.goToPosition(2340, 0.85);
         cont.set(true);
+        // drive to cone
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 80, 98, 50), "move to pole");
+        // wait for slide to stop shaking
         sleep(1000);
 
 
+        // slide goes down 300 tics from it's original position
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
+        // cone released
         score.setClawPosition(0);
         sleep(300);
         score.setClawPosition(0.24);
+        // drive backwards to center-ish of squares (y direction)
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-30, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
+        // lowers arm after scoring first cone
         score.goToPosition(0, 0.3);
         sleep(300);
 
@@ -153,16 +163,19 @@ public class RedRightHigh extends LinearOpMode {
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-650,-650,600), "strafe right");
+            // move forward a bit to guarantee park
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
             drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(892+892,-910-910,-905-905,928+928), "strafe right (center)");
+            // move forward a bit to guarantee park
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 
         } else {
             // move to right
             drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(2017+2017,-1559-1559,-1557-1557,1613+1613), "strafe right (more right)");
+            // move forward a bit to guarantee park
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 
         }
@@ -179,32 +192,9 @@ public class RedRightHigh extends LinearOpMode {
     */
         score.setClawPosition(0);
     }
-
+    // returns the average tics for mecanum wheels
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
-    /*
-    //TODO: check if camera angle works
-    private class DetectionAlgorithm extends OpenCvPipeline {
-        Mat original;
-        Mat changed;
-
-        @Override
-        public Mat processFrame(Mat input) {
-            input.copyTo(original);
-            changed = new Mat();
-            if(original.empty()) {
-                return input;
-            }
-            // cyan magenta yellow
-            Imgproc.cvtColor(original, changed, Imgproc.COLOR_RGB2YCrCb);
-            // magenta 255, 0, 255
-            Core.inRange(changed, new Scalar(240, 0 ,240), new Scalar(255, 0, 255), changed);
-            return null;
-        }
-
-
-    }
-    */
 
 }
