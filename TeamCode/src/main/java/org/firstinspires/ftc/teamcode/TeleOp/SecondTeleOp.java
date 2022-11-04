@@ -19,14 +19,12 @@ public class SecondTeleOp extends LinearOpMode {
     AtomicBoolean pause;
     BNO055IMU imu;
     AtomicBoolean discontinue;
-    //ColorSensor color;
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.7;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
     @Override
     public void runOpMode() throws InterruptedException {
-        double initialAngle;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -40,19 +38,17 @@ public class SecondTeleOp extends LinearOpMode {
         score = new ScoringSystem(hardwareMap, telemetry);
         pause = new AtomicBoolean();
         discontinue = new AtomicBoolean();
-        //color = new ColorSensor(hardwareMap, telemetry);
         pause.set(true);
         discontinue.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         //Open
-        //TODO: Test below Out
-        //Comment out code in opmodeisactive while loop if you test this tread out(as well as the thread aboeve)
+        //Thread for the slides
         liftThread = new Thread(){
             @Override
             public void run(){
-                //removed !score.isBusy() from the while statement
                 while(opModeIsActive()){
+                    //manually lifts slides up and down
                     if(gamepad1.right_bumper){
                         if(score.getEncoderPosition() > 2390){
                             score.setPower(0);
@@ -70,28 +66,33 @@ public class SecondTeleOp extends LinearOpMode {
                             score.setPower(0.1);
                         }
                     }
-                    // reset   gamepad1.dpad_down
-                    // low cone, 13 in, 1209  gamenpad1.dpad_left
-                    // medium cone, 23 in, 1795 gamepad1.dpad_up
-                    // high cone, 33 in, 2390 gamepad1.dpad_right
+                    //moves the slides all the way down
                     if(gamepad1.dpad_down) {
                         score.goToPosition(0, 0.4);
                     }
+                    //moves the slides to highest pole height
                     if (gamepad1.right_stick_button) {
                         //high cone
                         score.goToPosition(2330, 0.95);
                         score.setPower(0.1);
                     }
+                    //moves slides to medium pole height
                     if(gamepad1.left_stick_button){
                         //medium cone
                         score.goToPosition(1660, 0.95);
                         score.setPower(0.1);
                     }
+                    //temporary command that will move the slides to the low pole height
                     if(gamepad1.x){
                         //low cone
                         score.goToPosition(1050, 1);
                         score.setPower(0.08);
                     }
+                    //resets the slidemotor encoder
+                    if(gamepad1.options){
+                        score.resetLiftEncoder();
+                    }
+                    //closes the claw(manually) and opens the claw(like a toggle)
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
                         if(0.22 < score.getClawPosition() && score.getClawPosition() < 0.26){
                             if(score.getEncoderPosition() > 900){
@@ -145,7 +146,7 @@ public class SecondTeleOp extends LinearOpMode {
                     }else if(gamepad1.right_trigger < 0.1){
                         pause.set(true);
                     }
-
+                    // closes claw using color sensor
                     if (score.getClawPosition() == 0.0) {
                         try {
                             score.grabCone(true);
@@ -162,6 +163,7 @@ public class SecondTeleOp extends LinearOpMode {
         liftThread.start();
         int stackHeight = 330;
         while(opModeIsActive()){
+            //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
             double gamepadY = gamepad1.left_stick_y;
             if(Math.abs(gamepadX) < Math.abs(gamepadY)){
@@ -172,7 +174,7 @@ public class SecondTeleOp extends LinearOpMode {
                 gamepadX = 0;
                 gamepadY = 0;
             }
-            //TODO: Decide if you want sprint capability
+            //robot movement(using controls/gamepads) with sprint mode
             if (gamepad1.left_trigger > 0.1) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }else {
@@ -182,11 +184,13 @@ public class SecondTeleOp extends LinearOpMode {
                     drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
+            //Used for testing purposes-turns a certain number of radians
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
-                drive.turn(Math.PI/60, 0.3);
+                drive.turn(Math.PI/4, 0.3);
             }
+            //lowers the height of the slides for the stack of 5 cones
             if(gamepad1.a){
                 discontinue.set(true);
                 if((score.getEncoderPosition() - 30) > 0){
@@ -194,6 +198,7 @@ public class SecondTeleOp extends LinearOpMode {
                     stackHeight -= 30;
                 }
             }
+            //moves the slides to the stack of 5 cones height
             if(gamepad1.y){
                 discontinue.set(true);
                 if(stackHeight != 330){
@@ -203,9 +208,7 @@ public class SecondTeleOp extends LinearOpMode {
                 }
             }
 
-            if(gamepad1.options){
-                score.resetLiftEncoder();
-            }
+            //resets the drive motor encoders
             if (gamepad1.share) {
                 drive.resetEncoders();
             }
@@ -232,12 +235,5 @@ public class SecondTeleOp extends LinearOpMode {
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
         score.setClawPosition(1);
-    }
-    //Test this out
-    public void calibrateLiftBottom(int tics) {
-        if (tics < 70) {
-            int aimedPow = (int) (Math.sqrt(tics) / 15);
-            score.setPower(aimedPow);
-        }
     }
 }

@@ -62,7 +62,8 @@ public class ScoringSystem {
 
 
             difference =  System.currentTimeMillis() - time;
-            //set power to zero if tics pretty high and power continually being used
+            //set power to zero if tics pretty high and power continually being used, stops lift
+            //system from breaking itself from trying to go past mechanical max
             if((Math.abs(difference) > 5000)){
                 liftMotor.setPower(0);
                 notReached = false;
@@ -107,15 +108,15 @@ public class ScoringSystem {
     public boolean isBusy(){
         return liftMotor.isBusy();
     }
-
+    //returns numerical value of how "blue it is" from the color sensor
     public int currentBlueColor() {
         return colorCone.blue(); // if current color is really high // 410
     }
-
+    //returns the numerical value of how "red it is" from the color sensor
     public int currentRedColor() {
         return colorCone.red(); // if current color is really high // 177
     }
-
+    // Uses color sensor to grab cone
     public boolean grabCone() throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 0.9) {
             // grab cone
@@ -130,6 +131,7 @@ public class ScoringSystem {
         }
         return false;
     }
+    //uses color sensor to grab cone(this one is used when trying to grab from the stack of 5 cones
     public boolean grabCone(boolean stack) throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 1) {
             // grab cone

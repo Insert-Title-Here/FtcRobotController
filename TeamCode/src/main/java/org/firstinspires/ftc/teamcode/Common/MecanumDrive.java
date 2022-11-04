@@ -27,8 +27,9 @@ public class MecanumDrive {
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
     // holds data
     public String loggingString;
-
+    //constructor
     public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
+        //initializes imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -44,7 +45,7 @@ public class MecanumDrive {
         colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
 
 
-        //TODO: Change the deviceName for each
+        //initiallises drive motors
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
@@ -72,7 +73,7 @@ public class MecanumDrive {
         br.setDirection(DcMotorSimple.Direction.FORWARD);
 
     }
-
+    /*current motor positions*/
     public int getFLPosition() {
         return fl.getCurrentPosition();
     }
@@ -121,7 +122,7 @@ public class MecanumDrive {
         br.setPower(brPow);
     }
 
-    //TODO: Change mecanudm drive so that each motor goes same amount of tics??(or ist it already set that way)
+
     public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics, String action) {
         //fl fr bl br
 
@@ -137,7 +138,7 @@ public class MecanumDrive {
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // won't work for turns, only forward and backward
-
+        //avg position from all four drive motors
         int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                 Math.abs(br.getCurrentPosition())) / 4;
 
@@ -145,6 +146,7 @@ public class MecanumDrive {
         telemetry.update();
         long time = System.currentTimeMillis();
         long difference;
+        //Encoder based gotoposition
         while ((Math.abs(tics) - position) > 0) {
             difference = System.currentTimeMillis() - time;
             setPower(flPow + additionalPower(difference, flPow), frPow + additionalPower(difference, flPow), blPow + additionalPower(difference, flPow), brPow + additionalPower(difference, flPow      ));
@@ -191,7 +193,7 @@ public class MecanumDrive {
         setPower(flPow, frPow, blPow, brPow);
 
     }
-
+    // Turns a certain amount of given radians useing imu
     //TODO: Needs Testing
     public void turn(double radians, double power) {
         // will be negative 1 or posiive 1
@@ -218,7 +220,6 @@ public class MecanumDrive {
             }
 
              */
-            telemetry.addData("nowork:((", "nooooooo");
             if (radians < 0) {
                 //turn right # of radians
                 setPower(power, -power, power, -power);
@@ -230,12 +231,13 @@ public class MecanumDrive {
 
 
     }
-
+    // turns to the starting position
     //TODO: Needs Testing
     public void turnToInitialPosition() {
+        boolean over = true;
         double rad = imu.getAngularOrientation().firstAngle;
         if (rad > 0.04 || rad < -0.04) {
-            while ((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005) {
+            while ((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005 && over) {
                 double radians = imu.getAngularOrientation().firstAngle;
                 if (0 < radians) {
                     //turn right # of radians
@@ -244,23 +246,13 @@ public class MecanumDrive {
                     //turn left # of radians
                     setPower(-0.2, 0.2, -0.2, 0.2);
                 } else {
-                    break;
+                    over = false;
                 }
             }
         }
-
-        /*
-        if(startingRad > 0){
-            turn(-0.05,0.5);
-        }else if(startingRad < 0){
-            turn(0.05,0.5);
-        }else{
-            //nothing
-        }
-
-         */
     }
-
+    /*
+    //DO NOT USE currently does not work
     public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action) {
         //fl fr bl br
         active.set(true);
@@ -327,6 +319,8 @@ public class MecanumDrive {
 
     }
 
+     */
+    //PID testing not currently operational
     public double additionalPower(double delta_time, double power) {
         double angleError = imu.getAngularOrientation().firstAngle;
         double accumulatedError = 0;
@@ -380,7 +374,7 @@ public class MecanumDrive {
     public int currentRedColor() {
         return colorTape.red(); // if current color is really high // 177
     }
-
+    //checks if the color sensor identifies tape color
     public void findTape() {
         while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
             goToPosition(0, 0.8, 0, 0.8);
