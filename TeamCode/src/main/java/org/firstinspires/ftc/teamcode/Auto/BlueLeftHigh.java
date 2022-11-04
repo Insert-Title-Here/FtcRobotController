@@ -83,51 +83,67 @@ public class BlueLeftHigh extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        //close claw
+        score.setClawPosition(0.24);
         waitForStart();
         webcam.stopStreaming();
         liftThread.start();
         blueLeft();
     }
     public void blueLeft(){
-        //close claw
-        score.setClawPosition(0.24);
-        sleep(800);
+        telemetry.addData("liftPow", score.getPower());
+        telemetry.addData("liftPos", score.getEncoderPosition());telemetry.update();
         //lift claw a little bit
-        score.goToPosition(100, 0.7);
+        score.goToPosition(350, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1100, 1100, 1159, 1200), "forward");
+        drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1400, 1300), "forward");
+        sleep(100);
+        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(200, 200, 100, 200), "forward");
 
-        //strafe right
-        drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1754, -1640, -1800, 1710), "strafe right");
-        sleep(500);
+        //drive.turnToInitialPosition();
+        //strafe left
+        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 1000+1080, -855-855), "strafe left");
+
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
-
+        sleep(100);
         // move arm max
         score.goToPosition(2340, 0.85);
         cont.set(true);
-        drive.goToPosition( 0.3, 0.3, 0.3, 0.3, avgPosition(100, 80, 98, 100), "move to pole");
-        sleep(2000);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 100, 80, 50), "move to pole");
+        sleep(1000);
+
+
+        score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(0);
         sleep(300);
         score.setClawPosition(0.24);
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-30, -97, -111, -98), "move back from pole");
         // lowers arm after scoring first cone
         cont.set(false);
-        score.goToPosition(0, 0.7);
+        score.goToPosition(0, 0.3);
         sleep(300);
-
+        drive.turn(-Math.PI/2, 0.3);
 
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-4007,2941,3226,-3036), "strafe left (more left)");
+//            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-5007,2941,3226,-3036), "strafe left (more left)");
+//            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(600,600,600,650), "strafe right");
+            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 3410, "strafe right");
+            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, 300, "strafe right");
+
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
-            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
+//            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
+//            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
+            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1530, "strafe right");
+            drive.turnToInitialPosition();
         } else {
             // move to right
-            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
+//            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
+//            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
+            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 400, "strafe right");
 
         }
         //drive.turnToInitialPosition();

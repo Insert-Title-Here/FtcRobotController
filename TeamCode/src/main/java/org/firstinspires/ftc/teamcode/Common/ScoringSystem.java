@@ -45,7 +45,8 @@ public class ScoringSystem {
         }
         long time = System.currentTimeMillis();
         long difference;
-        while (Math.abs(Math.abs(tics)-motorPosition) > 10) {
+        boolean notReached = true;
+        while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
             //set power to zero if tics pretty high and power continually being used
             /*
             if(motorPosition < 400){
@@ -64,7 +65,7 @@ public class ScoringSystem {
             //set power to zero if tics pretty high and power continually being used
             if((Math.abs(difference) > 5000)){
                 liftMotor.setPower(0);
-
+                notReached = false;
             }else{
                 liftMotor.setPower(power);
                 motorPosition = liftMotor.getCurrentPosition();
@@ -119,9 +120,9 @@ public class ScoringSystem {
         if (colorCone.getDistance(DistanceUnit.CM) < 0.9) {
             // grab cone
             setClawPosition(0.24);
-            sleep(300);
+            sleep(400);
             // lift up
-            goToPosition(200, 0.6);
+            goToPosition(getEncoderPosition() + 100, 0.6);
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
             telemetry.update();
             return true;
@@ -129,6 +130,26 @@ public class ScoringSystem {
         }
         return false;
     }
+    public boolean grabCone(boolean stack) throws InterruptedException {
+        if (colorCone.getDistance(DistanceUnit.CM) < 1) {
+            // grab cone
+            setClawPosition(0.24);
+            sleep(400);
+            // lift up
+            if(stack){
+                goToPosition(getEncoderPosition() + 320, 0.6);
+            }else{
+                goToPosition(getEncoderPosition() + 100, 0.6);
+            }
+            telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
+            telemetry.update();
+            return true;
+
+        }
+        return false;
+    }
+
+
 
     public double getDistance() {
         return colorCone.getDistance(DistanceUnit.CM);

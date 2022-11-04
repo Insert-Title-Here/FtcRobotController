@@ -88,9 +88,14 @@ public class SecondTeleOp extends LinearOpMode {
                         score.goToPosition(1660, 0.95);
                         score.setPower(0.1);
                     }
+                    if(gamepad1.x){
+                        //low cone
+                        score.goToPosition(1050, 1);
+                        score.setPower(0.08);
+                    }
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
                         if(0.22 < score.getClawPosition() && score.getClawPosition() < 0.26){
-                            if(score.getEncoderPosition() > 1500){
+                            if(score.getEncoderPosition() > 900){
                                 score.goToPosition(score.getEncoderPosition() - 300, 0.5);
                             }
                             score.setClawPosition(0);
@@ -129,7 +134,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+300,0.6);
+                                    score.goToPosition(score.getEncoderPosition()+330,0.6);
                                     discontinue.set(false);
                                 }else{
                                     score.setClawPosition(0.25);
@@ -144,7 +149,8 @@ public class SecondTeleOp extends LinearOpMode {
 
                     if (score.getClawPosition() == 0.0) {
                         try {
-                            score.grabCone();
+                            score.grabCone(true);
+                            discontinue.set(false);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -155,7 +161,7 @@ public class SecondTeleOp extends LinearOpMode {
         score.setClawPosition(0);
         waitForStart();
         liftThread.start();
-        int stackHeight = 300;
+        int stackHeight = 330;
         while(opModeIsActive()){
             double gamepadX = gamepad1.left_stick_x;
             double gamepadY = gamepad1.left_stick_y;
@@ -191,23 +197,20 @@ public class SecondTeleOp extends LinearOpMode {
             }
             if(gamepad1.y){
                 discontinue.set(true);
-                if(stackHeight != 300){
+                if(stackHeight != 330){
                     stackHeight += 30;
                 }else{
                     score.goToPosition(stackHeight, 0.7);
                 }
             }
-            if(gamepad1.x){
-                //low position
-                score.goToPosition(1120, 1);
-            }
+
             if(gamepad1.options){
                 score.resetLiftEncoder();
             }
             if (gamepad1.share) {
                 drive.resetEncoders();
             }
-            /*
+
             //TODO: add telemtry for gamepad a and y positions when you press them
             telemetry.addData("flPos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());
@@ -218,13 +221,14 @@ public class SecondTeleOp extends LinearOpMode {
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
+            telemetry.addData("booleanCheck(Discontinue)", discontinue.get());
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());
             //  telemetry.update();
             //telemetry.update();
             telemetry.update();
 
-             */
+
         }
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);

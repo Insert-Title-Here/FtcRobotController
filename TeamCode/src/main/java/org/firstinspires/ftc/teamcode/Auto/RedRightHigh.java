@@ -24,6 +24,7 @@ public class RedRightHigh extends LinearOpMode {
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
     BNO055IMU imu;
+    double radius;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -63,6 +64,9 @@ public class RedRightHigh extends LinearOpMode {
 
         telemetry.addData("position", parkLocation);
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("liftPos", score.getEncoderPosition());
+        telemetry.addData("clawPos", score.getClawPosition());
+        telemetry.addData("liftPow", score.getPower());
 
         telemetry.update();
 
@@ -81,6 +85,7 @@ public class RedRightHigh extends LinearOpMode {
 
                     telemetry.addData("liftPow", score.getPower());
                     telemetry.addData("liftPos", score.getEncoderPosition());
+                    telemetry.addData("anglePos", imu.getAngularOrientation().firstAngle);
                     telemetry.update();
                 }
 
@@ -101,23 +106,29 @@ public class RedRightHigh extends LinearOpMode {
         redRight();
     }
     public void redRight(){
-
+        telemetry.addData("liftPow", score.getPower());
+        telemetry.addData("liftPos", score.getEncoderPosition());
+        telemetry.addData("anglePos", imu.getAngularOrientation().firstAngle);
+        telemetry.update();
         //lift claw a little bit
-        score.goToPosition(100, 0.7);
+        score.goToPosition(150, 0.7);
         sleep(200);
         // move forward a square
-        drive.goToPosition(0.4, 0.4,  0.4, 0.4, avgPosition(1000, 1000, 1059, 1000), "forward");
+        drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1359, 1200), "forward");
+        sleep(100);
+        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(200, 100, 100, 200), "forward");
+
         //drive.turnToInitialPosition();
         //strafe left
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-1700, 1600, 2000, -1650), "strafe left");
-        sleep(500);
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-927-927, 800+820, 1000+1080, -855-855), "strafe left");
+
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
-
+        sleep(100);
         // move arm max
         score.goToPosition(2340, 0.85);
         cont.set(true);
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 80, 98, 100), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 80, 98, 50), "move to pole");
         sleep(1000);
 
 
@@ -141,15 +152,18 @@ public class RedRightHigh extends LinearOpMode {
         //drive.goToPosition(0.3,0.3,0.3,0.3,avgPosition(310, 380, 320, 290), "drive forward a little");
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(750,-750,-750,600), "strafe right");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-750,-750,600), "strafe right");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
+
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
-            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(892+892,-910-910,-905-905,928+928), "strafe right (center)");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
+
         } else {
             // move to right
-            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(3035,-2117,-2114,2226), "strafe right (more right)");
-            drive.goToPosition(0.3, 0.3, 0.3, 0.3, 400, "forward a little");
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, 1000, "right");
+            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(2017+2017,-1559-1559,-1557-1557,1613+1613), "strafe right (more right)");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 
         }
 
