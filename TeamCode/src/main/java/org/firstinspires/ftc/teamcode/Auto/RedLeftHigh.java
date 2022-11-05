@@ -108,7 +108,7 @@ public class RedLeftHigh extends LinearOpMode {
 
         //drive.turnToInitialPosition();
         //strafe right to in front of highest pole
-        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 700+880, -805-755), "strafe right");
+        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 980+900, 700+880, -805-755), "strafe right");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -117,7 +117,7 @@ public class RedLeftHigh extends LinearOpMode {
         score.goToPosition(2340, 0.85);
         cont.set(true);
         // drive to cone
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(300, 100, 160, 100), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 140, 100), "move to pole");
         // wait for slide to stop shaking
         sleep(1000);
 
@@ -126,7 +126,7 @@ public class RedLeftHigh extends LinearOpMode {
         // cone released
         score.setClawPosition(0);
         sleep(300);
-        score.setClawPosition(0.24);
+
         // drive backwards to center-ish of squares (y direction)
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-160, -117, -111, -98), "move back from pole");
         cont.set(false);
@@ -146,17 +146,18 @@ public class RedLeftHigh extends LinearOpMode {
 
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
-            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
+            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-1759,1648,1737,-1784), "strafe left (center)");
             // move forward a bit to guarantee park
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 //            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1530, "strafe right");
 //            drive.turnToInitialPosition();
         } else {
             // move to right
-            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,642,-585), "strafe left");
+            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-560,565,542,-585), "strafe left");
             // move forward a bit to guarantee park
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 //            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 400, "strafe right");
+
 
         }
         //drive.turnToInitialPosition();

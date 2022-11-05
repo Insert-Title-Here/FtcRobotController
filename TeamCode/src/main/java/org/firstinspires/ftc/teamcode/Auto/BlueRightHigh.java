@@ -117,7 +117,7 @@ public class BlueRightHigh extends LinearOpMode {
 
         //drive.turnToInitialPosition();
         //strafe left
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-827-827, 860+660, 900+1080, -955-855), "strafe left");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-827-827, 860+660, 980+1080, -955-855), "strafe left");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -127,14 +127,14 @@ public class BlueRightHigh extends LinearOpMode {
         //begin thread for maintaining height of slides
         cont.set(true);
         //move forward closer to pole
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 200, 150), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 170, 150), "move to pole");
         sleep(1000);
 
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(0);
         sleep(300);
-        score.setClawPosition(0.24);
+
         //move back from pole to strafe right
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -211, -68), "move back from pole");
         cont.set(false);
