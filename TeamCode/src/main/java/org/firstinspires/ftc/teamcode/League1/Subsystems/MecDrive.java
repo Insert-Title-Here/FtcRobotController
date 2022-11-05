@@ -1442,7 +1442,8 @@ public class MecDrive {
             }
 
             if(toRotate) {
-                simpleMoveToPosition(-50, MovementType.ROTATE, 0.3);
+                //Changed for blue left PID (was -50)
+                simpleMoveToPosition(-35, MovementType.ROTATE, 0.3);
             }
         }
 

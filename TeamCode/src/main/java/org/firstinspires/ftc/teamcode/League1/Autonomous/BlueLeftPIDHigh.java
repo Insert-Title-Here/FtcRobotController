@@ -262,7 +262,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
 
         }
         sleep(200);
-        score.setGrabberPosition(0.3);
+        score.setGrabberPosition(constants.score + 0.02);
         sleep(350);
         score.setGrabberPosition(constants.grabbing);
         //sleep(500);
@@ -377,7 +377,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
             }
             ;
             sleep(200);
-            score.setGrabberPosition(0.3);
+            score.setGrabberPosition(constants.score + 0.02);
             sleep(350);
 
             armDown.set(true);
@@ -416,10 +416,10 @@ public class BlueLeftPIDHigh extends LinearOpMode {
 
         }else{
             if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
-                drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 1);
+                drive.simpleMoveToPosition(500, MecDrive.MovementType.STRAIGHT, 1);
 
             } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
-                drive.simpleMoveToPosition(500, MecDrive.MovementType.STRAIGHT, 1);
+                drive.simpleMoveToPosition(-450, MecDrive.MovementType.STRAIGHT, 0.8);
 
             }
         }
