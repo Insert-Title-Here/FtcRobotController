@@ -85,7 +85,7 @@ public class SecondTeleOp extends LinearOpMode {
                     //temporary command that will move the slides to the low pole height
                     if(gamepad1.x){
                         //low cone
-                        score.goToPosition(1050, 1);
+                        score.goToPosition(1015, 1);
                         score.setPower(0.08);
                     }
                     //resets the slidemotor encoder

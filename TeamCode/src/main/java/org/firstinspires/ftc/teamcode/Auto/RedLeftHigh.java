@@ -101,14 +101,14 @@ public class RedLeftHigh extends LinearOpMode {
         score.goToPosition(370, 0.7);
         sleep(200);
         // move forward a bit more than a square (pushes sleeve out of way)
-        drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1400, 1300), "forward");
+        drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1500, 1500, 1400, 1300), "forward");
         sleep(100);
         // moves back to center-ish of square
-        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 100, 200, 100), "forward");
+        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(300, 300, 200, 100), "forward");
 
         //drive.turnToInitialPosition();
         //strafe right to in front of highest pole
-        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 900+980, -905-755), "strafe right");
+        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 700+880, -805-755), "strafe right");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -117,7 +117,7 @@ public class RedLeftHigh extends LinearOpMode {
         score.goToPosition(2340, 0.85);
         cont.set(true);
         // drive to cone
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 160, 100), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(300, 100, 160, 100), "move to pole");
         // wait for slide to stop shaking
         sleep(1000);
 

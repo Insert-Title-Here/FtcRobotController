@@ -123,8 +123,9 @@ public class RedRightHigh extends LinearOpMode {
         drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 50, 50, 50), "backwards");
 
         //drive.turnToInitialPosition();
+
         //strafe left to in front of highest pole
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-927-927, 800+900, 1000+1280, -805-805), "strafe left");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-927-927, 800+900, 1000+1080, -805-805), "strafe left");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -133,7 +134,7 @@ public class RedRightHigh extends LinearOpMode {
         score.goToPosition(2340, 0.85);
         cont.set(true);
         // drive to cone
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 80, 98, 50), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(190, 200, 98, 150), "move to pole");
         // wait for slide to stop shaking
         sleep(1000);
 
@@ -145,8 +146,8 @@ public class RedRightHigh extends LinearOpMode {
         sleep(300);
         score.setClawPosition(0.24);
         // drive backwards to center-ish of squares (y direction)
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-30, -97, -111, -98), "move back from pole");
-        // lowers arm after scoring first cone
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-130, -97, -201, -98), "move back from pole");
+
         cont.set(false);
         // lowers arm after scoring first cone
         score.goToPosition(0, 0.3);

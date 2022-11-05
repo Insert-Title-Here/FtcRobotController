@@ -101,14 +101,14 @@ public class BlueLeftHigh extends LinearOpMode {
         score.goToPosition(370, 0.7);
         sleep(200);
         // move forward a square and push sleeved cone out of the way
-        drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1400, 1300), "forward");
+        drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1500, 1500, 1600, 1500), "forward");
         sleep(100);
         // move back a little from pushing the cone out of the way
-        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 100, 200, 100), "forward");
+        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(270, 300, 300, 300), "forward");
 
         //drive.turnToInitialPosition();
         //strafe right
-        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 900+980, -905-755), "strafe right");
+        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 900+1080, -905-705), "strafe right");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -118,7 +118,7 @@ public class BlueLeftHigh extends LinearOpMode {
         //begin thread for maintaining height of slides
         cont.set(true);
         //move forward closer to pole
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(90, 80, 100, 50), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(180, 250, 100, 100), "move to pole");
         sleep(1000);
 
         //lower cone onto pole
@@ -127,7 +127,7 @@ public class BlueLeftHigh extends LinearOpMode {
         sleep(300);
         score.setClawPosition(0.24);
         //move back from pole to strafe right
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-30, -117, -111, -98), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-130, -147, -191, -88), "move back from pole");
         cont.set(false);
         //moves slides down
         score.goToPosition(0, 0.3);

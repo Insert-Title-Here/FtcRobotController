@@ -113,11 +113,11 @@ public class BlueRightHigh extends LinearOpMode {
         drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1359, 1200), "forward");
         sleep(100);
         // move back a little from pushing the cone out of the way
-        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 100, 100, 100), "forward");
+        drive.goToPosition(-0.3, -0.3,  -0.3, -0.3, avgPosition(100, 100, 100, 50), "forward");
 
         //drive.turnToInitialPosition();
         //strafe left
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-827-827, 860+820, 1000+1080, -955-855), "strafe left");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-827-827, 860+820, 900+1080, -955-855), "strafe left");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -127,7 +127,7 @@ public class BlueRightHigh extends LinearOpMode {
         //begin thread for maintaining height of slides
         cont.set(true);
         //move forward closer to pole
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 100, 150), "move to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 200, 150), "move to pole");
         sleep(1000);
 
         //lower cone onto pole
@@ -136,7 +136,7 @@ public class BlueRightHigh extends LinearOpMode {
         sleep(300);
         score.setClawPosition(0.24);
         //move back from pole to strafe right
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-50, -97, -111, -98), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-100, -97, -211, -68), "move back from pole");
         cont.set(false);
         //moves slides down
         score.goToPosition(0, 0.3);
@@ -144,12 +144,12 @@ public class BlueRightHigh extends LinearOpMode {
         //moves robot to correct parking position
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(750,-700,-600,500), "strafe right");
+            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(750,-700,-600,500), "strafe right");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right"  );
 
         } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
             // move to center
-            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(892+892,-900-900,-905-905,900+900), "strafe right (center)");
+            drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(892+892,-900-900,-905-905,900+900), "strafe right (center)");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");
 
         } else {
