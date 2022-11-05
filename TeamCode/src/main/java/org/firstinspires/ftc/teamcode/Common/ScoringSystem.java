@@ -139,6 +139,7 @@ public class ScoringSystem {
             sleep(400);
             // lift up
             if(stack){
+                sleep(300);
                 goToPosition(getEncoderPosition() + 320, 0.6);
             }else{
                 goToPosition(getEncoderPosition() + 100, 0.6);

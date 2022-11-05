@@ -87,12 +87,12 @@ public class SecondTeleOp extends LinearOpMode {
                     //temporary command that will move the slides to the low pole height
                     if(gamepad1.x){
                         //low cone
-                        score.goToPosition(980, 1);
+                        score.goToPosition(870, 0.8);
                         score.setPower(0.08);
                     }
                     //resets the slidemotor encoder
                     if(gamepad1.options){
-                        score.resetLiftEncoder();
+                        score = new ScoringSystem(hardwareMap, telemetry);
                     }
                     //closes the claw(manually) and opens the claw(like a toggle)
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
@@ -164,7 +164,7 @@ public class SecondTeleOp extends LinearOpMode {
         score.setClawPosition(0);
         waitForStart();
         liftThread.start();
-        int stackHeight = 320;
+        int stackHeight = 305;
         boolean stackDoubleDown = true;
         boolean stackDoubleUp = true;
         while(opModeIsActive()){
@@ -199,22 +199,24 @@ public class SecondTeleOp extends LinearOpMode {
             if(gamepad1.a && stackDoubleDown){
                 discontinue.set(true);
                 stackDoubleDown = false;
-                if((score.getEncoderPosition() - 50) > 0){
-                    score.goToPosition(stackHeight - 50, 0.5);
-                    stackHeight -= 50;
+                if((stackHeight - 80) > 0){
+                    stackHeight -= 80;
+                    score.goToPosition(stackHeight, 0.4);
                 }
-            }else if(gamepad1.a && !stackDoubleDown){
+            }if(gamepad1.a && !stackDoubleDown){
                 stackDoubleDown = true;
             }
             //moves the slides to the stack of 5 cones height
             if(gamepad1.y && stackDoubleUp){
                 discontinue.set(true);
                 stackDoubleUp = false;
-                if(score.getEncoderPosition() + 50 < 320){
-                    score.goToPosition(stackHeight + 50, 0.4);
-                    stackHeight += 50;
+                if(stackHeight < 305){
+                    score.goToPosition(stackHeight, 0.6);
+                    stackHeight +=80;
+                }else if(stackHeight == 305){
+                    score.goToPosition(305, 0.6);
                 }
-            }else if(gamepad1.a && !stackDoubleUp){
+            }if(gamepad1.y && !stackDoubleUp){
                 stackDoubleUp = true;
             }
 
@@ -234,6 +236,7 @@ public class SecondTeleOp extends LinearOpMode {
             telemetry.addData("liftPow", score.getPower());
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
             telemetry.addData("booleanCheck(Discontinue)", discontinue.get());
+            telemetry.addData("stackHeight", stackHeight);
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());
             //  telemetry.update();
