@@ -326,14 +326,12 @@ public class MecanumDrive {
         double angleError = imu.getAngularOrientation().firstAngle;
         double accumulatedError = 0;
         double output = 0;
-        double proportionCoefficient = 0.8;
-        double integralCoefficient = 0.1;
+        double proportionCoefficient = 0.1;
+        double integralCoefficient = 0.02;
         if (angleError > 0.05) {
-            while ((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005) {
-                accumulatedError += angleError * delta_time;
-                output = (angleError * proportionCoefficient) + (accumulatedError * integralCoefficient);
-                return output + power;
-            }
+            accumulatedError += angleError * delta_time;
+            output = (angleError * proportionCoefficient) + (accumulatedError * integralCoefficient);
+            return output + power;
         } else if (angleError < -0.05) {
 
         }

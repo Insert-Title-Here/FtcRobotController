@@ -155,7 +155,7 @@ public class BlueLeftHigh extends LinearOpMode {
 
         }
         //drive.turnToInitialPosition();
-        
+
         score.setClawPosition(0);
 
     }

@@ -117,7 +117,7 @@ public class BlueRightHigh extends LinearOpMode {
 
         //drive.turnToInitialPosition();
         //strafe left
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-827-827, 860+820, 900+1080, -955-855), "strafe left");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, avgPosition(-827-827, 860+660, 900+1080, -955-855), "strafe left");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
