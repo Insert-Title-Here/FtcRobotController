@@ -77,6 +77,13 @@ public class MecDrive {
         LDIAGONALLESS
     }
 
+    public enum DiagonalPath{
+        REDRIGHT,
+        REDLEFT,
+        BLUERIGHT,
+        BLUELEFT
+    }
+
     /*
     localizer -> Arm/actuator -> drive
      */
@@ -819,6 +826,7 @@ public class MecDrive {
             double brDerivative = (brError - brPreviousError)/(currentTime - startTime);
 
             //TODO: Max out integral if at the wrong point
+            /*
             if(Math.abs(flError) > 150 && Math.abs(frError) > 150 && Math.abs(blError) > 150 && Math.abs(brError) > 150){
                 if(flError > 0 && frError > 0 && blError > 0 && brError > 0 && isInitialErrorNegative){
                     flIntegralSum = 10000;
@@ -834,6 +842,8 @@ public class MecDrive {
                 }
 
             }
+
+             */
 
 
             telemetry.addData("flDerivative", flDerivative);
@@ -1444,6 +1454,91 @@ public class MecDrive {
             if(toRotate) {
                 //Changed for blue left PID (was -50)
                 simpleMoveToPosition(-35, MovementType.ROTATE, 0.3);
+            }else{
+                //Change this later (4 red left)
+                simpleMoveToPosition(-50, MovementType.ROTATE, 0.3);
+            }
+        }
+
+
+    }
+
+    public void autoDiagonals(boolean startGoingLeft, boolean longer, DiagonalPath auto){
+        if(longer) {
+            if (startGoingLeft) {
+
+                while (avgPosActual() < 450) {
+                    setPower(0.2, 0.9, 0.9, 0.2);
+                }
+                simpleBrake();
+
+                while (avgPosActual() < 250 && (color.getNormalizedColors().red < baseRed && color.getNormalizedColors().blue < baseBlue)) {
+                    setPower(0.6, 0, 0, 0.6);
+                }
+                simpleBrake();
+
+
+            } else {
+
+
+                while (avgPosActual() < 450) {
+                    setPower(0.9, 0.2, 0.2, 0.9);
+                }
+                simpleBrake();
+
+                while (avgPosActual() < 250 && (color.getNormalizedColors().red < baseRed && color.getNormalizedColors().blue < baseBlue)) {
+                    setPower(0, 0.6, 0.6, 0);
+                }
+                simpleBrake();
+
+
+
+
+
+            }
+
+            if(auto == DiagonalPath.REDLEFT) {
+                simpleMoveToPosition(-35, MovementType.ROTATE, 0.3);
+            }else if(auto !=DiagonalPath.BLUERIGHT){
+                simpleMoveToPosition(20, MovementType.ROTATE, 0.3);
+
+            }
+        }else{
+            if (startGoingLeft) {
+
+                while (avgPosActual() < 350) {
+                    setPower(0.2, 0.9, 0.9, 0.2);
+                }
+                simpleBrake();
+
+                while (avgPosActual() < 250 && (color.getNormalizedColors().red < baseRed && color.getNormalizedColors().blue < baseBlue)) {
+                    setPower(0.6, 0, 0, 0.6);
+                }
+                simpleBrake();
+
+
+            } else {
+
+
+                while (avgPosActual() < 350) {
+                    setPower(0.9, 0.2, 0.2, 0.9);
+                }
+                simpleBrake();
+
+                while (avgPosActual() < 250 && (color.getNormalizedColors().red < baseRed && color.getNormalizedColors().blue < baseBlue)) {
+                    setPower(0, 0.6, 0.6, 0);
+                }
+                simpleBrake();
+
+
+            }
+
+            if(auto == DiagonalPath.BLUELEFT) {
+                //Changed for blue left PID (was -50)
+                simpleMoveToPosition(-35, MovementType.ROTATE, 0.3);
+            }else if(auto == DiagonalPath.REDLEFT){
+                //Change this later (4 red left)
+                simpleMoveToPosition(-60, MovementType.ROTATE, 0.3);
             }
         }
 

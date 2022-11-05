@@ -267,7 +267,7 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
+        drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
         while(armUp.get()){
 
         }
@@ -308,12 +308,16 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
 
 
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 2; i++) {
 
             if(i == 0){
-                drive.autoDiagonals(true, true, true);
+                //drive.autoDiagonals(true, true, true);
+                drive.autoDiagonals(true, true, MecDrive.DiagonalPath.REDLEFT);
+
             }else{
-                drive.autoDiagonals(true, false, true);
+                //drive.autoDiagonals(true, false, false);
+                drive.autoDiagonals(true, true, MecDrive.DiagonalPath.REDLEFT);
+
 
             }
 
@@ -379,7 +383,7 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
 
 
-            drive.simpleMoveToPosition(-20, MecDrive.MovementType.STRAIGHT, 0.3);
+            drive.simpleMoveToPosition(-60, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
@@ -427,10 +431,10 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
         }else{
             if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
-                drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 1);
+                drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 0.5);
 
             } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
-                drive.simpleMoveToPosition(500, MecDrive.MovementType.STRAIGHT, 1);
+                drive.simpleMoveToPosition(-485, MecDrive.MovementType.STRAIGHT, 0.5);
 
             }
         }

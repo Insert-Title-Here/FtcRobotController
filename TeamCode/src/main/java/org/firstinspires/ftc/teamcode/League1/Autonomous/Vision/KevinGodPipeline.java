@@ -197,7 +197,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
             telemetry.addData("countCb", countCb);
 
             // Check if certain channels are within certain ranges to determine color
-            if(countY > 100 && countCb < 100) {
+            if(countY > 100 && countCb < 90) {
                 telemetry.addData("Color", "Yellow - Left");
                 position = ParkPos.LEFT;
             } else if(countCr > 200 && countCb > 200) {

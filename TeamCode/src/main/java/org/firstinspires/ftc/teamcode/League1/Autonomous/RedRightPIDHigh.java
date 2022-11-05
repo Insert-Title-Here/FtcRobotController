@@ -262,7 +262,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
+        //drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
         while(armUp.get()){
 
         }
@@ -303,16 +303,19 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
 
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 2; i++) {
 
 
 
 
 
             if(i == 0){
-                drive.autoDiagonals(false, true, true);
+                //drive.autoDiagonals(false, true, true);
+                drive.autoDiagonals(false, true, MecDrive.DiagonalPath.REDRIGHT);
+
             }else{
-                drive.autoDiagonals(false, false, false);
+                //drive.autoDiagonals(false, false, false);
+                drive.autoDiagonals(false, true, MecDrive.DiagonalPath.REDRIGHT);
 
             }
             if(i % 2 == 0){
@@ -339,7 +342,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
                 if(time.seconds() - startDistanceTime > 2){
                     drive.simpleBrake();
-                    drive.tankRotatePID(-Math.PI/2, 0.6, false);
+                    drive.tankRotatePID(Math.PI/2, 0.6, false);
                     failed = true;
                     break;
                 }
@@ -378,7 +381,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
 
-            drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
+            drive.simpleMoveToPosition(45, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
@@ -428,10 +431,10 @@ public class RedRightPIDHigh extends LinearOpMode {
 
         }else{
             if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
-                drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 1);
+                drive.simpleMoveToPosition(-550, MecDrive.MovementType.STRAIGHT, 0.5);
 
             } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
-                drive.simpleMoveToPosition(500, MecDrive.MovementType.STRAIGHT, 1);
+                drive.simpleMoveToPosition(700, MecDrive.MovementType.STRAIGHT, 0.5);
 
             }
         }

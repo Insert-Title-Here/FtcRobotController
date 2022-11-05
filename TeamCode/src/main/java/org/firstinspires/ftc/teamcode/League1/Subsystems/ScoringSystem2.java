@@ -252,7 +252,7 @@ public class ScoringSystem2{
         //TODO: Check if logic for encoder positions works
 
         if(power > 0) {
-            while ((time.seconds() - startTime) < 3 && (rLiftPos < tics || lLiftPos < tics)) {
+            while ((time.seconds() - startTime) < 2 && (rLiftPos < tics || lLiftPos < tics)) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -271,7 +271,7 @@ public class ScoringSystem2{
 
             }
         }else{
-            while ((time.seconds() - startTime) < 3 && (rLiftPos > tics || lLiftPos > tics)) {
+            while ((time.seconds() - startTime) < 2 && (rLiftPos > tics || lLiftPos > tics)) {
 
                 //TODO: figure out if we need to negate either of them
 

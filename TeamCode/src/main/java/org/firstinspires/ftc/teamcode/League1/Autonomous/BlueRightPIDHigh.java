@@ -250,13 +250,13 @@ public class BlueRightPIDHigh extends LinearOpMode {
         sleep(500);
 
         //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
-        normalizeDistance = pipeline.normalizeToPole(0.3, 165, 5);
+        normalizeDistance = pipeline.normalizeToPole(0.3, 172, 5);
         //pipeline.Ynormalize(0.2, 95, 5);
 
 
 
 
-        drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.3);
+        drive.simpleMoveToPosition(-20, MecDrive.MovementType.STRAIGHT, 0.3);
         while(armUp.get()){
 
         }
@@ -301,9 +301,11 @@ public class BlueRightPIDHigh extends LinearOpMode {
 
 
             if(i == 0){
-                drive.autoDiagonals(false, true, false);
+                drive.autoDiagonals(false, true, MecDrive.DiagonalPath.BLUERIGHT);
             }else{
-                drive.autoDiagonals(false, false, false);
+
+                //FIX THIS CODE
+                drive.autoDiagonals(false, false, MecDrive.DiagonalPath.BLUERIGHT);
 
             }
             if(i % 2 == 0){
@@ -330,7 +332,7 @@ public class BlueRightPIDHigh extends LinearOpMode {
 
                 if(time.seconds() - startDistanceTime > 2){
                     drive.simpleBrake();
-                    drive.tankRotatePID(-Math.PI/2, 0.6, false);
+                    drive.tankRotatePID(Math.PI/2, 0.6, false);
                     failed = true;
                     break;
                 }
@@ -368,7 +370,7 @@ public class BlueRightPIDHigh extends LinearOpMode {
 
 
 
-            //drive.simpleMoveToPosition(30, MecDrive.MovementType.STRAIGHT, 0.3);
+            drive.simpleMoveToPosition(-20, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
@@ -404,7 +406,7 @@ public class BlueRightPIDHigh extends LinearOpMode {
         finalMove.set(true);
 
 
-        drive.coast();
+        //drive.coast();
 
         if(failed) {
             if (parkPos == KevinGodPipeline.ParkPos.CENTER) {
@@ -417,10 +419,10 @@ public class BlueRightPIDHigh extends LinearOpMode {
 
         }else{
             if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
-                drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 1);
+                drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 0.8);
 
             } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
-                drive.simpleMoveToPosition(500, MecDrive.MovementType.STRAIGHT, 1);
+                drive.simpleMoveToPosition(700, MecDrive.MovementType.STRAIGHT, 1);
 
             }
         }
