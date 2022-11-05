@@ -10,8 +10,6 @@ import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 @TeleOp
 public class SecondTeleOp extends LinearOpMode {
     //TODO: change names if you want to
@@ -20,9 +18,6 @@ public class SecondTeleOp extends LinearOpMode {
     Thread liftThread;
     AtomicBoolean pause;
     AtomicBoolean discontinue;
-    AtomicBoolean stackDoubleDown;
-    AtomicBoolean stackDoubleUp;
-    AtomicInteger stackHeight;
     BNO055IMU imu;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.5;
@@ -44,18 +39,13 @@ public class SecondTeleOp extends LinearOpMode {
         score = new ScoringSystem(hardwareMap, telemetry);
         pause = new AtomicBoolean();
         discontinue = new AtomicBoolean();
-        stackDoubleDown = new AtomicBoolean();
-        stackDoubleUp = new AtomicBoolean();
-        stackHeight = new AtomicInteger();
         pause.set(true);
         discontinue.set(false);
-        stackDoubleDown.set(true);
-        stackDoubleUp.set(true);
-        stackHeight.set(320);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         //Open
         //Thread for the slides
+
         liftThread = new Thread(){
             @Override
             public void run(){
@@ -167,35 +157,16 @@ public class SecondTeleOp extends LinearOpMode {
                             e.printStackTrace();
                         }
                     }
-                    //lowers the height of the slides for the stack of 5 cones
-                    if(gamepad1.a && stackDoubleDown.get()){
-                        discontinue.set(true);
-                        stackDoubleDown.set(false);
-                        if((score.getEncoderPosition() - 50) > 0){
-                            stackHeight.set(stackHeight.get()-50);
-                            score.goToPosition(stackHeight.get(), 0.4);
-                        }
-                    }else if(gamepad1.a && !stackDoubleDown.get()){
-                        stackDoubleDown.set(true);
-                    }
-                    //moves the slides to the stack of 5 cones height
-                    if(gamepad1.y && stackDoubleUp.get()){
-                        discontinue.set(true);
-                        stackDoubleUp.set(false);
-                        if(score.getEncoderPosition() + 50 < 320){
-                            stackHeight.set(stackHeight.get()+50);
-                            score.goToPosition(stackHeight.get(), 0.6);
-                        }
-                    }else if(gamepad1.a && !stackDoubleUp.get()){
-                        stackDoubleUp.set(true);
-                    }
+
                 }
             }
         };
         score.setClawPosition(0);
         waitForStart();
         liftThread.start();
-
+        int stackHeight = 320;
+        boolean stackDoubleDown = true;
+        boolean stackDoubleUp = true;
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -224,7 +195,28 @@ public class SecondTeleOp extends LinearOpMode {
                 //drive.turnToInitialPosition();
                 drive.turn(Math.PI/4, 0.3);
             }
-
+            //lowers the height of the slides for the stack of 5 cones
+            if(gamepad1.a && stackDoubleDown){
+                discontinue.set(true);
+                stackDoubleDown = false;
+                if((score.getEncoderPosition() - 50) > 0){
+                    score.goToPosition(stackHeight - 50, 0.5);
+                    stackHeight -= 50;
+                }
+            }else if(gamepad1.a && !stackDoubleDown){
+                stackDoubleDown = true;
+            }
+            //moves the slides to the stack of 5 cones height
+            if(gamepad1.y && stackDoubleUp){
+                discontinue.set(true);
+                stackDoubleUp = false;
+                if(score.getEncoderPosition() + 50 < 320){
+                    score.goToPosition(stackHeight + 50, 0.4);
+                    stackHeight += 50;
+                }
+            }else if(gamepad1.a && !stackDoubleUp){
+                stackDoubleUp = true;
+            }
 
             //resets the drive motor encoders
             if (gamepad1.share) {
