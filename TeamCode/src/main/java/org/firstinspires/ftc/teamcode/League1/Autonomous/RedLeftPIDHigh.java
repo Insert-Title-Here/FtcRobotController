@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -28,7 +29,9 @@ public class RedLeftPIDHigh extends LinearOpMode {
     ScoringSystem2 score;
     Constants constants;
     Thread armThread, feedForward, idController;
+    ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
+
 
     ColorRangeSensor distance, color;
     Servo cameraServo;
@@ -38,6 +41,7 @@ public class RedLeftPIDHigh extends LinearOpMode {
     KevinGodPipeline.ParkPos parkPos;
 
     int normalizeDistance;
+    boolean failed;
 
 
 
@@ -58,6 +62,8 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
         score.setLinkagePosition(Constants.linkageDown);
         score.setGrabberPosition(constants.grabbing);
+
+        failed = false;
 
 
         cameraServo = hardwareMap.get(Servo.class, "camera");
@@ -149,6 +155,11 @@ public class RedLeftPIDHigh extends LinearOpMode {
                     }else if(armDown.get()){
                         hold.set(false);
                         score.setLinkagePosition(Constants.linkageUp);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         score.moveToPosition(0, 0.5);
                         score.setLinkagePositionLogistic(Constants.linkageDown, 250, 30);
                         armDown.set(false);
@@ -195,7 +206,7 @@ public class RedLeftPIDHigh extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipeline(telemetry, drive, false);
+        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.RED_LEFT);
 
         camera.setPipeline(pipeline);
 
@@ -214,7 +225,7 @@ public class RedLeftPIDHigh extends LinearOpMode {
             }
         });
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
 
@@ -226,6 +237,8 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
 
         waitForStart();
+        double startTime = time.seconds();
+
         parkPos = pipeline.getPosition();
         pipeline.setMode(false);
 
@@ -242,7 +255,7 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.goTOPIDPos(-2200, 0.5,MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPos(-2100, 0.5,MecDrive.MovementType.STRAIGHT);
         armUp.set(true);
         drive.tankRotatePID(-Math.PI / 4.5, 0.7, true);
         sleep(500);
@@ -297,8 +310,12 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
         for(int i = 0; i < 3; i++) {
 
+            if(i == 0){
+                drive.autoDiagonals(true, true, true);
+            }else{
+                drive.autoDiagonals(true, false, true);
 
-            drive.autoDiagonals(false);
+            }
 
             if(i % 2 == 0){
                 drive.simpleMoveToPosition(-55, MecDrive.MovementType.STRAFE, 0.3);
@@ -315,13 +332,24 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
             score.setLinkagePosition(0.75 + (i * 0.03));
 
-
+            double startDistanceTime = time.seconds();
             while (distance.getDistance(DistanceUnit.CM) > 4.3) {
                 drive.setPowerAuto(0.3, MecDrive.MovementType.STRAIGHT);
 
                 telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                 telemetry.update();
 
+                if(time.seconds() - startDistanceTime > 2){
+                    drive.simpleBrake();
+                    drive.tankRotatePID(-Math.PI/2, 0.6, false);
+                    failed = true;
+                    break;
+                }
+
+            }
+
+            if(failed){
+                break;
             }
             drive.simpleBrake();
 
@@ -333,7 +361,11 @@ public class RedLeftPIDHigh extends LinearOpMode {
             hold.set(true);
             sleep(200);
             linkageUp.set(true);
-            drive.goTOPIDPos(-1100 ,  1, MecDrive.MovementType.STRAIGHT);
+            drive.goTOPIDPos(-1000 ,  1, MecDrive.MovementType.STRAIGHT);
+
+            if(time.seconds() - startTime > 26){
+                break;
+            }
 
             //score.moveToPosition(0, 1);
 
@@ -347,7 +379,7 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
 
 
-            drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
+            drive.simpleMoveToPosition(-20, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
@@ -384,12 +416,23 @@ public class RedLeftPIDHigh extends LinearOpMode {
 
 
 
-        if(parkPos == KevinGodPipeline.ParkPos.LEFT){
-            drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 1);
+        if(failed) {
+            if (parkPos == KevinGodPipeline.ParkPos.CENTER) {
+                drive.simpleMoveToPosition(-700, MecDrive.MovementType.STRAIGHT, 0.5);
 
-        }else if(parkPos == KevinGodPipeline.ParkPos.RIGHT){
-            drive.simpleMoveToPosition(500, MecDrive.MovementType.STRAIGHT, 1);
+            } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
+                drive.simpleMoveToPosition(-1500, MecDrive.MovementType.STRAIGHT, 0.5);
 
+            }
+
+        }else{
+            if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
+                drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 1);
+
+            } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
+                drive.simpleMoveToPosition(500, MecDrive.MovementType.STRAIGHT, 1);
+
+            }
         }
 
 

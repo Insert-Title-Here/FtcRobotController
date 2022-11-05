@@ -60,11 +60,11 @@ public class ScoringSystem2{
         lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
         rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
-        grabber = hardwareMap.get(Servo.class, "Grabber");
+        grabber =  hardwareMap.get(Servo.class, "Grabber");
 
 
-        lLinkage.setPosition(Constants.linkageDown);
-        rLinkage.setPosition(Constants.linkageDown);
+        /*lLinkage.setPosition(Constants.linkageDown);
+        rLinkage.setPosition(Constants.linkageDown);*/
         grabber.setPosition(constants.open);
 
     }
@@ -252,7 +252,7 @@ public class ScoringSystem2{
         //TODO: Check if logic for encoder positions works
 
         if(power > 0) {
-            while ((time.seconds() - startTime) < 3 && rLiftPos < tics || lLiftPos < tics) {
+            while ((time.seconds() - startTime) < 3 && (rLiftPos < tics || lLiftPos < tics)) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -271,7 +271,7 @@ public class ScoringSystem2{
 
             }
         }else{
-            while ((time.seconds() - startTime) < 3 && rLiftPos > tics || lLiftPos > tics) {
+            while ((time.seconds() - startTime) < 3 && (rLiftPos > tics || lLiftPos > tics)) {
 
                 //TODO: figure out if we need to negate either of them
 

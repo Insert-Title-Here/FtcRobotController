@@ -174,6 +174,11 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.ULTRA){
                             score.autoGoToPosition();
                             score.setPower(0.2);
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             score.setLinkagePosition(constants.linkageScore);
                             passive = PassivePower.EXTENDED;
 
@@ -182,7 +187,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
                     }
 
                     //Linkage stack cone heights with dpad up and down
-                    if((gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
+                    if((gamepad1.left_bumper || gamepad1.dpad_down) && changeStackFlag){
 
                         //Raise linkage by height of a cone (max height of 5)
                         if(gamepad1.dpad_up) {
@@ -212,7 +217,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
 
                     //Reset linkage position
                     if(gamepad1.left_stick_button){
-                        score.setLinkagePositionLogistic(constants.linkageDown, 500);
+                        score.setLinkagePositionLogistic(constants.linkageUp, 500);
 
                     }
 
@@ -358,9 +363,10 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
         };
 
         //TODO: might need to change this
-        score.setLinkagePosition(constants.linkageUp);
 
         waitForStart();
+        score.setLinkagePosition(constants.linkageUp);
+
 
         //Starting Threads
         liftThread.start();

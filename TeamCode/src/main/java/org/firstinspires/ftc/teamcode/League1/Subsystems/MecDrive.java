@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-@Config
+//@Config
 public class MecDrive {
 
     private DcMotorEx fl, fr, bl, br;
@@ -41,16 +41,23 @@ public class MecDrive {
     double baseRed, baseBlue;
 
 
-
+    //Original
     //PIDFCoefficients pidf = new PIDFCoefficients(0.001, 0.0003,0.0001, 0);
     //PIDCoefficients rotate = new PIDCoefficients(1, 0.00012, 0.08);
 
     //Slow start
-    PIDFCoefficients pidf = new PIDFCoefficients(0.00075, 0.00042,0.0002, 0);
+    /*PIDFCoefficients pidf = new PIDFCoefficients(0.00075, 0.00042,0.0002, 0);
 
 
     PIDCoefficients rotate = new PIDCoefficients(0.75, 0.00015, 0.2);
-    PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0.0002, 0.22);
+    PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0.0002, 0.22);*/
+
+    //Faster Slower Start
+    PIDFCoefficients pidf = new PIDFCoefficients(0.0008, 0.00042,0.0002, 0);
+
+
+    PIDCoefficients rotate = new PIDCoefficients(0.82, 0.00016, 0.2);
+    PIDCoefficients rotateFaster = new PIDCoefficients(0.92, 0.00021, 0.22);
 
 
 
@@ -706,6 +713,7 @@ public class MecDrive {
         double startTime = time.seconds();
         boolean countTime = true;
 
+        boolean isInitialErrorNegative;
 
 
 
@@ -725,6 +733,12 @@ public class MecDrive {
         int blPreviousError = blError;
         int brPreviousError = brError;
 
+        if(flPreviousError < 0){
+            isInitialErrorNegative = true;
+        }else{
+            isInitialErrorNegative = false;
+        }
+
         int flIntegralSum = 0;
         int frIntegralSum = 0;
         int blIntegralSum = 0;
@@ -733,6 +747,7 @@ public class MecDrive {
 
         while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2){
             telemetry.addData("target", tics);
+
 
             //TODO: check if we need to negate any
             flPos = -1 * getFLEncoder();
@@ -751,6 +766,8 @@ public class MecDrive {
             frError = tics - frPos;
             blError = tics - blPos;
             brError = tics - brPos;
+
+
 
             double currentTime = time.seconds();
 
@@ -800,6 +817,23 @@ public class MecDrive {
             double frDerivative = (frError - frPreviousError)/(currentTime - startTime);
             double blDerivative = (blError - blPreviousError)/(currentTime - startTime);
             double brDerivative = (brError - brPreviousError)/(currentTime - startTime);
+
+            //TODO: Max out integral if at the wrong point
+            if(Math.abs(flError) > 150 && Math.abs(frError) > 150 && Math.abs(blError) > 150 && Math.abs(brError) > 150){
+                if(flError > 0 && frError > 0 && blError > 0 && brError > 0 && isInitialErrorNegative){
+                    flIntegralSum = 10000;
+                    frIntegralSum = 10000;
+                    blIntegralSum = 10000;
+                    brIntegralSum = 10000;
+
+                }else if(flError < 0 && frError < 0 && blError < 0 && brError < 0 && !isInitialErrorNegative){
+                    flIntegralSum = -10000;
+                    frIntegralSum = -10000;
+                    blIntegralSum = -10000;
+                    brIntegralSum = -10000;
+                }
+
+            }
 
 
             telemetry.addData("flDerivative", flDerivative);
@@ -1337,11 +1371,12 @@ public class MecDrive {
                 && Math.abs(tics - data.getMotorCurrentPosition(2)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(3)) > TIC_TOLERANCE;
     }
 
-    public void autoDiagonals(boolean startGoingLeft){
-        if(startGoingLeft){
+    public void autoDiagonals(boolean startGoingLeft, boolean longer, boolean toRotate){
+        if(longer) {
+            if (startGoingLeft) {
 
-                while (avgPosActual() < 350) {
-                    setPower(0.2, 0.7, 0.7, 0.2);
+                while (avgPosActual() < 450) {
+                    setPower(0.2, 0.9, 0.9, 0.2);
                 }
                 simpleBrake();
 
@@ -1351,8 +1386,46 @@ public class MecDrive {
                 simpleBrake();
 
 
+            } else {
 
+
+                while (avgPosActual() < 450) {
+                    setPower(0.9, 0.2, 0.2, 0.9);
+                }
+                simpleBrake();
+
+                while (avgPosActual() < 250 && (color.getNormalizedColors().red < baseRed && color.getNormalizedColors().blue < baseBlue)) {
+                    setPower(0, 0.6, 0.6, 0);
+                }
+                simpleBrake();
+
+
+
+
+
+            }
+
+            if(toRotate) {
+                simpleMoveToPosition(-30, MovementType.ROTATE, 0.3);
+            }else{
+                simpleMoveToPosition(20, MovementType.ROTATE, 0.3);
+
+            }
         }else{
+            if (startGoingLeft) {
+
+                while (avgPosActual() < 350) {
+                    setPower(0.2, 0.9, 0.9, 0.2);
+                }
+                simpleBrake();
+
+                while (avgPosActual() < 250 && (color.getNormalizedColors().red < baseRed && color.getNormalizedColors().blue < baseBlue)) {
+                    setPower(0.6, 0, 0, 0.6);
+                }
+                simpleBrake();
+
+
+            } else {
 
 
                 while (avgPosActual() < 350) {
@@ -1366,7 +1439,11 @@ public class MecDrive {
                 simpleBrake();
 
 
+            }
 
+            if(toRotate) {
+                simpleMoveToPosition(-50, MovementType.ROTATE, 0.3);
+            }
         }
 
 

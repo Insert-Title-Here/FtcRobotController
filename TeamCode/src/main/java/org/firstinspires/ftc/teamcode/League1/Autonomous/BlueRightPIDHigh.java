@@ -1,19 +1,13 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
@@ -27,13 +21,13 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class RedRightPIDHigh extends LinearOpMode {
+public class BlueRightPIDHigh extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
     Thread armThread, feedForward, idController;
-    AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
     ElapsedTime time = new ElapsedTime();
+    AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
 
     ColorRangeSensor distance, color;
     Servo cameraServo;
@@ -44,7 +38,6 @@ public class RedRightPIDHigh extends LinearOpMode {
 
     int normalizeDistance;
     boolean failed;
-
 
 
 
@@ -202,7 +195,7 @@ public class RedRightPIDHigh extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.RED_RIGHT);
+        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.BLUE_RIGHT);
 
         camera.setPipeline(pipeline);
 
@@ -234,6 +227,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
         waitForStart();
         double startTime = time.seconds();
+
         parkPos = pipeline.getPosition();
         pipeline.setMode(false);
 
@@ -250,7 +244,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.goTOPIDPos(-2200, 0.5,MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPos(-2100, 0.5,MecDrive.MovementType.STRAIGHT);
         armUp.set(true);
         drive.tankRotatePID(Math.PI / 4.5, 0.7, true);
         sleep(500);
@@ -262,7 +256,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
 
-        drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
+        drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.3);
         while(armUp.get()){
 
         }
@@ -306,11 +300,8 @@ public class RedRightPIDHigh extends LinearOpMode {
         for(int i = 0; i < 3; i++) {
 
 
-
-
-
             if(i == 0){
-                drive.autoDiagonals(false, true, true);
+                drive.autoDiagonals(false, true, false);
             }else{
                 drive.autoDiagonals(false, false, false);
 
@@ -360,8 +351,7 @@ public class RedRightPIDHigh extends LinearOpMode {
             hold.set(true);
             sleep(200);
             linkageUp.set(true);
-            drive.goTOPIDPos(-1100 ,  1, MecDrive.MovementType.STRAIGHT);
-
+            drive.goTOPIDPos(-1000,  1, MecDrive.MovementType.STRAIGHT);
             if(time.seconds() - startTime > 26){
                 break;
             }
@@ -378,7 +368,7 @@ public class RedRightPIDHigh extends LinearOpMode {
 
 
 
-            drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
+            //drive.simpleMoveToPosition(30, MecDrive.MovementType.STRAIGHT, 0.3);
 
             while(armUp.get()){
 
@@ -405,17 +395,16 @@ public class RedRightPIDHigh extends LinearOpMode {
 
         }
 
-        finalMove.set(true);
-
-        score.setGrabberPosition(Constants.grabbing);
+        score.setGrabberPosition(constants.grabbing);
 
         camera.closeCameraDevice();
 
 
 
+        finalMove.set(true);
 
 
-
+        drive.coast();
 
         if(failed) {
             if (parkPos == KevinGodPipeline.ParkPos.CENTER) {
@@ -435,7 +424,6 @@ public class RedRightPIDHigh extends LinearOpMode {
 
             }
         }
-
 
         //Will have to check if this aligns straight already (need color sensor or not) ->
         // may need to turn into slight diagonal instead of straight to check color

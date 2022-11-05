@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.AutonomousTesting;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 
+@Disabled
 @Autonomous
 public class ColorNormalizationTesting extends LinearOpMode {
     MecDrive drive;
@@ -39,7 +41,7 @@ public class ColorNormalizationTesting extends LinearOpMode {
 */
        //color.resetDeviceConfigurationForOpMode();
 
-       drive.autoDiagonals(false);
+       drive.autoDiagonals(false, false, false);
 
 
         while(opModeIsActive()){

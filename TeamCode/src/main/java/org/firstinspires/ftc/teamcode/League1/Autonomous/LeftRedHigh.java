@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
@@ -27,7 +28,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//TODO: Mirror
+@Disabled
 @Autonomous
 public class LeftRedHigh extends LinearOpMode {
     MecDrive drive;
@@ -45,7 +46,7 @@ public class LeftRedHigh extends LinearOpMode {
     KevinGodPipeline pipeline;
     KevinGodPipeline.ParkPos parkPos;
 
-    TelemetryPacket packet = new TelemetryPacket();
+    //TelemetryPacket packet = new TelemetryPacket();
 
     int normalizeDistance;
 
@@ -54,8 +55,8 @@ public class LeftRedHigh extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        dashboard.updateConfig();
+        //FtcDashboard dashboard = FtcDashboard.getInstance();
+        //dashboard.updateConfig();
 
         drive = new MecDrive(hardwareMap, false, telemetry);
         constants = new Constants();
@@ -170,9 +171,9 @@ public class LeftRedHigh extends LinearOpMode {
                     telemetry.addData("blue", color.blue());
                     telemetry.update();
 
-                    packet.put("red", color.red());
-                    packet.put("blue", color.blue());
-                    dashboard.sendTelemetryPacket(packet);
+                    //packet.put("red", color.red());
+                    //packet.put("blue", color.blue());
+                    //dashboard.sendTelemetryPacket(packet);
 
 
 
@@ -221,7 +222,7 @@ public class LeftRedHigh extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipeline(telemetry, drive, true);
+        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.RED_LEFT);
 
         camera.setPipeline(pipeline);
 
@@ -240,7 +241,7 @@ public class LeftRedHigh extends LinearOpMode {
             }
         });
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
         cameraServo.setPosition(0.5);
 

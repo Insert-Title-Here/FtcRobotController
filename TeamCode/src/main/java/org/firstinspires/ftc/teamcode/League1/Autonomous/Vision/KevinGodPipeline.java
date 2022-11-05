@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Config
+//@Config
 public class KevinGodPipeline extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
@@ -40,15 +40,26 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int CbLower = 170;
 
     // Config variables for bounding box
-    public static int topLeftXRight = 125;
-    public static int topLeftYRight = 35;
-    public static int boxWidthRight = 35;
-    public static int boxHeightRight = 60;
+    public static int topLeftXRightRed = 225 ;
+    public static int topLeftYRightRed = 20;
+    public static int boxWidthRightRed = 20;
+    public static int boxHeightRightRed = 40;
 
-    public static int topLeftXLeft = 135;
-    public static int topLeftYLeft = 5;
-    public static int boxWidthLeft = 35;
-    public static int boxHeightLeft = 60;
+    public static int topLeftXLeftRed = 140;
+    public static int topLeftYLeftRed = 20;
+    public static int boxWidthLeftRed = 20;
+    public static int boxHeightLeftRed = 40;
+
+    public static int topLeftXRightBlue = 215 ;
+    public static int topLeftYRightBlue = 20;
+    public static int boxWidthRightBlue = 20;
+    public static int boxHeightRightBlue = 40;
+
+    public static int topLeftXLeftBlue = 135;
+    public static int topLeftYLeftBlue = 25;
+    public static int boxWidthLeftBlue = 20;
+    public static int boxHeightLeftBlue = 40;
+
 
 
     private Rect MIDDLE;
@@ -83,16 +94,34 @@ public class KevinGodPipeline extends OpenCvPipeline {
         CENTER
     }
 
+    public enum AutoSide {
+        RED_RIGHT,
+        RED_LEFT,
+        BLUE_RIGHT,
+        BLUE_LEFT
+    }
+
     // The rectangle/submat used to evaluate the signal color
-    static final Rect rightMIDDLE = new Rect(
-            new Point(topLeftXRight, topLeftYRight),
-            new Point(topLeftXRight + boxWidthRight, topLeftYRight + boxHeightRight)
+    static final Rect RIGHT_MIDDLE_RED = new Rect(
+            new Point(topLeftXRightRed, topLeftYRightRed),
+            new Point(topLeftXRightRed + boxWidthRightRed, topLeftYRightRed + boxHeightRightRed)
     );
 
-    static final Rect leftMIDDLE = new Rect(
-            new Point(topLeftXLeft, topLeftYLeft),
-            new Point(topLeftXLeft + boxWidthLeft, topLeftYLeft + boxHeightLeft)
+    static final Rect LEFT_MIDDLE_RED = new Rect(
+            new Point(topLeftXLeftRed, topLeftYLeftRed),
+            new Point(topLeftXLeftRed + boxWidthLeftRed, topLeftYLeftRed + boxHeightLeftRed)
     );
+
+    static final Rect RIGHT_MIDDLE_BLUE = new Rect(
+            new Point(topLeftXRightBlue, topLeftYRightBlue),
+            new Point(topLeftXRightBlue + boxWidthRightBlue, topLeftYRightBlue + boxHeightRightBlue)
+    );
+
+    static final Rect LEFT_MIDDLE_BLUE = new Rect(
+            new Point(topLeftXLeftBlue, topLeftYLeftBlue),
+            new Point(topLeftXLeftBlue + boxWidthLeftBlue, topLeftYLeftBlue + boxHeightLeftBlue)
+    );
+
 
     // Sets default values for pipelineMode and position
     //PipelineMode pipelineMode = PipelineMode.SIGNAL;
@@ -117,17 +146,21 @@ public class KevinGodPipeline extends OpenCvPipeline {
     }
 
 
-    public KevinGodPipeline(Telemetry telemetry, MecDrive drive, boolean left){
+    public KevinGodPipeline(Telemetry telemetry, MecDrive drive, AutoSide autoSide){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
         contourLengths = new ArrayList<>();
         this.telemetry = telemetry;
         this.drive = drive;
-        if(left) {
-            MIDDLE = leftMIDDLE;
+        if(autoSide == AutoSide.RED_LEFT) {
+            MIDDLE = LEFT_MIDDLE_RED;
+        } else if(autoSide == AutoSide.RED_RIGHT) {
+            MIDDLE = RIGHT_MIDDLE_RED;
+        } else if(autoSide == AutoSide.BLUE_LEFT) {
+            MIDDLE = LEFT_MIDDLE_BLUE;
         } else {
-            MIDDLE = rightMIDDLE;
+            MIDDLE = RIGHT_MIDDLE_BLUE;
         }
     }
 
@@ -141,7 +174,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
             Core.extractChannel(ycrcb, temp, 0);
 
             // Make a binary image of values within the desired range and calculate avg color
-            Core.inRange(temp, new Scalar(160), new Scalar(190), temp);
+            Core.inRange(temp, new Scalar(140), new Scalar(200), temp);
             double countY = Core.mean(temp.submat(MIDDLE)).val[0];
 
             // Extract Cr channel
@@ -155,14 +188,14 @@ public class KevinGodPipeline extends OpenCvPipeline {
             Core.extractChannel(ycrcb, temp, 2);
 
             // Make binary image and calculate avg color
-            Core.inRange(temp, new Scalar(130), new Scalar(170), temp);
+            Core.inRange(temp, new Scalar(100), new Scalar(180), temp);
             double countCb = Core.mean(temp.submat(MIDDLE)).val[0];
 
             // Telemetry
-            /*telemetry.addData("countY", countY);
+            telemetry.addData("countY", countY);
             telemetry.addData("countCr", countCr);
             telemetry.addData("countCb", countCb);
-*/
+
             // Check if certain channels are within certain ranges to determine color
             if(countY > 100 && countCb < 100) {
                 telemetry.addData("Color", "Yellow - Left");
