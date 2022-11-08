@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -22,6 +23,7 @@ public class MecanumDrive {
     AtomicBoolean active;
     BNO055IMU imu;
     ColorRangeSensor colorTape;
+    double accumulatedError;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -145,12 +147,19 @@ public class MecanumDrive {
         telemetry.addData("motorPosition", position);
         telemetry.update();
         long time = System.currentTimeMillis();
-        long difference;
+        long timeDifference;
         //Encoder based gotoposition
         while ((Math.abs(tics) - position) > 0) {
-            difference = System.currentTimeMillis() - time;
+            double angleError = imu.getAngularOrientation().firstAngle;
+            timeDifference = System.currentTimeMillis() - time;
+            accumulateError(timeDifference, angleError);
+
             setPower(flPow, frPow, blPow, brPow);
-            //setPower(flPow + additionalPower(difference, flPow), frPow + additionalPower(difference, flPow), blPow + additionalPower(difference, flPow), brPow + additionalPower(difference, flPow      ));
+            if(angleError < 0){
+                setPower(additionalPower(flPow, angleError), frPow, additionalPower(flPow, angleError), brPow);
+            }else if(angleError > 0){
+                setPower(flPow, additionalPower(frPow, angleError), blPow, additionalPower(brPow, angleError));
+            }
             position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                     Math.abs(br.getCurrentPosition())) / 4;
         }
@@ -322,20 +331,18 @@ public class MecanumDrive {
 
      */
     //PID testing not currently operational
-    public double additionalPower(double delta_time, double power) {
-        double angleError = imu.getAngularOrientation().firstAngle;
-        double accumulatedError = 0;
+    public double additionalPower(double initialPower, double angleError) {
         double output = 0;
         double proportionCoefficient = 0.1;
         double integralCoefficient = 0.02;
-        if (angleError > 0.05) {
-            accumulatedError += angleError * delta_time;
-            output = (angleError * proportionCoefficient) + (accumulatedError * integralCoefficient);
-            return output + power;
-        } else if (angleError < -0.05) {
-
-        }
-        return output + power;
+        output = (angleError * proportionCoefficient) + (getAccumulatedError() * integralCoefficient);
+        return output + initialPower;
+    }
+    public void accumulateError(double delta_time, double angleError){
+        accumulatedError = angleError * delta_time;
+    }
+    public double getAccumulatedError(){
+        return accumulatedError;
     }
     // resets encoders
     public void resetEncoders() {
