@@ -173,11 +173,11 @@ public class NewUltraTeleOp extends LinearOpMode {
                     if((gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
                         if(gamepad1.dpad_up) {
                             score.raiseConeStack();
-                            score.setLinkageConeStack();
+                            score.setLinkageConeStack(false);
                             changeStackFlag = false;
                         }else if(gamepad1.dpad_down){
                             score.lowerConeStack();
-                            score.setLinkageConeStack();
+                            score.setLinkageConeStack(false);
                             changeStackFlag = false;
 
                         }

@@ -122,17 +122,31 @@ public class ScoringSystem2{
     }
 
     //TODO: tune this
-    public void setLinkageConeStack(){
-        if(coneStack == 5){
-            setLinkagePosition(0.745);
-        }else if(coneStack == 4){
-            setLinkagePosition(0.76);
-        }else if(coneStack == 3){
-            setLinkagePosition(0.79);
-        }else if(coneStack == 2){
-            setLinkagePosition(0.82);
-        }else if(coneStack == 1){
-            setLinkagePosition(0.89);
+    public void setLinkageConeStack(boolean logistic){
+        if(logistic){
+            if(coneStack == 5){
+                setLinkagePositionLogistic(0.745, 500);
+            }else if(coneStack == 4){
+                setLinkagePositionLogistic(0.76, 500);
+            }else if(coneStack == 3){
+                setLinkagePositionLogistic(0.79, 500);
+            }else if(coneStack == 2){
+                setLinkagePositionLogistic(0.82, 500);
+            }else if(coneStack == 1){
+                setLinkagePositionLogistic(0.89, 500);
+            }
+        }else {
+            if (coneStack == 5) {
+                setLinkagePosition(0.745);
+            } else if (coneStack == 4) {
+                setLinkagePosition(0.76);
+            } else if (coneStack == 3) {
+                setLinkagePosition(0.79);
+            } else if (coneStack == 2) {
+                setLinkagePosition(0.82);
+            } else if (coneStack == 1) {
+                setLinkagePosition(0.89);
+            }
         }
     }
 

@@ -42,8 +42,11 @@ public class MecDrive {
 
 
     //Original
-    //PIDFCoefficients pidf = new PIDFCoefficients(0.001, 0.0003,0.0001, 0);
-    //PIDCoefficients rotate = new PIDCoefficients(1, 0.00012, 0.08);
+    PIDCoefficients pidf = new PIDCoefficients(0.001, 0,0);
+    PIDCoefficients rotate = new PIDCoefficients(0.2, 0, 0);
+
+    PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0, 0);
+
 
     //Slow start
     /*PIDFCoefficients pidf = new PIDFCoefficients(0.00075, 0.00042,0.0002, 0);
@@ -53,12 +56,11 @@ public class MecDrive {
     PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0.0002, 0.22);*/
 
     //Faster Slower Start
-    PIDFCoefficients pidf = new PIDFCoefficients(0.0008, 0.00042,0.0002, 0);
-
+    /*PIDFCoefficients pidf = new PIDFCoefficients(0.0008, 0.00042,0.0002, 0);
 
     PIDCoefficients rotate = new PIDCoefficients(0.82, 0.00016, 0.2);
     PIDCoefficients rotateFaster = new PIDCoefficients(0.92, 0.00021, 0.22);
-
+*/
 
 
 
@@ -722,6 +724,8 @@ public class MecDrive {
 
         boolean isInitialErrorNegative;
 
+        int half = Math.abs(tics) / 2;
+
 
 
         //TODO: check if we need to negate any
@@ -825,25 +829,33 @@ public class MecDrive {
             double blDerivative = (blError - blPreviousError)/(currentTime - startTime);
             double brDerivative = (brError - brPreviousError)/(currentTime - startTime);
 
-            //TODO: Max out integral if at the wrong point
-            /*
+
+            //TODO: see if we need this
+            /*if(!(Math.abs(flError) < half && Math.abs(frError) < half && Math.abs(blError) < half && Math.abs(brError) < half)){
+                flDerivative = 0;
+                frDerivative = 0;
+                blDerivative = 0;
+                brDerivative = 0;
+            }
+*/
+            //TODO: Max out integral if shoot past
             if(Math.abs(flError) > 150 && Math.abs(frError) > 150 && Math.abs(blError) > 150 && Math.abs(brError) > 150){
                 if(flError > 0 && frError > 0 && blError > 0 && brError > 0 && isInitialErrorNegative){
-                    flIntegralSum = 10000;
-                    frIntegralSum = 10000;
-                    blIntegralSum = 10000;
-                    brIntegralSum = 10000;
+                    flIntegralSum = 2000;
+                    frIntegralSum = 2000;
+                    blIntegralSum = 2000;
+                    brIntegralSum = 2000;
 
                 }else if(flError < 0 && frError < 0 && blError < 0 && brError < 0 && !isInitialErrorNegative){
-                    flIntegralSum = -10000;
-                    frIntegralSum = -10000;
-                    blIntegralSum = -10000;
-                    brIntegralSum = -10000;
+                    flIntegralSum = -2000;
+                    frIntegralSum = -2000;
+                    blIntegralSum = -2000;
+                    brIntegralSum = -2000;
                 }
 
             }
 
-             */
+
 
 
             telemetry.addData("flDerivative", flDerivative);
@@ -851,10 +863,10 @@ public class MecDrive {
             telemetry.addData("blDerivative", blDerivative);
             telemetry.addData("brDerivative", brDerivative);
 
-            double flPower = ((pidf.p * flError) + (pidf.i * flIntegralSum) + (pidf.d * flDerivative)) * power;
-            double frPower = ((pidf.p * frError) + (pidf.i * frIntegralSum) + (pidf.d * frDerivative)) * power;
-            double blPower = ((pidf.p * blError) + (pidf.i * blIntegralSum) + (pidf.d * blDerivative)) * power;
-            double brPower = ((pidf.p * brError) + (pidf.i * brIntegralSum) + (pidf.d * brDerivative)) * power;
+            double flPower = ((pidf.p * flError) + (pidf.i * flIntegralSum) + (pidf.d * flDerivative));
+            double frPower = ((pidf.p * frError) + (pidf.i * frIntegralSum) + (pidf.d * frDerivative));
+            double blPower = ((pidf.p * blError) + (pidf.i * blIntegralSum) + (pidf.d * blDerivative));
+            double brPower = ((pidf.p * brError) + (pidf.i * brIntegralSum) + (pidf.d * brDerivative));
 
 
             //TODO: See if we need this maxing out for power

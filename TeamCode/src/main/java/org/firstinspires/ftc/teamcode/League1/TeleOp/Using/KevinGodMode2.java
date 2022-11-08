@@ -146,8 +146,10 @@ public class KevinGodMode2 extends LinearOpMode {
 
                         //Open Grabber and reset linkage
                         score.setGrabberPosition(constants.open);
-                        score.setLinkagePositionLogistic(constants.linkageDown, 300);
+                        //score.setLinkagePositionLogistic(constants.linkageDown, 300);
 
+                        score.lowerConeStack();
+                        score.setLinkageConeStack(true);
 
                         //Resetting flags
                         autoLinkageFlag = true;
@@ -193,18 +195,18 @@ public class KevinGodMode2 extends LinearOpMode {
                     }
 
                     //Linkage stack cone heights with dpad up and down
-                    if((gamepad1.left_bumper || gamepad1.dpad_down) && changeStackFlag){
+                    if((gamepad1.left_bumper || gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
 
                         //Raise linkage by height of a cone (max height of 5)
-                        if(gamepad1.left_bumper) {
+                        if(gamepad1.left_bumper || gamepad1.dpad_up) {
                             score.raiseConeStack();
-                            score.setLinkageConeStack();
+                            score.setLinkageConeStack(false);
                             changeStackFlag = false;
 
                             //Lower linkage by height of a cone (min height of 1)
                         }else if(gamepad1.dpad_down){
                             score.lowerConeStack();
-                            score.setLinkageConeStack();
+                            score.setLinkageConeStack(false);
                             changeStackFlag = false;
 
                         }
@@ -216,7 +218,7 @@ public class KevinGodMode2 extends LinearOpMode {
                         }
 
                     }
-                    if(!gamepad1.dpad_down && !gamepad1.dpad_up){
+                    if(!gamepad1.dpad_down && !gamepad1.dpad_up && !gamepad1.left_bumper){
                         changeStackFlag = true;
                     }
 

@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 
-@Disabled
 @Autonomous
 public class PIDFTestingDrive extends LinearOpMode {
     MecDrive drive;
@@ -47,7 +46,7 @@ public class PIDFTestingDrive extends LinearOpMode {
 
         //drive.goTOPIDPosAvg(3000, 1, MecDrive.MovementType.STRAIGHT);
         //sleep(1000);
-        //drive.goTOPIDPos(-2120, 0.7,MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPos(-2120, 0.7,MecDrive.MovementType.STRAIGHT);
 
         //drive.goTOPIDPos(-250, 1, MecDrive.MovementType.STRAFE);
         //drive.tankRotatePID(Math.PI/4, 0.85);
