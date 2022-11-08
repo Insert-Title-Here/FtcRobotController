@@ -298,7 +298,7 @@ public class DuplicateAuto extends LinearOpMode {
 
 
 
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 4; i++) {
 
 
 
@@ -333,7 +333,7 @@ public class DuplicateAuto extends LinearOpMode {
 
             double startDistanceTime = time.seconds();
             while (distance.getDistance(DistanceUnit.CM) > 4.3) {
-                drive.setPowerAuto(0.3, MecDrive.MovementType.STRAIGHT);
+                drive.setPowerAuto(0.5, MecDrive.MovementType.STRAIGHT);
 
                 telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                 telemetry.update();
