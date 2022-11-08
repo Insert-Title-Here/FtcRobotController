@@ -108,7 +108,7 @@ public class BlueLeftHigh extends LinearOpMode {
 
         //drive.turnToInitialPosition();
         //strafe right
-        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 900+1080, -905-705), "strafe right");
+        drive.goToPosition(0.4, -0.4, -0.4, 0.4, avgPosition(-927-927, 800+820, 980+1080, -905-705), "strafe right");
 
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -125,7 +125,7 @@ public class BlueLeftHigh extends LinearOpMode {
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(0);
         sleep(300);
-        score.setClawPosition(0.24);
+
         //move back from pole to strafe right
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, avgPosition(-130, -147, -191, -88), "move back from pole");
         cont.set(false);

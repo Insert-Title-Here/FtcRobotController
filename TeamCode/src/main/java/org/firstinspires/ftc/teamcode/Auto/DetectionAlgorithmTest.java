@@ -27,8 +27,8 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
     public static final Point BOX_TOPLEFT = new Point(175,114); // 175, 150
 
     // width and height of submat
-    public static int BOX_WIDTH = 29;
-    public static int BOX_HEIGHT = -34;
+    public static int BOX_WIDTH = 23;
+    public static int BOX_HEIGHT = -38;
 
     enum ParkingPosition {
         LEFT,
@@ -115,10 +115,10 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
         Core.inRange(yelMat, new Scalar(160), new Scalar(205), yelMat);
         // cyan 169
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-        Core.inRange(cyaMat, new Scalar(154), new Scalar(184), cyaMat);
+        Core.inRange(cyaMat, new Scalar(160), new Scalar(184), cyaMat);
         // magenta 186
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
-        Core.inRange(magMat, new Scalar(171), new Scalar(201), magMat);
+        Core.inRange(magMat, new Scalar(161), new Scalar(195), magMat);
 
 //        befChange.convertTo(befChange, CvType.CV_64FC3);
 //        byte buff[] = new byte[ (int) (befChange.total() * befChange.channels())];
