@@ -230,7 +230,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
         double startTime = time.seconds();
 
         parkPos = pipeline.getPosition();
-        pipeline.setMode(false);
+        pipeline.changeMode(KevinGodPipeline.Mode.POLE);
 
 
 
@@ -251,7 +251,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
         sleep(500);
 
         //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
-        normalizeDistance = pipeline.normalizeToPole(0.3, 165, 5);
+        normalizeDistance = pipeline.normalize(0.3, 165, 5);
         //pipeline.Ynormalize(0.2, 95, 5);
 
 
@@ -365,7 +365,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
             //TODO: see if want to change to -Math.PI/3.7
             drive.tankRotatePID(-Math.PI / 4, 0.8, true);
             //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
-            normalizeDistance = pipeline.normalizeToPole(0.2, 172, 3);
+            normalizeDistance = pipeline.normalize(0.2, 172, 3);
 
 
 

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-//import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//@Config
+@Config
 public class KevinGodPipeline extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
@@ -30,6 +30,22 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int H2 = 33;
     public static int S2 = 200;
     public static int V2 = 200;
+
+    //Blue cone color
+    public static int H3 = 105;
+    public static int S3 = 120;
+    public static int V3 = 70;
+    public static int H4 = 117;
+    public static int S4 = 240;
+    public static int V4 = 255;
+
+    //Red cone color
+    public static int H5 = 0;
+    public static int S5 = 140;
+    public static int V5 = 100;
+    public static int H6 = 7;
+    public static int S6 = 255;
+    public static int V6 = 255;
 
     // Config variables for signal pipeline
     public static int YUpper = 190;
@@ -101,6 +117,13 @@ public class KevinGodPipeline extends OpenCvPipeline {
         BLUE_LEFT
     }
 
+    public enum Mode{
+        SLEEVE,
+        POLE,
+        REDCONE,
+        BLUECONE
+    }
+
     // The rectangle/submat used to evaluate the signal color
     static final Rect RIGHT_MIDDLE_RED = new Rect(
             new Point(topLeftXRightRed, topLeftYRightRed),
@@ -125,7 +148,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
     // Sets default values for pipelineMode and position
     //PipelineMode pipelineMode = PipelineMode.SIGNAL;
-    boolean sleeveSense = true;
+    Mode sleeveSense = Mode.SLEEVE;
     ParkPos position = ParkPos.CENTER;
 
     public KevinGodPipeline(Telemetry telemetry){
@@ -167,7 +190,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Check pipelineMode and run corresponding image processing
-        if(sleeveSense) {
+        if(sleeveSense == Mode.SLEEVE) {
 
             // Convert image to YCrCb color space and extract the Y channel
             Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
@@ -239,13 +262,20 @@ public class KevinGodPipeline extends OpenCvPipeline {
                 );
             }
 
-        } else {
+        } else{
 
             // Convert to HSV color space
             Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
 
             // Make binary image of yellow pixels
-            Core.inRange(temp, new Scalar(H1, S1, V1), new Scalar(H2, S2, V2), temp);
+
+            if(sleeveSense == Mode.POLE) {
+                Core.inRange(temp, new Scalar(H1, S1, V1), new Scalar(H2, S2, V2), temp);
+            }else if(sleeveSense == Mode.BLUECONE){
+                Core.inRange(temp, new Scalar(H3, S3, V3), new Scalar(H4, S4, V4), temp);
+            }else if(sleeveSense == Mode.REDCONE){
+                Core.inRange(temp, new Scalar(H5, S5, V5), new Scalar(H6, S6, V6), temp);
+            }
 
             // Blur image to reduce noise
             Imgproc.GaussianBlur(temp, temp, new Size(5, 5), 0);
@@ -312,7 +342,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
     }
 
     // Get x coordinate of center of largest contour (pole)
-    public int getPolePosition() {
+    public int getXContour() {
         return longestContourX;
     }
 
@@ -320,27 +350,22 @@ public class KevinGodPipeline extends OpenCvPipeline {
         return longestContourY;
     }
 
-    // Set mode of pipeline to signal (innit) or contour (after start)
-    public void setMode(boolean mode) {
-        sleeveSense = mode;
-    }
-
     // Get parking position determined by signal mode
     public ParkPos getPosition() {
         return position;
     }
 
-    public int normalizeToPole(double power, int target, int tolerance) {
+    public int normalize(double power, int target, int tolerance) {
         int xMax = target + tolerance;
         int xMin = target - tolerance;
         double startPos = drive.avgPos();
-        int startPolePosition = getPolePosition();
+        int startPolePosition = getXContour();
 
         if(startPolePosition < xMax){
             power *= -1;
         }
 
-        while(getPolePosition() > xMax || getPolePosition() < xMin) {
+        while(getXContour() > xMax || getXContour() < xMin) {
             /*if(getPolePosition() > xMax) {
                 drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
             } else {
@@ -352,7 +377,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
         drive.simpleBrake();
 
 
-        if(getPolePosition() < startPolePosition){
+        if(getXContour() < startPolePosition){
             return -(int)(startPos - drive.avgPos());
 
         }
@@ -361,6 +386,12 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
 
 
+    }
+
+
+
+    public void changeMode(Mode mode){
+        sleeveSense = mode;
     }
 
     public void Ynormalize(double power, int target, int tolerance){

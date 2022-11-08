@@ -236,7 +236,7 @@ public class RightRedHigh extends LinearOpMode {
         waitForStart();
         parkPos = pipeline.getPosition();
 
-        pipeline.setMode(false);
+        //pipeline.setMode(false);
 
         armThread.start();
         feedForward.start();
@@ -254,7 +254,7 @@ public class RightRedHigh extends LinearOpMode {
         //tankRotate(Math.PI / 4.25, 0.3);
 
         drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
-        normalizeDistance = pipeline.normalizeToPole(0.3, 165, 5);
+        normalizeDistance = pipeline.normalize(0.3, 165, 5);
         //pipeline.Ynormalize(0.2, 95, 5);
 
 
@@ -361,7 +361,7 @@ public class RightRedHigh extends LinearOpMode {
 
             //tankRotate(Math.PI / 4.35, 0.3);
             drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
-            normalizeDistance = pipeline.normalizeToPole(0.2, 172, 3);
+            normalizeDistance = pipeline.normalize(0.2, 172, 3);
 
 
 

@@ -228,7 +228,7 @@ public class RightBlueHigh extends LinearOpMode {
         waitForStart();
         parkPos = pipeline.getPosition();
 
-        pipeline.setMode(false);
+        //pipeline.setMode(false);
 
         armThread.start();
         feedForward.start();
@@ -246,7 +246,7 @@ public class RightBlueHigh extends LinearOpMode {
         //tankRotate(Math.PI / 4.25, 0.3);
 
         drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
-        pipeline.normalizeToPole(0.3, 165, 5);
+        pipeline.normalize(0.3, 165, 5);
         pipeline.Ynormalize(0.2, 95, 5);
 
 
@@ -267,7 +267,7 @@ public class RightBlueHigh extends LinearOpMode {
 
         //tankRotate(Math.PI / 2, 0.3);
         drive.simpleMoveToPosition(-350, MecDrive.MovementType.ROTATE, 0.4);
-        pipeline.normalizeToPole(0.3, 82, 10);
+        pipeline.normalize(0.3, 82, 10);
 
         score.setGrabberPosition(0.7);
 
@@ -357,7 +357,7 @@ public class RightBlueHigh extends LinearOpMode {
 
             //tankRotate(Math.PI / 4.35, 0.3);
             drive.simpleMoveToPosition(320, MecDrive.MovementType.ROTATE, 0.4);
-            pipeline.normalizeToPole(0.3, 165, 10);
+            pipeline.normalize(0.3, 165, 10);
             pipeline.Ynormalize(0.2, 92, 5);
 
 
@@ -379,7 +379,7 @@ public class RightBlueHigh extends LinearOpMode {
 
             //tankRotate(Math.PI / 2, 0.3);
             drive.simpleMoveToPosition(-320, MecDrive.MovementType.ROTATE, 0.4);
-            pipeline.normalizeToPole(0.3, 42, 5);
+            pipeline.normalize(0.3, 42, 5);
 
         }
 
@@ -431,13 +431,5 @@ public class RightBlueHigh extends LinearOpMode {
 
     }
 
-    public void normalizeToPole(double power, int xMin, int xMax) {
-        while(pipeline.getPolePosition() > xMax || pipeline.getPolePosition() < xMin) {
-            if(pipeline.getPolePosition() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
-            } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }
-        }
-    }
+
 }
