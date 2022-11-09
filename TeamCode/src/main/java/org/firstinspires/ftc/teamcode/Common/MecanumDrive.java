@@ -24,6 +24,9 @@ public class MecanumDrive {
     BNO055IMU imu;
     ColorRangeSensor colorTape;
     double accumulatedError;
+    double integralPow;
+    double derivativePow;
+    double proportionPow;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -199,8 +202,6 @@ public class MecanumDrive {
     // Turns a certain amount of given radians useing imu
     //TODO: Needs Testing
     public void turn(double radians, double power) {
-        // will be negative 1 or posiive 1
-        //double sign = radians / Math.abs(radians);
         ElapsedTime time = new ElapsedTime();
         double initialAngle = imu.getAngularOrientation().firstAngle;
         double currentAngleError = 0;
@@ -212,14 +213,17 @@ public class MecanumDrive {
             accumulateError(timeDifference, currentAngleError);
             if (radians < 0) {
                 //turn right # of radians
-                setPower(additionalPower(power, priorAngleError, currentAngleError, timeDifference), -additionalPower(power, priorAngleError, currentAngleError, timeDifference), additionalPower(power, priorAngleError, currentAngleError, timeDifference), -additionalPower(power, priorAngleError, currentAngleError, timeDifference));
+                setPower(additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference));
             } else {
                 //turn left # of radians
-                setPower(-additionalPower(power, priorAngleError, currentAngleError, timeDifference), additionalPower(power, priorAngleError, currentAngleError, timeDifference), -additionalPower(power, priorAngleError, currentAngleError, timeDifference), additionalPower(power, priorAngleError, currentAngleError, timeDifference));
+                setPower(-additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference));
             }
             timeDifference = time.milliseconds()-priorTime;
             currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
         }
+        integralPow = 0;
+        derivativePow = 0;
+        proportionPow = 0;
 
 
     }
@@ -313,13 +317,23 @@ public class MecanumDrive {
 
      */
     //PID testing not currently operational
-    public double additionalPower(double initialPower, double priorError, double currentError, double timeChange) {
-        double output = 0;
+    public double additionalPower(double priorError, double currentError, double timeChange) {
         double proportionCoefficient = 0.1;
         double integralCoefficient = 0.02;
         double derivativeCoefficient = 0;
-        output = /*(currentError * proportionCoefficient)+*/ (((currentError-priorError)/timeChange) * derivativeCoefficient) + (getAccumulatedError() * integralCoefficient);
-        return output + initialPower;
+        integralPow = getAccumulatedError() * integralCoefficient;
+        derivativePow = ((currentError-priorError)/timeChange) * derivativeCoefficient;
+        proportionPow = currentError * proportionCoefficient;
+        return proportionPow + derivativePow + integralPow;
+    }
+    public double getIntegralPower(){
+        return integralPow;
+    }
+    public double getDerivativePower(){
+        return derivativePow;
+    }
+    public double getProportionPower(){
+        return proportionPow;
     }
     public void accumulateError(double delta_time, double angleError){
         accumulatedError += angleError * delta_time;
