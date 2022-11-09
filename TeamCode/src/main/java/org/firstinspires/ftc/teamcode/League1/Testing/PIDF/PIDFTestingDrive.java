@@ -46,13 +46,15 @@ public class PIDFTestingDrive extends LinearOpMode {
 
         //drive.goTOPIDPosAvg(3000, 1, MecDrive.MovementType.STRAIGHT);
         //sleep(1000);
-        drive.goTOPIDPos(-2120, 1,MecDrive.MovementType.STRAIGHT);
+        //drive.goTOPIDPos(-2120, 1,MecDrive.MovementType.STRAIGHT);
 
-        //drive.goTOPIDPos(-250, 1, MecDrive.MovementType.STRAFE);
-        //drive.tankRotatePID(Math.PI/4, 0.85);
+        //drive.goTOPIDPos(-250, 1, MecDrive.MovementType.STRAFE);0/
+        drive.tankRotatePID(Math.PI/4, 1, false);
         sleep(1000);
+        drive.tankRotatePID(Math.PI/2, 1, false);
+
+
         //IMU Rotate
-        //drive.tankRotatePID(Math.PI/2, 0.85);
         //drive.tankRotatePID(Math.PI, 0.85);
 
         while(opModeIsActive()){
@@ -60,6 +62,7 @@ public class PIDFTestingDrive extends LinearOpMode {
             telemetry.addData("fr", drive.getFREncoder());
             telemetry.addData("bl", drive.getBLEncoder());
             telemetry.addData("br", drive.getBREncoder());
+            telemetry.addData("first Angle", drive.getFirstAngle());
             telemetry.update();
 
         }

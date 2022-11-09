@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
@@ -78,6 +79,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
     public int contourTarget = 0;
     public boolean isNormalizing = false;
+    private boolean normlizationBroke = false;
 
 
     private Rect MIDDLE;
@@ -363,6 +365,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
     }
 
     public int normalize(double power, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
         contourTarget = target;
         isNormalizing = true;
         int xMax = target + tolerance;
@@ -374,7 +378,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
             power *= -1;
         }
 
-        while(getXContour() > xMax || getXContour() < xMin) {
+        while((getXContour() > xMax || getXContour() < xMin)) {
             /*if(getPolePosition() > xMax) {
                 drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
             } else {
@@ -382,10 +386,17 @@ public class KevinGodPipeline extends OpenCvPipeline {
             }*/
 
             drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+
+            if(time.seconds() - startTime > 1.5){
+                normlizationBroke = true;
+                break;
+            }
         }
         drive.simpleBrake();
 
         isNormalizing = false;
+
+
 
         if(getXContour() < startPolePosition){
             return -(int)(startPos - drive.avgPos());
@@ -396,6 +407,10 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
 
 
+    }
+
+    public boolean getNormalizationBroke(){
+        return normlizationBroke;
     }
 
 

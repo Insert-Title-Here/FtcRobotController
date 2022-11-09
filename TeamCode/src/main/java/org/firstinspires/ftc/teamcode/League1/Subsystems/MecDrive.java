@@ -43,9 +43,9 @@ public class MecDrive {
 
     //Original
     PIDCoefficients pidf = new PIDCoefficients(0.003, 0.0001,0.0003);
-    //PIDCoefficients rotate = new PIDCoefficients(0.2, 0, 0);
+    PIDCoefficients rotate = new PIDCoefficients(1.09, 0, 0.002);
 
-    //PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0, 0);
+    PIDCoefficients rotateFaster = new PIDCoefficients(1.09, 0, 0.002  );
 
 
     //Slow start
@@ -60,8 +60,8 @@ public class MecDrive {
 
 
      */
-    PIDCoefficients rotate = new PIDCoefficients(0.82, 0.00016, 0.2);
-    PIDCoefficients rotateFaster = new PIDCoefficients(0.92, 0.00021, 0.22);
+    //PIDCoefficients rotate = new PIDCoefficients(0.82, 0.00016, 0.2);
+    //PIDCoefficients rotateFaster = new PIDCoefficients(0.92, 0.00021, 0.22);
 
 
 
@@ -282,6 +282,7 @@ public class MecDrive {
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
+        double actualStartTime = startTime;
 
         radians = wrapAngle(radians);
         double radError = wrapAngle(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians);
@@ -289,7 +290,7 @@ public class MecDrive {
         double integralSum = 0;
 
 
-        while(Math.abs(radError) > 0.007){
+        while(Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < 1){
 
             telemetry.addData("target", radians);
 
@@ -300,6 +301,8 @@ public class MecDrive {
             double currentTime = time.seconds();
 
             radError = wrapAngle(currentAngle - radians);
+            telemetry.addData("current", currentAngle);
+
             telemetry.addData("Error", radError);
 
             integralSum += (radError + previousError)/(currentTime - startTime);
@@ -320,9 +323,9 @@ public class MecDrive {
 
 
             if(!slidesUp) {
-                newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative)) * power;
+                newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative));
             }else{
-                newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative)) * power;
+                newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative));
             }
             setPowerAuto(newPower, MecDrive.MovementType.ROTATE);
 
@@ -480,6 +483,10 @@ public class MecDrive {
             }
             brake();
         }
+    }
+
+    public double getFirstAngle(){
+        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
     }
 
     //TODO: Test this
@@ -722,6 +729,7 @@ public class MecDrive {
     public void goTOPIDPos(int tics, double power, MovementType movement){
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
+        double actualStartTime = startTime;
         //boolean countTime = true;
 
         boolean isInitialErrorNegative;
@@ -758,7 +766,7 @@ public class MecDrive {
         int brIntegralSum = 0;
 
 
-        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2){
+        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5){
             telemetry.addData("target", tics);
 
 
