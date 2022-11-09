@@ -193,7 +193,7 @@ public class SecondTeleOp extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
-                drive.turn(Math.PI/4, 0.3);
+                drive.turn(Math.PI/4, 0);
             }
             //lowers the height of the slides for the stack of 5 cones
             if(gamepad1.a && stackDoubleDown){
@@ -230,12 +230,15 @@ public class SecondTeleOp extends LinearOpMode {
             telemetry.addData("frPos", drive.getFRPosition());
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());
-            telemetry.addData("flPow", drive.getPower());
+            telemetry.addData("Ppower", drive.getProportionPower());
+            telemetry.addData("Ipower", drive.getIntegralPower());
+            telemetry.addData("Dpower", drive.getDerivativePower());
+            telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
+            telemetry.addData("drivePower",(drive.getProportionPower()+drive.getIntegralPower()+drive.getDerivativePower()));
+            telemetry.addData("realDrivePow", drive.getPower());
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
-            telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
-            telemetry.addData("booleanCheck(Discontinue)", discontinue.get());
             telemetry.addData("stackHeight", stackHeight);
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());

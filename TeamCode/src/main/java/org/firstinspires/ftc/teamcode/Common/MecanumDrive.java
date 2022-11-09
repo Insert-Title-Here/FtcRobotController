@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -22,6 +23,10 @@ public class MecanumDrive {
     AtomicBoolean active;
     BNO055IMU imu;
     ColorRangeSensor colorTape;
+    double accumulatedError;
+    double integralPow;
+    double derivativePow;
+    double proportionPow;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -145,12 +150,12 @@ public class MecanumDrive {
         telemetry.addData("motorPosition", position);
         telemetry.update();
         long time = System.currentTimeMillis();
-        long difference;
+        long timeDifference;
         //Encoder based gotoposition
         while ((Math.abs(tics) - position) > 0) {
-            difference = System.currentTimeMillis() - time;
+            timeDifference = System.currentTimeMillis() - time;
+
             setPower(flPow, frPow, blPow, brPow);
-            //setPower(flPow + additionalPower(difference, flPow), frPow + additionalPower(difference, flPow), blPow + additionalPower(difference, flPow), brPow + additionalPower(difference, flPow      ));
             position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                     Math.abs(br.getCurrentPosition())) / 4;
         }
@@ -197,38 +202,28 @@ public class MecanumDrive {
     // Turns a certain amount of given radians useing imu
     //TODO: Needs Testing
     public void turn(double radians, double power) {
-        // will be negative 1 or posiive 1
-        //double sign = radians / Math.abs(radians);
+        ElapsedTime time = new ElapsedTime();
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        double before;
-        double after;
-
+        double currentAngleError = 0;
+        double priorAngleError = 0;
+        double priorTime = time.milliseconds();
+        double timeDifference = 0;
         while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
-            /*
-            if(imu.getAngularOrientation().firstAngle == Math.PI){
-                //before = sign*(Math.PI - Math.abs(initialAngle));
-                after = Math.abs((initialAngle + radians) - Math.PI);
-                radians = after;
-                initialAngle = Math.PI;
-                telemetry.addData("testtt", after);
-                telemetry.update();
-            }else if(imu.getAngularOrientation().firstAngle == -Math.PI){
-                after = Math.abs((initialAngle + radians) - Math.PI);
-                radians = after;
-                initialAngle = -Math.PI;
-                telemetry.addData("TESTTT", after);
-                telemetry.update();
-            }
-
-             */
+            priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+            accumulateError(timeDifference, currentAngleError);
             if (radians < 0) {
                 //turn right # of radians
-                setPower(power, -power, power, -power);
+                setPower(additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference));
             } else {
                 //turn left # of radians
-                setPower(-power, power, -power, power);
+                setPower(-additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference));
             }
+            timeDifference = time.milliseconds()-priorTime;
+            currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
         }
+        integralPow = 0;
+        derivativePow = 0;
+        proportionPow = 0;
 
 
     }
@@ -322,20 +317,29 @@ public class MecanumDrive {
 
      */
     //PID testing not currently operational
-    public double additionalPower(double delta_time, double power) {
-        double angleError = imu.getAngularOrientation().firstAngle;
-        double accumulatedError = 0;
-        double output = 0;
+    public double additionalPower(double priorError, double currentError, double timeChange) {
         double proportionCoefficient = 0.1;
         double integralCoefficient = 0.02;
-        if (angleError > 0.05) {
-            accumulatedError += angleError * delta_time;
-            output = (angleError * proportionCoefficient) + (accumulatedError * integralCoefficient);
-            return output + power;
-        } else if (angleError < -0.05) {
-
-        }
-        return output + power;
+        double derivativeCoefficient = 0;
+        integralPow = getAccumulatedError() * integralCoefficient;
+        derivativePow = ((currentError-priorError)/timeChange) * derivativeCoefficient;
+        proportionPow = currentError * proportionCoefficient;
+        return proportionPow + derivativePow + integralPow;
+    }
+    public double getIntegralPower(){
+        return integralPow;
+    }
+    public double getDerivativePower(){
+        return derivativePow;
+    }
+    public double getProportionPower(){
+        return proportionPow;
+    }
+    public void accumulateError(double delta_time, double angleError){
+        accumulatedError += angleError * delta_time;
+    }
+    public double getAccumulatedError(){
+        return accumulatedError;
     }
     // resets encoders
     public void resetEncoders() {
@@ -385,6 +389,15 @@ public class MecanumDrive {
 
 
 
+    }
+    public double angleWrap(double radians){
+        while(radians > Math.PI){
+            radians -= 2 * Math.PI;
+        }
+        while(radians < -Math.PI){
+            radians += 2 * Math.PI;
+        }
+        return radians;
     }
     // returns the average tics for mecanum wheels
     public int avgPosition(){
