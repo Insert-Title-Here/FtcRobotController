@@ -96,7 +96,7 @@ public class SecondTeleOp extends LinearOpMode {
                     }
                     //closes the claw(manually) and opens the claw(like a toggle)
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
-                        if(0.24 < score.getClawPosition() && score.getClawPosition() < 0.27){
+                        if(0.2 < score.getClawPosition() && score.getClawPosition() < 0.34){
                             if(score.getEncoderPosition() > 900){
                                 score.goToPosition(score.getEncoderPosition() - 300, 0.5);
                             }
@@ -111,7 +111,7 @@ public class SecondTeleOp extends LinearOpMode {
                         }else{
                             if(score.getEncoderPosition() < 200){
                                 if(discontinue.get()){
-                                    score.setClawPosition(0.26);
+                                    score.setClawPosition(0.32); // TODO: 0.32 is closed, 0 is open (not actually todo)
                                     try {
                                         Thread.sleep(300);
                                     } catch (InterruptedException e) {
@@ -120,7 +120,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     score.goToPosition(score.getEncoderPosition()+300,0.6);
                                     discontinue.set(false);
                                 }else{
-                                    score.setClawPosition(0.26);
+                                    score.setClawPosition(0.32);
                                     try {
                                         Thread.sleep(300);
                                     } catch (InterruptedException e) {
@@ -130,7 +130,7 @@ public class SecondTeleOp extends LinearOpMode {
                                 }
                             }else{
                                 if(discontinue.get()){
-                                    score.setClawPosition(0.26);
+                                    score.setClawPosition(0.32);
                                     try {
                                         Thread.sleep(300);
                                     } catch (InterruptedException e) {
@@ -139,7 +139,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     score.goToPosition(score.getEncoderPosition()+330,0.6);
                                     discontinue.set(false);
                                 }else{
-                                    score.setClawPosition(0.25);
+                                    score.setClawPosition(0.32);
                                 }
                             }
                         }
@@ -152,7 +152,7 @@ public class SecondTeleOp extends LinearOpMode {
                     if (score.getClawPosition() == 0.0) {
                         try {
                             score.grabCone(true);
-                            discontinue.set(false);
+                            pause.set(true);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
