@@ -76,6 +76,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int boxWidthLeftBlue = 20;
     public static int boxHeightLeftBlue = 40;
 
+    public int contourTarget = 0;
+    public boolean isNormalizing = false;
 
 
     private Rect MIDDLE;
@@ -336,8 +338,13 @@ public class KevinGodPipeline extends OpenCvPipeline {
             xList.clear();
             yList.clear();
 
-        }
+            if(isNormalizing) {
+                Imgproc.drawMarker(input, new Point(contourTarget, 120), new Scalar(255, 92, 90));
+            } else {
+                Imgproc.drawMarker(input, new Point(contourTarget, 120), new Scalar(100, 200, 200));
+            }
 
+        }
         return input;
     }
 
@@ -356,6 +363,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
     }
 
     public int normalize(double power, int target, int tolerance) {
+        contourTarget = target;
+        isNormalizing = true;
         int xMax = target + tolerance;
         int xMin = target - tolerance;
         double startPos = drive.avgPos();
@@ -376,6 +385,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
         }
         drive.simpleBrake();
 
+        isNormalizing = false;
 
         if(getXContour() < startPolePosition){
             return -(int)(startPos - drive.avgPos());

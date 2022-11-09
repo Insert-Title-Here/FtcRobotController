@@ -39,14 +39,14 @@ public class PIDFTestingDrive extends LinearOpMode {
 
         //Straight, Strafe, Encoder Rotate
         //TODO: return constants
-        drive.goTOPIDPos(-3000, 0.5, MecDrive.MovementType.STRAIGHT);
+        //drive.goTOPIDPos(-3000, 0.5, MecDrive.MovementType.STRAIGHT);
 
         //drive.autoDiagonals(true);
 
 
         //drive.goTOPIDPosAvg(3000, 1, MecDrive.MovementType.STRAIGHT);
         //sleep(1000);
-        drive.goTOPIDPos(-2120, 0.7,MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPos(-2120, 1,MecDrive.MovementType.STRAIGHT);
 
         //drive.goTOPIDPos(-250, 1, MecDrive.MovementType.STRAFE);
         //drive.tankRotatePID(Math.PI/4, 0.85);

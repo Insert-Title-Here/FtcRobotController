@@ -42,10 +42,10 @@ public class MecDrive {
 
 
     //Original
-    PIDCoefficients pidf = new PIDCoefficients(0.001, 0,0);
-    PIDCoefficients rotate = new PIDCoefficients(0.2, 0, 0);
+    PIDCoefficients pidf = new PIDCoefficients(0.003, 0.0001,0.0003);
+    //PIDCoefficients rotate = new PIDCoefficients(0.2, 0, 0);
 
-    PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0, 0);
+    //PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0, 0);
 
 
     //Slow start
@@ -58,9 +58,11 @@ public class MecDrive {
     //Faster Slower Start
     /*PIDFCoefficients pidf = new PIDFCoefficients(0.0008, 0.00042,0.0002, 0);
 
+
+     */
     PIDCoefficients rotate = new PIDCoefficients(0.82, 0.00016, 0.2);
     PIDCoefficients rotateFaster = new PIDCoefficients(0.92, 0.00021, 0.22);
-*/
+
 
 
 
@@ -720,7 +722,7 @@ public class MecDrive {
     public void goTOPIDPos(int tics, double power, MovementType movement){
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
-        boolean countTime = true;
+        //boolean countTime = true;
 
         boolean isInitialErrorNegative;
 
@@ -838,24 +840,60 @@ public class MecDrive {
                 brDerivative = 0;
             }
 */
-            //TODO: Max out integral if shoot past
-            if(Math.abs(flError) > 150 && Math.abs(frError) > 150 && Math.abs(blError) > 150 && Math.abs(brError) > 150){
-                if(flError > 0 && frError > 0 && blError > 0 && brError > 0 && isInitialErrorNegative){
-                    flIntegralSum = 2000;
-                    frIntegralSum = 2000;
-                    blIntegralSum = 2000;
-                    brIntegralSum = 2000;
+            /*//TODO: Max out integral if shoot past
+            if(Math.abs(flError) > 10 || Math.abs(frError) > 10 || Math.abs(blError) > 10 || Math.abs(brError) > 10){
+                if(isInitialErrorNegative){
+                    if(flError > 0){
+                        flIntegralSum = 500;
+                    }
+
+                    if(frError > 0){
+                        frIntegralSum = 500;
+                    }
+
+                    if(blIntegralSum > 0){
+                        blIntegralSum = 500;
+                    }
+
+                    if(brIntegralSum > 0){
+                        brIntegralSum = 500;
+
+                    }
+                }else{
+                    if(flError < 0){
+                        flIntegralSum = -500;
+                    }
+
+                    if(frError < 0){
+                        frIntegralSum = -500;
+                    }
+
+                    if(blIntegralSum < 0){
+                        blIntegralSum = -500;
+                    }
+
+                    if(brIntegralSum < 0){
+                        brIntegralSum = -500;
+
+                    }
+
+                }
+                *//*if(flError > 0 && frError > 0 && blError > 0 && brError > 0 && isInitialErrorNegative){
+                    flIntegralSum = 500;
+                    frIntegralSum = 500;
+                    blIntegralSum = 500;
+                    brIntegralSum = 500;
 
                 }else if(flError < 0 && frError < 0 && blError < 0 && brError < 0 && !isInitialErrorNegative){
-                    flIntegralSum = -2000;
-                    frIntegralSum = -2000;
-                    blIntegralSum = -2000;
-                    brIntegralSum = -2000;
-                }
+                    flIntegralSum = -500;
+                    frIntegralSum = -500;
+                    blIntegralSum = -500;
+                    brIntegralSum = -500;
+                }*//*
 
             }
 
-
+*/
 
 
             telemetry.addData("flDerivative", flDerivative);
@@ -948,8 +986,8 @@ public class MecDrive {
 
         }
 
-        setPower(0,0,0,0);
-        //simpleBrake();
+        //setPower(0,0,0,0);
+        simpleBrake();
 
     }
 
