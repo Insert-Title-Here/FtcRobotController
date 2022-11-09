@@ -409,6 +409,51 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
     }
 
+
+    public int normalizeStrafe(double power, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+
+        if(startPolePosition < xMax){
+            power *= -1;
+        }
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+            /*if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }*/
+
+            drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
+
+            if(time.seconds() - startTime > 1.5){
+                normlizationBroke = true;
+                break;
+            }
+        }
+        drive.simpleBrake();
+
+        isNormalizing = false;
+
+
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+
+        return (int)(startPos - drive.avgPos());
+
+
+
+    }
     public boolean getNormalizationBroke(){
         return normlizationBroke;
     }

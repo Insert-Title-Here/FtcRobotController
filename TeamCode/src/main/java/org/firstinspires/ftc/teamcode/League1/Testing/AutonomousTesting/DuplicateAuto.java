@@ -267,7 +267,7 @@ public class DuplicateAuto extends LinearOpMode {
         }else {
 
 
-            drive.simpleMoveToPosition(-20, MecDrive.MovementType.STRAIGHT, 0.3);
+            //drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAIGHT, 0.3);
             while (armUp.get()) {
 
             }
@@ -323,7 +323,7 @@ public class DuplicateAuto extends LinearOpMode {
 
             }
 */
-                pipeline.normalize(-0.2, 155, 5);
+                pipeline.normalizeStrafe(-0.35, 155, 5);
 
                 if(pipeline.getNormalizationBroke()){
                     drive.tankRotatePID(Math.PI/2, 0.6, false);
@@ -334,7 +334,7 @@ public class DuplicateAuto extends LinearOpMode {
                 score.setLinkagePosition(0.75 + (i * 0.04));
 
                 double startDistanceTime = time.seconds();
-                while (distance.getDistance(DistanceUnit.CM) > 4.3) {
+                while (distance.getDistance(DistanceUnit.CM) > 3.8) {
                     drive.setPowerAuto(0.4, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
@@ -357,7 +357,7 @@ public class DuplicateAuto extends LinearOpMode {
 
 
                 score.setGrabberPosition(constants.grabbing);
-                sleep(300);
+                sleep(400);
 
                 score.moveToPosition(200, 1);
                 hold.set(true);
@@ -368,7 +368,7 @@ public class DuplicateAuto extends LinearOpMode {
                 pipeline.changeMode(KevinGodPipeline.Mode.POLE);
                 cameraServo.setPosition(0.37);
 
-                drive.goTOPIDPos(-1000, 1, MecDrive.MovementType.STRAIGHT);
+                drive.goTOPIDPos(-1100, 1, MecDrive.MovementType.STRAIGHT);
                 if (time.seconds() - startTime > 26) {
                     break;
                 }
@@ -378,7 +378,7 @@ public class DuplicateAuto extends LinearOpMode {
                 armUp.set(true);
 
                 //TODO: see if want to change to Math.PI/3.7
-                drive.tankRotatePID(Math.PI / 4, 0.8, true);
+                drive.tankRotatePID(Math.PI / 5, 0.8, true);
                 //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
                 normalizeDistance = pipeline.normalize(0.2, 172, 2);
 
@@ -388,7 +388,7 @@ public class DuplicateAuto extends LinearOpMode {
                 }
 
 
-                drive.simpleMoveToPosition(-20, MecDrive.MovementType.STRAIGHT, 0.3);
+                //drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
 
                 while (armUp.get()) {
 

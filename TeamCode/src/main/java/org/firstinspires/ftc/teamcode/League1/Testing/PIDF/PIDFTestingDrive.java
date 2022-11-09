@@ -49,9 +49,9 @@ public class PIDFTestingDrive extends LinearOpMode {
         //drive.goTOPIDPos(-2120, 1,MecDrive.MovementType.STRAIGHT);
 
         //drive.goTOPIDPos(-250, 1, MecDrive.MovementType.STRAFE);0/
-        drive.tankRotatePID(Math.PI/4, 1, false);
-        sleep(1000);
         drive.tankRotatePID(Math.PI/2, 1, false);
+        sleep(1000);
+        drive.tankRotatePID(Math.PI/4, 1, false);
 
 
         //IMU Rotate
