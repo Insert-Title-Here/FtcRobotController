@@ -318,9 +318,9 @@ public class MecanumDrive {
      */
     //PID testing not currently operational
     public double additionalPower(double priorError, double currentError, double timeChange) {
-        double proportionCoefficient = 0.01;
+        double proportionCoefficient = 0.5;
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.02;
+        double derivativeCoefficient = 0;
         integralPow = getAccumulatedError() * integralCoefficient;
         derivativePow = ((currentError-priorError)/timeChange) * derivativeCoefficient;
         proportionPow = currentError * proportionCoefficient;
