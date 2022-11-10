@@ -288,7 +288,7 @@ public class DuplicateAuto extends LinearOpMode {
             //drive.simpleMoveToPosition(-370 - normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
             //pipeline.normalizeToPole(0.3, 82, 10);
 
-            score.setGrabberPosition(0.7);
+            score.setGrabberPosition(0.65);
 
 
             //drive.tankRotatePID(Math.PI/2, 1);            //pipeline.normalizeToPole(0.3, 42, 5);
@@ -323,7 +323,7 @@ public class DuplicateAuto extends LinearOpMode {
 
             }
 */
-                pipeline.normalizeStrafe(-0.35, 155, 5);
+                pipeline.normalizeStrafe(-0.35, 170, 5);
 
                 if(pipeline.getNormalizationBroke()){
                     drive.tankRotatePID(Math.PI/2, 0.6, false);
@@ -335,7 +335,7 @@ public class DuplicateAuto extends LinearOpMode {
 
                 double startDistanceTime = time.seconds();
                 while (distance.getDistance(DistanceUnit.CM) > 3.8) {
-                    drive.setPowerAuto(0.4, MecDrive.MovementType.STRAIGHT);
+                    drive.setPowerAuto(0.45, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                     telemetry.update();
@@ -368,7 +368,7 @@ public class DuplicateAuto extends LinearOpMode {
                 pipeline.changeMode(KevinGodPipeline.Mode.POLE);
                 cameraServo.setPosition(0.37);
 
-                drive.goTOPIDPos(-1100, 1, MecDrive.MovementType.STRAIGHT);
+                drive.goTOPIDPos(-1035, 1, MecDrive.MovementType.STRAIGHT);
                 if (time.seconds() - startTime > 26) {
                     break;
                 }
@@ -413,7 +413,7 @@ public class DuplicateAuto extends LinearOpMode {
                 //drive.simpleMoveToPosition(150, MecDrive.MovementType.STRAFE, 0.4);
                 //drive.goTOPIDPos(150, 1, MecDrive.MovementType.STRAIGHT);
 
-                score.setGrabberPosition(0.7);
+                score.setGrabberPosition(0.65);
 
 
             }

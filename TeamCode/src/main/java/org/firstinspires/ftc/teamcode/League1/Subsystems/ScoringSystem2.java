@@ -36,7 +36,7 @@ public class ScoringSystem2{
 
     public ScoringSystem2(HardwareMap hardwareMap, Constants constants) {
 
-        coneStack = 5;
+        coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
         this.constants = constants;
@@ -72,7 +72,7 @@ public class ScoringSystem2{
     public ScoringSystem2(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
         this.telemetry = telemetry;
 
-        coneStack = 5;
+        coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
         this.constants = constants;
@@ -266,7 +266,7 @@ public class ScoringSystem2{
         //TODO: Check if logic for encoder positions works
 
         if(power > 0) {
-            while ((time.seconds() - startTime) < 2 && (rLiftPos < tics || lLiftPos < tics)) {
+            while ((time.seconds() - startTime) < 1.25 && (rLiftPos < tics || lLiftPos < tics)) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -285,7 +285,7 @@ public class ScoringSystem2{
 
             }
         }else{
-            while ((time.seconds() - startTime) < 2 && (rLiftPos > tics || lLiftPos > tics)) {
+            while ((time.seconds() - startTime) < 1.25 && (rLiftPos > tics || lLiftPos > tics)) {
 
                 //TODO: figure out if we need to negate either of them
 

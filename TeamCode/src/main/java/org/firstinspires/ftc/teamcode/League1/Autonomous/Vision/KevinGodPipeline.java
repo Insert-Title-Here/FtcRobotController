@@ -369,6 +369,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
         double startTime = time.seconds();
         contourTarget = target;
         isNormalizing = true;
+        boolean wrongWay = false;
         int xMax = target + tolerance;
         int xMin = target - tolerance;
         double startPos = drive.avgPos();
@@ -388,11 +389,26 @@ public class KevinGodPipeline extends OpenCvPipeline {
             drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
 
             if(time.seconds() - startTime > 1.5){
-                normlizationBroke = true;
+                //normlizationBroke = true;
+                wrongWay = true;
                 break;
             }
         }
         drive.simpleBrake();
+
+        if(wrongWay) {
+            while ((getXContour() > xMax || getXContour() < xMin)) {
+            /*if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }*/
+
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+
+
+            }
+        }
 
         isNormalizing = false;
 
