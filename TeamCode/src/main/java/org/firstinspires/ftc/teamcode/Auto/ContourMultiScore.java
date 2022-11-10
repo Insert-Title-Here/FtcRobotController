@@ -57,9 +57,11 @@ public class ContourMultiScore extends OpenCvPipeline {
 
 
         //contours
-        Imgproc.findContours(contourMat, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(contourMat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         Imgproc.drawContours(generalMat, contours, -1, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
                 hierarchy, 2, new Point()*/);
+        telemetry.addData("contour 1", contours.get(0));
+        telemetry.update();
 /*
         // loop through contours to find max
         int indexOfMax = 0;
@@ -117,7 +119,7 @@ public class ContourMultiScore extends OpenCvPipeline {
 
 
  */
-        return generalMat;
+        return contourMat;
     }
 
     // method for determining distance of camera to object
