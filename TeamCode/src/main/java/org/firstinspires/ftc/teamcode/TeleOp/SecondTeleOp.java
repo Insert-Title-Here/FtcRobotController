@@ -235,6 +235,7 @@ public class SecondTeleOp extends LinearOpMode {
             telemetry.addData("Dpower", drive.getDerivativePower());
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
             telemetry.addData("drivePower",(drive.getProportionPower()+drive.getIntegralPower()+drive.getDerivativePower()));
+            telemetry.addData("angleError", drive.getAngleError());
             telemetry.addData("realDrivePow", drive.getPower());
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());

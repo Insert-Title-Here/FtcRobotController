@@ -27,7 +27,7 @@ public class MecanumDrive {
     double integralPow;
     double derivativePow;
     double proportionPow;
-
+    double angleError;
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
     // holds data
@@ -224,6 +224,7 @@ public class MecanumDrive {
         integralPow = 0;
         derivativePow = 0;
         proportionPow = 0;
+        angleError = 0;
 
 
     }
@@ -318,13 +319,17 @@ public class MecanumDrive {
      */
     //PID testing not currently operational
     public double additionalPower(double priorError, double currentError, double timeChange) {
-        double proportionCoefficient = 0.5;
+        double proportionCoefficient = 0.8;
         double integralCoefficient = 0;
         double derivativeCoefficient = 0;
+        angleError = currentError;
         integralPow = getAccumulatedError() * integralCoefficient;
         derivativePow = ((currentError-priorError)/timeChange) * derivativeCoefficient;
         proportionPow = currentError * proportionCoefficient;
         return proportionPow + derivativePow + integralPow;
+    }
+    public double getAngleError(){
+        return angleError;
     }
     public double getIntegralPower(){
         return integralPow;
