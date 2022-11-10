@@ -209,17 +209,21 @@ public class MecanumDrive {
         double priorTime = time.milliseconds();
         double timeDifference = 0;
         while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
+            double drivePower = 0;
             priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
             accumulateError(timeDifference, currentAngleError);
             if (radians < 0) {
+                drivePower = additionalPower(priorAngleError, currentAngleError, timeDifference);
                 //turn right # of radians
-                setPower(additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference));
+                setPower(drivePower, -drivePower, drivePower, -drivePower);
             } else {
+                drivePower = additionalPower(priorAngleError, currentAngleError, timeDifference);
                 //turn left # of radians
-                setPower(-additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference), -additionalPower(priorAngleError, currentAngleError, timeDifference), additionalPower(priorAngleError, currentAngleError, timeDifference));
+                setPower(-drivePower, drivePower, -drivePower, drivePower);
             }
-            timeDifference = time.milliseconds()-priorTime;
+            timeDifference = time.milliseconds() - priorTime;
             currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+
         }
         integralPow = 0;
         derivativePow = 0;
@@ -319,9 +323,9 @@ public class MecanumDrive {
      */
     //PID testing not currently operational
     public double additionalPower(double priorError, double currentError, double timeChange) {
-        double proportionCoefficient = 0.8;
+        double proportionCoefficient = 0.82;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0;
+        double derivativeCoefficient = 0.04;
         angleError = currentError;
         integralPow = getAccumulatedError() * integralCoefficient;
         derivativePow = ((currentError-priorError)/timeChange) * derivativeCoefficient;

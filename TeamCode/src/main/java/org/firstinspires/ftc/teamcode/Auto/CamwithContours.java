@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -37,7 +38,8 @@ public class CamwithContours extends LinearOpMode {
                 telemetry.update();
             }
         });
-
+        // ftc dashboard
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
         telemetry.addData("position", position);
         telemetry.addData("Status", "Initialized");
 

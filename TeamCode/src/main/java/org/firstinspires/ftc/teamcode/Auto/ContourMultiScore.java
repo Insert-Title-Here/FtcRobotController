@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -14,7 +17,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Config
 public class ContourMultiScore extends OpenCvPipeline {
     // dimensions of camera image: 320, 176
 
@@ -27,14 +30,18 @@ public class ContourMultiScore extends OpenCvPipeline {
     double knownWidth, focalLength, perWidth;
     Telemetry telemetry;
 
+    /* make stuff public static  */
+    public static int lower = 145;
+    public static int upper = 185;
+
     public ContourMultiScore (Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
     @Override
-    public Mat processFrame(Mat     input) {
+    public Mat processFrame(Mat input) {
         knownWidth = 1.04; //inches
-
+        contours = new ArrayList<>();
 
 
         generalMat = input.clone();
@@ -44,11 +51,12 @@ public class ContourMultiScore extends OpenCvPipeline {
             return input;
         }
         // image tuning
-        Imgproc.GaussianBlur(generalMat, generalMat, new Size(5, 5), 0);
-        Imgproc.erode(generalMat, generalMat, new Mat(), new Point(-1, -1), 2);
-        Imgproc.dilate(generalMat, generalMat, new Mat(), new Point(-1, -1), 2);
-        Imgproc.cvtColor(generalMat, contourMat, Imgproc.COLOR_RGB2YCrCb);
-        Core.inRange(contourMat, new Scalar(255, 245, 149), new Scalar(212, 191, 0), contourMat);
+        Imgproc.GaussianBlur(generalMat, contourMat, new Size(5, 5), 0);
+        Imgproc.erode(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
+        Imgproc.dilate(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
+        Imgproc.cvtColor(contourMat, contourMat, Imgproc.COLOR_RGB2YCrCb);
+        Core.extractChannel(contourMat, contourMat, 0);
+        Core.inRange(contourMat, new Scalar(lower), new Scalar(upper), contourMat);
 
         //extracts yellow (for poles)
         //Core.extractChannel(generalMat, contourMat, 0);
@@ -58,11 +66,10 @@ public class ContourMultiScore extends OpenCvPipeline {
 
         //contours
         Imgproc.findContours(contourMat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.drawContours(generalMat, contours, -1, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
-                hierarchy, 2, new Point()*/);
-        telemetry.addData("contour 1", contours.get(0));
-        telemetry.update();
-/*
+//        Imgproc.drawContours(generalMat, contours, -1, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
+//                hierarchy, 2, new Point()*/);
+
+
         // loop through contours to find max
         int indexOfMax = 0;
         double largestArea = 0;
@@ -77,8 +84,9 @@ public class ContourMultiScore extends OpenCvPipeline {
 
 
         //draws largest contour
-        Imgproc.drawContours(contourMat, contours, indexOfMax, new Scalar(255, 255, 0), 2, Imgproc.LINE_8,
-                contourMat, 2, new Point());
+        Imgproc.drawContours(generalMat, contours, indexOfMax, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
+        hierarchy, 2, new Point()*/);
+
         Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
         perWidth = boundRect.width;
 
