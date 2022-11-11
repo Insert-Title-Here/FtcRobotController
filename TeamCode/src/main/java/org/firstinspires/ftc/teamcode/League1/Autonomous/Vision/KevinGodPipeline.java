@@ -25,19 +25,19 @@ import java.util.List;
 public class KevinGodPipeline extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
-    public static int H1 = 23;
-    public static int S1 = 50;
-    public static int V1 = 50;
-    public static int H2 = 33;
-    public static int S2 = 200;
-    public static int V2 = 200;
+    public static int H1 = 12;
+    public static int S1 = 20;
+    public static int V1 = 125;
+    public static int H2 = 29;
+    public static int S2 = 220;
+    public static int V2 = 255;
 
     //Blue cone color
     public static int H3 = 105;
-    public static int S3 = 120;
-    public static int V3 = 70;
-    public static int H4 = 117;
-    public static int S4 = 240;
+    public static int S3 = 110;
+    public static int V3 = 60;
+    public static int H4 = 130;
+    public static int S4 = 255;
     public static int V4 = 255;
 
     //Red cone color
