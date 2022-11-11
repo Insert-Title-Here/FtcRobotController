@@ -31,8 +31,13 @@ public class ContourMultiScore extends OpenCvPipeline {
     Telemetry telemetry;
 
     /* make stuff public static  */
-    public static int lower = 145;
-    public static int upper = 185;
+    public static int lower1 = 50;
+    public static int lower2 = 50;
+    public static int lower3 = 10;
+    public static int upper1 = 255;
+    public static int upper2 = 255;
+    public static int upper3 = 80;
+
 
     public ContourMultiScore (Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -42,7 +47,7 @@ public class ContourMultiScore extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         knownWidth = 1.04; //inches
         contours = new ArrayList<>();
-
+        // 43, 157, 166
 
         generalMat = input.clone();
         //input.copyTo(generalMat);
@@ -55,8 +60,8 @@ public class ContourMultiScore extends OpenCvPipeline {
         Imgproc.erode(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
         Imgproc.dilate(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
         Imgproc.cvtColor(contourMat, contourMat, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(contourMat, contourMat, 0);
-        Core.inRange(contourMat, new Scalar(lower), new Scalar(upper), contourMat);
+//        Core.extractChannel(contourMat, contourMat, 0);
+        Core.inRange(contourMat, new Scalar(lower1, lower2, lower3), new Scalar(upper1, upper2, upper3), contourMat);
 
         //extracts yellow (for poles)
         //Core.extractChannel(generalMat, contourMat, 0);
@@ -81,15 +86,16 @@ public class ContourMultiScore extends OpenCvPipeline {
             }
         }
 
+        telemetry.addData("index", indexOfMax);
+        telemetry.update();
+        if (contours.size() != 0) {
+            //draws largest contour
+            Imgproc.drawContours(generalMat, contours, indexOfMax, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
+            hierarchy, 2, new Point()*/);
 
-
-        //draws largest contour
-        Imgproc.drawContours(generalMat, contours, indexOfMax, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
-        hierarchy, 2, new Point()*/);
-
-        Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
-        perWidth = boundRect.width;
-
+            Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
+            perWidth = boundRect.width;
+        }
 /*
         int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
         perWidth =
@@ -127,7 +133,7 @@ public class ContourMultiScore extends OpenCvPipeline {
 
 
  */
-        return contourMat;
+        return generalMat;
     }
 
     // method for determining distance of camera to object
