@@ -30,7 +30,7 @@ public class KevinGodModeV2 extends LinearOpMode {
     boolean previousLeft, previousRight, previousUp, previousDown, linkageUp;
     volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag;
 
-    Thread liftThread, capThread, linkageThread;
+    Thread liftThread,/* capThread,*/ linkageThread;
 
     //Enums for feed forward
     public enum PassivePower{
@@ -82,36 +82,37 @@ public class KevinGodModeV2 extends LinearOpMode {
                     //Lift up to scoring position
                     if(gamepad1.left_trigger > 0.1){
                         score.autoGoToPosition();
-                        score.setPower(0.2);
+                        //score.setPower(0.2);
+                        //TODO: fix this
                         score.setLinkagePosition(constants.linkageScore);
-                        passive = PassivePower.EXTENDED;
+                        //passive = PassivePower.EXTENDED;
 
-                    }else {
+                    }/*else {
                         if(passive == PassivePower.EXTENDED){
                             score.setPower(0.23);
                         }else if(passive == PassivePower.ZERO){
                             score.setPower(0);
                         }
-                    }
+                    }*/
 
 
                     //Scoring feature
                     if(gamepad1.right_trigger > 0.1){
                         score.setGrabberPosition(constants.score);
 
-                        //Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
+                        /*//Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
                         if(score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW && score.isExtended()) {
                             try {
                                 sleep(500);
                             } catch (InterruptedException e) {
 
                             }
-                            passive = PassivePower.ZERO;
-                            score.moveToPosition(constants.lowOperation, 1);
-                            passive = PassivePower.EXTENDED;
+                            //passive = PassivePower.ZERO;
+                            //score.moveToPosition(constants.lowOperation, 1);
+                            //passive = PassivePower.EXTENDED;
 
                         }
-
+*/
                         try {
                             sleep(600);
                         } catch (InterruptedException e) {
@@ -119,7 +120,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                         }
 
 
-
+                        //TODO: fix this
                         score.setLinkagePosition(constants.linkageUp);
 
 
@@ -132,16 +133,17 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
                         //Do nothing during movement phase
-                        passive = PassivePower.MOVEMENT;
+                        //passive = PassivePower.MOVEMENT;
 
                         //Reset to zero and no passive power
-                        score.moveToPosition(0, 0.5);
-                        passive = PassivePower.ZERO;
+                        score.moveToPosition(0, 0.7);
+                        //passive = PassivePower.ZERO;
 
                         //Open Grabber and reset linkage
                         score.setGrabberPosition(constants.open);
                         //score.setLinkagePositionLogistic(constants.linkageDown, 300);
 
+                        //TODO: fix this
                         score.lowerConeStack();
                         score.setLinkageConeStack(true);
 
@@ -175,19 +177,22 @@ public class KevinGodModeV2 extends LinearOpMode {
                         //Goes up automatically if in ultra mode
                         if(score.getScoringMode() == ScoringSystemV2.ScoringMode.ULTRA){
                             score.autoGoToPosition();
-                            score.setPower(0.2);
+                            //score.setPower(0.2);
                             try {
                                 Thread.sleep(100);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+
+                            //TODO: fix this
                             score.setLinkagePosition(constants.linkageScore);
-                            passive = PassivePower.EXTENDED;
+                            //passive = PassivePower.EXTENDED;
 
 
                         }
                     }
 
+                    //TODO: tune this (both raise and lower)
                     //Linkage stack cone heights with dpad up and down
                     if((gamepad1.left_bumper || gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
 
@@ -217,7 +222,8 @@ public class KevinGodModeV2 extends LinearOpMode {
                     }
 
 
-                    //Reset linkage position
+                    //TODO: fix this
+                    //Linkage up position
                     if(gamepad1.left_stick_button){
                         score.setLinkagePositionLogistic(constants.linkageUp, 500);
 
@@ -269,19 +275,19 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     //Manual slides (dpad right and left)
                     if(gamepad1.dpad_right){
-                        passive = PassivePower.MOVEMENT;
+                        //passive = PassivePower.MOVEMENT;
                         score.setPower(0.7);
                     }else if(gamepad1.dpad_left){
-                        passive = PassivePower.MOVEMENT;
+                        //passive = PassivePower.MOVEMENT;
                         score.setPower(-0.3);
                     }else{
 
                         //Feedforward if slides are extended
-                        if(score.isExtended() == true){
+                        /*if(score.isExtended() == true){
                             passive = PassivePower.EXTENDED;
                         }else{
                             passive = PassivePower.ZERO;
-                        }
+                        }*/
                     }
 
 
@@ -291,7 +297,7 @@ public class KevinGodModeV2 extends LinearOpMode {
         };
 
         //CapThread
-        capThread = new Thread(){
+        /*capThread = new Thread(){
 
 
             @Override
@@ -345,7 +351,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
             }
         };
-
+*/
         //Logistic Linkage thread
         linkageThread = new Thread() {
 
@@ -359,6 +365,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        //TODO: fix this
                         score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
                         linkageUp = false;
                     }
@@ -366,15 +373,16 @@ public class KevinGodModeV2 extends LinearOpMode {
             }
         };
 
-        //TODO: might need to change this
 
         waitForStart();
+
+        //TODO: fix this
         score.setLinkagePosition(constants.linkageUp);
 
 
         //Starting Threads
         liftThread.start();
-        capThread.start();
+        //capThread.start();
         linkageThread.start();
 
         while(opModeIsActive()){
@@ -429,9 +437,13 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
         //Stop
-        drive.setPower(0, 0, 0, 0);
+        drive.simpleBrake();
+
+        //TODO: fix this
         score.setLinkagePositionLogistic(0.25, 500);
         score.setLinkagePositionLogistic(constants.linkageDown, 500);
+
+
         score.setGrabberPosition(constants.open);
     }
 }
