@@ -52,17 +52,17 @@ public class ScoringSystemV2 {
         rLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         lLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        //lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
-        //rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
+        lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
+        rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
 
-        //lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
-        //rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
         //grabber =  hardwareMap.get(Servo.class, "Grabber");
 
 
-        /*lLinkage.setPosition(Constants.linkageDown);
-        rLinkage.setPosition(Constants.linkageDown);*/
+        lLinkage.setPosition(0.05);
+        rLinkage.setPosition(0.05);
         //grabber.setPosition(constants.open);
 
     }

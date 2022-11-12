@@ -38,6 +38,8 @@ public class ArmTester extends OpModeWrapper {
         armThread = new Thread(){
             @Override
             public void run() {
+                score.setLinkagePosition(0.95);
+
                 while(opModeIsActive()){
                     if(gamepad1.right_trigger > 0.1){
                         score.moveToPosition(0, 0.5);
@@ -95,6 +97,7 @@ public class ArmTester extends OpModeWrapper {
 
 
 
+
         while(opModeIsActive()) {
 
             double leftStickX = gamepad1.left_stick_x;
@@ -127,7 +130,7 @@ public class ArmTester extends OpModeWrapper {
             telemetry.addData("fl", drive.getFLEncoder());
             telemetry.addData("fr", drive.getFREncoder());
             telemetry.addData("bl", drive.getBLEncoder());
-            telemetry.addData("br", drive.getBREncoder());  
+            telemetry.addData("br", drive.getBREncoder());
             telemetry.addData("rTrigger", gamepad1.right_trigger);
             telemetry.addData("lTrigger", gamepad1.left_trigger);
             telemetry.update();
