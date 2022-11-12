@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.Vision;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,9 +16,12 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-
 @Autonomous
+@Config
 public class TestingVisionAuto extends LinearOpMode {
+
+
+    public static double servoHeight = 0.9;
 
     OpenCvWebcam camera;
     KevinGodPipeline pipeline;
@@ -52,9 +56,13 @@ public class TestingVisionAuto extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
-        cameraServo.setPosition(0.91);
 
         pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
+
+        while(opModeInInit()){
+            cameraServo.setPosition(cameraThing.cameraPosition);
+
+        }
 
 
         waitForStart();
@@ -67,4 +75,10 @@ public class TestingVisionAuto extends LinearOpMode {
 
         camera.closeCameraDevice();
     }
+}
+
+@Config
+class cameraThing {
+    public static double cameraPosition = 0.9;
+
 }

@@ -127,5 +127,8 @@ repositories {
         dirs rootProject.file('libs')
     }
     jcenter()
+
+    maven { url = 'https://jitpack.io' }
+
 }
 

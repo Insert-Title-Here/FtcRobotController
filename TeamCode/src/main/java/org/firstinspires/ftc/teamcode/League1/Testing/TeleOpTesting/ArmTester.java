@@ -8,24 +8,81 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 
 import java.io.FileNotFoundException;
 
 
-@Disabled
 @TeleOp
 public class ArmTester extends OpModeWrapper {
     //Servo lServo, rServo, grabber;
-    DcMotor rMotor, lMotor;
+    //DcMotor rMotor, lMotor;
+    MecDrive drive;
+    ScoringSystemV2 score;
+    Constants constants;
 
-    //ScoringSystem2 score;
-    //Constants constants;
+    Thread armThread;
+
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
         //constants = new Constants();
-        //score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystemV2(hardwareMap, constants);
+
+        constants = new Constants();
+        drive = new MecDrive(hardwareMap, false, telemetry);
+
+        armThread = new Thread(){
+            @Override
+            public void run() {
+                while(opModeIsActive()){
+                    if(gamepad1.right_trigger > 0.1){
+                        score.moveToPosition(0, 0.5);
+
+
+
+                    }else if(gamepad1.left_trigger > 0.1){
+                        score.autoGoToPosition();
+
+
+
+                    }
+
+                    if(gamepad1.a){
+                        score.setScoringMode(ScoringSystemV2.ScoringMode.ULTRA);
+                    }else if(gamepad1.b){
+                        score.setScoringMode(ScoringSystemV2.ScoringMode.HIGH);
+                    }else if(gamepad1.y){
+                        score.setScoringMode(ScoringSystemV2.ScoringMode.LOW);
+                    }else if(gamepad1.x){
+                        score.setScoringMode(ScoringSystemV2.ScoringMode.MEDIUM);
+                    }
+
+
+                    if(gamepad1.dpad_left){
+                        score.setPower(-0.5);
+                    }else if(gamepad1.dpad_right){
+                        score.setPower(0.5);
+                    }else{
+                        score.setPower(0);
+                    }
+                }
+            }
+        };
+
+        /*rMotor = hardwareMap.get(DcMotor.class, "RightLift");
+        lMotor = hardwareMap.get(DcMotor.class, "LeftLift");
+
+        rMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        rMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
+
+
 
         //score.setLinkagePosition(0.03);
         //score.setGrabberPosition(0.75);
@@ -34,32 +91,43 @@ public class ArmTester extends OpModeWrapper {
 
     @Override
     protected void onStart() {
+        armThread.start();
 
 
 
         while(opModeIsActive()) {
 
+            double leftStickX = gamepad1.left_stick_x;
+            double leftStickY = gamepad1.left_stick_y;
 
-            if(gamepad1.right_trigger > 0.1){
-                rMotor.setPower(gamepad1.right_trigger);
-                lMotor.setPower(-gamepad1.right_trigger);
+            if(Math.abs(leftStickX) > Math.abs(leftStickY)){
+                leftStickY = 0;
 
-
-            }else if(gamepad1.left_trigger > 0.1){
-                rMotor.setPower(-gamepad1.right_trigger);
-                lMotor.setPower(gamepad1.right_trigger);
-
+            }else if(Math.abs(leftStickY) > Math.abs(leftStickX)){
+                leftStickX = 0;
 
             }else{
-                rMotor.setPower(0);
-                lMotor.setPower(0);
+                leftStickY = 0;
+                leftStickX = 0;
+            }
 
-
+            if (gamepad1.right_bumper) {
+                drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+            } else{
+                drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
-            telemetry.addData("lMotor", -1 * lMotor.getCurrentPosition());
-            telemetry.addData("rMotor", rMotor.getCurrentPosition());
+
+
+
+
+            telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
+            telemetry.addData("rMotor", score.getRightEncoderPos());
+            telemetry.addData("fl", drive.getFLEncoder());
+            telemetry.addData("fr", drive.getFREncoder());
+            telemetry.addData("bl", drive.getBLEncoder());
+            telemetry.addData("br", drive.getBREncoder());  
             telemetry.addData("rTrigger", gamepad1.right_trigger);
             telemetry.addData("lTrigger", gamepad1.left_trigger);
             telemetry.update();
@@ -74,11 +142,6 @@ public class ArmTester extends OpModeWrapper {
 
     @Override
     protected void onStop() {
-
-
-
-        rMotor.setPower(0);
-        lMotor.setPower(0);
-
+        score.setPower(0);
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.TeleOp;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
+import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.FeedForwardCommand;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.GrabAndScore;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.ResetScoringGroup;
 
@@ -25,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 //TODO: FIX THIS
 
-@Disabled
+
 @TeleOp
 public class CommandTestingTeleOp extends CommandOpMode {
 
@@ -35,7 +37,7 @@ public class CommandTestingTeleOp extends CommandOpMode {
 
 
     private MecDrive drive;
-    private ScoringSystem2 lift;
+    private ScoringSystemCommand lift;
     private EndgameSystems endgameSystem;
     private Constants constants;
     private ColorRangeSensor distance, color;
@@ -56,7 +58,7 @@ public class CommandTestingTeleOp extends CommandOpMode {
         //Initializing objects
         constants = new Constants();
         drive = new MecDrive(hardwareMap, false, telemetry);
-        lift = new ScoringSystem2(hardwareMap, constants);
+        lift = new ScoringSystemCommand(hardwareMap, constants);
         endgameSystem = new EndgameSystems(hardwareMap);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -83,14 +85,15 @@ public class CommandTestingTeleOp extends CommandOpMode {
         //Testing value for up linkage
         driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new ResetScoringGroup(lift, constants));
         driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new GrabAndScore(lift, constants));
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.LOW)));
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.MEDIUM)));
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.HIGH)));
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystem2.ScoringMode.ULTRA)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystemCommand.ScoringMode.LOW)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystemCommand.ScoringMode.MEDIUM)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystemCommand.ScoringMode.HIGH)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystemCommand.ScoringMode.ULTRA)));
 
 
         lift.setLinkagePosition(constants.linkageDown);
         lift.setGrabberPosition(constants.open);
+
 
     }
 
@@ -98,6 +101,7 @@ public class CommandTestingTeleOp extends CommandOpMode {
 
     @Override
     public void run() {
+        ParallelCommandGroup group = new ParallelCommandGroup();
         /*if(initializeRobot.get()){
             robot.start;
             initializeRobot.set(false);
@@ -139,12 +143,21 @@ public class CommandTestingTeleOp extends CommandOpMode {
         }
         */
 
+
         //Trying out taking out distance
-        if(/*distance.getDistance(DistanceUnit.CM) < 6.5*/distance.getNormalizedColors().red > 0.7 && distance.getNormalizedColors().blue > 0.7
-                && !lift.isGrabbing() && !lift.isLinkageUp()){
-            schedule(new GrabAndScore(lift, constants));
+        if(distance.getDistance(DistanceUnit.CM) < 6.5/*distance.getNormalizedColors().red > 0.7 && distance.getNormalizedColors().blue > 0.7
+                */&& !lift.isGrabbing()){
+            group.addCommands(new GrabAndScore(lift, constants));
+            lift.setGrabbing(true);
 
         }
+
+        if(lift.isExtended()){
+            group.addCommands(new FeedForwardCommand(lift, constants, hardwareMap, driver));
+        }
+
+
+        schedule(group);
 
 
         telemetry.update();

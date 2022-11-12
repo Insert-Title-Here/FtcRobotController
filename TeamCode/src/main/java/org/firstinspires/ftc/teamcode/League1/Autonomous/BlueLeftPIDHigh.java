@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
+import android.provider.ContactsContract;
+
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -22,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
 public class BlueLeftPIDHigh extends LinearOpMode {
+
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
@@ -44,6 +48,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         color = hardwareMap.get(ColorRangeSensor.class, "color");
 
@@ -227,6 +232,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
 
 
         waitForStart();
+
         double startTime = time.seconds();
 
         parkPos = pipeline.getPosition();
@@ -361,6 +367,8 @@ public class BlueLeftPIDHigh extends LinearOpMode {
             //score.moveToPosition(0, 1);
 
             armUp.set(true);
+
+
 
             //TODO: see if want to change to -Math.PI/3.7
             drive.tankRotatePID(-Math.PI / 4, 0.8, true);

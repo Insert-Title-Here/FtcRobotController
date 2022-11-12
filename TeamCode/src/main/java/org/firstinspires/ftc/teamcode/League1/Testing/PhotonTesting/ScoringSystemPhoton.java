@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.V2.NewSubsystem;
+package org.firstinspires.ftc.teamcode.League1.Testing.PhotonTesting;
 
 
+import com.outoftheboxrobotics.photoncore.PhotonCore;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 
-public class ScoringSystemV2 {
+public class ScoringSystemPhoton {
     DcMotorEx lLift, rLift;
     public Servo grabber;
     ServoImplEx rLinkage, lLinkage;
@@ -32,9 +34,9 @@ public class ScoringSystemV2 {
         ULTRA
     }
 
-    public ScoringSystemV2(HardwareMap hardwareMap, Constants constants) {
+    public ScoringSystemPhoton(HardwareMap hardwareMap, Constants constants) {
 
-        //coneStack = 2;
+        coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
         this.constants = constants;
@@ -52,22 +54,22 @@ public class ScoringSystemV2 {
         rLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         lLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        //lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
-        //rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
+        lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
+        rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
 
-        //lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
-        //rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
-        //grabber =  hardwareMap.get(Servo.class, "Grabber");
+        grabber =  hardwareMap.get(Servo.class, "Grabber");
 
 
         /*lLinkage.setPosition(Constants.linkageDown);
         rLinkage.setPosition(Constants.linkageDown);*/
-        //grabber.setPosition(constants.open);
+        grabber.setPosition(constants.open);
 
     }
 
-    public ScoringSystemV2(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
+    public ScoringSystemPhoton(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         coneStack = 2;
@@ -164,8 +166,6 @@ public class ScoringSystemV2 {
         return height;
     }
 
-
-    //TODO: Fix this
     public int getHeight(){
        if(height == ScoringMode.HIGH){
            return 850;
@@ -179,13 +179,13 @@ public class ScoringSystemV2 {
     }
 
     public void setPower(double power) {
-        rLift.setPower(-power);
-        lLift.setPower(power);
+        rLift.setPower(power);
+        lLift.setPower(-power);
     }
 
     public void setPower(double rightPower, double leftPower){
-        rLift.setPower(-rightPower);
-        lLift.setPower(leftPower);
+        rLift.setPower(rightPower);
+        lLift.setPower(-leftPower);
     }
     public int getLeftEncoderPos() {
         return lLift.getCurrentPosition();
@@ -199,38 +199,36 @@ public class ScoringSystemV2 {
         height = score;
     }
 
-    //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH || height == ScoringMode.ULTRA){
-            moveToPosition(40000, 1);
+            moveToPosition(850, 1);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(20000, 1);
+            moveToPosition(500, 1);
 
 
         }else if(height == ScoringMode.LOW){
-            moveToPosition(10000, 1);
+            moveToPosition(190, 1);
 
         }
 
         extended = true;
     }
 
-    //TODO: fix this
     public void autoGoToPosition(ScoringMode height) {
         this.height = height;
         if (height == ScoringMode.HIGH || height == ScoringMode.ULTRA) {
-            moveToPosition(40000, 1);
+            moveToPosition(850, 1);
 
         } else if (height == ScoringMode.MEDIUM) {
 
             //TODO: Find tic value
-            moveToPosition(20000, 1);
+            moveToPosition(500, 1);
 
 
         } else if (height == ScoringMode.LOW) {
             //TODO: Find tic value
-            moveToPosition(10000, 1);
+            moveToPosition(190, 1);
 
         }
 
@@ -247,8 +245,10 @@ public class ScoringSystemV2 {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
 
-        int rLiftPos = rLift.getCurrentPosition();
-        int lLiftPos = -1 * lLift.getCurrentPosition();
+        LynxModule.BulkData data = PhotonCore.EXPANSION_HUB.getBulkData();
+
+        int rLiftPos = data.getMotorCurrentPosition(3);
+        int lLiftPos = -1 * data.getMotorCurrentPosition(2);
 
 
         if(tics < ((rLiftPos + lLiftPos) / 2)){
@@ -270,6 +270,8 @@ public class ScoringSystemV2 {
         if(power > 0) {
             while ((time.seconds() - startTime) < 1.25 && (rLiftPos < tics || lLiftPos < tics)) {
 
+                data = PhotonCore.EXPANSION_HUB.getBulkData();
+
                 //TODO: figure out if we need to negate either of them
 
                 if (rLiftPos >= tics) {
@@ -279,8 +281,8 @@ public class ScoringSystemV2 {
                 }
 
 
-                rLiftPos = rLift.getCurrentPosition();
-                lLiftPos = -1 * lLift.getCurrentPosition();
+                rLiftPos = data.getMotorCurrentPosition(3);
+                lLiftPos = -1 * data.getMotorCurrentPosition(2);
 
                 setPower(rightPower, leftPower);
 
@@ -288,6 +290,9 @@ public class ScoringSystemV2 {
             }
         }else{
             while ((time.seconds() - startTime) < 1.25 && (rLiftPos > tics || lLiftPos > tics)) {
+
+                data = PhotonCore.EXPANSION_HUB.getBulkData();
+
 
                 //TODO: figure out if we need to negate either of them
 
@@ -298,8 +303,8 @@ public class ScoringSystemV2 {
                 }
 
 
-                rLiftPos = rLift.getCurrentPosition();
-                lLiftPos = -1 * lLift.getCurrentPosition();
+                rLiftPos = data.getMotorCurrentPosition(3);
+                lLiftPos = -1 * data.getMotorCurrentPosition(2);
 
                 setPower(rightPower, leftPower);
 
@@ -621,4 +626,7 @@ public class ScoringSystemV2 {
         return linkageUp;
     }
 
+    public boolean bothBusy(){
+        return rLift.isBusy() && lLift.isBusy();
+    }
 }
