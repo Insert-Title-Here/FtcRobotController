@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 
 
-//TODO: figure out bulk read
 
 @TeleOp (name = "KevinGodModeV2")
 public class KevinGodModeV2 extends LinearOpMode {
@@ -21,7 +20,7 @@ public class KevinGodModeV2 extends LinearOpMode {
     Constants constants = new Constants();
     ScoringSystemV2 score;
     MecDrive drive;
-    EndgameSystems systems;
+    //EndgameSystems systems;
 
     ColorRangeSensor distance, color;
 
@@ -59,7 +58,7 @@ public class KevinGodModeV2 extends LinearOpMode {
         score = new ScoringSystemV2(hardwareMap, constants);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
-        systems = new EndgameSystems(hardwareMap);
+        //systems = new EndgameSystems(hardwareMap);
 
 
         //score.setLinkagePositionLogistic(constants.linkageDown, 500);
@@ -83,8 +82,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         score.autoGoToPosition();
                         //score.setPower(0.2);
-                        //TODO: fix this
-                        score.setLinkagePosition(constants.linkageScore);
+                        score.setLinkagePosition(constants.linkageScoreV2);
                         //passive = PassivePower.EXTENDED;
 
                     }/*else {
@@ -120,8 +118,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                         }
 
 
-                        //TODO: fix this
-                        score.setLinkagePosition(constants.linkageUp);
+                        score.setLinkagePosition(constants.linkageUpV2);
 
 
                         try {
@@ -136,16 +133,16 @@ public class KevinGodModeV2 extends LinearOpMode {
                         //passive = PassivePower.MOVEMENT;
 
                         //Reset to zero and no passive power
-                        score.moveToPosition(0, 0.7);
+                        score.moveToPosition(0, 0.3);
                         //passive = PassivePower.ZERO;
 
                         //Open Grabber and reset linkage
                         score.setGrabberPosition(constants.open);
-                        //score.setLinkagePositionLogistic(constants.linkageDown, 300);
+                        score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
 
                         //TODO: fix this
-                        score.lowerConeStack();
-                        score.setLinkageConeStack(true);
+                        /*score.lowerConeStack();
+                        score.setLinkageConeStack(true);*/
 
                         //Resetting flags
                         autoLinkageFlag = true;
@@ -184,8 +181,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                                 e.printStackTrace();
                             }
 
-                            //TODO: fix this
-                            score.setLinkagePosition(constants.linkageScore);
+                            score.setLinkagePosition(constants.linkageScoreV2);
                             //passive = PassivePower.EXTENDED;
 
 
@@ -222,10 +218,9 @@ public class KevinGodModeV2 extends LinearOpMode {
                     }
 
 
-                    //TODO: fix this
                     //Linkage up position
                     if(gamepad1.left_stick_button){
-                        score.setLinkagePositionLogistic(constants.linkageUp, 500);
+                        score.setLinkagePositionLogistic(constants.linkageUpV2, 500);
 
                     }
 
@@ -365,8 +360,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        //TODO: fix this
-                        score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
+                        score.setLinkagePositionLogistic(constants.linkageUpV2, 0, 50);
                         linkageUp = false;
                     }
                 }
@@ -376,8 +370,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
         waitForStart();
 
-        //TODO: fix this
-        score.setLinkagePosition(constants.linkageUp);
+        //score.setLinkagePosition(constants.linkageUpV2);
 
 
         //Starting Threads
@@ -439,9 +432,8 @@ public class KevinGodModeV2 extends LinearOpMode {
         //Stop
         drive.simpleBrake();
 
-        //TODO: fix this
-        score.setLinkagePositionLogistic(0.25, 500);
-        score.setLinkagePositionLogistic(constants.linkageDown, 500);
+        //score.setLinkagePositionLogistic(0.25, 500);
+        score.setLinkagePositionLogistic(constants.linkageDownV2, 500);
 
 
         score.setGrabberPosition(constants.open);

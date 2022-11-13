@@ -22,19 +22,19 @@ public class AutoVisionTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        servo = hardwareMap.get(Servo.class, "camera");
-
+        servo = hardwareMap.get(Servo.class, "RightLinkage");
+/*
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new ContourPipeline(telemetry);
+        pipeline = new ContourPipeline(telemetry);*/
 
-        camera.setPipeline(pipeline);
+        //camera.setPipeline(pipeline);
 
-        servo.setPosition(.73);
+        servo.setPosition(0.05);
 
 
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        /*camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 camera.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
@@ -47,12 +47,12 @@ public class AutoVisionTest extends LinearOpMode {
 
             }
         });
-
+*/
         while(opModeInInit()){
 
             double yPos = getYCapPosition();
             setYCapPosition(yPos - map(gamepad1.right_stick_y, -1, 1, -0.0010, 0.0010));
-            telemetry.addData("camera position", getYCapPosition());
+            telemetry.addData("Position", getYCapPosition());
             telemetry.update();
 
         }

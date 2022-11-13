@@ -38,7 +38,7 @@ public class ArmTester extends OpModeWrapper {
         armThread = new Thread(){
             @Override
             public void run() {
-                score.setLinkagePosition(0.95);
+                score.setLinkagePosition(0.72);
 
                 while(opModeIsActive()){
                     if(gamepad1.right_trigger > 0.1){
@@ -74,6 +74,12 @@ public class ArmTester extends OpModeWrapper {
                 }
             }
         };
+
+
+        while(opModeInInit()){
+            telemetry.addData("Linkage Pos", score.getRightLinkage());
+            telemetry.update();
+        }
 
         /*rMotor = hardwareMap.get(DcMotor.class, "RightLift");
         lMotor = hardwareMap.get(DcMotor.class, "LeftLift");
@@ -133,6 +139,7 @@ public class ArmTester extends OpModeWrapper {
             telemetry.addData("br", drive.getBREncoder());
             telemetry.addData("rTrigger", gamepad1.right_trigger);
             telemetry.addData("lTrigger", gamepad1.left_trigger);
+            telemetry.addData("Linkage Pos", score.getLeftLinkage());
             telemetry.update();
 
         }

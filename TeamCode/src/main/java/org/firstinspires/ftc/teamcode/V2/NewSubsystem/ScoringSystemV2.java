@@ -58,11 +58,11 @@ public class ScoringSystemV2 {
         lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
         rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
-        //grabber =  hardwareMap.get(Servo.class, "Grabber");
+        grabber =  hardwareMap.get(Servo.class, "Grabber");
 
 
-        setLinkagePosition(0.05);
-        //grabber.setPosition(constants.open);
+        setLinkagePosition(0.1);
+        grabber.setPosition(constants.open);
 
     }
 
@@ -96,8 +96,7 @@ public class ScoringSystemV2 {
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
 
-        lLinkage.setPosition(Constants.linkageDown);
-        rLinkage.setPosition(Constants.linkageDown);
+        setLinkagePosition(0.1);
         grabber.setPosition(constants.open);
 
     }
@@ -122,27 +121,27 @@ public class ScoringSystemV2 {
     public void setLinkageConeStack(boolean logistic){
         if(logistic){
             if(coneStack == 5){
-                setLinkagePositionLogistic(0.745, 500);
+                setLinkagePositionLogistic(0.20, 500);
             }else if(coneStack == 4){
-                setLinkagePositionLogistic(0.76, 500);
+                setLinkagePositionLogistic(0.17, 500);
             }else if(coneStack == 3){
-                setLinkagePositionLogistic(0.79, 500);
+                setLinkagePositionLogistic(0.14, 500);
             }else if(coneStack == 2){
-                setLinkagePositionLogistic(0.82, 500);
+                setLinkagePositionLogistic(0.11, 500);
             }else if(coneStack == 1){
-                setLinkagePositionLogistic(0.89, 500);
+                setLinkagePositionLogistic(0.08, 500);
             }
         }else {
             if (coneStack == 5) {
-                setLinkagePosition(0.745);
+                setLinkagePosition(0.20);
             } else if (coneStack == 4) {
-                setLinkagePosition(0.76);
+                setLinkagePosition(0.17);
             } else if (coneStack == 3) {
-                setLinkagePosition(0.79);
+                setLinkagePosition(0.14);
             } else if (coneStack == 2) {
-                setLinkagePosition(0.82);
+                setLinkagePosition(0.11);
             } else if (coneStack == 1) {
-                setLinkagePosition(0.89);
+                setLinkagePosition(0.08);
             }
         }
     }
@@ -201,7 +200,7 @@ public class ScoringSystemV2 {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH || height == ScoringMode.ULTRA){
-            moveToPosition(40000, 1);
+            moveToPosition(46500, 1);
 
         }else if(height == ScoringMode.MEDIUM){
             moveToPosition(20000, 1);
@@ -219,7 +218,7 @@ public class ScoringSystemV2 {
     public void autoGoToPosition(ScoringMode height) {
         this.height = height;
         if (height == ScoringMode.HIGH || height == ScoringMode.ULTRA) {
-            moveToPosition(40000, 1);
+            moveToPosition(46500, 1);
 
         } else if (height == ScoringMode.MEDIUM) {
 
@@ -267,7 +266,7 @@ public class ScoringSystemV2 {
         //TODO: Check if logic for encoder positions works
 
         if(power > 0) {
-            while ((time.seconds() - startTime) < 1.25 && (rLiftPos < tics || lLiftPos < tics)) {
+            while ((time.seconds() - startTime) < 4 && (rLiftPos < tics || lLiftPos < tics)) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -286,7 +285,7 @@ public class ScoringSystemV2 {
 
             }
         }else{
-            while ((time.seconds() - startTime) < 1.25 && (rLiftPos > tics || lLiftPos > tics)) {
+            while ((time.seconds() - startTime) < 4 && (rLiftPos > tics || lLiftPos > tics)) {
 
                 //TODO: figure out if we need to negate either of them
 

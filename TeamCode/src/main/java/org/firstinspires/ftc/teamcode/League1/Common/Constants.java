@@ -20,6 +20,11 @@ public class Constants {
     public static final double linkageUp = 0.35;
     public static final double linkageScore = 0.05;
 
+    //V2 Positions
+    public static final double linkageDownV2 = 0.1; // was 0.875
+    public static final double linkageUpV2 = 0.55;
+    public static final double linkageScoreV2 = 0.72;
+
 
     //Grabber Positions (tuned)
     public static final double grabbing = 0;
