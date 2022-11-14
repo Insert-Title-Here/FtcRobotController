@@ -249,6 +249,7 @@ public class SecondTeleOp extends LinearOpMode {
 
 
         }
+        drive.writeLoggerToFile();
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
         score.setClawPosition(1);
