@@ -159,13 +159,15 @@ public class MecanumDrive {
             position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
                     Math.abs(br.getCurrentPosition())) / 4;
         }
+        /*
+        loggingString += action.toUpperCase() + "\n";
+        loggingString += "FL Position: " + getFLPosition() + "\n";
+        loggingString += "FR Position: " + getFRPosition() + "\n";
+        loggingString += "BL Position: " + getBLPosition() + "\n";
+        loggingString += "BR Position: " + getBRPosition() + "\n";
+        loggingString += "---------------------" + "\n";
 
-        loggingString += action.toUpperCase() + "/n";
-        loggingString += "FL Position: " + getFLPosition() + "/n";
-        loggingString += "FR Position: " + getFRPosition() + "/n";
-        loggingString += "BL Position: " + getBLPosition() + "/n";
-        loggingString += "BR Position: " + getBRPosition() + "/n";
-        loggingString += "---------------------" + "/n";
+         */
 
         // loggingString += "Claw (Intake) Position: " + score.getClawPosition()
 
@@ -204,13 +206,18 @@ public class MecanumDrive {
     public void turn(double radians, double power) {
         ElapsedTime time = new ElapsedTime();
         double initialAngle = imu.getAngularOrientation().firstAngle;
-        double currentAngleError = 0;
-        double priorAngleError = 0;
+        double currentAngleError = angleWrap(radians);
+        double priorAngleError = angleWrap(radians);
         double priorTime = time.milliseconds();
         double timeDifference = 0;
+        loggingString += "CurrentAngle: " + initialAngle + "\n";
         while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
             double drivePower = 0;
-            priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+            if(currentAngleError == priorAngleError){
+                //values stay the same
+            }else{
+                priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+            }
             accumulateError(timeDifference, currentAngleError);
             if (radians < 0) {
                 drivePower = additionalPower(priorAngleError, currentAngleError, timeDifference);
@@ -223,6 +230,7 @@ public class MecanumDrive {
             }
             timeDifference = time.milliseconds() - priorTime;
             currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+
 
         }
         integralPow = 0;
@@ -325,11 +333,17 @@ public class MecanumDrive {
     public double additionalPower(double priorError, double currentError, double timeChange) {
         double proportionCoefficient = 0.82;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.04;
+        double derivativeCoefficient = 0.007;
         angleError = currentError;
         integralPow = getAccumulatedError() * integralCoefficient;
         derivativePow = ((currentError-priorError)/timeChange) * derivativeCoefficient;
         proportionPow = currentError * proportionCoefficient;
+        loggingString += "PriorAngleError: " + priorError + "   ";
+        loggingString += "CurrentAngleError: " + currentError + "   ";
+        loggingString += "DrivePower: " + proportionPow + derivativePow + integralPow + "   ";
+        loggingString += "derivativePower: " + derivativePow + "   ";
+        loggingString += "proportionPower: " + proportionPow + "   ";
+        loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
         return proportionPow + derivativePow + integralPow;
     }
     public double getAngleError(){
