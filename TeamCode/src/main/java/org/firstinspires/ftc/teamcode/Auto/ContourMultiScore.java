@@ -27,7 +27,8 @@ public class ContourMultiScore extends OpenCvPipeline {
     private int cX;
     private  int cY;
     private List<MatOfPoint> contours = new ArrayList<>();
-    double knownWidth, focalLength, perWidth;
+    private Point[] mainContour;
+    double knownWidth, focalLength, perWidth, distance;
     Telemetry telemetry;
 
     /* make stuff public static  */
@@ -86,8 +87,7 @@ public class ContourMultiScore extends OpenCvPipeline {
             }
         }
 
-        telemetry.addData("index", indexOfMax);
-        telemetry.update();
+
         if (contours.size() != 0) {
             //draws largest contour
             Imgproc.drawContours(generalMat, contours, indexOfMax, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
@@ -95,26 +95,42 @@ public class ContourMultiScore extends OpenCvPipeline {
 
             Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
             perWidth = boundRect.width;
+
+    /*
+            int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
+            perWidth =
+    */
+
+            //gets the moments of the contour in question ...idk how
+            M = Imgproc.moments(contours.get(indexOfMax));
+            // gets x and y of centroid
+            cX = (int)(M.get_m10() / M.get_m00());
+            cY = (int) (M.get_m01() / M.get_m00());
+
+    /*
+            // another method of finding center of contour
+            Rect boundRect = Imgproc.boundingRect(contour);
+            double centerX = boundRect.x + (boundRect.width / 2)
+            double centerY = boundRect.y + (boundRect.height / 2)
+    */
+            // gets points of the main contour
+            mainContour = contours.get(indexOfMax).toArray();
+            
+
+            //draws circle of centroid
+            Imgproc.circle(contourMat, new Point(cX, cY), 4, new Scalar(255,49,0,255), 4);
+            focalLength = (398.0769230769231 + 354.8076923076923 + 346.1538461538462 + 391.3461538461538) / 4.0;
+            distance = distanceFromPole(1.04, focalLength, perWidth);
+
+            telemetry.addData("index", indexOfMax);
+            telemetry.addData("cX", cX);
+            telemetry.addData("cY", cY);
+            telemetry.addData("width", perWidth);
+            telemetry.addData("distanceInches", distance - 0.75);
+
+
+            telemetry.update();
         }
-/*
-        int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
-        perWidth =
-*/
-/*
-        //gets the moments of the contour in question ...idk how
-        M = Imgproc.moments(contours.get(indexOfMax));
-        // gets x and y of centroid
-        cX = (int)(M.get_m10() / M.get_m00());
-        cY = (int) (M.get_m01() / M.get_m00());
-*/
-/*
-        // another method of finding center of contour
-        Rect boundRect = Imgproc.boundingRect(contour);
-        double centerX = boundRect.x + (boundRect.width / 2)
-        double centerY = boundRect.y + (boundRect.height / 2)
-*/
-        //draws circle of centroid
-//        Imgproc.circle(contourMat, new Point(cX, cY), 4, new Scalar(255,49,0,255), 4);
 /*
 
 
@@ -149,7 +165,13 @@ public class ContourMultiScore extends OpenCvPipeline {
     public double getFocalLength(double knownWidth, double dist, double perWidth) {
         return (perWidth * dist) / knownWidth;
     }
+    // perWidth = 22.0; (pixels)
+    // dist = 18.5; (inches)
+    // focal = 391.3461538461538
 
+    // 34.5 // 20.5 // 15
+    // 12 // 18 // 24
+    // 398.0769230769231 // 354.8076923076923 // 346.1538461538462
 
     // actual width of pole 1.04 in.
     // https://pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
