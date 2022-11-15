@@ -115,7 +115,6 @@ public class ContourMultiScore extends OpenCvPipeline {
     */
             // gets points of the main contour
             mainContour = contours.get(indexOfMax).toArray();
-            
 
             //draws circle of centroid
             Imgproc.circle(contourMat, new Point(cX, cY), 4, new Scalar(255,49,0,255), 4);
