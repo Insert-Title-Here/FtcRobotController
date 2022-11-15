@@ -115,17 +115,20 @@ public class ContourMultiScore extends OpenCvPipeline {
     */
             // gets points of the main contour
             mainContour = contours.get(indexOfMax).toArray();
-            // loops through the x values for the contour
-            for (int i = 0; i < mainContour.length / 2; i++) {
-                leftOfContour += mainContour[i].x;
+            try {
+                // loops through the x values for the contour
+                for (int i = 0; i < mainContour.length / 2; i++) {
+                    leftOfContour += mainContour[i].x;
+                }
+                for (int i = mainContour.length; i > mainContour.length / 2; i--) {
+                    rightOfContour += mainContour[i].x;
+                }
+                //gets the average distance between each x point (that's why it's divided by one half of
+                //the values it looped for; the difference means every 2 instead of the average of every 1)
+                perWidth = Math.abs(leftOfContour - rightOfContour) / (mainContour.length / 2);
+            } catch (Exception e){
+                telemetry.addData("error", e);
             }
-            for (int i = mainContour.length; i > mainContour.length / 2; i--) {
-                rightOfContour += mainContour[i].x;
-            }
-            //gets the average distance between each x point (that's why it's divided by one half of
-            //the values it looped for; the difference means every 2 instead of the average of every 1)
-            perWidth = Math.abs(leftOfContour - rightOfContour) / (mainContour.length / 2);
-
             //draws circle of centroid
             Imgproc.circle(contourMat, new Point(cX, cY), 4, new Scalar(255,49,0,255), 4);
             focalLength = (398.0769230769231 + 354.8076923076923 + 346.1538461538462 + 391.3461538461538) / 4.0;
