@@ -210,6 +210,8 @@ public class MecanumDrive {
         double priorAngleError = angleWrap(radians);
         double priorTime = time.milliseconds();
         double timeDifference = 0;
+        double before;
+        double after;
         loggingString += "CurrentAngle: " + initialAngle + "\n";
         while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
             double drivePower = 0;
@@ -331,9 +333,9 @@ public class MecanumDrive {
      */
     //PID testing not currently operational
     public double additionalPower(double priorError, double currentError, double timeChange) {
-        double proportionCoefficient = 0.82;//0.75
+        double proportionCoefficient = 0.725;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.007;
+        double derivativeCoefficient = /*0.007*/0;
         angleError = currentError;
         integralPow = getAccumulatedError() * integralCoefficient;
         derivativePow = ((currentError-priorError)/timeChange) * derivativeCoefficient;
