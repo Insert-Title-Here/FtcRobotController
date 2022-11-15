@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.League1.Autonomous;
 //import com.acmerobotics.dashboard.FtcDashboard;
 import android.provider.ContactsContract;
 
-import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;

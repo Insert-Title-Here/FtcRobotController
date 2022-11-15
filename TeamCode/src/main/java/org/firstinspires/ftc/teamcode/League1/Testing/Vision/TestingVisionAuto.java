@@ -57,7 +57,7 @@ public class TestingVisionAuto extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
-        pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
+        pipeline.changeMode(KevinGodPipeline.Mode.POLE);
 
         while(opModeInInit()){
             cameraServo.setPosition(cameraThing.cameraPosition);
