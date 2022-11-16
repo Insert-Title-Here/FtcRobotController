@@ -145,6 +145,7 @@ public class BlueLeftMedium extends LinearOpMode {
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
+
     /*
     //TODO: check if camera angle works
     private class DetectionAlgorithm extends OpenCvPipeline {

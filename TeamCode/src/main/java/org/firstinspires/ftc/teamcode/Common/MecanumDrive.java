@@ -406,14 +406,12 @@ public class MecanumDrive {
     //checks if the color sensor identifies tape color
     public void findTape() {
         while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
-            goToPosition(0, 0.8, 0, 0.8);
-            if (avgPosition() > 700) {
-                goToPosition(0.8, 0, 0.8, 0);
-            }
+            goToPosition(0, 0.8, 0.8, 0, 300, "right diagonal");
+            // strafe diagonal left
+            goToPosition(0.8, 0, 0, 0.8);
+
         }
-
-
-
+        goToPosition(0,0,0,0);
     }
     public double angleWrap(double radians){
         while(radians > Math.PI){
@@ -427,5 +425,9 @@ public class MecanumDrive {
     // returns the average tics for mecanum wheels
     public int avgPosition(){
         return (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition()))/4;
+    }
+    // returns the average tics for mecanum wheels (inputed)
+    public int avgPosition(int fl, int fr, int bl, int br){
+        return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
 }

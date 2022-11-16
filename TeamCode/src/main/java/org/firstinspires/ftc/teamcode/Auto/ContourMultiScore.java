@@ -93,6 +93,7 @@ public class ContourMultiScore extends OpenCvPipeline {
             Imgproc.drawContours(generalMat, contours, indexOfMax, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
             hierarchy, 2, new Point()*/);
 
+            // bounding box (approximate width)
             Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
             perWidth = boundRect.width;
 
@@ -120,7 +121,7 @@ public class ContourMultiScore extends OpenCvPipeline {
                 for (int i = 0; i < mainContour.length / 2; i++) {
                     leftOfContour += mainContour[i].x;
                 }
-                for (int i = mainContour.length; i > mainContour.length / 2; i--) {
+                for (int i = mainContour.length - 1; i >= mainContour.length / 2; i--) {
                     rightOfContour += mainContour[i].x;
                 }
                 //gets the average distance between each x point (that's why it's divided by one half of
@@ -130,7 +131,7 @@ public class ContourMultiScore extends OpenCvPipeline {
                 telemetry.addData("error", e);
             }
             //draws circle of centroid
-            Imgproc.circle(contourMat, new Point(cX, cY), 4, new Scalar(255,49,0,255), 4);
+            Imgproc.circle(generalMat, new Point(cX, cY), 1, new Scalar(255,49,0,255), 2);
             focalLength = (398.0769230769231 + 354.8076923076923 + 346.1538461538462 + 391.3461538461538) / 4.0;
             distance = distanceFromPole(1.04, focalLength, perWidth);
 
@@ -144,24 +145,6 @@ public class ContourMultiScore extends OpenCvPipeline {
 
             telemetry.update();
         }
-/*
-
-
-        //movement if robot isn't centered to pole
-        if (cX < 160) {
-            while (cX < 160) {
-                // turn to the right
-            }
-        } else if (cX > 160) {
-            while (cX > 160) {
-                // turn to the left
-            }
-        } else { // cX must equal to 160
-            // move forward until close enough
-        }
-
-
- */
         return generalMat;
     }
 
@@ -188,4 +171,13 @@ public class ContourMultiScore extends OpenCvPipeline {
 
     // actual width of pole 1.04 in.
     // https://pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
+
+
+    public int getcX() {
+        return cX;
+    }
+
+    public int getcY() {
+        return cY;
+    }
 }
