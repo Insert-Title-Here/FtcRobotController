@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.League1.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -23,6 +24,7 @@ public class ScoringSystem2{
     Constants constants;
     private int coneStack;
     Telemetry telemetry;
+    PIDCoefficients lift = new PIDCoefficients(0, 0, 0);
 
 
 
@@ -448,6 +450,110 @@ public class ScoringSystem2{
         return intSums;
 
     }
+
+    public void moveToPIDPosition(int tics, double power){
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double intStartTime = time.milliseconds();
+
+        int rightIntegralSum = 0;
+        int leftIntegralSum = 0;
+
+        int rLiftPos = rLift.getCurrentPosition();
+        int lLiftPos = -1 * lLift.getCurrentPosition();
+
+        int leftError = tics - lLiftPos;
+        int rightError = tics - rLiftPos;
+
+        int leftPreviousError = leftError;
+        int rightPreviousError = rightError;
+
+
+
+        //Dont know if need the != condition
+        //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
+
+        //TODO: Check if logic for encoder positions works
+
+        while ((time.seconds() - startTime) < 1.25 && Math.abs(leftError) > 2 || Math.abs(leftError) > 2) {
+
+            //TODO: figure out if we need to negate either of them
+
+
+
+
+
+            rLiftPos = rLift.getCurrentPosition();
+            lLiftPos = -1 * lLift.getCurrentPosition();
+
+            telemetry.addData("rLift", rLiftPos);
+            telemetry.addData("lLift", lLiftPos);
+
+
+            double currentTime = time.milliseconds();
+
+
+            leftError = tics - lLiftPos;
+            rightError = tics - rLiftPos;
+
+            telemetry.addData("leftError", leftError);
+            telemetry.addData("rightError", rightError);
+
+
+            leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - intStartTime));
+            rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - intStartTime));
+
+            if(leftIntegralSum > 20000){
+                leftIntegralSum = 20000;
+            }else if(leftIntegralSum < -20000){
+                leftIntegralSum = -20000;
+            }
+
+            if(rightIntegralSum > 20000){
+                rightIntegralSum = 20000;
+            }else if(rightIntegralSum < -20000){
+                rightIntegralSum = -20000;
+            }
+
+            telemetry.addData("rightIntegral", rightIntegralSum);
+            telemetry.addData("leftIntegral", leftIntegralSum);
+
+            double leftDerivative = (leftError - leftPreviousError) / (currentTime - intStartTime);
+            double rightDerivative = (rightError - rightPreviousError) / (currentTime - intStartTime);
+
+            telemetry.addData("rightDerivative", rightDerivative);
+            telemetry.addData("leftDerivative", leftDerivative);
+
+            double leftPower = ((leftError * lift.p) + (leftIntegralSum * lift.i) + (leftDerivative * lift.d));
+            double rightPower = ((rightError * lift.p) + (rightIntegralSum * lift.i) + (rightDerivative * lift.d));
+
+            telemetry.addData("rightPower", rightPower);
+            telemetry.addData("leftPower", leftPower);
+
+
+
+
+
+            setPower(rightPower, leftPower);
+
+            telemetry.update();
+
+
+            intStartTime = currentTime;
+            leftPreviousError = leftError;
+            rightPreviousError = rightError;
+
+
+
+        }
+
+        setPower(0);
+
+
+    }
+
+
 
 
     public void setTimeServoPosLogistic(double target, int time) {

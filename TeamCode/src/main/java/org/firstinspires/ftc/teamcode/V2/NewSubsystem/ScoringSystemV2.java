@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.V2.NewSubsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -21,6 +22,7 @@ public class ScoringSystemV2 {
     Constants constants;
     private int coneStack;
     Telemetry telemetry;
+    PIDCoefficients lift = new PIDCoefficients(0, 0, 0);
 
 
 
@@ -166,11 +168,11 @@ public class ScoringSystemV2 {
     //TODO: Fix this
     public int getHeight(){
        if(height == ScoringMode.HIGH){
-           return 850;
+           return 1400;
        }else if(height == ScoringMode.MEDIUM){
-           return 500;
+           return 1000;
        }else if(height == ScoringMode.LOW){
-           return 190;
+           return 700;
        }
 
        return 0;
@@ -200,14 +202,14 @@ public class ScoringSystemV2 {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH || height == ScoringMode.ULTRA){
-            moveToPosition(46500, 1);
+            moveToPosition(1350, 1);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(20000, 1);
+            moveToPosition(1000, 1);
 
 
         }else if(height == ScoringMode.LOW){
-            moveToPosition(10000, 1);
+            moveToPosition(700, 1);
 
         }
 
@@ -218,17 +220,17 @@ public class ScoringSystemV2 {
     public void autoGoToPosition(ScoringMode height) {
         this.height = height;
         if (height == ScoringMode.HIGH || height == ScoringMode.ULTRA) {
-            moveToPosition(46500, 1);
+            moveToPosition(1350, 1);
 
         } else if (height == ScoringMode.MEDIUM) {
 
             //TODO: Find tic value
-            moveToPosition(20000, 1);
+            moveToPosition(1000, 1);
 
 
         } else if (height == ScoringMode.LOW) {
             //TODO: Find tic value
-            moveToPosition(10000, 1);
+            moveToPosition(700, 1);
 
         }
 
@@ -245,8 +247,8 @@ public class ScoringSystemV2 {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
 
-        int rLiftPos = rLift.getCurrentPosition();
-        int lLiftPos = -1 * lLift.getCurrentPosition();
+        int rLiftPos = -1 * rLift.getCurrentPosition();
+        int lLiftPos = lLift.getCurrentPosition();
 
 
         if(tics < ((rLiftPos + lLiftPos) / 2)){
@@ -277,8 +279,8 @@ public class ScoringSystemV2 {
                 }
 
 
-                rLiftPos = rLift.getCurrentPosition();
-                lLiftPos = -1 * lLift.getCurrentPosition();
+                rLiftPos = -1 * rLift.getCurrentPosition();
+                lLiftPos = lLift.getCurrentPosition();
 
                 setPower(rightPower, leftPower);
 
@@ -296,8 +298,8 @@ public class ScoringSystemV2 {
                 }
 
 
-                rLiftPos = rLift.getCurrentPosition();
-                lLiftPos = -1 * lLift.getCurrentPosition();
+                rLiftPos = -1 * rLift.getCurrentPosition();
+                lLiftPos = lLift.getCurrentPosition();
 
                 setPower(rightPower, leftPower);
 
@@ -320,8 +322,8 @@ public class ScoringSystemV2 {
         double startTime = time.seconds();
         double intStartTime = time.seconds();
 
-        int rLiftPos = rLift.getCurrentPosition();
-        int lLiftPos = -1 * lLift.getCurrentPosition();
+        int rLiftPos = -1 * rLift.getCurrentPosition();
+        int lLiftPos = lLift.getCurrentPosition();
 
         int leftPreviousError = Math.abs(tics - lLiftPos);
         int rightPreviousError = Math.abs(tics - rLiftPos);
@@ -364,8 +366,8 @@ public class ScoringSystemV2 {
                 }
 
 
-                rLiftPos = rLift.getCurrentPosition();
-                lLiftPos = -1 * lLift.getCurrentPosition();
+                rLiftPos = -1 * rLift.getCurrentPosition();
+                lLiftPos = lLift.getCurrentPosition();
 
                 telemetry.addData("rLift", rLiftPos);
                 telemetry.addData("lLift", lLiftPos);
@@ -434,8 +436,8 @@ public class ScoringSystemV2 {
                 }
 
 
-                rLiftPos = rLift.getCurrentPosition();
-                lLiftPos = -1 * lLift.getCurrentPosition();
+                rLiftPos = -1 * rLift.getCurrentPosition();
+                lLiftPos = lLift.getCurrentPosition();
 
                 setPower(rightPower, leftPower);
 
@@ -448,6 +450,110 @@ public class ScoringSystemV2 {
         return intSums;
 
     }
+
+    public void moveToPIDPosition(int tics, double power){
+
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double intStartTime = time.milliseconds();
+
+
+        int rightIntegralSum = 0;
+        int leftIntegralSum = 0;
+
+
+        int rLiftPos = -1 * rLift.getCurrentPosition();
+        int lLiftPos = lLift.getCurrentPosition();
+
+        int leftError = tics - lLiftPos;
+        int rightError = tics - rLiftPos;
+
+        int leftPreviousError = leftError;
+        int rightPreviousError = rightError;
+
+
+
+        //Dont know if need the != condition
+        //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
+
+        //TODO: Check if logic for encoder positions works
+
+        while ((time.seconds() - startTime) < 1.25 && Math.abs(leftError) > 2 || Math.abs(leftError) > 2) {
+
+            //TODO: figure out if we need to negate either of them
+
+
+            rLiftPos = -1 * rLift.getCurrentPosition();
+            lLiftPos = lLift.getCurrentPosition();
+
+            telemetry.addData("rLift", rLiftPos);
+            telemetry.addData("lLift", lLiftPos);
+
+
+            double currentTime = time.milliseconds();
+
+
+            leftError = tics - lLiftPos;
+            rightError = tics - rLiftPos;
+
+            telemetry.addData("leftError", leftError);
+            telemetry.addData("rightError", rightError);
+
+
+            leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - intStartTime));
+            rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - intStartTime));
+
+            if(leftIntegralSum > 20000){
+                leftIntegralSum = 20000;
+            }else if(leftIntegralSum < -20000){
+                leftIntegralSum = -20000;
+            }
+
+            if(rightIntegralSum > 20000){
+                rightIntegralSum = 20000;
+            }else if(rightIntegralSum < -20000){
+                rightIntegralSum = -20000;
+            }
+
+            telemetry.addData("rightIntegral", rightIntegralSum);
+            telemetry.addData("leftIntegral", leftIntegralSum);
+
+            double leftDerivative = (leftError - leftPreviousError) / (currentTime - intStartTime);
+            double rightDerivative = (rightError - rightPreviousError) / (currentTime - intStartTime);
+
+            telemetry.addData("rightDerivative", rightDerivative);
+            telemetry.addData("leftDerivative", leftDerivative);
+
+            double leftPower = ((leftError * lift.p) + (leftIntegralSum * lift.i) + (leftDerivative * lift.d));
+            double rightPower = ((rightError * lift.p) + (rightIntegralSum * lift.i) + (rightDerivative * lift.d));
+
+            telemetry.addData("rightPower", rightPower);
+            telemetry.addData("leftPower", leftPower);
+
+
+
+
+
+            setPower(rightPower, leftPower);
+
+            telemetry.update();
+
+
+            intStartTime = currentTime;
+            leftPreviousError = leftError;
+            rightPreviousError = rightError;
+
+
+
+        }
+
+        setPower(0);
+
+
+    }
+
+
 
 
     public void setTimeServoPosLogistic(double target, int time) {

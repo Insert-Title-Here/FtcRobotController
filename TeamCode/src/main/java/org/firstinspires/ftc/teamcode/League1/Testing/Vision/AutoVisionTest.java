@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.ContourPipeline;
+import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -17,24 +19,25 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class AutoVisionTest extends LinearOpMode {
     Servo servo;
     OpenCvWebcam camera;
-    ContourPipeline pipeline;
+    KevinGodPipeline pipeline;
+    MecDrive drive = new MecDrive(hardwareMap, false, telemetry);
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        servo = hardwareMap.get(Servo.class, "RightLinkage");
-/*
+        servo = hardwareMap.get(Servo.class, "camera");
+
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new ContourPipeline(telemetry);*/
+        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.RED_RIGHT);
 
-        //camera.setPipeline(pipeline);
+        camera.setPipeline(pipeline);
 
-        servo.setPosition(0.05);
+        servo.setPosition(0.085);
 
 
-        /*camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 camera.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
@@ -47,13 +50,14 @@ public class AutoVisionTest extends LinearOpMode {
 
             }
         });
-*/
+        pipeline.changeMode(KevinGodPipeline.Mode.SLEEVE);
+
         while(opModeInInit()){
 
-            double yPos = getYCapPosition();
+            /*double yPos = getYCapPosition();
             setYCapPosition(yPos - map(gamepad1.right_stick_y, -1, 1, -0.0010, 0.0010));
             telemetry.addData("Position", getYCapPosition());
-            telemetry.update();
+            telemetry.update();*/
 
         }
 

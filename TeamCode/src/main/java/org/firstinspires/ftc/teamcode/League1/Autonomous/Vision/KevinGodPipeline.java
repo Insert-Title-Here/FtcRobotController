@@ -49,12 +49,12 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int V6 = 255;
 
     // Config variables for signal pipeline
-    public static int YUpper = 190;
-    public static int YLower = 160;
-    public static int CrUpper = 200;
-    public static int CrLower = 130;
-    public static int CbUpper = 130;
-    public static int CbLower = 170;
+    public static int YUpper = 178;
+    public static int YLower = 158;
+    public static int CrUpper = 91;
+    public static int CrLower = 85;
+    public static int CbUpper = 160;
+    public static int CbLower = 150;
 
     // Config variables for bounding box
     public static int topLeftXRightRed = 225 ;
@@ -67,10 +67,10 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int boxWidthLeftRed = 20;
     public static int boxHeightLeftRed = 40;
 
-    public static int topLeftXRightBlue = 215 ;
-    public static int topLeftYRightBlue = 20;
-    public static int boxWidthRightBlue = 20;
-    public static int boxHeightRightBlue = 40;
+    public static int topLeftXRightBlue = 130;
+    public static int topLeftYRightBlue = 0;
+    public static int boxWidthRightBlue = 110;
+    public static int boxHeightRightBlue = 176;
 
     public static int topLeftXLeftBlue = 135;
     public static int topLeftYLeftBlue = 25;
@@ -201,27 +201,37 @@ public class KevinGodPipeline extends OpenCvPipeline {
             Core.extractChannel(ycrcb, temp, 0);
 
             // Make a binary image of values within the desired range and calculate avg color
-            Core.inRange(temp, new Scalar(140), new Scalar(200), temp);
+            Core.inRange(temp, new Scalar(YLower), new Scalar(YUpper), temp);
             double countY = Core.mean(temp.submat(MIDDLE)).val[0];
+            int newY = Core.countNonZero(temp);
 
             // Extract Cr channel
             Core.extractChannel(ycrcb, temp, 1);
 
             // Make binary image and calculate avg color
-            Core.inRange(temp, new Scalar(130), new Scalar(200), temp);
+            Core.inRange(temp, new Scalar(CrLower), new Scalar(CrUpper), temp);
             double countCr = Core.mean(temp.submat(MIDDLE)).val[0];
+            int newCr = Core.countNonZero(temp);
+
+
+
 
             // Extract Cb channel
             Core.extractChannel(ycrcb, temp, 2);
 
             // Make binary image and calculate avg color
-            Core.inRange(temp, new Scalar(100), new Scalar(180), temp);
+            Core.inRange(temp, new Scalar(CbLower), new Scalar(CbUpper), temp);
             double countCb = Core.mean(temp.submat(MIDDLE)).val[0];
+            int newCb = Core.countNonZero(temp);
+
 
             // Telemetry
             telemetry.addData("countY", countY);
             telemetry.addData("countCr", countCr);
             telemetry.addData("countCb", countCb);
+            telemetry.addData("newY", newY);
+            telemetry.addData("newCr", newCr);
+            telemetry.addData("newCb", newCb);
 
             // Check if certain channels are within certain ranges to determine color
             if(countY > 100 && countCb < 90) {
@@ -234,6 +244,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
                 telemetry.addData("Color", "Cyan - Center ");
                 position = ParkPos.CENTER;
             }
+
 
             telemetry.update();
 
@@ -435,6 +446,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
         int xMin = target - tolerance;
         double startPos = drive.avgPos();
         int startPolePosition = getXContour();
+        boolean wrongWay = false;
 
         if(startPolePosition < xMax){
             power *= -1;
@@ -450,11 +462,26 @@ public class KevinGodPipeline extends OpenCvPipeline {
             drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
 
             if(time.seconds() - startTime > 1.5){
-                normlizationBroke = true;
+                //normlizationBroke = true;
+                wrongWay = true;
                 break;
             }
         }
         drive.simpleBrake();
+
+        if(wrongWay) {
+            while ((getXContour() > xMax || getXContour() < xMin)) {
+            /*if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }*/
+
+                drive.setPowerAuto(-power, MecDrive.MovementType.STRAFE);
+
+
+            }
+        }
 
         isNormalizing = false;
 
