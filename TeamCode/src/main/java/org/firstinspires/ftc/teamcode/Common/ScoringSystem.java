@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class ScoringSystem {
     private DcMotor liftMotor;
     private Servo claw;
+    MecanumDrive drive;
     ColorRangeSensor colorCone;
     Telemetry telemetry;
 
@@ -22,6 +23,7 @@ public class ScoringSystem {
         claw = hardwareMap.get(Servo.class, "claw");
         liftMotor = hardwareMap.get(DcMotor.class, "motor");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "colorCone");
+        drive = new MecanumDrive(hardwareMap, telemetry);
         this.telemetry = telemetry;
         // reset encoder's tics for liftMotor (leave commented unless you need to reset the encoder for
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -124,6 +126,7 @@ public class ScoringSystem {
         return false;
     }
     //uses color sensor to grab cone(this one is used when trying to grab from the stack of 5 cones
+    // tele version
     public boolean grabCone(boolean stack) throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 1) {
             // grab cone
@@ -142,6 +145,25 @@ public class ScoringSystem {
 
         }
         return false;
+    }
+    // auto version
+    public void grabConeAuto() {
+        drive.goToPosition(0.5, 0.5, 0.5, 0.5);
+        if (colorCone.getDistance(DistanceUnit.CM) < 1) {
+
+            // grab cone
+            setClawPosition(0.24);
+            try {
+                sleep(400);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // lift up
+            goToPosition(getEncoderPosition() + 250, 0.6);
+
+            telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
+            telemetry.update();
+        }
     }
 
 
