@@ -141,6 +141,7 @@ public class ContourMultiScore extends OpenCvPipeline {
             telemetry.addData("width", perWidth);
             telemetry.addData("distanceInches", distance - 0.75);
             telemetry.addData("array", mainContour[0].x +" "+ mainContour[0].y);
+            telemetry.addData("array", mainContour[1].x +" "+ mainContour[1].y);
 
 
             telemetry.update();

@@ -18,6 +18,7 @@ public class SecondTeleOp extends LinearOpMode {
     Thread liftThread;
     AtomicBoolean pause;
     AtomicBoolean discontinue;
+    AtomicBoolean reToggle;
     BNO055IMU imu;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.5;
@@ -39,6 +40,8 @@ public class SecondTeleOp extends LinearOpMode {
         score = new ScoringSystem(hardwareMap, telemetry);
         pause = new AtomicBoolean();
         discontinue = new AtomicBoolean();
+        reToggle = new AtomicBoolean();
+        reToggle.set(false);
         pause.set(true);
         discontinue.set(false);
         telemetry.addData("Status", "Initialized");
@@ -96,24 +99,37 @@ public class SecondTeleOp extends LinearOpMode {
                     }
                     //closes the claw(manually) and opens the claw(like a toggle)
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
-                        if(0.2 < score.getClawPosition() && score.getClawPosition() < 0.34){
+                        if(0.32 < score.getClawPosition() && score.getClawPosition() < 0.45){
                             //if liftpos is low height ish or higher
                             if(score.getEncoderPosition() > 500){
-                                score.goToPosition(score.getEncoderPosition() - 113, 0.5);
+                                if(0.32 < score.getClawPosition() && score.getClawPosition() < 0.45 && reToggle.get()){
+                                    score.setClawPosition(0);
+                                    try {
+                                        Thread.sleep(800);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    score.goToPosition(0, 0.4);
+                                    reToggle.set(false);
+                                }else{
+                                    score.goToPosition(score.getEncoderPosition() - 113, 0.5);
+                                    reToggle.set(true);
+                                }
+                            }else{
+                                score.setClawPosition(0);
+                                try {
+                                    Thread.sleep(800);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                score.goToPosition(0, 0.4);
                             }
-                            score.setClawPosition(0);
 
-                            try {
-                                Thread.sleep(800);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            score.goToPosition(0, 0.4);
                         }else{
-                            //if lifts system is below...
+                            //if lifts system is below 95
                             if(score.getEncoderPosition() < 95){
                                 if(discontinue.get()){
-                                    score.setClawPosition(0.32); // TODO: 0.32 is closed, 0 is open (not actually todo)
+                                    score.setClawPosition(0.34); // TODO: 0.32 is closed, 0 is open (not actually todo)
                                     try {
                                         Thread.sleep(300);
                                     } catch (InterruptedException e) {
@@ -122,7 +138,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     score.goToPosition(score.getEncoderPosition()+113,0.6);
                                     discontinue.set(false);
                                 }else{
-                                    score.setClawPosition(0.32);
+                                    score.setClawPosition(0.34);
                                     try {
                                         Thread.sleep(300);
                                     } catch (InterruptedException e) {
@@ -132,7 +148,7 @@ public class SecondTeleOp extends LinearOpMode {
                                 }
                             }else{
                                 if(discontinue.get()){
-                                    score.setClawPosition(0.32);
+                                    score.setClawPosition(0.34);
                                     try {
                                         Thread.sleep(300);
                                     } catch (InterruptedException e) {
@@ -141,7 +157,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     score.goToPosition(score.getEncoderPosition()+125,0.6);
                                     discontinue.set(false);
                                 }else{
-                                    score.setClawPosition(0.32);
+                                    score.setClawPosition(0.34);
                                 }
                             }
                         }
@@ -231,12 +247,7 @@ public class SecondTeleOp extends LinearOpMode {
             telemetry.addData("frPos", drive.getFRPosition());
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());
-            telemetry.addData("Ppower", drive.getProportionPower());
-            telemetry.addData("Ipower", drive.getIntegralPower());
-            telemetry.addData("Dpower", drive.getDerivativePower());
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
-            telemetry.addData("drivePower",(drive.getProportionPower()));
-            telemetry.addData("angleError", drive.getAngleError());
             telemetry.addData("realDrivePow", drive.getPower());
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());

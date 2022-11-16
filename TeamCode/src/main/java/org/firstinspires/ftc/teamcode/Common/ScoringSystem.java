@@ -46,37 +46,22 @@ public class ScoringSystem {
             power *= -1;
         }
         long time = System.currentTimeMillis();
-        long difference;
+        long difference= 0;
         boolean notReached = true;
+        double currentError = tics - getEncoderPosition();
+        double proportionPow;
         while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
-            //set power to zero if tics pretty high and power continually being used
-            /*
-            if(motorPosition < 400){
-                liftMotor.setPower(power/2);
-                motorPosition = liftMotor.getCurrentPosition();
-            }else{
-                liftMotor.setPower(power);
-                motorPosition = liftMotor.getCurrentPosition();
-            }
-
-             */
-
-
-
-            difference =  System.currentTimeMillis() - time;
+            proportionPow = currentError * 0.67;
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
             if((Math.abs(difference) > 5000)){
                 liftMotor.setPower(0);
                 notReached = false;
             }else{
-                liftMotor.setPower(power);
+                liftMotor.setPower(proportionPow);
                 motorPosition = liftMotor.getCurrentPosition();
             }
-
-
-
-
+            difference =  System.currentTimeMillis() - time;
 
         }
 
@@ -122,7 +107,7 @@ public class ScoringSystem {
     public boolean grabCone() throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 0.9) {
             // grab cone
-            setClawPosition(0.24);
+            setClawPosition(0.34);
             sleep(400);
             // lift up
             goToPosition(getEncoderPosition() + 100, 0.6);
@@ -138,7 +123,7 @@ public class ScoringSystem {
     public boolean grabCone(boolean stack) throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 1) {
             // grab cone
-            setClawPosition(0.24);
+            setClawPosition(0.34);
             sleep(400);
             // lift up
             if(stack){
