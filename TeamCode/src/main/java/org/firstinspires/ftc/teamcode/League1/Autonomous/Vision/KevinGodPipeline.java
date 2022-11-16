@@ -34,8 +34,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
     //Blue cone color
     public static int H3 = 105;
-    public static int S3 = 110;
-    public static int V3 = 60;
+    public static int S3 = 125;
+    public static int V3 = 90;
     public static int H4 = 130;
     public static int S4 = 255;
     public static int V4 = 255;
@@ -147,6 +147,16 @@ public class KevinGodPipeline extends OpenCvPipeline {
     static final Rect LEFT_MIDDLE_BLUE = new Rect(
             new Point(topLeftXLeftBlue, topLeftYLeftBlue),
             new Point(topLeftXLeftBlue + boxWidthLeftBlue, topLeftYLeftBlue + boxHeightLeftBlue)
+    );
+
+    public static int topLeftXCone = 75;
+    public static int topLeftYCone = 5;
+    public static int bottomLeftXCone = 265;
+    public static int bottomLeftYCone = 80;
+
+    static final Rect CONE_AREA = new Rect(
+            new Point(topLeftXCone, topLeftYCone),
+            new Point(bottomLeftXCone, bottomLeftYCone)
     );
 
 
@@ -297,20 +307,36 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
             // Find all contours in binary image
             List<MatOfPoint> contours = new ArrayList<>();
-            Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
+            if(sleeveSense != Mode.POLE) {
+                Imgproc.findContours(temp.submat(CONE_AREA), contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+                Imgproc.rectangle(input, CONE_AREA, new Scalar(255, 92, 90), 2);
+
+            } else {
+                Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            }
 
             for(int i = 0; i < contours.size(); i++){
                 // Filter out small, irrelevant contours
-                if(contours.get(i).toArray().length > 6) {
+                if(contours.get(i).toArray().length > 20) {
 
                     // Draw all contours to the screen
-                    Imgproc.drawContours(input, contours, i, new Scalar(230, 191, 254));
+                    if(sleeveSense != Mode.POLE) {
+                        Imgproc.drawContours(input.submat(CONE_AREA), contours, i, new Scalar(230, 191, 254));
+                    } else {
+                        Imgproc.drawContours(input, contours, i, new Scalar(230, 191, 254));
+                    }
 
                     // Find center of contour and add a point on the screen
                     M = Imgproc.moments(contours.get(i));
                     cX = (int)(M.m10 / M.m00);
                     cY = (int)(M.m01 / M.m00);
+
+                    if(sleeveSense != Mode.POLE) {
+                        cX += topLeftXCone;
+                        cY += topLeftYCone;
+                    }
+
                     Imgproc.circle(input, new Point(cX, cY), 3, new Scalar(0, 0, 255));
 
                     // Save the contour's center in a list
@@ -356,6 +382,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
             } else {
                 Imgproc.drawMarker(input, new Point(contourTarget, 120), new Scalar(100, 200, 200));
             }
+
 
         }
         return input;
