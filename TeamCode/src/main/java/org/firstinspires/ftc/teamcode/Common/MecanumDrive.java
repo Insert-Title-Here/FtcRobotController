@@ -154,7 +154,8 @@ public class MecanumDrive {
         while (Math.abs(currentError) > 0.001) {
             double drivePower = 0;
             priorError = currentError;
-            setPower(PIDDrivePower(priorError, currentError, timeDifference), PIDDrivePower(priorError, currentError, timeDifference), PIDDrivePower(priorError, currentError, timeDifference), PIDDrivePower(priorError, currentError, timeDifference));
+            drivePower = PIDDrivePower(priorError, currentError, timeDifference);
+            setPower(drivePower, drivePower, drivePower, drivePower);
             currentError = tics - position;
             timeDifference = System.currentTimeMillis() - time;
         }
@@ -351,6 +352,14 @@ public class MecanumDrive {
         double derivativeCoefficient = 0;//0.8
         error = currentError;
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+    }
+    //used for robot not moving straight    
+    public double additionalPow(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.1;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 0.06;//0.8
+        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+
     }
     public double getError(){
         return error;

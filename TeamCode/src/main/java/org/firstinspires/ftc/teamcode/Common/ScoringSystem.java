@@ -49,7 +49,7 @@ public class ScoringSystem {
         double currentError = tics - getEncoderPosition();
         double proportionPow;
         while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
-            proportionPow = currentError * 0.6;
+            proportionPow = currentError * 0.67;
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
             if((Math.abs(difference) > 5000)){
@@ -105,7 +105,7 @@ public class ScoringSystem {
     public boolean grabCone() throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 0.9) {
             // grab cone
-            setClawPosition(0.38);
+            setClawPosition(0.34);
             sleep(400);
             // lift up
             goToPosition(getEncoderPosition() + 100, 0.6);
@@ -120,7 +120,7 @@ public class ScoringSystem {
     public boolean grabCone(boolean stack) throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 1) {
             // grab cone
-            setClawPosition(0.38);
+            setClawPosition(0.34);
             sleep(400);
             // lift up
             if(stack){
