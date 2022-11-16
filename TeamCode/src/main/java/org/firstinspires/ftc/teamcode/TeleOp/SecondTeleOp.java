@@ -10,6 +10,8 @@ import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 @TeleOp
 public class SecondTeleOp extends LinearOpMode {
     //TODO: change names if you want to
@@ -19,6 +21,9 @@ public class SecondTeleOp extends LinearOpMode {
     AtomicBoolean pause;
     AtomicBoolean discontinue;
     AtomicBoolean reToggle;
+    AtomicInteger stackHeight;
+    AtomicBoolean stackDoubleDown;
+    AtomicBoolean stackDoubleUp;
     BNO055IMU imu;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.5;
@@ -41,6 +46,12 @@ public class SecondTeleOp extends LinearOpMode {
         pause = new AtomicBoolean();
         discontinue = new AtomicBoolean();
         reToggle = new AtomicBoolean();
+        stackHeight = new AtomicInteger();
+        stackDoubleUp = new AtomicBoolean();
+        stackDoubleDown = new AtomicBoolean();
+        stackDoubleDown.set(true);
+        stackDoubleUp.set(true);
+        stackHeight.set(174);
         reToggle.set(false);
         pause.set(true);
         discontinue.set(false);
@@ -97,6 +108,30 @@ public class SecondTeleOp extends LinearOpMode {
                     if(gamepad1.options){
                         score = new ScoringSystem(hardwareMap, telemetry);
                     }
+                    //lowers the height of the slides for the stack of 5 cones
+                    if(gamepad1.a && stackDoubleDown.get()){
+                        discontinue.set(true);
+                        stackDoubleDown.set(false);
+                        if((stackHeight.get() - 50) > 0){
+                            stackHeight.set(stackHeight.get()-50);
+                            score.goToPosition(stackHeight.get(), 0.4);
+                        }
+                    }if(gamepad1.a && !stackDoubleDown.get()){
+                        stackDoubleDown.set(true);
+                    }
+                    //moves the slides to the stack of 5 cones height
+                    if(gamepad1.y && stackDoubleUp.get()){
+                        discontinue.set(true);
+                        stackDoubleUp.set(false);
+                        if(stackHeight.get() < 174){
+                            score.goToPosition(stackHeight.get(), 0.6);
+                            stackHeight.set(stackHeight.get() + 50);
+                        }else if(stackHeight.get() == 174){
+                            score.goToPosition(174, 0.6);
+                        }
+                    }if(gamepad1.y && !stackDoubleUp.get()){
+                        stackDoubleUp.set(true);
+                    }
                     //closes the claw(manually) and opens the claw(like a toggle)
                     if(gamepad1.right_trigger > 0.1 && pause.get()){
                         if(0.32 < score.getClawPosition() && score.getClawPosition() < 0.45){
@@ -131,7 +166,7 @@ public class SecondTeleOp extends LinearOpMode {
                                 if(discontinue.get()){
                                     score.setClawPosition(0.34); // TODO: 0.32 is closed, 0 is open (not actually todo)
                                     try {
-                                        Thread.sleep(300);
+                                        Thread.sleep(600);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -140,7 +175,7 @@ public class SecondTeleOp extends LinearOpMode {
                                 }else{
                                     score.setClawPosition(0.34);
                                     try {
-                                        Thread.sleep(300);
+                                        Thread.sleep(600);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -150,7 +185,7 @@ public class SecondTeleOp extends LinearOpMode {
                                 if(discontinue.get()){
                                     score.setClawPosition(0.34);
                                     try {
-                                        Thread.sleep(300);
+                                        Thread.sleep(600);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -181,9 +216,6 @@ public class SecondTeleOp extends LinearOpMode {
         score.setClawPosition(0);
         waitForStart();
         liftThread.start();
-        int stackHeight = 174;
-        boolean stackDoubleDown = true;
-        boolean stackDoubleUp = true;
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -211,30 +243,6 @@ public class SecondTeleOp extends LinearOpMode {
                 //turn test
                 //drive.turnToInitialPosition();
                 drive.turn(Math.PI/4, 0);
-            }
-            //lowers the height of the slides for the stack of 5 cones
-            if(gamepad1.a && stackDoubleDown){
-                discontinue.set(true);
-                stackDoubleDown = false;
-                if((stackHeight - 50) > 0){
-                    stackHeight -= 50;
-                    score.goToPosition(stackHeight, 0.4);
-                }
-            }if(gamepad1.a && !stackDoubleDown){
-                stackDoubleDown = true;
-            }
-            //moves the slides to the stack of 5 cones height
-            if(gamepad1.y && stackDoubleUp){
-                discontinue.set(true);
-                stackDoubleUp = false;
-                if(stackHeight < 174){
-                    score.goToPosition(stackHeight, 0.6);
-                    stackHeight +=50;
-                }else if(stackHeight == 174){
-                    score.goToPosition(174, 0.6);
-                }
-            }if(gamepad1.y && !stackDoubleUp){
-                stackDoubleUp = true;
             }
 
             //resets the drive motor encoders

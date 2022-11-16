@@ -349,11 +349,11 @@ public class MecanumDrive {
     public double PIDDrivePower(double priorError, double currentError, double timeChange){
         double proportionCoefficient = 0.7065;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0;//0.8
+        double derivativeCoefficient = 0.8;//0.8
         error = currentError;
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
     }
-    //used for robot not moving straight    
+    //used for robot not moving straight
     public double additionalPow(double priorError, double currentError, double timeChange){
         double proportionCoefficient = 0.1;//0.75
         double integralCoefficient = 0;

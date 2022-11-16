@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Common;
 
+import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -47,9 +48,14 @@ public class ScoringSystem {
         long difference= 0;
         boolean notReached = true;
         double currentError = tics - getEncoderPosition();
+        double priorError = tics - getEncoderPosition();
         double proportionPow;
+        double derivativePow;
         while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
+            priorError = currentError;
             proportionPow = currentError * 0.67;
+            derivativePow =  ((currentError-priorError)/difference) * 0.8;
+
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
             if((Math.abs(difference) > 5000)){
@@ -59,6 +65,7 @@ public class ScoringSystem {
                 liftMotor.setPower(proportionPow);
                 motorPosition = liftMotor.getCurrentPosition();
             }
+            currentError = tics - getEncoderPosition();
             difference =  System.currentTimeMillis() - time;
 
         }
