@@ -55,8 +55,14 @@ public class ScoringSystem {
         double derivativePow;
         while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
             priorError = currentError;
-            proportionPow = currentError * 0.67;
-            derivativePow =  ((currentError-priorError)/difference) * 0.8;
+            if(tics == 0){
+                proportionPow = currentError * 0.4;
+
+            }else{
+                proportionPow = currentError * 0.72;
+
+            }
+            derivativePow =  ((currentError-priorError)/difference) * 0.65;
 
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
@@ -64,7 +70,7 @@ public class ScoringSystem {
                 liftMotor.setPower(0);
                 notReached = false;
             }else{
-                liftMotor.setPower(proportionPow);
+                liftMotor.setPower(proportionPow + derivativePow);
                 motorPosition = liftMotor.getCurrentPosition();
             }
             currentError = tics - getEncoderPosition();
@@ -165,8 +171,6 @@ public class ScoringSystem {
             telemetry.update();
         }
     }
-
-
 
     public double getDistance() {
         return colorCone.getDistance(DistanceUnit.CM);

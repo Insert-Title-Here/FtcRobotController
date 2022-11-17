@@ -24,6 +24,7 @@ public class SecondTeleOp extends LinearOpMode {
     AtomicInteger stackHeight;
     AtomicBoolean stackDoubleDown;
     AtomicBoolean stackDoubleUp;
+    AtomicBoolean zero;
     BNO055IMU imu;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.5;
@@ -43,9 +44,10 @@ public class SecondTeleOp extends LinearOpMode {
         imu.initialize(parameters);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
+        zero = new AtomicBoolean();
         pause = new AtomicBoolean();
-        discontinue = new AtomicBoolean();
         reToggle = new AtomicBoolean();
+        discontinue = new AtomicBoolean();
         stackHeight = new AtomicInteger();
         stackDoubleUp = new AtomicBoolean();
         stackDoubleDown = new AtomicBoolean();
@@ -54,6 +56,7 @@ public class SecondTeleOp extends LinearOpMode {
         stackHeight.set(174);
         reToggle.set(false);
         pause.set(true);
+        zero.set(true);
         discontinue.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -66,10 +69,11 @@ public class SecondTeleOp extends LinearOpMode {
                 while(opModeIsActive()){
                     //manually lifts slides up and down
                     if(gamepad1.right_bumper){
+                        //if bumper get to maxe height sets power stop moving up
                         if(score.getEncoderPosition() > 1367){
-                            score.setPower(0);
+                            score.setPower(0.08);
                         }else{
-                            score.setPower(0.7);
+                            score.setPower(0.8);
                         }
                     }else if(gamepad1.left_bumper) {
                         if(score.getEncoderPosition() < 3){
@@ -78,8 +82,22 @@ public class SecondTeleOp extends LinearOpMode {
                             score.setPower(-0.5);
                         }
                     }else{
-                        if(!discontinue.get()){
-                            score.setPower(0.1);
+                        if(score.getEncoderPosition() > 100){
+                            if(!discontinue.get()){
+                                score.setPower(0.1);
+                            }
+                            zero.set(true);
+                        }else{
+                            if(zero.get()){
+                                score.setPower(0.2);
+                                try {
+                                    Thread.sleep(200);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                score.setPower(0);
+                                zero.set(false);
+                            }
                         }
                     }
                     //moves the slides all the way down
@@ -102,7 +120,7 @@ public class SecondTeleOp extends LinearOpMode {
                     if(gamepad1.x){
                         //low cone
                         score.goToPosition(580, 0.8);
-                        score.setPower(0.08);
+                        score.setPower(0.01);
                     }
                     //resets the slidemotor encoder
                     if(gamepad1.options){
@@ -145,6 +163,13 @@ public class SecondTeleOp extends LinearOpMode {
                                         e.printStackTrace();
                                     }
                                     score.goToPosition(0, 0.4);
+                                    score.setPower(0.2);
+                                    try {
+                                        Thread.sleep(200);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    score.setPower(0);
                                     reToggle.set(false);
                                 }else{
                                     score.goToPosition(score.getEncoderPosition() - 113, 0.5);
@@ -158,6 +183,13 @@ public class SecondTeleOp extends LinearOpMode {
                                     e.printStackTrace();
                                 }
                                 score.goToPosition(0, 0.4);
+                                score.setPower(0.2);
+                                try {
+                                    Thread.sleep(200);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                score.setPower(0);
                             }
 
                         }else{

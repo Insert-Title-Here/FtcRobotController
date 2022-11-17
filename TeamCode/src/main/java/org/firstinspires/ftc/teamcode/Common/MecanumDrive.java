@@ -336,7 +336,7 @@ public class MecanumDrive {
     public double PIDTurnPower(double priorError, double currentError, double timeChange) {
         double proportionCoefficient = 0.7065;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0;//0.8
+        double derivativeCoefficient = 0.68;//0.8
         error = currentError;
         loggingString += "PriorAngleError: " + priorError + "   ";
         loggingString += "CurrentAngleError: " + currentError + "   ";
