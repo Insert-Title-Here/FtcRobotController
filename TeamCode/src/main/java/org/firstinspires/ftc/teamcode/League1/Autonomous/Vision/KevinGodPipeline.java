@@ -311,7 +311,6 @@ public class KevinGodPipeline extends OpenCvPipeline {
             if(sleeveSense != Mode.POLE) {
                 Imgproc.findContours(temp.submat(CONE_AREA), contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
                 Imgproc.rectangle(input, CONE_AREA, new Scalar(255, 92, 90), 2);
-
             } else {
                 Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }

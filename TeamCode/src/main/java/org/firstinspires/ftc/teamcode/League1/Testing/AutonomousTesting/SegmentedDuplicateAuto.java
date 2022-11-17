@@ -144,7 +144,7 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
                         score.setLinkagePositionLogistic(Constants.linkageUp, 250);
                         finalMove.set(false);
 
-                    }else if(armUp.get()){
+                    } else if (armUp.get()) {
                         try {
                             Thread.sleep(100);
                         } catch (InterruptedException e) {
@@ -261,14 +261,14 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
 
             //score.moveToPosition(200, 1);
 
-            if(i < 2) {
-                score.setLinkagePosition(0.63);
-                //hold.set(true);
-                sleep(300);
-            }else{
-                armUp.set(true);
+            if (i >= 2) {
+                drive.simpleMoveToPosition(-10, MecDrive.MovementType.STRAIGHT, 0.3);
+
             }
 
+            score.setLinkagePosition(0.63);
+            //hold.set(true);
+            sleep(300);
 
 
             pipeline.changeMode(KevinGodPipeline.Mode.POLE);

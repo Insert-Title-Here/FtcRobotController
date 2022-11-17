@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class DuplicateAuto extends LinearOpMode {
+public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
@@ -323,7 +323,7 @@ public class DuplicateAuto extends LinearOpMode {
             //Dont know if need to check multiple time
 
 
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 3; i++) {
 
 
                 score.setLinkagePosition(constants.linkageUp);
@@ -402,12 +402,30 @@ public class DuplicateAuto extends LinearOpMode {
 
                 //score.moveToPosition(0, 1);
 
-                armUp.set(true);
+                //armUp.set(true);
+
+                hold.set(false);
+
+                score.moveToPosition(830, 1);
+                hold.set(true);
+
+
+
 
                 //TODO: see if want to change to Math.PI/3.7
+
+
+
                 drive.tankRotatePID(Math.PI / 5, 0.8, true);
                 //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
                 normalizeDistance = pipeline.normalize(0.2, 172, 2);
+
+                score.setLinkagePositionLogistic(Constants.linkageScore, 300, 50);
+
+                sleep(500);
+                score.setGrabberPosition(0.3);
+                sleep(200);
+
 
                 if(pipeline.getNormalizationBroke()){
                     drive.tankRotatePID(Math.PI/2, 0.6, false);
