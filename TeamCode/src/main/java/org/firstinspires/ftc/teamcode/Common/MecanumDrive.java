@@ -69,10 +69,10 @@ public class MecanumDrive {
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        fr.setDirection(DcMotorSimple.Direction.FORWARD);
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.FORWARD);
+        fl.setDirection(DcMotor.Direction.REVERSE);
+        fr.setDirection(DcMotor.Direction.FORWARD);
+        bl.setDirection(DcMotor.Direction.REVERSE);
+        br.setDirection(DcMotor.Direction.FORWARD);
 
     }
     /*current motor positions*/
@@ -150,13 +150,30 @@ public class MecanumDrive {
         long timeDifference = 0;
         double priorError = tics;
         double currentError = tics;
+        double priorAngleError = 0;
+        double currentAngleError = 0;
         //Encoder based gotoposition
         while (Math.abs(currentError) > 0.001) {
             double drivePower = 0;
+            double addedDrivePow = 0;
+            priorAngleError = currentAngleError;
             priorError = currentError;
             drivePower = PIDDrivePower(priorError, currentError, timeDifference);
-            setPower(drivePower, drivePower, drivePower, drivePower);
+            addedDrivePow = additionalPow(priorAngleError, currentAngleError, timeDifference);
+            /*
+            if(imu.getAngularOrientation().firstAngle > 0){
+                setPower(drivePower, drivePower - addedDrivePow, drivePower, drivePower - addedDrivePow);
+            }else if(imu.getAngularOrientation().firstAngle < 0){
+                setPower(drivePower - addedDrivePow, drivePower, drivePower - addedDrivePow, drivePower);
+            }else{
+
+             */
+                setPower(drivePower, drivePower, drivePower, drivePower);
+            //}
+            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+                    Math.abs(br.getCurrentPosition())) / 4;
             currentError = tics - position;
+            currentAngleError = Math.abs(imu.getAngularOrientation().firstAngle);
             timeDifference = System.currentTimeMillis() - time;
         }
         /*
@@ -240,8 +257,6 @@ public class MecanumDrive {
         }
 
         error = 0;
-
-
     }
     // turns to the starting position
     //TODO: Needs Testing
@@ -336,7 +351,7 @@ public class MecanumDrive {
     public double PIDTurnPower(double priorError, double currentError, double timeChange) {
         double proportionCoefficient = 0.7065;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.68;//0.8
+        double derivativeCoefficient = 0.678;//0.8
         error = currentError;
         loggingString += "PriorAngleError: " + priorError + "   ";
         loggingString += "CurrentAngleError: " + currentError + "   ";
@@ -346,18 +361,20 @@ public class MecanumDrive {
         loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
     }
+    //TODO
     public double PIDDrivePower(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.7065;//0.75
+        double proportionCoefficient = 0.001;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.8;//0.8
+        double derivativeCoefficient = 0;//0.8
         error = currentError;
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
     }
+    //TODO
     //used for robot not moving straight
     public double additionalPow(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.1;//0.75
+        double proportionCoefficient = 0.1;
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.06;//0.8
+        double derivativeCoefficient = 0.06;
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
 
     }
