@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.Common.MaintainLiftPosition;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
-@TeleOp
 public class TestTeleOp extends LinearOpMode {
 
     MecanumDrive drive;
@@ -71,31 +70,35 @@ public class TestTeleOp extends LinearOpMode {
                 while(lift.getCurrentPosition()<origLiftPos+500&&opModeIsActive()){
                     lift.setPower(1);
                     rightLift.setPower(-1);
+                    telemetry.addData("liftPos", lift.getCurrentPosition());
+                    telemetry.addData("targetLiftPos", origLiftPos+500);
                 }
 
-                while(lift.getCurrentPosition()>origLiftPos+1500&&opModeIsActive()){
+                while(lift.getCurrentPosition()>origLiftPos+1200&&opModeIsActive()){
                     lift.setPower(-1);
                     rightLift.setPower(1);
+                    telemetry.addData("liftPos", lift.getCurrentPosition());
+                    telemetry.addData("targetLiftPos", origLiftPos+1200);
                 }
-                maintainLiftPos(origLiftPos+2140, origRightLiftPos-2140);
+                maintainLiftPos(origLiftPos+1000, origRightLiftPos-1000);
                 openFourbar();
-                sleep(400);
-
             } else if(gamepad1.dpad_up){
                 liftIsStill = false;
-                while(lift.getCurrentPosition()<origLiftPos+1500&&opModeIsActive()){
+                while(lift.getCurrentPosition()<origLiftPos+1600&&opModeIsActive()){
                     lift.setPower(1);
                     rightLift.setPower(-1);
+                    telemetry.addData("liftPos", lift.getCurrentPosition());
+                    telemetry.addData("targetLiftPos", origLiftPos+1600);
                 }
 
-                while(lift.getCurrentPosition()>origLiftPos+3000&&opModeIsActive()){
+                while(lift.getCurrentPosition()>origLiftPos+2300&&opModeIsActive()){
                     lift.setPower(-1);
                     rightLift.setPower(1);
+                    telemetry.addData("liftPos", lift.getCurrentPosition());
+                    telemetry.addData("targetLiftPos", origLiftPos+2300);
                 }
-                maintainLiftPos(origLiftPos+2140, origRightLiftPos-2140);
+                maintainLiftPos(origLiftPos+2250, origRightLiftPos-2250);
                 openFourbar();
-                sleep(400);
-
             } else if(gamepad1.dpad_right){
                 liftIsStill = false;
                 while(lift.getCurrentPosition()<origLiftPos+3300&&opModeIsActive()){
@@ -109,24 +112,28 @@ public class TestTeleOp extends LinearOpMode {
                 while(lift.getCurrentPosition()>origLiftPos+4200&&opModeIsActive()){
                     lift.setPower(-1);
                     rightLift.setPower(1);
+                    telemetry.addData("liftPos", lift.getCurrentPosition());
+                    telemetry.addData("targetLiftPos", origLiftPos+4200);
                 }
                 maintainLiftPos(origLiftPos+3800, origRightLiftPos-3800);
                 openFourbar();
-                sleep(400);
             } else if(gamepad1.dpad_down){
                 liftIsStill = false;
                 while(lift.getCurrentPosition()<origLiftPos-600&&opModeIsActive()) {
                     lift.setPower(1);
                     rightLift.setPower(-1);
+                    telemetry.addData("liftPos", lift.getCurrentPosition());
+                    telemetry.addData("targetLiftPos", origLiftPos-600);
                 }
 
                 while(lift.getCurrentPosition()>origLiftPos+550&&opModeIsActive()) {
                     lift.setPower(-1);
                     rightLift.setPower(1);
+                    telemetry.addData("liftPos", lift.getCurrentPosition());
+                    telemetry.addData("targetLiftPos", origLiftPos+550);
                 }
                 maintainLiftPos(origLiftPos, origRightLiftPos);
                 closeFourbar();
-                sleep(400);
             }
 
             if (gamepad1.left_trigger > 0.1) {
@@ -147,15 +154,6 @@ public class TestTeleOp extends LinearOpMode {
                 telemetry.addData("liftPos", lift.getCurrentPosition());
                 telemetry.update();
 
-            } else {
-                /*if(liftIsUp){
-                    while(opModeIsActive()&&lift.getCurrentPosition()<(liftPos-50)) {
-                        lift.setPower(0.1);
-                        telemetry.addData("Looping", "Adjusting lift position");
-                    }
-                }*/
-                lift.setPower(0);
-                rightLift.setPower(0);
             }
 
             if(gamepad1.a){
@@ -240,14 +238,17 @@ public class TestTeleOp extends LinearOpMode {
         return (liftIsStill);
     }
 
-    public static void openFourbar() {
-        fourbar.setPosition(origFourbarPos-0.5);
+    public static void openFourbar() throws InterruptedException {
+        fourbar.setPosition(origFourbarPos-0.2);
         fourbarIsUp = true;
+        Thread.currentThread().sleep(400);
     }
 
-    public static void closeFourbar() {
+    public static void closeFourbar() throws InterruptedException{
         fourbar.setPosition(origFourbarPos+1);
         fourbarIsUp = false;
+        Thread.currentThread().sleep(400);
+
     }
 
 }
