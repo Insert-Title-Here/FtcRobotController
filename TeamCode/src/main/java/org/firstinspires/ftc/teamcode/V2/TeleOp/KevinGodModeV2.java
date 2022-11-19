@@ -82,16 +82,16 @@ public class KevinGodModeV2 extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         score.autoGoToPosition();
                         //score.setPower(0.2);
-                        score.setLinkagePosition(constants.linkageScoreV2);
-                        //passive = PassivePower.EXTENDED;
+                        score.setLinkagePosition(constants.linkageScoreV2 - 0.02);
+                        passive = PassivePower.EXTENDED;
 
-                    }/*else {
+                    }else {
                         if(passive == PassivePower.EXTENDED){
                             score.setPower(0.23);
                         }else if(passive == PassivePower.ZERO){
                             score.setPower(0);
                         }
-                    }*/
+                    }
 
 
                     //Scoring feature
@@ -130,15 +130,14 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
                         //Do nothing during movement phase
-                        //passive = PassivePower.MOVEMENT;
-
                         //Reset to zero and no passive power
-                        score.moveToPosition(0, 0.3);
-                        //passive = PassivePower.ZERO;
+                        score.moveToPosition(0, 0.75);
+                        passive = PassivePower.ZERO;
 
                         //Open Grabber and reset linkage
                         score.setGrabberPosition(constants.open);
                         score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
+                        //score.setLinkagePositionLogistic(0.8, 500);
 
                         //TODO: fix this
                         /*score.lowerConeStack();
@@ -157,7 +156,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                         grabFlag = false;
                         try {
-                            sleep(200);
+                            sleep(300);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -181,8 +180,8 @@ public class KevinGodModeV2 extends LinearOpMode {
                                 e.printStackTrace();
                             }
 
-                            score.setLinkagePosition(constants.linkageScoreV2);
-                            //passive = PassivePower.EXTENDED;
+                            score.setLinkagePosition(constants.linkageScoreV2 - 0.02);
+                            passive = PassivePower.EXTENDED;
 
 
                         }
@@ -220,7 +219,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     //Linkage up position
                     if(gamepad1.left_stick_button){
-                        score.setLinkagePositionLogistic(constants.linkageUpV2, 500);
+                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
 
                     }
 
@@ -278,11 +277,13 @@ public class KevinGodModeV2 extends LinearOpMode {
                     }else{
 
                         //Feedforward if slides are extended
-                        /*if(score.isExtended() == true){
+                        if(score.isExtended() == true && (score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2.ScoringMode.MEDIUM)){
                             passive = PassivePower.EXTENDED;
                         }else{
                             passive = PassivePower.ZERO;
-                        }*/
+                        }
+
+
                     }
 
 
@@ -360,7 +361,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePositionLogistic(constants.linkageUpV2, 0, 50);
+                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
                         linkageUp = false;
                     }
                 }
@@ -433,7 +434,10 @@ public class KevinGodModeV2 extends LinearOpMode {
         drive.simpleBrake();
 
         //score.setLinkagePositionLogistic(0.25, 500);
-        score.setLinkagePositionLogistic(constants.linkageDownV2, 500);
+        score.setLinkagePositionLogistic(Constants.linkageDownV2, 500);
+        //score.setLinkagePositionLogistic(0.8, 500);
+
+
 
 
         score.setGrabberPosition(constants.open);

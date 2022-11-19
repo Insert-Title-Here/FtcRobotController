@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @TeleOp
 public class AutoVisionTest extends LinearOpMode {
-    Servo servo;
+    //Servo servo;
     OpenCvWebcam camera;
     KevinGodPipeline pipeline;
     MecDrive drive = new MecDrive(hardwareMap, false, telemetry);
@@ -25,7 +25,7 @@ public class AutoVisionTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        servo = hardwareMap.get(Servo.class, "camera");
+        //servo = hardwareMap.get(Servo.class, "camera");
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -34,7 +34,7 @@ public class AutoVisionTest extends LinearOpMode {
 
         camera.setPipeline(pipeline);
 
-        servo.setPosition(0.085);
+        //servo.setPosition(0.085);
 
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -65,7 +65,7 @@ public class AutoVisionTest extends LinearOpMode {
     }
 
 
-    public void setYCapPosition(double pos){
+    /*public void setYCapPosition(double pos){
         servo.setPosition(pos);
     }
 
@@ -76,6 +76,6 @@ public class AutoVisionTest extends LinearOpMode {
 
     public double getYCapPosition() {
         return servo.getPosition();
-    }
+    }*/
 
 }

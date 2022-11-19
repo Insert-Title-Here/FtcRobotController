@@ -63,7 +63,7 @@ public class ScoringSystemV2 {
         grabber =  hardwareMap.get(Servo.class, "Grabber");
 
 
-        setLinkagePosition(0.1);
+        setLinkagePosition(Constants.linkageDownV2);
         grabber.setPosition(constants.open);
 
     }
@@ -98,7 +98,8 @@ public class ScoringSystemV2 {
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
 
-        setLinkagePosition(0.1);
+        setLinkagePosition(Constants.linkageDownV2);
+        //setLinkagePosition(0.8);
         grabber.setPosition(constants.open);
 
     }
@@ -202,14 +203,14 @@ public class ScoringSystemV2 {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH || height == ScoringMode.ULTRA){
-            moveToPosition(1350, 1);
+            moveToPosition(1400, 1);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(1000, 1);
+            moveToPosition(760, 1);
 
 
         }else if(height == ScoringMode.LOW){
-            moveToPosition(700, 1);
+            moveToPosition(360, 1);
 
         }
 
@@ -220,17 +221,17 @@ public class ScoringSystemV2 {
     public void autoGoToPosition(ScoringMode height) {
         this.height = height;
         if (height == ScoringMode.HIGH || height == ScoringMode.ULTRA) {
-            moveToPosition(1350, 1);
+            moveToPosition(1400, 1);
 
         } else if (height == ScoringMode.MEDIUM) {
 
             //TODO: Find tic value
-            moveToPosition(1000, 1);
+            moveToPosition(760, 1);
 
 
         } else if (height == ScoringMode.LOW) {
             //TODO: Find tic value
-            moveToPosition(700, 1);
+            moveToPosition(360, 1);
 
         }
 
@@ -268,7 +269,7 @@ public class ScoringSystemV2 {
         //TODO: Check if logic for encoder positions works
 
         if(power > 0) {
-            while ((time.seconds() - startTime) < 4 && (rLiftPos < tics || lLiftPos < tics)) {
+            while ((time.seconds() - startTime) < 2.25 && (rLiftPos < tics || lLiftPos < tics)) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -287,7 +288,7 @@ public class ScoringSystemV2 {
 
             }
         }else{
-            while ((time.seconds() - startTime) < 4 && (rLiftPos > tics || lLiftPos > tics)) {
+            while ((time.seconds() - startTime) < 4 &&   (rLiftPos > tics || lLiftPos > tics)) {
 
                 //TODO: figure out if we need to negate either of them
 
