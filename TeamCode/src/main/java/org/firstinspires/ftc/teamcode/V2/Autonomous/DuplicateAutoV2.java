@@ -10,9 +10,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
+import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipelineV2;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -23,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous
 public class DuplicateAutoV2 extends LinearOpMode {
     MecDrive drive;
-    ScoringSystem2 score;
+    ScoringSystemV2 score;
     Constants constants;
     Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
@@ -33,8 +35,8 @@ public class DuplicateAutoV2 extends LinearOpMode {
     Servo cameraServo;
 
     OpenCvWebcam camera;
-    KevinGodPipeline pipeline;
-    KevinGodPipeline.ParkPos parkPos;
+    KevinGodPipelineV2 pipeline;
+    KevinGodPipelineV2.ParkPos parkPos;
 
     int normalizeDistance;
     boolean failed;
@@ -48,7 +50,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
 
         drive = new MecDrive(hardwareMap, false, telemetry, color);
         constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystemV2(hardwareMap, constants);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
@@ -73,7 +75,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 while(opModeIsActive()) {
                     if(armUp.get()) {
                         hold.set(false);
-                        score.setLinkagePositionLogistic(Constants.linkageScore, 300, 50);
+                        score.setLinkagePosition(Constants.linkageScoreV2);
 
                         score.moveToPosition(1400, 1);
                         hold.set(true);
@@ -93,7 +95,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
                         armUp.set(false);
                     }else if(armDown.get()){
                         hold.set(false);
-                        score.setLinkagePosition(Constants.linkageUp);
+                        score.setLinkagePosition(Constants.linkageUpV2);
                         score.moveToPosition(0, 0.5);
                         //score.setLinkagePositionLogistic(Constants.linkageDown, 250, 30);
                         armDown.set(false);
@@ -140,7 +142,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.BLUE_RIGHT);
+        pipeline = new KevinGodPipelineV2(telemetry, drive, KevinGodPipelineV2.AutoSide.RED_RIGHT);
 
         camera.setPipeline(pipeline);
 
@@ -174,7 +176,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
         double startTime = time.seconds();
 
         parkPos = pipeline.getPosition();
-        pipeline.changeMode(KevinGodPipeline.Mode.POLE);
+        //pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
 
 
 
@@ -184,32 +186,116 @@ public class DuplicateAutoV2 extends LinearOpMode {
 
 
 
-
-        cameraServo.setPosition(Constants.pole);
+        pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
+        cameraServo.setPosition(Constants.cone);
 
 
         linkageUp.set(true);
-        drive.goTOPIDPos(-1300, 0.5,MecDrive.MovementType.STRAIGHT);
+        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.7);
 
-        armUp.set(true);
-        drive.tankRotatePID(Math.PI / 5, 0.7, true);
-        sleep(200);
+        //armUp.set(true);
+        drive.tankRotatePID(Math.PI / 2, 0.7, true);
+        //sleep(200);
         //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
-        normalizeDistance = pipeline.normalize(0.2, 172, 2);
+        pipeline.normalize(0.2, 172, 2);
         //pipeline.Ynormalize(0.2, 95, 5);
 
         if(pipeline.getNormalizationBroke()){
             drive.tankRotatePID(Math.PI/2, 0.6, false);
             armDown.set(true);
 
-            if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
+            if (parkPos == KevinGodPipelineV2.ParkPos.LEFT) {
                 drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 0.5);
 
-            } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
+            } else if (parkPos == KevinGodPipelineV2.ParkPos.RIGHT) {
                 drive.simpleMoveToPosition(700, MecDrive.MovementType.STRAIGHT, 0.5 );
 
             }
-        }else {
+        }else{
+
+            cameraServo.setPosition(Constants.pole);
+            pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
+            drive.simpleMoveToPosition(600, MecDrive.MovementType.STRAIGHT, 0.5);
+
+            for(int i = 0; i < 6; i++){
+                pipeline.normalize(0.2, 172, 2);
+
+                cameraServo.setPosition(Constants.cone);
+                pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
+
+
+                //Arm Up
+                hold.set(false);
+
+                score.moveToPosition(1400, 1);
+                hold.set(true);
+
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                score.setGrabberPosition(0.3);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+                //Arm Down
+                hold.set(false);
+
+                score.setLinkagePosition(Constants.linkageUpV2);
+
+                score.moveToPosition(0, 0.8);
+
+                pipeline.normalize(-0.2, 172, 2);
+
+                score.setLinkagePosition(0.23 - (i * 0.03));
+
+                cameraServo.setPosition(Constants.pole);
+                pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
+
+                double startDistanceTime = time.seconds();
+                while (distance.getDistance(DistanceUnit.CM) > 3.8) {
+                    drive.setPowerAuto(0.3, MecDrive.MovementType.STRAIGHT);
+
+                    telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
+                    telemetry.update();
+
+                    if (time.seconds() - startDistanceTime > 3) {
+                        drive.simpleBrake();
+                        drive.tankRotatePID(Math.PI / 2, 0.6, false);
+                        failed = true;
+                        break;
+                    }
+
+                }
+
+                if (failed) {
+                    break;
+                }
+
+                drive.simpleBrake();
+
+
+                score.setGrabberPosition(constants.grabbing);
+                sleep(400);
+
+                score.setLinkagePosition(Constants.linkageScoreV2);
+
+                drive.simpleMoveToPosition(-70, MecDrive.MovementType.STRAIGHT, 0.4);
+
+
+
+
+            }
+        }
+
+
+        /*else {
 
 
             //drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAIGHT, 0.3);
@@ -228,7 +314,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
 
             drive.goTOPIDPos(-1300, 0.5,MecDrive.MovementType.STRAIGHT);
 
-            pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
+            pipeline.changeMode(KevinGodPipelineV2.Mode.BLUECONE);
 
 
             //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
@@ -272,7 +358,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.3);
 
             }
-*/
+
                 pipeline.normalizeStrafe(-0.35, 170, 5);
 
                 if(pipeline.getNormalizationBroke()){
@@ -315,7 +401,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 finalMove.set(true);
 
 
-                pipeline.changeMode(KevinGodPipeline.Mode.POLE);
+                pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
                 cameraServo.setPosition(Constants.pole);
 
                 drive.goTOPIDPos(-1035, 1, MecDrive.MovementType.STRAIGHT);
@@ -355,7 +441,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 sleep(200);
 
                 armDown.set(true);
-                pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
+                pipeline.changeMode(KevinGodPipelineV2.Mode.BLUECONE);
 
 
                 //drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
@@ -384,24 +470,26 @@ public class DuplicateAutoV2 extends LinearOpMode {
             //drive.coast();
 
             if (failed) {
-                if (parkPos == KevinGodPipeline.ParkPos.CENTER) {
+                if (parkPos == KevinGodPipelineV2.ParkPos.CENTER) {
                     drive.simpleMoveToPosition(-700, MecDrive.MovementType.STRAIGHT, 0.5);
 
-                } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
+                } else if (parkPos == KevinGodPipelineV2.ParkPos.RIGHT) {
                     drive.simpleMoveToPosition(-1500, MecDrive.MovementType.STRAIGHT, 0.5);
 
                 }
 
             } else {
-                if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
+                if (parkPos == KevinGodPipelineV2.ParkPos.LEFT) {
                     drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 0.8);
 
-                } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
+                } else if (parkPos == KevinGodPipelineV2.ParkPos.RIGHT) {
                     drive.simpleMoveToPosition(700, MecDrive.MovementType.STRAIGHT, 1);
 
                 }
             }
         }
+
+         */
 
         //Will have to check if this aligns straight already (need color sensor or not) ->
         // may need to turn into slight diagonal instead of straight to check color
