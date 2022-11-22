@@ -76,7 +76,7 @@ public class SecondTeleOp extends LinearOpMode {
                         if(score.getEncoderPosition() > constant.getHeightLimit()){
                             score.setPower(constant.getSteadyPow());
                         }else{
-                            score.setPower(constant.getSteadyPow());
+                            score.setPower(0.9);
                         }
                     }else if(gamepad1.left_bumper) {
                         if(score.getEncoderPosition() < 3){
@@ -271,7 +271,7 @@ public class SecondTeleOp extends LinearOpMode {
                 drive.turn(Math.PI/4, 0);
             }
             if(gamepad1.dpad_up){
-                drive.goToPosition(0, 0, 0, 0, 1000, "test");
+                drive.goToPosition(0, 0, 0, 0, 2000, "test");
             }
 
             //resets the drive motor encoders
@@ -299,6 +299,7 @@ public class SecondTeleOp extends LinearOpMode {
 
         }
         drive.writeLoggerToFile();
+        score.writeLoggerToFile();
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
         score.setClawPosition(1);

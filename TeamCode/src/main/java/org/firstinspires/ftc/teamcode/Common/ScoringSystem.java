@@ -11,6 +11,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 public class ScoringSystem {
     private DcMotor liftMotor;
@@ -19,6 +24,9 @@ public class ScoringSystem {
     ColorRangeSensor colorCone;
     Telemetry telemetry;
     Constants constant;
+    File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
+
+    public String loggingString;
 
     public ScoringSystem(HardwareMap hardwareMap, Telemetry telemetry) {
         /* the below is init*/
@@ -45,47 +53,68 @@ public class ScoringSystem {
     public void goToPosition(int tics, double power) {
 
         int motorPosition = liftMotor.getCurrentPosition();
-
+        int negPos = 1;
         if (motorPosition > tics) {
-            power *= -1;
+            negPos *= -1;
         }
+        double startingPos = getEncoderPosition();
         long time = System.currentTimeMillis();
-        long difference= 0;
+        long timeChange= 0;
         boolean notReached = true;
         double currentError = tics - getEncoderPosition();
         double priorError = tics - getEncoderPosition();
         double proportionPow;
         double derivativePow;
-        while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
-            priorError = currentError;
+        while (Math.abs(Math.abs(tics)-motorPosition) > 1 && notReached) {
             if(tics == 0){
-                proportionPow = currentError * 0.4;
-
+                proportionPow = currentError * 0.004;
+                derivativePow = /*((currentError-priorError)/timeChange) * 2*/0.2;
             }else{
-                proportionPow = currentError * 0.82;
-
+                proportionPow = /*currentError * 0.82*/1;
+                derivativePow =  0/*((currentError-priorError)/timeChange) * 0.65*/;
             }
-            derivativePow =  ((currentError-priorError)/difference) * 0.65;
+            priorError = currentError;
 
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
-            if((Math.abs(difference) > 5000)){
+            if((Math.abs(timeChange) > 3000)){
                 liftMotor.setPower(0);
+                //stops while loop
                 notReached = false;
+                break;
             }else{
-                liftMotor.setPower(proportionPow + derivativePow);
-                motorPosition = liftMotor.getCurrentPosition();
+                if(startingPos < 300 && tics == 0){
+                    liftMotor.setPower(negPos*0.1);
+
+                }else{
+                    liftMotor.setPower(proportionPow + derivativePow);
+                    motorPosition = liftMotor.getCurrentPosition();
+                }
             }
             currentError = tics - getEncoderPosition();
-            difference =  System.currentTimeMillis() - time;
-
+            timeChange =  System.currentTimeMillis() - time;
+            loggingString += "PriorError: " + priorError + "   ";
+            loggingString += "CurrentError: " + currentError + "   ";
+            loggingString += "proportionPow: " + proportionPow + "   ";
+            loggingString += "derivativePower: " + derivativePow + "   ";
+            loggingString += "CurrentPower: " + getPower() + "   ";
+            loggingString += "DrivePower: " + (proportionPow + derivativePow) + "\n";
         }
+        loggingString += "---------------------------------------------------\n";
 
 
         liftMotor.setPower(0);
 
     }
 
+    public void writeLoggerToFile(){
+        try{
+            PrintStream toFile = new PrintStream(loggingFile);
+            toFile.println(loggingString);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+    }
     public void setPower(double power){
         liftMotor.setPower(power);
     }

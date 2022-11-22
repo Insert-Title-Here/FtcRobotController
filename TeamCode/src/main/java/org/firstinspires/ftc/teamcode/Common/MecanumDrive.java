@@ -26,7 +26,7 @@ public class MecanumDrive {
     double accumulatedError;
     double error;
     // creates/accesses file
-    File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
+    File loggingFile = AppUtil.getInstance().getSettingsFile("driveTelemetry.txt");
     // holds data
     public String loggingString;
     //constructor
@@ -45,6 +45,7 @@ public class MecanumDrive {
         this.telemetry = telemetry;
         active = new AtomicBoolean();
         colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
+        accumulatedError = 0;
 
 
         //initiallises drive motors
@@ -141,8 +142,9 @@ public class MecanumDrive {
 
         // won't work for turns, only forward and backward
         //avg position from all four drive motors
-        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-                Math.abs(br.getCurrentPosition())) / 4;
+        //int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+                //Math.abs(br.getCurrentPosition())) / 4;
+        int position = (int)(Math.abs(fr.getCurrentPosition()));
 
         telemetry.addData("motorPosition", position);
         telemetry.update();
@@ -153,13 +155,15 @@ public class MecanumDrive {
         double priorAngleError = 0;
         double currentAngleError = 0;
         //Encoder based gotoposition
-        while (Math.abs(currentError) > 0.001) {
+        //Math.abs(currentError) > 0.001
+        while ((Math.abs(tics) - position) > 0) {
             double drivePower = 0;
             double addedDrivePow = 0;
-            priorAngleError = currentAngleError;
-            priorError = currentError;
+
             drivePower = PIDDrivePower(priorError, currentError, timeDifference);
             addedDrivePow = additionalPow(priorAngleError, currentAngleError, timeDifference);
+            priorAngleError = currentAngleError;
+            priorError = currentError;
             /*
             if(imu.getAngularOrientation().firstAngle > 0){
                 setPower(drivePower, drivePower - addedDrivePow, drivePower, drivePower - addedDrivePow);
@@ -170,12 +174,17 @@ public class MecanumDrive {
              */
                 setPower(drivePower, drivePower, drivePower, drivePower);
             //}
-            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-                    Math.abs(br.getCurrentPosition())) / 4;
+            //position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+                    //Math.abs(br.getCurrentPosition())) / 4;
+            position = (int)Math.abs(fr.getCurrentPosition());
             currentError = tics - position;
             currentAngleError = Math.abs(imu.getAngularOrientation().firstAngle);
             timeDifference = System.currentTimeMillis() - time;
+            accumulateError(timeDifference, currentError);
+            if(timeDifference > tics * 1)break;
         }
+        accumulatedError = 0;
+        loggingString +="----------------------------------------------------------------------------\n";
         /*
         loggingString += action.toUpperCase() + "\n";
         loggingString += "FL Position: " + getFLPosition() + "\n";
@@ -232,7 +241,7 @@ public class MecanumDrive {
         double timeDifference = 0;
         double before;
         double after;
-        loggingString += "CurrentAngle: " + initialAngle + "\n";
+       // loggingString += "CurrentAngle: " + initialAngle + "\n";
         while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
             double drivePower = 0;
             if(currentAngleError == priorAngleError){
@@ -349,25 +358,35 @@ public class MecanumDrive {
      */
     //PID testing not currently operational
     public double PIDTurnPower(double priorError, double currentError, double timeChange) {
-        double proportionCoefficient = 0.7065;//0.75
+        double proportionCoefficient = 0.707;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.678;//0.8
+        double derivativeCoefficient = 0.68;//0.8
         error = currentError;
+        /*
         loggingString += "PriorAngleError: " + priorError + "   ";
         loggingString += "CurrentAngleError: " + currentError + "   ";
         loggingString += "DrivePower: " +  currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient + "   ";
         loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
         loggingString += "proportionPower: " + getAccumulatedError() * integralCoefficient + "   ";
         loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
+
+         */
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
     }
     //TODO
     public double PIDDrivePower(double priorError, double currentError, double timeChange){
         double proportionCoefficient = 0.001;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0;//0.8
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+        loggingString += "PriorError: " + priorError + "   ";
+        loggingString += "CurrentError: " + currentError + "   ";
+        loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
+        loggingString += "proportionPower: " + currentError * proportionCoefficient+ "   ";
+        loggingString += "integralPower: " + getAccumulatedError() * integralCoefficient + "   ";
+        loggingString += "DrivePower: " + totalPower + "\n";
         error = currentError;
-        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+        return totalPower;
     }
     //TODO
     //used for robot not moving straight
