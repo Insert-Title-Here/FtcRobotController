@@ -487,7 +487,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
             }*/
 
-            power = error * p;
+            power = 0.2;
 
             drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
         }

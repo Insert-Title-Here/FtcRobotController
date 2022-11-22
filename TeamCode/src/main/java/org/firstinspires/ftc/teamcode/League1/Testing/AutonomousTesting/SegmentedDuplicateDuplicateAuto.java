@@ -141,6 +141,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
                 //score.setLinkagePosition(0.7);
                 while(opModeIsActive()) {
                     if(armUp.get()) {
+
                         hold.set(false);
 
                         /*
@@ -154,8 +155,8 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
                         score.moveToPosition(830, 1);
                         hold.set(true);
-                        score.setLinkagePositionLogistic(Constants.linkageScore, 300, 50);
 
+                        score.setLinkagePositionLogistic(Constants.linkageScore, 100, 50);
 
                         try {
                             Thread.sleep(500);
@@ -358,7 +359,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
                 double startDistanceTime = time.seconds();
                 while (distance.getDistance(DistanceUnit.CM) > 3.8) {
-                    drive.setPowerAuto(0.45, MecDrive.MovementType.STRAIGHT);
+                    drive.setPowerAuto(0.7, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                     telemetry.update();
@@ -416,11 +417,11 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
 
 
-                drive.tankRotatePID(Math.PI / 5, 0.8, true);
+                drive.tankRotatePID(Math.PI / 4.7, 0.8, true);
                 //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
                 normalizeDistance = pipeline.normalize(0.2, 172, 2);
 
-                score.setLinkagePositionLogistic(Constants.linkageScore, 300, 50);
+                score.setLinkagePositionLogistic(Constants.linkageScore, 100, 50);
 
                 sleep(500);
                 score.setGrabberPosition(0.3);
