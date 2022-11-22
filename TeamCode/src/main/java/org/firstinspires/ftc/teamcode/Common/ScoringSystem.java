@@ -51,29 +51,16 @@ public class ScoringSystem {
 
     //goes to given tics
     public void goToPosition(int tics, double power) {
-
         int motorPosition = liftMotor.getCurrentPosition();
-        int negPos = 1;
         if (motorPosition > tics) {
-            negPos *= -1;
+            power *= -1;
         }
-        double startingPos = getEncoderPosition();
         long time = System.currentTimeMillis();
         long timeChange= 0;
         boolean notReached = true;
-        double currentError = tics - getEncoderPosition();
-        double priorError = tics - getEncoderPosition();
         double proportionPow;
         double derivativePow;
-        while (Math.abs(Math.abs(tics)-motorPosition) > 1 && notReached) {
-            if(tics == 0){
-                proportionPow = currentError * 0.004;
-                derivativePow = /*((currentError-priorError)/timeChange) * 2*/0.2;
-            }else{
-                proportionPow = /*currentError * 0.82*/1;
-                derivativePow =  0/*((currentError-priorError)/timeChange) * 0.65*/;
-            }
-            priorError = currentError;
+        while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
 
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
@@ -83,24 +70,11 @@ public class ScoringSystem {
                 notReached = false;
                 break;
             }else{
-                if(startingPos < 300 && tics == 0){
-                    liftMotor.setPower(negPos*0.1);
-
-                }else{
-                    liftMotor.setPower(proportionPow + derivativePow);
-                    motorPosition = liftMotor.getCurrentPosition();
-                }
+                liftMotor.setPower(power);
+                motorPosition = liftMotor.getCurrentPosition();
             }
-            currentError = tics - getEncoderPosition();
             timeChange =  System.currentTimeMillis() - time;
-            loggingString += "PriorError: " + priorError + "   ";
-            loggingString += "CurrentError: " + currentError + "   ";
-            loggingString += "proportionPow: " + proportionPow + "   ";
-            loggingString += "derivativePower: " + derivativePow + "   ";
-            loggingString += "CurrentPower: " + getPower() + "   ";
-            loggingString += "DrivePower: " + (proportionPow + derivativePow) + "\n";
         }
-        loggingString += "---------------------------------------------------\n";
 
 
         liftMotor.setPower(0);
@@ -155,7 +129,7 @@ public class ScoringSystem {
             setClawPosition(constant.getClawClosePos());
             sleep(400);
             // lift up
-            goToPosition(getEncoderPosition() + 100, 0.6);
+            goToPosition(getEncoderPosition() + 100, 1);
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
             telemetry.update();
             return true;
@@ -173,9 +147,9 @@ public class ScoringSystem {
             // lift up
             if(stack){
                 sleep(300);
-                goToPosition(getEncoderPosition() + 50, 0.6);
+                goToPosition(getEncoderPosition() + 50, 1);
             }else{
-                goToPosition(getEncoderPosition() + 100, 0.6);
+                goToPosition(getEncoderPosition() + 100, 1);
             }
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
             telemetry.update();
@@ -197,7 +171,7 @@ public class ScoringSystem {
                 e.printStackTrace();
             }
             // lift up
-            goToPosition(getEncoderPosition() + 50, 0.6);
+            goToPosition(getEncoderPosition() + 50, 1);
 
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
             telemetry.update();
