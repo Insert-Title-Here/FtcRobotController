@@ -90,7 +90,7 @@ public class CamwithContours extends LinearOpMode {
     }
     public void blueRight() throws InterruptedException {
         // go forward next to pole
-        drive.goToPosition(0, 0, 0, 0, drive.avgPosition(0, 0, 0, 0), "go forward next to pole");
+        drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(1376, 1356, 1347, 1342), "go forward next to pole");
         // turn to left 45 degrees to medium pole
         drive.turn(Math.PI / 4, 0);
         // camera position correction
@@ -109,24 +109,24 @@ public class CamwithContours extends LinearOpMode {
         } else { // cX must equal to 160
             // move forward until close enough
         }
-        // go forward a bit to pole
-        drive.goToPosition(0, 0, 0, 0, drive.avgPosition(0, 0, 0, 0), "go forward to pole");
         // scoring cone
-        scoreCone(0, 0, 0, 0);
+        scoreCone(438, 416, 437, 426);
         // turn back straight
         drive.turn(-Math.PI / 4, 0);
         //go forward to blue cone tape adjacent mat
-        drive.goToPosition(0, 0, 0, 0, drive.avgPosition(0, 0, 0, 0), "go forward to next mat");
+        drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(1028, 1056, 1041, 1026), "go forward to next mat");
         // turn to tape/cones
         drive.turn(Math.PI / 2, 0);
         // find tape, get cone
         useColorSensor();
         // back up
-        drive.goToPosition(0, 0, 0, 0, drive.avgPosition(0, 0, 0, 0), "back up");
+        drive.goToPosition(-0.4, -0.4, -0.4, -0.4, -284, "back up");
+        //put lift down
+
         // turn 90 to the right
         drive.turn(-Math.PI / 2, 0);
         // strafe right
-        drive.goToPosition(0, -0, -0, 0, drive.avgPosition(0, 0, 0, 0), "strafe right");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, drive.avgPosition(-1727, 1651, 1650, -1601), "strafe right");
         // camera position correction
         if (detect.getcX() < 160) { //TODO: figure out value for 160
             while (detect.getcX() < 160) {
@@ -144,7 +144,7 @@ public class CamwithContours extends LinearOpMode {
             // move forward until close enough
         }
         // scoring cone
-        scoreCone(0, 0, 0, 0);
+        scoreCone(184, 165, 163, 147);
 /*
         //moves robot to correct parking position
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {

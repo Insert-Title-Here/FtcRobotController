@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -15,6 +16,9 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 @Config
@@ -28,7 +32,18 @@ public class ContourMultiScore extends OpenCvPipeline {
     private  int cY;
     private List<MatOfPoint> contours = new ArrayList<>();
     private Point[] mainContour;
-    double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour = 0;
+    private ArrayList<Double> leftContour, rightContour;
+    private Point[] loopSpecificPoints;
+    double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference = 0;
+    // for points on contour
+    double numCurrent, num1Prev, num2Prev, num3Prev, num4Prev, num5Prev = 0;
+    boolean toggle, toggle2;
+
+    // creates/accesses file
+    File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
+    // holds data
+    public String loggingString;
+
     Telemetry telemetry;
 
     /* make stuff public static  */
@@ -46,9 +61,18 @@ public class ContourMultiScore extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        // var inits / resets
         knownWidth = 1.04; //inches
         contours = new ArrayList<>();
         // 43, 157, 166
+        perWidth = 0;
+        rightOfContour = 0;
+        leftOfContour = 0;
+        difference = 0;
+        toggle = true;
+        toggle2 = false;
+        leftContour = new ArrayList<>();
+        rightContour = new ArrayList<>();
 
         generalMat = input.clone();
         //input.copyTo(generalMat);
@@ -95,7 +119,7 @@ public class ContourMultiScore extends OpenCvPipeline {
 
             // bounding box (approximate width)
             Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
-            perWidth = boundRect.width;
+            perWidth = boundRect.width - 3.2;
 
     /*
             int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
@@ -115,36 +139,123 @@ public class ContourMultiScore extends OpenCvPipeline {
             double centerY = boundRect.y + (boundRect.height / 2)
     */
             // gets points of the main contour
-            mainContour = contours.get(indexOfMax).toArray();
-            try {
-                // loops through the x values for the contour
-                for (int i = 0; i < mainContour.length / 2; i++) {
-                    leftOfContour += mainContour[i].x;
+//            mainContour = contours.get(indexOfMax).toArray();
+//            //telemetry.addData("bottom line 1", mainContour[mainContour.length - 34].x +"  "+ mainContour[mainContour.length - 34].y);
+//            //telemetry.addData("bottom line 2", mainContour[mainContour.length - 35].x +"  "+ mainContour[mainContour.length - 35].y);
+//            //telemetry.update();
+//            if (mainContour.length > 6) {
+//                loopSpecificPoints = new Point[]{mainContour[(int) (mainContour.length / 10)], mainContour[(int) (mainContour.length / 9)], mainContour[(int) (mainContour.length / 8)], mainContour[(int) (mainContour.length / 6)], mainContour[(int) (mainContour.length / 4)]};
+//                // loop to get indexes for more looping :) --> adds needed points to arrays
+//                for (int i = mainContour.length - 1; i >= mainContour.length / 2; i--) {
+//                    loggingString += (mainContour[i].toString() + "\n");
+//                    for (int j = 0; j < loopSpecificPoints.length; j++) {
+//                        if (mainContour[i].y == loopSpecificPoints[j].y) {
+//                            difference += (Math.abs(mainContour[i].x - loopSpecificPoints[j].x));
+//                            loggingString += ("coordinate - value: " + mainContour[i].x + ", " + mainContour[i].y+ ", pre coordinate value: " + loopSpecificPoints[j].x + ", " + loopSpecificPoints[i].y + " total: " + difference + "\n");
+//                        }
+//                    }
+//
+//
+//                    /*
+//                    if (i >= 5) {
+//                        num5Prev = mainContour[i - 5].x;
+//                        num4Prev = mainContour[i - 4].x;
+//                        num3Prev = mainContour[i - 3].x;
+//                        num2Prev = mainContour[i - 2].x;
+//                        num1Prev = mainContour[i - 1].x;
+//                        numCurrent = mainContour[i].x;
+//
+//
+//                        if (num5Prev < num4Prev && num4Prev == num3Prev && num3Prev == num2Prev && num2Prev == num1Prev && num1Prev == numCurrent) {
+//                            // left top (last element / index of arraylist)
+//                            telemetry.addData("leftContour.add(mainContour[i - 4].x);", mainContour[i - 4].x);
+//                            telemetry.update();
+//                            leftContour.add(mainContour[i - 4].x);
+//                            toggle = false;
+//                        } else if (num5Prev == num4Prev && num4Prev == num3Prev && num3Prev == num2Prev && num2Prev == num1Prev && num1Prev != numCurrent) {
+//                            // right top (first element / index of the right arraylist)
+//                            telemetry.addData("rightContour.add(mainContour[i - 1].x);", mainContour[i - 1].x);
+//                            telemetry.update();
+//                            rightContour.add(mainContour[i - 1].x);
+//                            toggle2 = true;
+//                            toggle = false;
+//                        }
+//
+//                        if (rightContour != null) {
+//
+//                            if (rightContour.size() > 3 && leftContour.size() > 3 && rightContour.size() == leftContour.size()) {
+//                                telemetry.addData("break", mainContour[i - 1].x);
+//                                telemetry.update();
+//                                break;
+//                            }
+//                        }
+//
+//                        if (toggle2 && (rightContour.size() != leftContour.size())) {
+//                            rightContour.add(mainContour[i].x);
+//                            telemetry.addData("toggle2", mainContour[i - 1].x);
+//                            telemetry.update();
+//                        }
+//                        if (toggle) {
+//                            leftContour.add(mainContour[i - 5].x);
+////                            telemetry.addData("toggle", mainContour[i - 1].x);
+//                            telemetry.update();
+//                        }
+//                    }
+//                    */
+//
+//                }
+//
+//                /*
+//                // compare the 2 lists (average distance)
+//                for (int i = 0; i < rightContour.size(); i++) {
+//                    leftOfContour += leftContour.get(i);
+//                    rightOfContour += rightContour.get(i);
+//
+//                }
+//                */
+//                 //*/
+//                //perWidth = Math.abs(leftOfContour - rightOfContour) / (rightContour.size());
+//                perWidth = difference / loopSpecificPoints.length;
+
+    /*
+                try {
+                    // loops through the x values for the contour
+                    for (int i = 0; i < mainContour.length / 2 - 30; i++) {
+                        leftOfContour += mainContour[i].x;
+                    }
+                    for (int i = mainContour.length - 1; i >= mainContour.length / 2; i--) {
+                        rightOfContour += mainContour[i].x;
+                    }
+                    //gets the average distance between each x point (that's why it's divided by one half of
+                    //the values it looped for; the difference means every 2 instead of the average of every 1)
+                    perWidth = Math.abs(leftOfContour - rightOfContour) / (mainContour.length / 2);
+                } catch (Exception e){
+                    telemetry.addData("error", e);
                 }
-                for (int i = mainContour.length - 1; i >= mainContour.length / 2; i--) {
-                    rightOfContour += mainContour[i].x;
-                }
-                //gets the average distance between each x point (that's why it's divided by one half of
-                //the values it looped for; the difference means every 2 instead of the average of every 1)
-                perWidth = Math.abs(leftOfContour - rightOfContour) / (mainContour.length / 2);
-            } catch (Exception e){
-                telemetry.addData("error", e);
-            }
-            //draws circle of centroid
-            Imgproc.circle(generalMat, new Point(cX, cY), 1, new Scalar(255,49,0,255), 2);
-            focalLength = (398.0769230769231 + 354.8076923076923 + 346.1538461538462 + 391.3461538461538) / 4.0;
-            distance = distanceFromPole(1.04, focalLength, perWidth);
+    */
 
-            telemetry.addData("index", indexOfMax);
-            telemetry.addData("cX", cX);
-            telemetry.addData("cY", cY);
-            telemetry.addData("width", perWidth);
-            telemetry.addData("distanceInches", distance - 0.75);
-            telemetry.addData("array", mainContour[0].x +" "+ mainContour[0].y);
-            telemetry.addData("array", mainContour[1].x +" "+ mainContour[1].y);
+                //draws circle of centroid
+                Imgproc.circle(generalMat, new Point(cX, cY), 1, new Scalar(255, 49, 0, 255), 2);
+                focalLength = (398.0769230769231 + 354.8076923076923 + 346.1538461538462 + 391.3461538461538) / 4.0;
+                distance = distanceFromPole(1.04, focalLength, perWidth);
 
+                telemetry.addData("index", indexOfMax);
+                telemetry.addData("cX", cX);
+                telemetry.addData("cY", cY);
+                telemetry.addData("width", perWidth);
+                telemetry.addData("width v.2", boundRect.width);
+                telemetry.addData("distanceInches", distance);
+//                telemetry.addData("array", mainContour[0].x + " " + mainContour[0].y);
+//                telemetry.addData("array", mainContour[1].x + " " + mainContour[1].y);
+//                telemetry.addData("leftcontour size", leftContour.size());
+//                telemetry.addData("rightcontour size", rightContour.size());
+//                telemetry.addData("maincontour", mainContour[1].y);
+//
+                loggingString += ("---------------------------------------------------------" + "\n");
+                writeLoggerToFile();
 
-            telemetry.update();
+                telemetry.update();
+//            }
         }
         return generalMat;
     }
@@ -180,5 +291,14 @@ public class ContourMultiScore extends OpenCvPipeline {
 
     public int getcY() {
         return cY;
+    }
+    // logs string into file
+    public void writeLoggerToFile(){
+        try{
+            PrintStream toFile = new PrintStream(loggingFile);
+            toFile.println(loggingString);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
     }
 }
