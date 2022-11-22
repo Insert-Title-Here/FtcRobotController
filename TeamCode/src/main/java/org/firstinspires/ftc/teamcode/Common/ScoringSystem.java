@@ -5,6 +5,7 @@ import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -17,6 +18,7 @@ public class ScoringSystem {
     MecanumDrive drive;
     ColorRangeSensor colorCone;
     Telemetry telemetry;
+    Constants constant;
 
     public ScoringSystem(HardwareMap hardwareMap, Telemetry telemetry) {
         /* the below is init*/
@@ -35,6 +37,7 @@ public class ScoringSystem {
         // when the power is zero, it'll resist movement/change
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
     }
 
@@ -55,8 +58,14 @@ public class ScoringSystem {
         double derivativePow;
         while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
             priorError = currentError;
-            proportionPow = currentError * 0.67;
-            derivativePow =  ((currentError-priorError)/difference) * 0.8;
+            if(tics == 0){
+                proportionPow = currentError * 0.4;
+
+            }else{
+                proportionPow = currentError * 0.82;
+
+            }
+            derivativePow =  ((currentError-priorError)/difference) * 0.65;
 
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
@@ -64,7 +73,7 @@ public class ScoringSystem {
                 liftMotor.setPower(0);
                 notReached = false;
             }else{
-                liftMotor.setPower(proportionPow);
+                liftMotor.setPower(proportionPow + derivativePow);
                 motorPosition = liftMotor.getCurrentPosition();
             }
             currentError = tics - getEncoderPosition();
@@ -114,7 +123,7 @@ public class ScoringSystem {
     public boolean grabCone() throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 0.9) {
             // grab cone
-            setClawPosition(0.34);
+            setClawPosition(constant.getClawClosePos());
             sleep(400);
             // lift up
             goToPosition(getEncoderPosition() + 100, 0.6);
@@ -130,12 +139,12 @@ public class ScoringSystem {
     public boolean grabCone(boolean stack) throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 1) {
             // grab cone
-            setClawPosition(0.34);
+            setClawPosition(constant.getClawClosePos());
             sleep(400);
             // lift up
             if(stack){
                 sleep(300);
-                goToPosition(getEncoderPosition() + 320, 0.6);
+                goToPosition(getEncoderPosition() + 50, 0.6);
             }else{
                 goToPosition(getEncoderPosition() + 100, 0.6);
             }
@@ -152,21 +161,19 @@ public class ScoringSystem {
         if (colorCone.getDistance(DistanceUnit.CM) < 1) {
 
             // grab cone
-            setClawPosition(0.24);
+            setClawPosition(constant.getClawClosePos());
             try {
                 sleep(400);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             // lift up
-            goToPosition(getEncoderPosition() + 250, 0.6);
+            goToPosition(getEncoderPosition() + 50, 0.6);
 
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
     }
-
-
 
     public double getDistance() {
         return colorCone.getDistance(DistanceUnit.CM);
