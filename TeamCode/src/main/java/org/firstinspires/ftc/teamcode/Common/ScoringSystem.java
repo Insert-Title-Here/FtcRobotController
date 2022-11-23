@@ -69,8 +69,14 @@ public class ScoringSystem {
                 //stops while loop
                 notReached = false;
                 break;
+            }else if(Math.abs(Math.abs(tics)-motorPosition) < 5){//This is just a failsafe to stop the loop
+                break;
             }else{
-                liftMotor.setPower(power);
+                if(motorPosition < 100){
+                    liftMotor.setPower(power/4);
+                }else{
+                    liftMotor.setPower(power);
+                }
                 motorPosition = liftMotor.getCurrentPosition();
             }
             timeChange =  System.currentTimeMillis() - time;

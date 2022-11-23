@@ -7,16 +7,25 @@ public class Constants {
     private int heightMed = 975;
     private int heightLow = 580;
     private double clawOpenPos = 0.0;
-    private double clawClosePos = 0.34;
+    private double clawClosePos = 0.31;
+    private double clawLowThreshold = 0.28;
+    private double clawHighThreshold = 0.35;
     private int stackHeight = 174;
-    private double steadyPow = 0.1;
+    private double steadyPow = 0.16;
     private int stackIntervalHeight = 50;
-
+    private int heightBottom = 10;
+    //TODO: add comments
     public double getClawOpenPos(){
         return clawOpenPos;
     }
     public double getClawClosePos(){
         return clawClosePos;
+    }
+    public double getClawLowThreshold(){
+        return clawLowThreshold;
+    }
+    public double getClawHighThreshold(){
+        return clawHighThreshold;
     }
     public int getHeightTrueLimit(){
         return heightTrueLimit;
@@ -41,6 +50,9 @@ public class Constants {
     }
     public int getStackIntervalHeight(){
         return stackIntervalHeight;
+    }
+    public int getHeightBottom(){
+        return heightBottom;
     }
 
 }
