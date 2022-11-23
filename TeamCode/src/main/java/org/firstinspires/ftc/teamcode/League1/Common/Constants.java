@@ -21,6 +21,12 @@ public class Constants {
     public static final double cone = 0.8;
 
 
+    //Camera Servo Constant
+    public static final double sleeveV2 = 0.18; // was 0.875
+    public static final double poleV2 = 0.4;
+    public static final double coneV2 = 0.905;
+
+
     //Axon Duo Positions
     public static final double linkageDown = 0.89; // was 0.875
     public static final double linkageUp = 0.35;

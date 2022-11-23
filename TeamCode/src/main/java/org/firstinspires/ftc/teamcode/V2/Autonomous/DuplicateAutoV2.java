@@ -57,7 +57,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
         linkageUp = new AtomicBoolean(false);
         armDown = new AtomicBoolean(false);
 
-        score.setLinkagePosition(Constants.linkageDown);
+        score.setLinkagePosition(Constants.linkageDownV2);
         score.setGrabberPosition(constants.grabbing);
 
 
@@ -101,7 +101,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
                         armDown.set(false);
                     }else if(finalMove.get()){
 
-                        score.setLinkagePositionLogistic(Constants.linkageUp, 250);
+                        score.setLinkagePositionLogistic(Constants.linkageUpV2, 250);
                         finalMove.set(false);
 
                     }else if(linkageUp.get()){
@@ -110,7 +110,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePosition(Constants.linkageUp);
+                        score.setLinkagePosition(Constants.linkageUpV2);
                         linkageUp.set(false);
                     }
 
@@ -167,7 +167,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
 
 
 
-        cameraServo.setPosition(Constants.sleeve);
+        cameraServo.setPosition(Constants.sleeveV2);
 
 
 
@@ -187,17 +187,17 @@ public class DuplicateAutoV2 extends LinearOpMode {
 
 
         pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
-        cameraServo.setPosition(Constants.cone);
+        cameraServo.setPosition(Constants.coneV2);
 
 
         linkageUp.set(true);
-        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.7);
+        drive.simpleMoveToPosition(-1540, MecDrive.MovementType.STRAIGHT, 0.7);
 
         //armUp.set(true);
-        drive.tankRotatePID(Math.PI / 2, 0.7, true);
+        drive.tankRotatePID(Math.PI / 2, 0.7, false);
         //sleep(200);
         //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
-        pipeline.normalize(0.2, 172, 2);
+        pipeline.normalize(-0.18, 172, 2);
         //pipeline.Ynormalize(0.2, 95, 5);
 
         if(pipeline.getNormalizationBroke()){
@@ -213,26 +213,31 @@ public class DuplicateAutoV2 extends LinearOpMode {
             }
         }else{
 
-            cameraServo.setPosition(Constants.pole);
+            cameraServo.setPosition(Constants.poleV2);
             pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
             drive.simpleMoveToPosition(600, MecDrive.MovementType.STRAIGHT, 0.5);
 
-            for(int i = 0; i < 6; i++){
-                pipeline.normalize(0.2, 172, 2);
+            score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
 
-                cameraServo.setPosition(Constants.cone);
+
+            for(int i = 0; i < 6; i++){
+
+                drive.tankRotatePID(Math.PI / 3, 0.7, false);
+                pipeline.normalize(0.2, 169, 2);
+
+                cameraServo.setPosition(Constants.coneV2);
                 pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
 
 
                 //Arm Up
                 hold.set(false);
 
-                score.moveToPosition(1400, 1);
+                score.moveToPosition(1210, 1);
                 hold.set(true);
 
 
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(400);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -247,20 +252,31 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 //Arm Down
                 hold.set(false);
 
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
                 score.setLinkagePosition(Constants.linkageUpV2);
+
 
                 score.moveToPosition(0, 0.8);
 
-                pipeline.normalize(-0.2, 172, 2);
 
+                drive.tankRotatePID(Math.PI / 2, 0.7, false);
+                pipeline.normalize(-0.3, 172, 2);
+
+                score.setGrabberPosition(Constants.open - 0.12);
                 score.setLinkagePosition(0.23 - (i * 0.03));
 
-                cameraServo.setPosition(Constants.pole);
+                cameraServo.setPosition(Constants.poleV2 - 0.02);
                 pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
 
                 double startDistanceTime = time.seconds();
                 while (distance.getDistance(DistanceUnit.CM) > 3.8) {
-                    drive.setPowerAuto(0.3, MecDrive.MovementType.STRAIGHT);
+                    drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                     telemetry.update();
@@ -284,9 +300,9 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 score.setGrabberPosition(constants.grabbing);
                 sleep(400);
 
-                score.setLinkagePosition(Constants.linkageScoreV2);
+                score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
 
-                drive.simpleMoveToPosition(-70, MecDrive.MovementType.STRAIGHT, 0.4);
+                drive.simpleMoveToPosition(-80, MecDrive.MovementType.STRAIGHT, 0.4);
 
 
 

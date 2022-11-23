@@ -443,6 +443,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
             }
+
+            drive.simpleBrake();
         }
 
         isNormalizing = false;

@@ -64,7 +64,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
         //score.setLinkagePositionLogistic(constants.linkageDown, 500);
-        score.setGrabberPosition(constants.open);
+        score.setGrabberPosition(constants.open - 0.07);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         color = hardwareMap.get(ColorRangeSensor.class, "color");
@@ -131,7 +131,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                         passive = PassivePower.ZERO;
 
                         //Open Grabber and reset linkage
-                        score.setGrabberPosition(constants.open);
+                        score.setGrabberPosition(constants.open - 0.07);
                         //score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
                         //score.setLinkagePositionLogistic(0.8, 500);
 
@@ -236,8 +236,8 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     //Manual open and close grabber
                     if(gamepad1.start && manualFlag){
-                        if(score.getGrabberPosition() != constants.open) {
-                            score.setGrabberPosition(constants.open);
+                        if(score.getGrabberPosition() != constants.open - 0.07) {
+                            score.setGrabberPosition(constants.open - 0.07);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -454,6 +454,6 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
 
-        score.setGrabberPosition(constants.open);
+        score.setGrabberPosition(constants.open - 0.07);
     }
 }
