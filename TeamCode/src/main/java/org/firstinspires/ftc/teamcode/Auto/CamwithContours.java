@@ -24,6 +24,8 @@ public class CamwithContours extends LinearOpMode {
     DetectionAlgorithmTest park;
     OpenCvWebcam webcam;
 
+    public double position = 0.1;
+
     @Override
     public void runOpMode() throws InterruptedException {
         detect = new ContourMultiScore(telemetry);
@@ -76,7 +78,8 @@ public class CamwithContours extends LinearOpMode {
         };
 
 
-
+        // code to turn servo of cam
+        score.setCamPosition(0);
         // ftc dashboard
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
         telemetry.addData("Status", "Initialized");
@@ -86,6 +89,8 @@ public class CamwithContours extends LinearOpMode {
 
         waitForStart();
         webcam.stopStreaming();
+        // turn servo of cam forward for poles
+        score.setCamPosition(position);
         blueRight();
     }
     public void blueRight() throws InterruptedException {

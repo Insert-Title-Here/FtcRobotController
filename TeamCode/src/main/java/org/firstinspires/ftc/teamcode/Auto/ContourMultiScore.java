@@ -53,6 +53,7 @@ public class ContourMultiScore extends OpenCvPipeline {
     public static int upper1 = 255;
     public static int upper2 = 255;
     public static int upper3 = 80;
+    public static double widthRemoveConstant = 3.1;
 
 
     public ContourMultiScore (Telemetry telemetry) {
@@ -119,7 +120,8 @@ public class ContourMultiScore extends OpenCvPipeline {
 
             // bounding box (approximate width)
             Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
-            perWidth = boundRect.width - 3.2;
+            perWidth = boundRect.width - widthRemoveConstant;
+            Imgproc.rectangle(generalMat, boundRect, new Scalar (20,20,20), 1);
 
     /*
             int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
@@ -139,7 +141,7 @@ public class ContourMultiScore extends OpenCvPipeline {
             double centerY = boundRect.y + (boundRect.height / 2)
     */
             // gets points of the main contour
-//            mainContour = contours.get(indexOfMax).toArray();
+            mainContour = contours.get(indexOfMax).toArray();
 //            //telemetry.addData("bottom line 1", mainContour[mainContour.length - 34].x +"  "+ mainContour[mainContour.length - 34].y);
 //            //telemetry.addData("bottom line 2", mainContour[mainContour.length - 35].x +"  "+ mainContour[mainContour.length - 35].y);
 //            //telemetry.update();
@@ -233,6 +235,14 @@ public class ContourMultiScore extends OpenCvPipeline {
                     telemetry.addData("error", e);
                 }
     */
+                for (int i = mainContour.length - 1; i >= 0; i--) {
+                    loggingString += (mainContour[i].toString() + "\n");
+                    if (Math.abs(mainContour[4].x - mainContour[i].x) > 6 && mainContour[i].y > 3) {
+                        perWidth = Math.abs(mainContour[4].x - mainContour[i].x);
+                        loggingString += ("perWidth " + perWidth + "\n");
+                        break;
+                    }
+                }
 
                 //draws circle of centroid
                 Imgproc.circle(generalMat, new Point(cX, cY), 1, new Scalar(255, 49, 0, 255), 2);

@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.Common;
 
-import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -20,6 +18,7 @@ import java.io.PrintStream;
 public class ScoringSystem {
     private DcMotor liftMotor;
     private Servo claw;
+    private Servo camTurn;
     MecanumDrive drive;
     ColorRangeSensor colorCone;
     Telemetry telemetry;
@@ -31,6 +30,7 @@ public class ScoringSystem {
     public ScoringSystem(HardwareMap hardwareMap, Telemetry telemetry) {
         /* the below is init*/
         claw = hardwareMap.get(Servo.class, "claw");
+        camTurn = hardwareMap.get(Servo.class, "camTurn");
         liftMotor = hardwareMap.get(DcMotor.class, "motor");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "colorCone");
         drive = new MecanumDrive(hardwareMap, telemetry);
@@ -106,6 +106,10 @@ public class ScoringSystem {
         claw.setPosition(position);
     }
 
+    public void setCamPosition(double position) {
+        camTurn.setPosition(position);
+    }
+
     public int getEncoderPosition() {
         return liftMotor.getCurrentPosition();
     }
@@ -113,6 +117,10 @@ public class ScoringSystem {
     public double getClawPosition() {
         return claw.getPosition();
     }
+    public double getCamPosition() {
+        return camTurn.getPosition();
+    }
+
     public void resetLiftEncoder(){
          liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
