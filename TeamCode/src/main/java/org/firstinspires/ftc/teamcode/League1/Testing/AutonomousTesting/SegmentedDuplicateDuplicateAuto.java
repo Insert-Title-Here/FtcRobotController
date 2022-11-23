@@ -359,7 +359,11 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
                 double startDistanceTime = time.seconds();
                 while (distance.getDistance(DistanceUnit.CM) > 3.8) {
-                    drive.setPowerAuto(0.7, MecDrive.MovementType.STRAIGHT);
+                    if(drive.getBLEncoder() < 100) {
+                        drive.setPowerAuto(0.7, MecDrive.MovementType.STRAIGHT);
+                    } else {
+                        drive.setPowerAuto(0.3, MecDrive.MovementType.STRAIGHT);
+                    }
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                     telemetry.update();
@@ -383,7 +387,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
                 score.setGrabberPosition(constants.grabbing);
                 sleep(400);
 
-                score.moveToPosition(200, 1);
+                score.moveToPosition(220, 1);
                 hold.set(true);
                 sleep(200);
                 finalMove.set(true);
@@ -417,7 +421,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
 
 
-                drive.tankRotatePID(Math.PI / 4.7, 0.8, true);
+                drive.tankRotatePID(Math.PI / 4, 0.8, true);
                 //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
                 normalizeDistance = pipeline.normalize(0.2, 172, 2);
 

@@ -25,7 +25,7 @@ public class TestingVisionAuto extends LinearOpMode {
 
     OpenCvWebcam camera;
     KevinGodPipeline pipeline;
-    //Servo cameraServo;
+    Servo cameraServo;
     MecDrive drive;
 
     @Override
@@ -34,7 +34,7 @@ public class TestingVisionAuto extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        //cameraServo = hardwareMap.get(Servo.class, "camera");
+        cameraServo = hardwareMap.get(Servo.class, "camera");
         pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.BLUE_RIGHT);
 
         camera.setPipeline(pipeline);
@@ -57,16 +57,16 @@ public class TestingVisionAuto extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
-        pipeline.changeMode(KevinGodPipeline.Mode.POLE);
+        pipeline.changeMode(KevinGodPipeline.Mode.SLEEVE);
 
         while(opModeInInit()){
-            //cameraServo.setPosition(cameraThing.cameraPosition);
+            cameraServo.setPosition(servoHeight);
 
         }
 
 
         waitForStart();
-        pipeline.normalize(-0.2, 160, 5);
+        //pipeline.normalize(-0.2, 160, 5);
 
 
         //SignalPipeline.ParkPos position = pipeline.getPosition();
