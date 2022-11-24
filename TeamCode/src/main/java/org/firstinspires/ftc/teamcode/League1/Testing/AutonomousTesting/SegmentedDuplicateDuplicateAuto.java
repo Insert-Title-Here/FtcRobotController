@@ -159,7 +159,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
                         score.setLinkagePositionLogistic(Constants.linkageScore, 100, 50);
 
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(700);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -268,7 +268,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.goTOPIDPos(-2100, 0.5,MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPos(-2200, 0.5,MecDrive.MovementType.STRAIGHT);
 
         armUp.set(true);
         drive.tankRotatePID(Math.PI / 4.5, 0.7, true);
@@ -312,7 +312,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
             //drive.simpleMoveToPosition(-370 - normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
             //pipeline.normalizeToPole(0.3, 82, 10);
 
-            score.setGrabberPosition(0.65);
+            score.setGrabberPosition(0.55);
 
 
             //drive.tankRotatePID(Math.PI/2, 1);            //pipeline.normalizeToPole(0.3, 42, 5);
@@ -359,13 +359,14 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
                 double startDistanceTime = time.seconds();
                 while (distance.getDistance(DistanceUnit.CM) > 3.8) {
-                    if(drive.getBLEncoder() < 100) {
+                    if(Math.abs(drive.getBLEncoder()) < 500) {
                         drive.setPowerAuto(0.7, MecDrive.MovementType.STRAIGHT);
                     } else {
                         drive.setPowerAuto(0.3, MecDrive.MovementType.STRAIGHT);
                     }
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
+                    telemetry.addData("drive distance", Math.abs(drive.getBLEncoder()));
                     telemetry.update();
 
                     if (time.seconds() - startDistanceTime > 3) {
@@ -396,7 +397,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
                 pipeline.changeMode(KevinGodPipeline.Mode.POLE);
                 cameraServo.setPosition(Constants.pole);
 
-                drive.goTOPIDPos(-1035, 1, MecDrive.MovementType.STRAIGHT);
+                drive.goTOPIDPos(-1135, 1, MecDrive.MovementType.STRAIGHT);
                 if (time.seconds() - startTime > 26) {
                     break;
                 }
@@ -421,7 +422,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
 
 
-                drive.tankRotatePID(Math.PI / 4, 0.8, true);
+                drive.tankRotatePID(Math.PI / 4.3, 0.8, true);
                 //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
                 normalizeDistance = pipeline.normalize(0.2, 172, 2);
 
@@ -464,7 +465,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
                 //drive.simpleMoveToPosition(150, MecDrive.MovementType.STRAFE, 0.4);
                 //drive.goTOPIDPos(150, 1, MecDrive.MovementType.STRAIGHT);
 
-                score.setGrabberPosition(0.65);
+                score.setGrabberPosition(0.55);
 
 
             }
