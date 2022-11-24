@@ -462,6 +462,69 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
     }
 
+    public int normalizeSpecial(double power, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        boolean wrongWay = false;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+
+        if(startPolePosition < xMax){
+            power *= -1;
+        }
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+            /*if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }*/
+
+            drive.setPower(power, 0, power, 0);
+
+            if(time.seconds() - startTime > 1.5){
+                //normlizationBroke = true;
+                wrongWay = true;
+                break;
+            }
+        }
+        drive.simpleBrake();
+
+        if(wrongWay) {
+            while ((getXContour() > xMax || getXContour() < xMin)) {
+            /*if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }*/
+
+                drive.setPower(-power, 0, -power, 0);
+
+
+            }
+
+            drive.simpleBrake();
+        }
+
+        isNormalizing = false;
+
+
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+
+        return (int)(startPos - drive.avgPos());
+
+
+
+    }
+
 
     public double p = 0.008;
     public int normalizeStrafe(double power, int target, int tolerance) {
@@ -480,7 +543,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
             power *= -1;
         }*/
 
-        while((getXContour() > xMax || getXContour() < xMin) && time.seconds() - startTime < 1.5) {
+        while((getXContour() > xMax || getXContour() < xMin)) {
             /*if(getPolePosition() > xMax) {
                 drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
             } else {
@@ -490,6 +553,12 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
             power = 0.2;
 
             drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
+
+            if(time.seconds() - startTime > 1.5){
+                //normlizationBroke = true;
+                wrongWay = true;
+                break;
+            }
         }
         drive.simpleBrake();
 
@@ -505,6 +574,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
             }
+            drive.simpleBrake();
+
         }
 
         isNormalizing = false;
