@@ -374,8 +374,13 @@ public class KevinGodModeV2 extends LinearOpMode {
                         linkageUp = false;
                     }else if(linkageDown) {
 
-
-                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 300);
+                        score.setLinkagePosition(Constants.linkageUpV2);
+                        try {
+                            Thread.sleep(70);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
                         linkageDown = false;
                     }
                 }

@@ -223,7 +223,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
             for(int i = 0; i < 6; i++){
 
                 drive.tankRotatePID(Math.PI / 3, 0.7, false);
-                pipeline.normalize(0.2, 169, 2);
+                normalizeDistance = pipeline.normalize(0.2, 170, 2);
 
                 cameraServo.setPosition(Constants.coneV2);
                 pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
@@ -232,7 +232,12 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 //Arm Up
                 hold.set(false);
 
-                score.moveToPosition(1210, 1);
+                if(i == 0) {
+                    score.moveToPosition(1250, 1);
+                }else{
+                    score.moveToPosition(1300, 1);
+
+                }
                 hold.set(true);
 
 
@@ -266,10 +271,21 @@ public class DuplicateAutoV2 extends LinearOpMode {
 
 
                 drive.tankRotatePID(Math.PI / 2, 0.7, false);
-                pipeline.normalize(-0.3, 172, 2);
+
+                if(i == 0) {
+                    pipeline.normalizeSpecial(-0.3, 172, 2);
+
+                }else{
+                    //pipeline.normalize(-0.2, 172, 2);
+                    pipeline.normalizeSpecial(-0.3, 172, 2);
+
+
+
+                }
+                //drive.simpleMoveToPosition(normalizeDistance, MecDrive.MovementType.ROTATE, 0.35);
 
                 score.setGrabberPosition(Constants.open - 0.12);
-                score.setLinkagePosition(0.23 - (i * 0.03));
+                score.setLinkagePosition(0.245 - (i * 0.03));
 
                 cameraServo.setPosition(Constants.poleV2 - 0.02);
                 pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
@@ -298,11 +314,11 @@ public class DuplicateAutoV2 extends LinearOpMode {
 
 
                 score.setGrabberPosition(constants.grabbing);
-                sleep(400);
+                sleep(500);
 
                 score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
 
-                drive.simpleMoveToPosition(-80, MecDrive.MovementType.STRAIGHT, 0.4);
+                drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.4);
 
 
 
