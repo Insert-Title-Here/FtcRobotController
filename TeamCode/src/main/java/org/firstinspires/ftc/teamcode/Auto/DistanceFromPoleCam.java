@@ -28,7 +28,7 @@ public class DistanceFromPoleCam extends LinearOpMode {
 
             @Override
             public void onOpened() {
-                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override

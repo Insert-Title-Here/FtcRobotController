@@ -170,7 +170,7 @@ public class ContourMultiScore extends OpenCvPipeline {
 
             // bounding box (approximate width)
             Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
-            perWidth = boundRect.width - widthRemoveConstant;
+            perWidth = boundRect.width;
             Imgproc.rectangle(generalMat, boundRect, new Scalar (20,20,20), 1);
 
     /*
@@ -296,7 +296,7 @@ public class ContourMultiScore extends OpenCvPipeline {
 
                 //draws circle of centroid
                 Imgproc.circle(generalMat, new Point(cX, cY), 1, new Scalar(255, 49, 0, 255), 2);
-                focalLength = (398.0769230769231 + 354.8076923076923 + 346.1538461538462 + 391.3461538461538) / 4.0;
+                focalLength = (311.5384615 + 311.5384615 + 311.9711538) / 3.0;
                 distance = distanceFromPole(1.04, focalLength, perWidth);
 
                 telemetry.addData("index", indexOfMax);
