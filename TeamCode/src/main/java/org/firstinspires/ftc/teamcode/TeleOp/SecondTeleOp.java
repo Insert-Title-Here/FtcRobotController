@@ -128,7 +128,7 @@ public class SecondTeleOp extends LinearOpMode {
                             stackHeight.set(stackHeight.get()-constant.getStackIntervalHeight());
                             score.goToPosition(stackHeight.get(), 0.8);
                         }
-                    }else /*if(gamepad1.a && !stackDoubleDown.get())*/{
+                    }else if(!gamepad1.a){
                         stackDoubleDown.set(true);
                     }
                     //moves the slides to the stack of 5 cones height
@@ -141,7 +141,7 @@ public class SecondTeleOp extends LinearOpMode {
                         }else if(stackHeight.get() == constant.getStackHeight()){
                             score.goToPosition(constant.getStackHeight(), 0.8);
                         }
-                    }else /*if(gamepad1.y && !stackDoubleUp.get())*/{
+                    }else if(!gamepad1.y){
                         stackDoubleUp.set(true);
                     }
                     //closes the claw(manually) and opens the claw(like a toggle)
@@ -262,7 +262,7 @@ public class SecondTeleOp extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
-                drive.turn(Math.PI/4, 0);
+                drive.turn(-Math.PI/4, 0);
             }
             if(gamepad1.dpad_up){
                 drive.goToPosition(0, 0, 0, 0, 2000, "test");

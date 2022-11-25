@@ -58,19 +58,15 @@ public class ScoringSystem {
         }
         long time = System.currentTimeMillis();
         long timeChange= 0;
-        boolean notReached = true;
         double proportionPow;
         double derivativePow;
-        while (Math.abs(Math.abs(tics)-motorPosition) > 10 && notReached) {
+        while (Math.abs(Math.abs(tics)-motorPosition) > 10) {
 
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
-            if((Math.abs(timeChange) > 3000)){
+            if((Math.abs(timeChange) > 2000)){
                 liftMotor.setPower(0);
                 //stops while loop
-                notReached = false;
-                break;
-            }else if(Math.abs(Math.abs(tics)-motorPosition) < 5){//This is just a failsafe to stop the loop
                 break;
             }else{
                 if(Math.abs(tics) - motorPosition < 0){

@@ -80,6 +80,7 @@ public class CamwithContours extends LinearOpMode {
 
         // code to turn servo of cam
         score.setCamPosition(position);
+        detect.park = true;
         // ftc dashboard
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
         telemetry.addData("Status", "Initialized");
@@ -88,16 +89,16 @@ public class CamwithContours extends LinearOpMode {
 
 
         waitForStart();
-        webcam.stopStreaming();
+        detect.park = false;
         // turn servo of cam forward for poles
         score.setCamPosition(0);
-        blueRight();
+        blueLeft();
     }
-    public void blueRight() throws InterruptedException {
+    public void blueLeft() throws InterruptedException {
         // go forward next to pole
-        drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(1376, 1356, 1347, 1342), "go forward next to pole");
+        drive.goToPositionPID( drive.avgPosition(1376, 1356, 1347, 1342), "go forward next to pole");
         // turn to left 45 degrees to medium pole
-        drive.turn(Math.PI / 4, 0);
+        drive.turn(-Math.PI / 4, 0);
         // camera position correction
         if (detect.getcX() < 160) { //TODO: figure out value for 160
             while (detect.getcX() < 160) {
@@ -120,7 +121,7 @@ public class CamwithContours extends LinearOpMode {
         // turn back straight
         drive.turn(-Math.PI / 4, 0);
         //go forward to blue cone tape adjacent mat
-        drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(1028, 1056, 1041, 1026), "go forward to next mat");
+        drive.goToPositionPID( drive.avgPosition(1028, 1056, 1041, 1026), "go forward to next mat");
         // turn to tape/cones
         drive.turn(Math.PI / 2, 0);
         // find tape, get cone

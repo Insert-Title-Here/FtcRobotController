@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -125,8 +124,41 @@ public class MecanumDrive {
         br.setPower(brPow);
     }
 
-
     public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics, String action) {
+        //fl fr bl br
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // won't work for turns, only forward and backward
+        //avg position from all four drive motors
+        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+                Math.abs(br.getCurrentPosition())) / 4;
+
+        telemetry.addData("motorPosition", position);
+        telemetry.update();
+        long time = System.currentTimeMillis();
+        long difference;
+        //Encoder based gotoposition
+        while ((Math.abs(tics) - position) > 0) {
+            difference = System.currentTimeMillis() - time;
+            setPower(flPow, frPow, blPow, brPow);
+            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+                    Math.abs(br.getCurrentPosition())) / 4;
+        }
+
+        setPower(0, 0, 0, 0);
+
+    }
+    public void goToPositionPID(int tics, String action) {
         //fl fr bl br
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -250,15 +282,11 @@ public class MecanumDrive {
                 priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
             }
             accumulateError(timeDifference, currentAngleError);
-            if (radians < 0) {
-                drivePower = PIDTurnPower(priorAngleError, currentAngleError, timeDifference);
-                //turn right # of radians
-                setPower(drivePower, -drivePower, drivePower, -drivePower);
-            } else {
-                drivePower = PIDTurnPower(priorAngleError, currentAngleError, timeDifference);
-                //turn left # of radians
-                setPower(-drivePower, drivePower, -drivePower, drivePower);
-            }
+
+            drivePower = PIDTurnPower(priorAngleError, currentAngleError, timeDifference);
+            //turn left # of radians
+            setPower(-drivePower, drivePower, -drivePower, drivePower);
+
             timeDifference = time.milliseconds() - priorTime;
             currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
             if(time.milliseconds() - priorTime > 1300) break;
