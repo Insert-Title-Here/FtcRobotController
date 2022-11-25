@@ -24,7 +24,7 @@ public class CamwithContours extends LinearOpMode {
     DetectionAlgorithmTest park;
     OpenCvWebcam webcam;
 
-    public double position = 0.1;
+    public double position = -0.1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,7 +45,7 @@ public class CamwithContours extends LinearOpMode {
 
             @Override
             public void onOpened() {
-                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -79,7 +79,7 @@ public class CamwithContours extends LinearOpMode {
 
 
         // code to turn servo of cam
-        score.setCamPosition(0);
+        score.setCamPosition(position);
         // ftc dashboard
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
         telemetry.addData("Status", "Initialized");
@@ -90,7 +90,7 @@ public class CamwithContours extends LinearOpMode {
         waitForStart();
         webcam.stopStreaming();
         // turn servo of cam forward for poles
-        score.setCamPosition(position);
+        score.setCamPosition(0);
         blueRight();
     }
     public void blueRight() throws InterruptedException {
@@ -105,7 +105,7 @@ public class CamwithContours extends LinearOpMode {
                 drive.goToPosition(0.4, -0.4, -0.4, 0.4);
 
             }
-        } else if (detect.getcX() > 160) {
+        } else if (detect.getcX() > 53) {
             while (detect.getcX() > 160) {
                 // strafe to the left (change fr and bl)
                 drive.goToPosition(-0.4, 0.4, 0.4, -0.4);

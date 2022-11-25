@@ -72,8 +72,8 @@ public class ScoringSystem {
             }else if(Math.abs(Math.abs(tics)-motorPosition) < 5){//This is just a failsafe to stop the loop
                 break;
             }else{
-                if(motorPosition < 100){
-                    liftMotor.setPower(power/4);
+                if(Math.abs(tics) - motorPosition < 0){
+                    liftMotor.setPower(power/3);
                 }else{
                     liftMotor.setPower(power);
                 }
