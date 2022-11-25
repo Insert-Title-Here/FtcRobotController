@@ -29,6 +29,7 @@ public class ScoringSystem {
 
     public ScoringSystem(HardwareMap hardwareMap, Telemetry telemetry) {
         /* the below is init*/
+        constant = new Constants();
         claw = hardwareMap.get(Servo.class, "claw");
         camTurn = hardwareMap.get(Servo.class, "camTurn");
         liftMotor = hardwareMap.get(DcMotor.class, "motor");

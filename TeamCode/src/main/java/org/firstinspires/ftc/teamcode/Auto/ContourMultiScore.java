@@ -23,6 +23,56 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class ContourMultiScore extends OpenCvPipeline {
+    /*
+   YELLOW  = Parking Left
+   CYAN    = Parking Middle
+   MAGENTA = Parking Right
+    */
+    // Mat defined/instantiated, percents (for each color) instantiated
+    private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
+    private double yelPercent, cyaPercent, magPercent;
+
+    // top left point of submat (original 320, 176)
+    public static final Point BOX_TOPLEFT = new Point(175,114); // 175, 150
+
+    // width and height of submat
+    public static int BOX_WIDTH = 23;
+    public static int BOX_HEIGHT = -38;
+
+    enum ParkingPosition {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
+    // Running variable storing the parking position
+    private volatile DetectionAlgorithmTest.ParkingPosition position = DetectionAlgorithmTest.ParkingPosition.LEFT;
+
+    // submat to center cone
+    Point box_top_left = new Point(
+            BOX_TOPLEFT.x,
+            BOX_TOPLEFT.y);
+    Point box_bottom_right = new Point(
+            BOX_TOPLEFT.x + BOX_WIDTH,
+            BOX_TOPLEFT.y + BOX_HEIGHT);
+
+    // Lower and upper boundaries for colors -> YCrCb
+    private static final Scalar
+            lower_yellow_bounds  = new Scalar(convertToY(200, 200, 0)),
+            upper_yellow_bounds  = new Scalar(convertToY(255, 255, 130)),
+            lower_cyan_bounds    = new Scalar(convertToCb(0, 200, 200)),
+            upper_cyan_bounds    = new Scalar(convertToCb(150, 255, 255)),
+            lower_magenta_bounds = new Scalar(convertToCr(170, 0, 170)),
+            upper_magenta_bounds = new Scalar(convertToCr(255, 60, 255));
+
+    // Color definitions -> RGB
+    private final Scalar
+            YELLOW  = new Scalar(255, 255, 0),
+            CYAN    = new Scalar(0, 255, 255),
+            MAGENTA = new Scalar(255, 0, 255);
+
+
+
     // dimensions of camera image: 320, 176
 
     // defining vars
@@ -34,7 +84,7 @@ public class ContourMultiScore extends OpenCvPipeline {
     private Point[] mainContour;
     private ArrayList<Double> leftContour, rightContour;
     private Point[] loopSpecificPoints;
-    double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference = 0;
+    private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference = 0;
     // for points on contour
     double numCurrent, num1Prev, num2Prev, num3Prev, num4Prev, num5Prev = 0;
     boolean toggle, toggle2;
@@ -302,6 +352,11 @@ public class ContourMultiScore extends OpenCvPipeline {
     public int getcY() {
         return cY;
     }
+
+    public double getDistance() {
+        return distance;
+    }
+
     // logs string into file
     public void writeLoggerToFile(){
         try{
@@ -310,5 +365,23 @@ public class ContourMultiScore extends OpenCvPipeline {
         }catch(FileNotFoundException e){
             e.printStackTrace();
         }
+    }
+
+
+    public static double convertToY(int r, int g, int b) {
+        return 16 + (65.738 * r + 129.057 * g + 25.064 * b) / 256;
+    }
+
+    public static double convertToCb(int r, int g, int b) {
+        return 128 - (37.945 * r - 74.494 * g + 112.439 * b) / 256;
+    }
+
+    public static double convertToCr(int r, int g, int b) {
+        return 128 + (112.439 * r - 94.154 * g - 18.285 * b) / 256;
+    }
+
+    // Returns an enum being the current position where the robot will park
+    public DetectionAlgorithmTest.ParkingPosition getPosition() {
+        return position;
     }
 }

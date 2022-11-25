@@ -113,6 +113,7 @@ public class CamwithContours extends LinearOpMode {
             }
         } else { // cX must equal to 160
             // move forward until close enough
+
         }
         // scoring cone
         scoreCone(438, 416, 437, 426);
