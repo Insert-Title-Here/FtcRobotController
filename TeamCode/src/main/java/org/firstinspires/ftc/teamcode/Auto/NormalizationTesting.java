@@ -48,7 +48,7 @@ public class NormalizationTesting extends OpenCvPipeline {
     public static int lower3 = 10;
     public static int upper1 = 255;
     public static int upper2 = 255;
-    public static int upper3 = 80;
+    public static int upper3 = 105; //value was 80 when servo was perpendicular to the ground
     public static double widthRemoveConstant = 3.1;
 
 
@@ -231,19 +231,21 @@ public class NormalizationTesting extends OpenCvPipeline {
                     telemetry.addData("error", e);
                 }
     */
-            for (int i = mainContour.length - 1; i >= 0; i--) {
-                loggingString += (mainContour[i].toString() + "\n");
-                if (Math.abs(mainContour[4].x - mainContour[i].x) > 6 && mainContour[i].y > 3) {
-                    perWidth = Math.abs(mainContour[4].x - mainContour[i].x);
-                    loggingString += ("perWidth " + perWidth + "\n");
-                    break;
+            if (mainContour.length > 8) {
+                for (int i = mainContour.length - 1; i >= 0; i--) {
+                    loggingString += (mainContour[i].toString() + "\n");
+                    if (Math.abs(mainContour[4].x - mainContour[i].x) > 6 && mainContour[i].y > 3) {
+                        perWidth = Math.abs(mainContour[4].x - mainContour[i].x);
+                        loggingString += ("perWidth " + perWidth + "\n");
+                        break;
+                    }
                 }
             }
 
             //draws circle of centroid
             Imgproc.circle(generalMat, new Point(cX, cY), 1, new Scalar(255, 49, 0, 255), 2);
             focalLength = (311.5384615 + 311.5384615 + 311.9711538) / 3.0;
-            distance = distanceFromPole(1.04, focalLength, perWidth);
+            distance = distanceFromPole(1.04, focalLength, perWidth) * Math.cos(38.6);
 
             telemetry.addData("index", indexOfMax);
             telemetry.addData("cX", cX);

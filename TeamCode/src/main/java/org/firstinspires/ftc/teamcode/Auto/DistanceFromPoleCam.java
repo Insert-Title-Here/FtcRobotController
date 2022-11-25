@@ -21,7 +21,7 @@ public class DistanceFromPoleCam extends LinearOpMode {
 
     OpenCvWebcam webcam;
 
-    public static double position = 0.1;
+    public static double position = 0.15;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -64,7 +64,7 @@ public class DistanceFromPoleCam extends LinearOpMode {
         // turn to left 45 degrees to medium pole
         drive.turn(-Math.PI / 4, 0);
         // go to pole a bit
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 400, "go forward some to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 200, "go forward some to pole");
 
 
 
