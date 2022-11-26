@@ -38,7 +38,7 @@ public class AutoVisionTest extends LinearOpMode {
 
         camera.setPipeline(pipeline);
 
-        servo.setPosition(Constants.poleV2);
+        servo.setPosition(Constants.cone);
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
@@ -56,13 +56,14 @@ public class AutoVisionTest extends LinearOpMode {
 
             }
         });
-        pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
+        pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
 
         while(opModeInInit()){
 
             double yPos = getYCapPosition();
             setYCapPosition(yPos - map(gamepad1.right_stick_y, -1, 1, -0.0010, 0.0010));
             telemetry.addData("Position", getYCapPosition());
+            telemetry.addData("XPos", pipeline.getXContour());
             telemetry.update();
 
         }

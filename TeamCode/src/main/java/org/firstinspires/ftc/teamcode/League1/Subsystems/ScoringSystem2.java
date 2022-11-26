@@ -135,7 +135,7 @@ public class ScoringSystem2{
             }else if(coneStack == 2){
                 setLinkagePositionLogistic(0.82, 500);
             }else if(coneStack == 1){
-                setLinkagePositionLogistic(0.89, 500);
+                setLinkagePositionLogistic(constants.linkageDown, 300);
             }
         }else {
             if (coneStack == 5) {
@@ -147,7 +147,7 @@ public class ScoringSystem2{
             } else if (coneStack == 2) {
                 setLinkagePosition(0.82);
             } else if (coneStack == 1) {
-                setLinkagePosition(0.89);
+                setLinkagePosition(constants.linkageDown);
             }
         }
     }

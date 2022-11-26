@@ -344,6 +344,76 @@ public class MecDrive {
 
     }
 
+    public void tankRotatePID(double radians, double power, boolean slidesUp, double kickout){
+
+        /*if(radians > imu.getAngularOrientation().firstAngle){
+            power *= -1;
+        }*/
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+
+        radians = wrapAngle(radians);
+        double radError = wrapAngle(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians);
+        double previousError = radError;
+        double integralSum = 0;
+
+
+        while(Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < kickout){
+
+            telemetry.addData("target", radians);
+
+            double newPower = 0;
+
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+
+            double currentTime = time.seconds();
+
+            radError = wrapAngle(currentAngle - radians);
+            telemetry.addData("current", currentAngle);
+
+            telemetry.addData("Error", radError);
+
+            integralSum += (radError + previousError)/(currentTime - startTime);
+            telemetry.addData("Integral", integralSum);
+
+            //TODO:See if we need an integral limit
+            if(integralSum > 10000){
+                integralSum = 10000;
+            }else if(integralSum < -10000){
+                integralSum = -10000;
+            }
+
+            double derivative = (radError - previousError)/(currentTime - startTime);
+            telemetry.addData("Derivative", derivative);
+
+
+            //TODO: see if we should multiply by power at the end
+
+
+            if(!slidesUp) {
+                newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative));
+            }else{
+                newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative));
+            }
+            setPowerAuto(newPower, MecDrive.MovementType.ROTATE);
+
+            telemetry.addData("Power", newPower);
+
+            startTime = currentTime;
+            previousError = radError;
+            telemetry.update();
+
+        }
+
+        simpleBrake();
+
+
+
+
+    }
+
     private double wrapAngle(double angle){
         while(angle > Math.PI){
             angle -= (2 * Math.PI);
@@ -997,6 +1067,164 @@ public class MecDrive {
         simpleBrake();
 
     }
+
+
+    public void goTOPIDPos(int tics, double power, MovementType movement, double kickout) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+        //boolean countTime = true;
+
+        boolean isInitialErrorNegative;
+
+        int half = Math.abs(tics) / 2;
+
+
+
+        //TODO: check if we need to negate any
+        int flPos = -1 * getFLEncoder();
+        int frPos = getFREncoder();
+        int blPos = -1 * getBLEncoder();
+        int brPos = getBREncoder();
+
+        int flError = tics - flPos;
+        int frError = tics - frPos;
+        int blError = tics - blPos;
+        int brError = tics - brPos;
+
+        int flPreviousError = flError;
+        int frPreviousError = frError;
+        int blPreviousError = blError;
+        int brPreviousError = brError;
+
+        if(flPreviousError < 0){
+            isInitialErrorNegative = true;
+        }else{
+            isInitialErrorNegative = false;
+        }
+
+        int flIntegralSum = 0;
+        int frIntegralSum = 0;
+        int blIntegralSum = 0;
+        int brIntegralSum = 0;
+
+
+        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < kickout){
+            telemetry.addData("target", tics);
+
+
+            //TODO: check if we need to negate any
+            flPos = -1 * getFLEncoder();
+            frPos = getFREncoder();
+            blPos = -1 * getBLEncoder();
+            brPos = getBREncoder();
+
+
+
+            telemetry.addData("flPos", flPos);
+            telemetry.addData("frPos", frPos);
+            telemetry.addData("blPos", blPos);
+            telemetry.addData("brPos", brPos);
+
+            flError = tics - flPos;
+            frError = tics - frPos;
+            blError = tics - blPos;
+            brError = tics - brPos;
+
+
+
+            double currentTime = time.seconds();
+
+            telemetry.addData("flError", flError);
+            telemetry.addData("frError", frError);
+            telemetry.addData("blError", blError);
+            telemetry.addData("brError", brError);
+
+            flIntegralSum += (0.5 * (flError + flPreviousError) * (currentTime - startTime));
+            frIntegralSum += (0.5 * (frError + frPreviousError) * (currentTime - startTime));
+            blIntegralSum += (0.5 * (blError + blPreviousError) * (currentTime - startTime));
+            brIntegralSum += (0.5 * (brError + brPreviousError) * (currentTime - startTime));
+
+            telemetry.addData("flIntegralSum", flIntegralSum);
+            telemetry.addData("frIntegralSum", frIntegralSum);
+            telemetry.addData("blIntegralSum", blIntegralSum);
+            telemetry.addData("brIntegralSum", brIntegralSum);
+
+
+            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
+            if(flIntegralSum > 20000){
+                flIntegralSum = 20000;
+            }else if(flIntegralSum < -20000){
+                flIntegralSum = -20000;
+            }
+
+            if(frIntegralSum > 20000){
+                frIntegralSum = 20000;
+            }else if(frIntegralSum < -20000){
+                frIntegralSum = -20000;
+            }
+
+            if(blIntegralSum > 20000){
+                blIntegralSum = 20000;
+            }else if(blIntegralSum < -20000){
+                blIntegralSum = -20000;
+            }
+
+            if(brIntegralSum > 20000){
+                brIntegralSum = 20000;
+            }else if(brIntegralSum < -20000){
+                brIntegralSum = -20000;
+            }
+
+
+            double flDerivative = (flError - flPreviousError)/(currentTime - startTime);
+            double frDerivative = (frError - frPreviousError)/(currentTime - startTime);
+            double blDerivative = (blError - blPreviousError)/(currentTime - startTime);
+            double brDerivative = (brError - brPreviousError)/(currentTime - startTime);
+
+            telemetry.addData("flDerivative", flDerivative);
+            telemetry.addData("frDerivative", frDerivative);
+            telemetry.addData("blDerivative", blDerivative);
+            telemetry.addData("brDerivative", brDerivative);
+
+            double flPower = ((pidf.p * flError) + (pidf.i * flIntegralSum) + (pidf.d * flDerivative));
+            double frPower = ((pidf.p * frError) + (pidf.i * frIntegralSum) + (pidf.d * frDerivative));
+            double blPower = ((pidf.p * blError) + (pidf.i * blIntegralSum) + (pidf.d * blDerivative));
+            double brPower = ((pidf.p * brError) + (pidf.i * brIntegralSum) + (pidf.d * brDerivative));
+
+            //TODO: See if we need this maxing out for power
+
+            telemetry.addData("flPower", flPower);
+            telemetry.addData("frPower", frPower);
+            telemetry.addData("blPower", blPower);
+            telemetry.addData("brPower", brPower);
+
+            //TODO: Fix rotate and check Strafe
+            if(movement == MovementType.STRAIGHT) {
+                setPower(flPower, frPower, blPower, brPower);
+            }else if(movement == MovementType.ROTATE){
+                setPower(flPower, -frPower, blPower, -brPower);
+            }else if(movement == MovementType.STRAFE){
+                setPower(flPower, -frPower, -blPower, brPower);
+            }
+
+
+            startTime = currentTime;
+            flPreviousError = flError;
+            frPreviousError = frError;
+            blPreviousError = blError;
+            brPreviousError = brError;
+
+            telemetry.update();
+
+
+        }
+
+        //setPower(0,0,0,0);
+        simpleBrake();
+
+    }
+
 
     public int avgPosPID(){
         return ((-1 * fl.getCurrentPosition()) + fr.getCurrentPosition()
