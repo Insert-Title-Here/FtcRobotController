@@ -38,7 +38,7 @@ public class AutoVisionTest extends LinearOpMode {
 
         camera.setPipeline(pipeline);
 
-        servo.setPosition(Constants.poleV2);
+        servo.setPosition(Constants.coneV2);
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
@@ -63,6 +63,7 @@ public class AutoVisionTest extends LinearOpMode {
             double yPos = getYCapPosition();
             setYCapPosition(yPos - map(gamepad1.right_stick_y, -1, 1, -0.0010, 0.0010));
             telemetry.addData("Position", getYCapPosition());
+            telemetry.addData("largest X", pipeline.getXContour());
             telemetry.update();
 
         }

@@ -23,11 +23,11 @@ import java.util.List;
 public class KevinGodPipelineV2 extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
-    public static int H1 = 12;
-    public static int S1 = 20;
-    public static int V1 = 125;
-    public static int H2 = 29;
-    public static int S2 = 220;
+    public static int H1 = 22;
+    public static int S1 = 80;
+    public static int V1 = 110;
+    public static int H2 = 25;
+    public static int S2 = 255;
     public static int V2 = 255;
 
     //Blue cone color
@@ -382,7 +382,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
         }
-        return input;
+        return temp;
     }
 
     // Get x coordinate of center of largest contour (pole)
@@ -423,7 +423,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
 
-            if(time.seconds() - startTime > 1.5){
+            if(time.seconds() - startTime > 1){
                 //normlizationBroke = true;
                 wrongWay = true;
                 break;

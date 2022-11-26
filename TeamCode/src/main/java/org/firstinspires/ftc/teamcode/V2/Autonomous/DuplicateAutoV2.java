@@ -75,7 +75,7 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 while(opModeIsActive()) {
                     if(armUp.get()) {
                         hold.set(false);
-                        score.setLinkagePosition(Constants.linkageScoreV2);
+                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
 
                         score.moveToPosition(1400, 1);
                         hold.set(true);
@@ -217,26 +217,24 @@ public class DuplicateAutoV2 extends LinearOpMode {
             pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
             drive.simpleMoveToPosition(600, MecDrive.MovementType.STRAIGHT, 0.5);
 
-            score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
+            score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
 
 
             for(int i = 0; i < 6; i++){
 
                 drive.tankRotatePID(Math.PI / 3, 0.7, false);
-                normalizeDistance = pipeline.normalize(0.2, 170, 2);
-
-                cameraServo.setPosition(Constants.coneV2);
-                pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
-
+                normalizeDistance = pipeline.normalize(0.2, 151, 2);
 
                 //Arm Up
                 hold.set(false);
 
                 if(i == 0) {
-                    score.moveToPosition(1250, 1);
-                }else{
-                    score.moveToPosition(1300, 1);
+                    score.moveToPosition(1285, 1);
+                }else if(i == 1 || i == 4 || i == 5){
+                    score.moveToPosition(1350, 1);
 
+                }else{
+                    score.moveToPosition(1320, 1);
                 }
                 hold.set(true);
 
@@ -246,12 +244,16 @@ public class DuplicateAutoV2 extends LinearOpMode {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                score.setGrabberPosition(0.3);
+                score.setGrabberPosition(0.37);
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
+                cameraServo.setPosition(Constants.coneV2);
+                pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
+
 
 
                 //Arm Down
@@ -272,58 +274,70 @@ public class DuplicateAutoV2 extends LinearOpMode {
 
                 drive.tankRotatePID(Math.PI / 2, 0.7, false);
 
-                if(i == 0) {
-                    pipeline.normalizeSpecial(-0.3, 172, 2);
 
-                }else{
-                    //pipeline.normalize(-0.2, 172, 2);
-                    pipeline.normalizeSpecial(-0.3, 172, 2);
+                if(i != 5) {
+
+                    if(i==0) {
+                        pipeline.normalize(-0.2, 186, 2);
+                    }else{
+                        //pipeline.normalize(-0.2, 162, 2);
+                        pipeline.normalize(-0.2, 186, 2);
+
+
+                    }
 
 
 
-                }
-                //drive.simpleMoveToPosition(normalizeDistance, MecDrive.MovementType.ROTATE, 0.35);
+                    //drive.simpleMoveToPosition(normalizeDistance, MecDrive.MovementType.ROTATE, 0.35);
 
-                score.setGrabberPosition(Constants.open - 0.12);
-                score.setLinkagePosition(0.245 - (i * 0.03));
+                    score.setGrabberPosition(Constants.open - 0.12);
+                    score.setLinkagePosition(0.245 - (i * 0.03));
 
-                cameraServo.setPosition(Constants.poleV2 - 0.02);
-                pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
+                    cameraServo.setPosition(Constants.poleV2 - 0.02);
+                    pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
 
-                double startDistanceTime = time.seconds();
-                while (distance.getDistance(DistanceUnit.CM) > 3.8) {
-                    drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
+                    double startDistanceTime = time.seconds();
+                    while (distance.getDistance(DistanceUnit.CM) > 3.5) {
+                        drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
-                    telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
-                    telemetry.update();
+                        telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
+                        telemetry.update();
 
-                    if (time.seconds() - startDistanceTime > 3) {
-                        drive.simpleBrake();
-                        drive.tankRotatePID(Math.PI / 2, 0.6, false);
-                        failed = true;
+                        if (time.seconds() - startDistanceTime > 3) {
+                            drive.simpleBrake();
+                            drive.tankRotatePID(Math.PI / 2, 0.6, false);
+                            failed = true;
+                            break;
+                        }
+
+                    }
+
+                    if (failed) {
                         break;
                     }
 
+                    drive.simpleBrake();
+
+
+                    score.setGrabberPosition(constants.grabbing);
+                    sleep(500);
+
+                    if (i == 0) {
+                        score.setLinkagePositionLogistic(Constants.linkageScoreV2 - 0.02, 300);
+
+                    } else {
+                        score.setLinkagePositionLogistic(Constants.linkageScoreV2 - 0.02, 300);
+                    }
+
+                    drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAIGHT, 0.4);
                 }
-
-                if (failed) {
-                    break;
-                }
-
-                drive.simpleBrake();
-
-
-                score.setGrabberPosition(constants.grabbing);
-                sleep(500);
-
-                score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
-
-                drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.4);
 
 
 
 
             }
+
+
         }
 
 
