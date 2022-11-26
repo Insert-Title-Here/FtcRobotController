@@ -28,7 +28,7 @@ public class Constants {
 
 
     //Axon Duo Positions
-    public static final double linkageDown = 0.89; // was 0.875
+    public static final double linkageDown = 0.875; // was 0.89
     public static final double linkageUp = 0.35;
     public static final double linkageScore = 0.05;
 
@@ -41,6 +41,7 @@ public class Constants {
     //Grabber Positions (tuned)
     public static final double grabbing = 0;
     public static final double open = 0.75;
+    public static final double openV1 = 0.65;
     public static final double score = 0.3;
 
     //Drive Modifiers

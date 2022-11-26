@@ -33,10 +33,10 @@ public class KevinGodMode2 extends LinearOpMode {
 
     PassivePower passive;
 
-    boolean previousLeft, previousRight, previousUp, previousDown, linkageUp;
-    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag;
+    boolean previousLeft, previousRight, previousUp, previousDown;
+    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown;
 
-    Thread liftThread, capThread, linkageThread;
+    Thread liftThread/*, capThread*/, linkageThread;
 
     //Enums for feed forward
     public enum PassivePower{
@@ -126,14 +126,10 @@ public class KevinGodMode2 extends LinearOpMode {
 
 
 
-                        score.setLinkagePosition(constants.linkageUp);
+                        //score.setLinkagePosition(constants.linkageUp);
+                        score.lowerConeStack();
+                        linkageDown = true;
 
-
-                        try {
-                            sleep(300);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
 
 
 
@@ -148,8 +144,7 @@ public class KevinGodMode2 extends LinearOpMode {
                         score.setGrabberPosition(constants.open - 0.11);
                         //score.setLinkagePositionLogistic(constants.linkageDown, 300);
 
-                        score.lowerConeStack();
-                        score.setLinkageConeStack(true);
+
 
                         //Resetting flags
                         autoLinkageFlag = true;
@@ -159,7 +154,7 @@ public class KevinGodMode2 extends LinearOpMode {
                         score.setExtended(false);
 
                         //Automated Grab
-                    }else if((distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
+                    }else if((distance.getDistance(DistanceUnit.CM) < 3.5) && grabFlag) {
                         score.setGrabberPosition(constants.grabbing);
 
                         grabFlag = false;
@@ -297,7 +292,7 @@ public class KevinGodMode2 extends LinearOpMode {
         };
 
         //CapThread
-        capThread = new Thread(){
+        /*capThread = new Thread(){
 
 
             @Override
@@ -352,6 +347,8 @@ public class KevinGodMode2 extends LinearOpMode {
             }
         };
 
+         */
+
         //Logistic Linkage thread
         linkageThread = new Thread() {
 
@@ -367,6 +364,12 @@ public class KevinGodMode2 extends LinearOpMode {
                         }
                         score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
                         linkageUp = false;
+                    }else if(linkageDown) {
+
+                        score.setLinkagePosition(Constants.linkageUp);
+
+                        score.setLinkageConeStack(true);
+                        linkageDown = false;
                     }
                 }
             }
@@ -380,7 +383,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
         //Starting Threads
         liftThread.start();
-        capThread.start();
+        //capThread.start();
         linkageThread.start();
 
         while(opModeIsActive()){

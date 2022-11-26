@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
+public class SegmentedDuplicateDuplicateAutoRedLeft extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
     Constants constants;
@@ -231,7 +231,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.BLUE_RIGHT);
+        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.RED_LEFT);
 
         camera.setPipeline(pipeline);
 
@@ -280,10 +280,10 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.goTOPIDPos(-2050, 0.5,MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPos(-2150, 0.5,MecDrive.MovementType.STRAIGHT);
 
         armUp2.set(true);
-        drive.tankRotatePID(Math.PI / 5.3, 0.7, true);
+        drive.tankRotatePID(-Math.PI / 5.3, 0.7, true);
         //sleep(200);
         //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
         normalizeDistance = pipeline.normalize(0.2, 172, 2);
@@ -297,7 +297,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
         //pipeline.Ynormalize(0.2, 95, 5);
 
         if(pipeline.getNormalizationBroke()){
-            drive.tankRotatePID(Math.PI/2, 0.6, false);
+            drive.tankRotatePID(-Math.PI/2, 0.6, false);
             armDown.set(true);
 
             if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
@@ -321,12 +321,12 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
             score.setGrabberPosition(constants.grabbing);
             //sleep(500);
             armDown.set(true);
-            pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
+            pipeline.changeMode(KevinGodPipeline.Mode.REDCONE);
 
 
             //drive.simpleMoveToPosition(140, MecDrive.MovementType.STRAIGHT, 0.3);
 
-            drive.tankRotatePID(Math.PI / 2, 0.85, false);
+            drive.tankRotatePID(-Math.PI / 2, 0.85, false);
 
             //drive.simpleMoveToPosition(-370 - normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
             //pipeline.normalizeToPole(0.3, 82, 10);
@@ -366,10 +366,10 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
             }
 */
-                pipeline.normalizeStrafe(0.22, 165, 3);
+                pipeline.normalizeStrafe(-0.22, 174, 3);
 
                 if(pipeline.getNormalizationBroke()){
-                    drive.tankRotatePID(Math.PI/2, 0.6, false);
+                    drive.tankRotatePID(-Math.PI/2, 0.6, false);
                     break;
                 }
 
@@ -390,7 +390,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
                     if (time.seconds() - startDistanceTime > 3) {
                         drive.simpleBrake();
-                        drive.tankRotatePID(Math.PI / 2, 0.6, false);
+                        drive.tankRotatePID(-Math.PI / 2, 0.6, false);
                         failed = true;
                         break;
                     }
@@ -417,7 +417,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
                 cameraServo.setPosition(Constants.pole);
 
                 drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.5);
-                drive.tankRotatePID(Math.PI/2, 1, false, 0.5);
+                drive.tankRotatePID(-Math.PI/2, 1, false, 0.5);
 
                 drive.goTOPIDPos(-1000, 1, MecDrive.MovementType.STRAIGHT, 1);
                 if (time.seconds() - startTime > 26) {
@@ -441,7 +441,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
 
 
-                drive.tankRotatePID(Math.PI / 4.5, 0.8, true);
+                drive.tankRotatePID(-Math.PI / 5, 0.8, true);
                 //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
                 normalizeDistance = pipeline.normalize(0.2, 172, 2);
 
@@ -453,7 +453,7 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
 
 
                 if(pipeline.getNormalizationBroke()){
-                    drive.tankRotatePID(Math.PI/2, 0.6, false);
+                    drive.tankRotatePID(-Math.PI/2, 0.6, false);
                     break;
                 }
 
@@ -471,12 +471,12 @@ public class SegmentedDuplicateDuplicateAuto extends LinearOpMode {
                 sleep(200);
 
                 armDown.set(true);
-                pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
+                pipeline.changeMode(KevinGodPipeline.Mode.REDCONE);
 
 
                 //drive.simpleMoveToPosition(70, MecDrive.MovementType.STRAIGHT, 0.4);
 
-                drive.tankRotatePID(Math.PI / 2, 0.85, false, 0.6);
+                drive.tankRotatePID(-Math.PI / 2, 0.85, false, 0.6);
                 //drive.simpleMoveToPosition(-320 + normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
                 //drive.tankRotatePID(Math.PI/2, 1);            //pipeline.normalizeToPole(0.3, 42, 5);
 
