@@ -158,6 +158,8 @@ public class MecanumDrive {
         setPower(0, 0, 0, 0);
 
     }
+
+    //TODO: Consider to do PID for each individual wheel
     public void goToPositionPID(int tics, String action) {
         //fl fr bl br
 
@@ -260,7 +262,6 @@ public class MecanumDrive {
 
     }
     // Turns a certain amount of given radians useing imu
-    //TODO: Needs Testing
     public void turn(double radians, double power) {
         double integralPow;
         double derivativePow;

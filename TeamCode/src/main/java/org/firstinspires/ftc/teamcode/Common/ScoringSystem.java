@@ -192,6 +192,42 @@ public class ScoringSystem {
     public double getDistance() {
         return colorCone.getDistance(DistanceUnit.CM);
     }
+    /*
+    //TODO Test the actual heights
+    int height1 = 174;
+    int height2 = 124;
+    int height3 = 74;
+    int height4 = 24;
+    int height5 = 24;
+    int currentHeight = 174;
+    public void stackUp(){
+        if(getEncoderPosition() >= height1){
+            currentHeight = height1;
+        }else if(getEncoderPosition() >= height2){
+            currentHeight = height2;
+        }else if(){
+            currentHeight = height3;
+        }else if(){
+            currentHeight = height4;
+        }else{
+            currentHeight = height5;
+        }
+    }
+    public void stackDown(){
+        if(){
+            currentHeight = height1;
+        }else if(){
+            currentHeight = height2;
+        }else if(){
+            currentHeight = height3;
+        }else if(){
+            currentHeight = height4;
+        }else{
+            currentHeight = height5;
+        }
+    }
+    
+     */
 }
 
 

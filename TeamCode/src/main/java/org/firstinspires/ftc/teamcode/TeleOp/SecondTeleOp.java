@@ -19,19 +19,15 @@ public class SecondTeleOp extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     Thread liftThread;
-    AtomicBoolean pause;
-    AtomicBoolean discontinue;
-    AtomicBoolean reToggle;
+    AtomicBoolean clawOpenCloseToggle;
+    AtomicBoolean clawStackFlag;
+    AtomicBoolean clawMoveDownToggle;
     AtomicInteger stackHeight;
-    AtomicBoolean stackDoubleDown;
-    AtomicBoolean stackDoubleUp;
-    AtomicBoolean zero;
+    AtomicBoolean stackFlag;
     Constants constant;
     BNO055IMU imu;
-    String s;
-
-    private final double NORMAL_LINEAR_MODIFIER = 0.65;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
+    private final double NORMAL_LINEAR_MODIFIER = 0.7;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
     @Override
@@ -48,21 +44,17 @@ public class SecondTeleOp extends LinearOpMode {
 
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
-        zero = new AtomicBoolean();
-        pause = new AtomicBoolean();
+        clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();
-        reToggle = new AtomicBoolean();
-        discontinue = new AtomicBoolean();
+        clawMoveDownToggle = new AtomicBoolean();
+        clawStackFlag = new AtomicBoolean();
         stackHeight = new AtomicInteger();
-        stackDoubleUp = new AtomicBoolean();
-        stackDoubleDown = new AtomicBoolean();
-        stackDoubleDown.set(true);
-        stackDoubleUp.set(true);
+        stackFlag = new AtomicBoolean();
+        stackFlag.set(true);
         stackHeight.set(constant.getStackHeight());
-        reToggle.set(false);
-        pause.set(true);
-        zero.set(false);
-        discontinue.set(false);
+        clawMoveDownToggle.set(false);
+        clawOpenCloseToggle.set(true);
+        clawStackFlag.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         //Open
@@ -88,7 +80,7 @@ public class SecondTeleOp extends LinearOpMode {
                         }
                     }else{
                         if(score.getEncoderPosition() > 100){
-                            if(!discontinue.get()){
+                            if(!clawStackFlag.get()){
                                 score.setPower(constant.getSteadyPow());
                             }
                         }
@@ -96,7 +88,6 @@ public class SecondTeleOp extends LinearOpMode {
                     //moves the slides all the way down
                     if(gamepad1.dpad_down) {
                         score.goToPosition(constant.getHeightBottom(),1);
-                        zero.set(true);
                     }
                     //moves the slides to highest pole height
                     if (gamepad1.right_stick_button) {
@@ -121,35 +112,32 @@ public class SecondTeleOp extends LinearOpMode {
                         score = new ScoringSystem(hardwareMap, telemetry);
                     }
                     //lowers the height of the slides for the stack of 5 cones
-                    if(gamepad1.a && stackDoubleDown.get()){
-                        discontinue.set(true);
-                        stackDoubleDown.set(false);
+                    if(gamepad1.a && stackFlag.get()){
+                        clawStackFlag.set(true);
+                        stackFlag.set(false);
                         if((stackHeight.get() - constant.getStackIntervalHeight()) > 0){
                             stackHeight.set(stackHeight.get()-constant.getStackIntervalHeight());
                             score.goToPosition(stackHeight.get(), 0.8);
                         }
-                    }else if(!gamepad1.a){
-                        stackDoubleDown.set(true);
-                    }
                     //moves the slides to the stack of 5 cones height
-                    if(gamepad1.y && stackDoubleUp.get()){
-                        discontinue.set(true);
-                        stackDoubleUp.set(false);
+                    }else if(gamepad1.y && stackFlag.get()){
+                        clawStackFlag.set(true);
+                        stackFlag.set(false);
                         if(stackHeight.get() < constant.getStackHeight()){
                             score.goToPosition(stackHeight.get(), 0.8);
                             stackHeight.set(stackHeight.get() + constant.getStackIntervalHeight());
                         }else if(stackHeight.get() == constant.getStackHeight()){
                             score.goToPosition(constant.getStackHeight(), 0.8);
                         }
-                    }else if(!gamepad1.y){
-                        stackDoubleUp.set(true);
+                    }else if(!gamepad1.a){
+                        stackFlag.set(true);
                     }
                     //closes the claw(manually) and opens the claw(like a toggle)
-                    if(gamepad1.right_trigger > 0.1 && pause.get()){
+                    if(gamepad1.right_trigger > 0.1 && clawOpenCloseToggle.get()){
                         if(constant.getClawLowThreshold() < score.getClawPosition() && score.getClawPosition() < constant.getClawHighThreshold()){
                             //if liftpos is low height ish or higher
                             if(score.getEncoderPosition() > constant.getHeightLow() - 80){
-                                if(reToggle.get()){
+                                if(clawMoveDownToggle.get()){
                                     score.setClawPosition(constant.getClawOpenPos());
                                     try {
                                         Thread.sleep(800);
@@ -157,11 +145,10 @@ public class SecondTeleOp extends LinearOpMode {
                                         e.printStackTrace();
                                     }
                                     score.goToPosition(constant.getHeightBottom(),1);
-                                    zero.set(true);
-                                    reToggle.set(false);
+                                    clawMoveDownToggle.set(false);
                                 }else{
                                     score.goToPosition(score.getEncoderPosition() - 113, 1);
-                                    reToggle.set(true);
+                                    clawMoveDownToggle.set(true);
                                 }
                             }else{
                                 score.setClawPosition(0);
@@ -171,14 +158,13 @@ public class SecondTeleOp extends LinearOpMode {
                                     e.printStackTrace();
                                 }
                                 score.goToPosition(constant.getHeightBottom(),0.8);
-                                zero.set(true);
                             }
 
                         }else{
                             //if lifts system is below 95
                             if(score.getEncoderPosition() < 95){
                                 //for stack only
-                                if(discontinue.get()){
+                                if(clawStackFlag.get()){
                                     score.setClawPosition(constant.getClawClosePos());
                                     try {
                                         Thread.sleep(600);
@@ -187,7 +173,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     }
                                     score.goToPosition(score.getEncoderPosition()+113,1);
                                     score.setPower(constant.getSteadyPow());
-                                    discontinue.set(false);
+                                    clawStackFlag.set(false);
                                 }else{
                                     score.setClawPosition(constant.getClawClosePos());
                                     try {
@@ -197,11 +183,11 @@ public class SecondTeleOp extends LinearOpMode {
                                     }
                                     score.goToPosition(score.getEncoderPosition()+43, 1);
                                     score.setPower(constant.getSteadyPow());
-                                    pause.set(false);
+                                    clawOpenCloseToggle.set(false);
 
                                 }
                             }else{
-                                if(discontinue.get()){
+                                if(clawStackFlag.get()){
                                     score.setClawPosition(constant.getClawClosePos());
                                     try {
                                         Thread.sleep(600);
@@ -210,21 +196,21 @@ public class SecondTeleOp extends LinearOpMode {
                                     }
                                     score.goToPosition(score.getEncoderPosition()+125,1);
                                     score.setPower(constant.getSteadyPow());
-                                    discontinue.set(false);
+                                    clawStackFlag.set(false);
                                 }else{
                                     score.setClawPosition(constant.getClawClosePos());
                                 }
                             }
                         }
-                        pause.set(false);
+                        clawOpenCloseToggle.set(false);
                     }else if(gamepad1.right_trigger < 0.1){
-                        pause.set(true);
+                        clawOpenCloseToggle.set(true);
                     }
                     // closes claw using color sensor
                     if (score.getClawPosition() == 0.0) {
                         try {
                             score.grabCone(true);
-                            pause.set(true);
+                            clawOpenCloseToggle.set(true);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -284,11 +270,10 @@ public class SecondTeleOp extends LinearOpMode {
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
             telemetry.addData("stackHeight", stackHeight);
-            telemetry.addData("retoggle value", reToggle.get());
+            telemetry.addData("clawMoveDownToggle value", clawMoveDownToggle.get());
             telemetry.addData("stack", stackHeight.get());
-            telemetry.addData("pause", pause.get());
+            telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
             telemetry.addData("lo", constant.getHeightLow());
-            telemetry.addData("plz", s);
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());
             //  telemetry.update();
