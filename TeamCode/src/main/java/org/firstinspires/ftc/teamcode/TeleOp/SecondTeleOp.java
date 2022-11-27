@@ -269,11 +269,8 @@ public class SecondTeleOp extends LinearOpMode {
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
-            telemetry.addData("stackHeight", stackHeight);
-            telemetry.addData("clawMoveDownToggle value", clawMoveDownToggle.get());
             telemetry.addData("stack", stackHeight.get());
             telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
-            telemetry.addData("lo", constant.getHeightLow());
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());
             //  telemetry.update();

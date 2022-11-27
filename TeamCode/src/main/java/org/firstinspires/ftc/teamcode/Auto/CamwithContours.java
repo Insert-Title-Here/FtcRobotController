@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -22,9 +23,11 @@ public class CamwithContours extends LinearOpMode {
     Thread liftThread;
     ContourMultiScore detect;
     DetectionAlgorithmTest park;
+    Constants constants;
     OpenCvWebcam webcam;
 
     public double position = -0.1;
+    private double properCX = 89;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,6 +35,7 @@ public class CamwithContours extends LinearOpMode {
         park = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
+        constants = new Constants();
         cont = new AtomicBoolean();
         cont.set(false);
 
@@ -87,43 +91,45 @@ public class CamwithContours extends LinearOpMode {
 
         telemetry.update();
 
-
+        //close claw
+        score.setClawPosition(constants.getClawClosePos());
         waitForStart();
         detect.park = false;
         // turn servo of cam forward for poles
-        score.setCamPosition(0);
+        score.setCamPosition(0.15);
         blueLeft();
     }
     public void blueLeft() throws InterruptedException {
+        //lift claw a little bit
+        score.goToPosition(50, 0.7);
         // go forward next to pole
-        drive.goToPositionPID( drive.avgPosition(1376, 1356, 1347, 1342), "go forward next to pole");
+        drive.goToPositionPID(drive.avgPosition(1476, 1456, 1447, 1442), "go forward next to pole");
         // turn to left 45 degrees to medium pole
         drive.turn(-Math.PI / 4, 0);
+        // go to pole a bit
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 200, "go forward some to pole");
         // camera position correction
-        if (detect.getcX() < 160) { //TODO: figure out value for 160
-            while (detect.getcX() < 160) {
+        if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
+            while (detect.getcX() < properCX - 5) {
                 // strafe to the right
-                drive.goToPosition(0.4, -0.4, -0.4, 0.4);
+                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
 
             }
-        } else if (detect.getcX() > 53) {
-            while (detect.getcX() > 160) {
+            while (detect.getcX() > properCX + 5) {
                 // strafe to the left (change fr and bl)
-                drive.goToPosition(-0.4, 0.4, 0.4, -0.4);
+                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
             }
-        } else { // cX must equal to 160
-            // move forward until close enough
-
         }
+
         // scoring cone
         scoreCone(438, 416, 437, 426);
         // turn back straight
-        drive.turn(-Math.PI / 4, 0);
+        drive.turn(Math.PI / 4, 0);
         //go forward to blue cone tape adjacent mat
         drive.goToPositionPID( drive.avgPosition(1028, 1056, 1041, 1026), "go forward to next mat");
         // turn to tape/cones
-        drive.turn(Math.PI / 2, 0);
+        drive.turn(-Math.PI / 2, 0);
         // find tape, get cone
         useColorSensor();
         // back up
@@ -131,24 +137,21 @@ public class CamwithContours extends LinearOpMode {
         //put lift down
 
         // turn 90 to the right
-        drive.turn(-Math.PI / 2, 0);
+        drive.turn(Math.PI / 2, 0);
         // strafe right
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, drive.avgPosition(-1727, 1651, 1650, -1601), "strafe right");
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, drive.avgPosition(-1727, 1651, 1650, -891), "strafe right");
         // camera position correction
-        if (detect.getcX() < 160) { //TODO: figure out value for 160
-            while (detect.getcX() < 160) {
+        if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
+            while (detect.getcX() < properCX - 5) {
                 // strafe to the right
-                drive.goToPosition(0.4, -0.4, -0.4, 0.4);
+                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
 
             }
-        } else if (detect.getcX() > 160) {
-            while (detect.getcX() > 160) {
+            while (detect.getcX() > properCX + 5) {
                 // strafe to the left (change fr and bl)
-                drive.goToPosition(-0.4, 0.4, 0.4, -0.4);
+                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
             }
-        } else { // cX must equal to 160
-            // move forward until close enough
         }
         // scoring cone
         scoreCone(184, 165, 163, 147);
@@ -174,7 +177,7 @@ public class CamwithContours extends LinearOpMode {
         }
 */
 
-        score.setClawPosition(0);
+        score.setClawPosition(constants.getClawOpenPos());
 
 
 
@@ -187,12 +190,19 @@ public class CamwithContours extends LinearOpMode {
         //begin thread for maintaining height of slides
         cont.set(true);
         //move forward closer to pole
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(fl, fr, bl, br), "move to pole");
+        if (detect.getDistance() >= 6 || detect.getDistance() <= 4) {
+            while (detect.getDistance() >= 6) {
+                drive.goToPosition(0.2, 0.2, 0.2, 0.2);
+            }
+            while (detect.getDistance() < 5) {
+                drive.goToPosition(-0.2, -0.2, -0.2, -0.2);
+            }
+        }
         sleep(1000);
 
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
-        score.setClawPosition(0);
+        score.setClawPosition(constants.getClawOpenPos());
         sleep(300);
 
         //move back from pole
