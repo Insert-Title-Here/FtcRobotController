@@ -1,19 +1,20 @@
 package org.firstinspires.ftc.teamcode.Common;
 
 public class Constants {
-    private int heightTrueLimit = 1200;
-    private int heightLimit = 1190;
-    private int heightHigh = 1087;
-    private int heightMed = 780;
-    private int heightLow = 460;
+    //TODO: Edit values
+    private int heightTrueLimit = 1680;
+    private int heightLimit = 1675;
+    private int heightHigh = 1655;
+    private int heightMed = 1155;
+    private int heightLow = 738;
     private double clawOpenPos = 0.0;
-    private double clawClosePos = 0.36;
-    private double clawLowThreshold = 0.34;
-    private double clawHighThreshold = 0.38;
-    private int stackHeight = 174;
+    private double clawLowThreshold = 0.3;
+    private double clawClosePos = 0.38;
+    private double clawHighThreshold = 0.4;
+    private int stackHeight = 240;
     private double steadyPow = 0.16;
-    private int stackIntervalHeight = 50;
-    private int heightBottom = 10;
+    private int stackIntervalHeight = 60;
+    private int heightBottom = 20;
     //TODO: add comments
     public double getClawOpenPos(){
         return clawOpenPos;

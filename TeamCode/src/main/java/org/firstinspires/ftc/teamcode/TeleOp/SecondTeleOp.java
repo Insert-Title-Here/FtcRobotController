@@ -181,7 +181,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+43, 1);
+                                    score.goToPosition(score.getEncoderPosition()+330, 1);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
 

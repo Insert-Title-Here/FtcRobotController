@@ -70,9 +70,9 @@ public class ScoringSystem {
                 break;
             }else{
                 if(Math.abs(tics) - motorPosition < 0){
-                    liftMotor.setPower(power/3);
-                }else{
                     liftMotor.setPower(power);
+                }else{
+                    liftMotor.setPower(0.8);
                 }
                 motorPosition = liftMotor.getCurrentPosition();
             }
@@ -158,7 +158,7 @@ public class ScoringSystem {
             // lift up
             if(stack){
                 sleep(300);
-                goToPosition(getEncoderPosition() + 50, 1);
+                goToPosition(getEncoderPosition() + 330, 1);
             }else{
                 goToPosition(getEncoderPosition() + 100, 1);
             }
@@ -226,7 +226,7 @@ public class ScoringSystem {
             currentHeight = height5;
         }
     }
-    
+
      */
 }
 
