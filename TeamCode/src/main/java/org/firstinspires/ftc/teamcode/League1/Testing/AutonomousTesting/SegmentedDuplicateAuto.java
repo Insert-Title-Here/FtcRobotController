@@ -153,6 +153,14 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
                         score.setLinkagePosition(0.63);
                         armUp.set(false);
 
+                    }else if(linkageUp.get()){
+                        try {
+                            sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        score.setLinkagePosition(Constants.linkageUp);
+                        linkageUp.set(false);
                     }
 
 
@@ -201,18 +209,56 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
-        cameraServo.setPosition(Constants.cone);
+        cameraServo.setPosition(Constants.sleeve);
 
 
         waitForStart();
         double startTime = time.seconds();
 
 
+
         armThread.start();
         feedForward.start();
+        parkPos = pipeline.getPosition();
+        cameraServo.setPosition(Constants.pole);
+        pipeline.changeMode(KevinGodPipeline.Mode.POLE);
 
 
-        pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
+
+        score.setLinkagePosition(0.8);
+        sleep(200);
+        drive.goTOPIDPos(-2050, 0.5,MecDrive.MovementType.STRAIGHT);
+        sleep(100);
+
+        score.setLinkagePosition(Constants.linkageUp);
+        sleep(200);
+
+        hold.set(false);
+        score.moveToPosition(830, 1);
+        hold.set(true);
+        drive.tankRotatePID(Math.PI / 5.3, 0.7, true);
+        sleep(100);
+
+        //sleep(200);
+        //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
+        normalizeDistance = pipeline.normalize(0.2, 172, 2);
+
+        score.setLinkagePositionLogistic(Constants.linkageScore, 100, 50);
+
+        sleep(500);
+        score.setGrabberPosition(0.3);
+        sleep(200);
+
+        score.setLinkagePositionLogistic(Constants.linkageUp, 100, 50);
+
+        hold.set(false);
+        score.moveToPosition(0, 0.5);
+
+
+
+
+
+        pipeline.changeMode(KevinGodPipeline.Mode.REDCONE);
         drive.tankRotatePID(Math.PI / 2, 0.85, false);
         score.setGrabberPosition(0.65);
 
@@ -222,7 +268,7 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
 
             score.setLinkagePosition(constants.linkageUp);
 
-            pipeline.normalizeStrafe(-0.3, 170, 5);
+            pipeline.normalizeStrafe(0.3, 165, 5);
 
             if (pipeline.getNormalizationBroke()) {
                 drive.tankRotatePID(Math.PI / 2, 0.6, false);
@@ -284,7 +330,7 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
 
             //score.moveToPosition(0, 1);
 
-            //hold.set(false);
+            hold.set(false);
             score.moveToPosition(830, 1);
             hold.set(true);
 
@@ -316,7 +362,7 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
 
 
             //score.setLinkagePositionLogistic(Constants.linkageDown, 250, 30);
-            pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
+            pipeline.changeMode(KevinGodPipeline.Mode.REDCONE);
 
             score.setLinkagePosition(Constants.linkageUp);
             sleep(100);

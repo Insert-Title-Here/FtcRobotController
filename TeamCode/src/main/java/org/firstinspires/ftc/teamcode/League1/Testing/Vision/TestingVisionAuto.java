@@ -17,7 +17,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
-@Config
 public class TestingVisionAuto extends LinearOpMode {
 
 

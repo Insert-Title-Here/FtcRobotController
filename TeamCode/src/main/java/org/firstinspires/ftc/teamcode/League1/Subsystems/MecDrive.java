@@ -43,9 +43,15 @@ public class MecDrive {
 
     //Original
     PIDCoefficients pidf = new PIDCoefficients(0.003, 0.0001,0.0003);
+    //PIDCoefficients pidf = new PIDCoefficients(0.031, 0,0.00055);
+
     PIDCoefficients rotate = new PIDCoefficients(1.09, 0, 0.002);
+    //PIDCoefficients rotate = new PIDCoefficients(0.975, 0, 0.02);
+
 
     PIDCoefficients rotateFaster = new PIDCoefficients(1.09, 0, 0.002  );
+    //PIDCoefficients rotateFaster = new PIDCoefficients(0.975, 0, 0.02);
+
 
 
     //Slow start
@@ -414,7 +420,7 @@ public class MecDrive {
 
     }
 
-    private double wrapAngle(double angle){
+    public double wrapAngle(double angle){
         while(angle > Math.PI){
             angle -= (2 * Math.PI);
         }
