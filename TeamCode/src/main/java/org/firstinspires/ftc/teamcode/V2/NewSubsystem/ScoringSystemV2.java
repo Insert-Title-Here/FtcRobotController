@@ -203,10 +203,10 @@ public class ScoringSystemV2 {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH || height == ScoringMode.ULTRA){
-            moveToPosition(1350, 1);
+            moveToPosition(1375, 1, 2.25);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(760, 1);
+            moveToPosition(650, 1);
 
 
         }else if(height == ScoringMode.LOW){
@@ -270,6 +270,75 @@ public class ScoringSystemV2 {
 
         if(power > 0) {
             while ((time.seconds() - startTime) < 2.25 && (rLiftPos < tics || lLiftPos < tics)) {
+
+                //TODO: figure out if we need to negate either of them
+
+                if (rLiftPos >= tics) {
+                    rightPower = 0;
+                } else if (lLiftPos >= tics) {
+                    leftPower = 0;
+                }
+
+
+                rLiftPos = -1 * rLift.getCurrentPosition();
+                lLiftPos = lLift.getCurrentPosition();
+
+                setPower(rightPower, leftPower);
+
+
+            }
+        }else{
+            while ((time.seconds() - startTime) < 4 &&   (rLiftPos > tics || lLiftPos > tics)) {
+
+                //TODO: figure out if we need to negate either of them
+
+                if (rLiftPos <= tics) {
+                    rightPower = 0;
+                } else if (lLiftPos <= tics) {
+                    leftPower = 0;
+                }
+
+
+                rLiftPos = -1 * rLift.getCurrentPosition();
+                lLiftPos = lLift.getCurrentPosition();
+
+                setPower(rightPower, leftPower);
+
+
+            }
+        }
+
+        setPower(0);
+
+    }
+
+    public void moveToPosition(int tics, double power, double kickout){
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+
+        int rLiftPos = -1 * rLift.getCurrentPosition();
+        int lLiftPos = lLift.getCurrentPosition();
+
+
+        if(tics < ((rLiftPos + lLiftPos) / 2)){
+            power *= -1;
+        }
+
+        double rightPower = power;
+        double leftPower = power;
+
+
+
+
+
+        //Dont know if need the != condition
+        //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
+
+        //TODO: Check if logic for encoder positions works
+
+        if(power > 0) {
+            while ((time.seconds() - startTime) < kickout && (rLiftPos < tics || lLiftPos < tics)) {
 
                 //TODO: figure out if we need to negate either of them
 

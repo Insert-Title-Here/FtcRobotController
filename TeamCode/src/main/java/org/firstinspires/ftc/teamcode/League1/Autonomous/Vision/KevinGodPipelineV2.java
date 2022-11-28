@@ -47,12 +47,12 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     public static int V6 = 255;
 
     // Config variables for signal pipeline
-    public static int YUpper = 178;
-    public static int YLower = 158;
-    public static int CrUpper = 91;
-    public static int CrLower = 85;
-    public static int CbUpper = 160;
-    public static int CbLower = 150;
+    public static int YUpper = 255;
+    public static int YLower = 165;
+    public static int CrUpper = 210;
+    public static int CrLower = 180;
+    public static int CbUpper = 190;
+    public static int CbLower = 170;
 
     // Config variables for bounding box
     public static int topLeftXRightRed = 225 ;
@@ -65,10 +65,10 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     public static int boxWidthLeftRed = 20;
     public static int boxHeightLeftRed = 40;
 
-    public static int topLeftXRightBlue = 130;
-    public static int topLeftYRightBlue = 0;
-    public static int boxWidthRightBlue = 110;
-    public static int boxHeightRightBlue = 176;
+    public static int topLeftXRightBlue = 180;
+    public static int topLeftYRightBlue = 60;
+    public static int boxWidthRightBlue = 20;
+    public static int boxHeightRightBlue = 40;
 
     public static int topLeftXLeftBlue = 135;
     public static int topLeftYLeftBlue = 25;
@@ -207,6 +207,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
             // Convert image to YCrCb color space and extract the Y channel
             Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(ycrcb, temp, 0);
+            telemetry.addData("Orig Y", Core.mean(temp.submat(MIDDLE)).val[0]);
 
             // Make a binary image of values within the desired range and calculate avg color
             Core.inRange(temp, new Scalar(YLower), new Scalar(YUpper), temp);
@@ -215,6 +216,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             // Extract Cr channel
             Core.extractChannel(ycrcb, temp, 1);
+            telemetry.addData("Orig Cr", Core.mean(temp.submat(MIDDLE)).val[0]);
 
             // Make binary image and calculate avg color
             Core.inRange(temp, new Scalar(CrLower), new Scalar(CrUpper), temp);
@@ -226,6 +228,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             // Extract Cb channel
             Core.extractChannel(ycrcb, temp, 2);
+            telemetry.addData("Orig Cb", Core.mean(temp.submat(MIDDLE)).val[0]);
 
             // Make binary image and calculate avg color
             Core.inRange(temp, new Scalar(CbLower), new Scalar(CbUpper), temp);
@@ -245,7 +248,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
             if(countY > 100 && countCb < 90) {
                 telemetry.addData("Color", "Yellow - Left");
                 position = ParkPos.LEFT;
-            } else if(countCr > 200 && countCb > 200) {
+            } else if(countCr > 200 /*&& countCb > 200*/) {
                 telemetry.addData("Color", "Magenta - Right");
                 position = ParkPos.RIGHT;
             } else {
@@ -382,7 +385,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
         }
-        return temp;
+        return input;
     }
 
     // Get x coordinate of center of largest contour (pole)

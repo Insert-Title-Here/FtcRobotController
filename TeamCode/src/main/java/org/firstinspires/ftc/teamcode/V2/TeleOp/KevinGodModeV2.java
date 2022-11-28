@@ -278,15 +278,15 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     //Manual slides (dpad right and left)
                     if(gamepad1.dpad_right){
-                        //passive = PassivePower.MOVEMENT;
-                        score.setPower(0.7);
+                        passive = PassivePower.MOVEMENT;
+                        score.setPower(1);
                     }else if(gamepad1.dpad_left){
-                        //passive = PassivePower.MOVEMENT;
-                        score.setPower(-0.3);
+                        passive = PassivePower.MOVEMENT;
+                        score.setPower(-0.55);
                     }else{
 
                         //Feedforward if slides are extended
-                        if(score.isExtended() == true && (score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2.ScoringMode.MEDIUM)){
+                        if(score.isExtended() && (score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2.ScoringMode.MEDIUM)){
                             passive = PassivePower.EXTENDED;
                         }else{
                             passive = PassivePower.ZERO;

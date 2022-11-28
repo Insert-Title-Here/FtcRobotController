@@ -142,7 +142,7 @@ public class V2AutoPerfect extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineV2(telemetry, drive, KevinGodPipelineV2.AutoSide.RED_RIGHT);
+        pipeline = new KevinGodPipelineV2(telemetry, drive, KevinGodPipelineV2.AutoSide.BLUE_RIGHT);
 
         camera.setPipeline(pipeline);
 
@@ -173,9 +173,12 @@ public class V2AutoPerfect extends LinearOpMode {
 
 
         waitForStart();
+
         double startTime = time.seconds();
 
         parkPos = pipeline.getPosition();
+
+        //parkPos = KevinGodPipelineV2.ParkPos.LEFT;
         //pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
 
 
@@ -191,25 +194,27 @@ public class V2AutoPerfect extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.simpleMoveToPosition(-1540, MecDrive.MovementType.STRAIGHT, 0.7);
+        drive.simpleMoveToPosition(-1540, MecDrive.MovementType.STRAIGHT, 0.85);
+
+        sleep(100);
 
         drive.tankRotatePID(Math.PI / 2, 1, false);
 
-        drive.simpleMoveToPosition(700, MecDrive.MovementType.STRAIGHT, 0.5);
+        drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 0.6);
 
         drive.tankRotatePID(3 * Math.PI / 8, 1, false);
 
-        drive.simpleMoveToPosition(-75, MecDrive.MovementType.STRAFE, 0.5);
+        drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.5);
 
-        pipeline.normalize(0.2, 150, 3);
+        pipeline.normalize(0.2, 147, 3);
 
-        drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
+        //drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
 
-        score.moveToPosition(1175, 1);
+        score.moveToPosition(1330, 1);
 
         sleep(150);
 
-        score.setLinkagePositionLogistic(0.7, 100);
+        score.setLinkagePositionLogistic(0.8, 100);
 
         sleep(100);
 
@@ -223,12 +228,12 @@ public class V2AutoPerfect extends LinearOpMode {
 
         score.moveToPosition(0, 0.8);
 
-
         for(int i = 0; i < 5; i++) {
 
 
             double startDrivePos = drive.avgPos();
 
+            /*
             double startDistanceTime = time.seconds();
             while (distance.getDistance(DistanceUnit.CM) > 3.5) {
                 drive.setPowerAuto(0.4, MecDrive.MovementType.STRAIGHT);
@@ -249,27 +254,29 @@ public class V2AutoPerfect extends LinearOpMode {
 
             drive.simpleBrake();
 
+             */
+
             score.setGrabberPosition(Constants.grabbing);
 
             sleep(100);
 
             score.setLinkagePositionLogistic(Constants.linkageUpV2, 100);
 
-            drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
+            //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 150, 3);
+            pipeline.normalize(0.2, 147, 3);
 
-            score.moveToPosition(1175, 1);
+            score.moveToPosition(1330, 1);
 
             sleep(150);
 
-            score.setLinkagePositionLogistic(0.7, 100);
+            score.setLinkagePositionLogistic(0.8, 100);
 
             sleep(100);
 
             score.setGrabberPosition(Constants.score);
 
-            sleep(100);
+            sleep(150);
 
             score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 100);
             score.setGrabberPosition(Constants.open);
@@ -279,7 +286,25 @@ public class V2AutoPerfect extends LinearOpMode {
 
             score.moveToPosition(0, 0.8);
 
+            if(time.seconds() - startTime > 24) {
+                i = 5;
+            }
+
         }
+
+        drive.simpleMoveToPosition(-160, MecDrive.MovementType.ROTATE, 0.5);
+
+        sleep(50);
+
+        score.setGrabberPosition(Constants.grabbing);
+
+        if (parkPos == KevinGodPipelineV2.ParkPos.CENTER) {
+            drive.simpleMoveToPosition(-750, MecDrive.MovementType.STRAIGHT, 1);
+        } else if (parkPos == KevinGodPipelineV2.ParkPos.LEFT){
+            drive.simpleMoveToPosition(-1500, MecDrive.MovementType.STRAIGHT, 1);
+        }
+
+        sleep(500);
 
     }
 
