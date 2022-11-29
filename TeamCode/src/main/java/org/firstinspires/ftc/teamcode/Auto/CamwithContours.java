@@ -49,7 +49,7 @@ public class CamwithContours extends LinearOpMode {
 
             @Override
             public void onOpened() {
-                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -198,7 +198,7 @@ public class CamwithContours extends LinearOpMode {
                 drive.goToPosition(-0.2, -0.2, -0.2, -0.2);
             }
         }
-        sleep(1000);
+        sleep(500);
 
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
