@@ -230,7 +230,8 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.goTOPIDPos(-2120, 0.5,MecDrive.MovementType.STRAIGHT);
+        drive.goTOPIDPos(-2000, 0.5,MecDrive.MovementType.STRAIGHT);
+        sleep(50);
 
         armUp.set(true);
         drive.tankRotatePID(Math.PI / 4.5, 0.7, true);
@@ -316,7 +317,9 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
                 drive.simpleMoveToPosition(-40, MecDrive.MovementType.STRAFE, 0.3);
             }
 */
-                pipeline.normalizeStrafe(0.25, 162, 3   );
+
+                pipeline.normalizeStrafe(-0.25, 166, 3);
+
 
                 if(pipeline.getNormalizationBroke()){
                     drive.tankRotatePID(Math.PI/2, 0.6, false);
@@ -355,7 +358,7 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
 
 
                 score.setGrabberPosition(constants.grabbing);
-                sleep(400);
+                sleep(300);
 
                 score.moveToPosition(220, 1);
                 hold.set(true);
@@ -366,7 +369,7 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
                 pipeline.changeMode(KevinGodPipeline.Mode.POLE);
                 cameraServo.setPosition(Constants.pole);
 
-                drive.goTOPIDPos(-1135, 1, MecDrive.MovementType.STRAIGHT);
+                drive.goTOPIDPos(-1055, 1, MecDrive.MovementType.STRAIGHT);
                 if (time.seconds() - startTime > 26) {
                     break;
                 }
@@ -397,7 +400,11 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
 
                 score.setLinkagePositionLogistic(Constants.linkageScore, 100, 50);
 
-                sleep(500);
+                if(i == 2) {
+                    drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
+                }
+
+                sleep(400);
                 score.setGrabberPosition(0.3);
                 sleep(200);
 
@@ -467,6 +474,8 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
 
                 }
             }
+
+            sleep(500);
         }
 
         //Will have to check if this aligns straight already (need color sensor or not) ->
