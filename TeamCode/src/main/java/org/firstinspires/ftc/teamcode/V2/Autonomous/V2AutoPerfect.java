@@ -195,7 +195,7 @@ public class V2AutoPerfect extends LinearOpMode {
 
         drive.tankRotatePID(Math.PI / 2, 1, false);
 
-        drive.simpleMoveToPosition(650, MecDrive.MovementType.STRAIGHT, 0.6);
+        drive.simpleMoveToPosition(670, MecDrive.MovementType.STRAIGHT, 0.6);
 
         drive.tankRotatePID(3 * Math.PI / 8, 1, false);
 
@@ -203,9 +203,10 @@ public class V2AutoPerfect extends LinearOpMode {
 
         pipeline.normalize(0.2, 159, 3);
 
+
         drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
 
-        score.moveToPosition(1330, 1);
+        score.moveToPosition(1320, 1);
 
         sleep(150);
 
@@ -226,7 +227,9 @@ public class V2AutoPerfect extends LinearOpMode {
         for (int i = 0; i < cycles; i++) {
 
 
-            if (i == 0) {
+
+            if(i == 0) {
+
                 double startDistanceTime = time.seconds();
                 while (distance.getDistance(DistanceUnit.CM) > 2.75) {
                     drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
@@ -242,6 +245,8 @@ public class V2AutoPerfect extends LinearOpMode {
                     }*/
 
                 }
+
+
 
 
                 drive.simpleBrake();
@@ -263,7 +268,7 @@ public class V2AutoPerfect extends LinearOpMode {
 
             pipeline.normalize(0.2, 159, 3);
 
-            score.moveToPosition(1330, 1);
+            score.moveToPosition(1320, 1);
 
             sleep(150);
 
@@ -293,13 +298,13 @@ public class V2AutoPerfect extends LinearOpMode {
 
         sleep(50);
 
-        score.setGrabberPosition(Constants.grabbing);
-
         if (parkPos == KevinGodPipelineV2.ParkPos.CENTER) {
             drive.simpleMoveToPosition(-750, MecDrive.MovementType.STRAIGHT, 1);
         } else if (parkPos == KevinGodPipelineV2.ParkPos.LEFT) {
             drive.simpleMoveToPosition(-1500, MecDrive.MovementType.STRAIGHT, 1);
         }
+
+        score.setGrabberPosition(Constants.grabbing);
 
         sleep(500);
 
