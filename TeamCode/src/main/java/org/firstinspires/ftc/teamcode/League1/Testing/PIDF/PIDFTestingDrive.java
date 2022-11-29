@@ -20,15 +20,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 
 @Autonomous
 @Config
 public class PIDFTestingDrive extends LinearOpMode {
     MecDrive drive;
-    ScoringSystem2 score;
+    ScoringSystemV2 score;
     Constants constants;
 
-    public static double target = 1.57;
+    public static int target = 1000;
     public static double p = 0, i = 0, d = 0;
 
     int flPreviousError = 0;
@@ -56,7 +57,9 @@ public class PIDFTestingDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         constants = new Constants();
         drive = new MecDrive(hardwareMap, true, telemetry, hardwareMap.get(ColorRangeSensor.class, "color"));
-        score = new ScoringSystem2(hardwareMap, constants, telemetry);
+        score = new ScoringSystemV2(hardwareMap, constants, telemetry);
+
+        score.setLinkagePosition(Constants.linkageDownV2);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -84,16 +87,16 @@ public class PIDFTestingDrive extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            tankRotatePID(target, 1, false);
+            goTOPIDPos(target, 1, MecDrive.MovementType.STRAIGHT);
 
 
-            /*telemetry.addData("flPos", drive.getFLEncoder());
+            telemetry.addData("flPos", drive.getFLEncoder());
             telemetry.addData("frPos", drive.getFREncoder());
-            telemetry.addData("blPos", drive.getBLEncoder());
-            telemetry.addData("brPos", drive.getBREncoder());
-*/
+            telemetry.addData("blPos",  -1 * drive.getBLEncoder());
+            telemetry.addData("brPos", -1 * drive.getBREncoder());
 
-            telemetry.addData("current", drive.getFirstAngle());
+
+            //telemetry.addData("current", drive.getFirstAngle());
             telemetry.addData("target", target);
 
             telemetry.update();
@@ -113,16 +116,22 @@ public class PIDFTestingDrive extends LinearOpMode {
 
 
         //TODO: check if we need to negate any
-        int flPos = -1 * drive.getFLEncoder();
+        int flPos = drive.getFLEncoder(); //Negative for v1
         int frPos = drive.getFREncoder();
-        int blPos = -1 * drive.getBLEncoder();
-        int brPos = drive.getBREncoder();
+        int blPos = -1 * drive.getBLEncoder();//Also negative for v1
+        int brPos =  -1 * drive.getBREncoder();
 
 
         int flError = tics - flPos;
         int frError = tics - frPos;
         int blError = tics - blPos;
         int brError = tics - brPos;
+
+        telemetry.addData("flError", flError);
+        telemetry.addData("frError", frError);
+        telemetry.addData("blError", blError);
+        telemetry.addData("brError", brError);
+        telemetry.update();
 
 
         flIntegralSum += (0.5 * (flError + flPreviousError) * (currentTime - startTime));

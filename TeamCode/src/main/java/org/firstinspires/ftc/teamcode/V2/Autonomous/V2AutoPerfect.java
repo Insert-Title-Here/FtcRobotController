@@ -231,30 +231,30 @@ public class V2AutoPerfect extends LinearOpMode {
         for(int i = 0; i < 5; i++) {
 
 
-            double startDrivePos = drive.avgPos();
 
-            /*
-            double startDistanceTime = time.seconds();
-            while (distance.getDistance(DistanceUnit.CM) > 3.5) {
-                drive.setPowerAuto(0.4, MecDrive.MovementType.STRAIGHT);
+            if(i == 0) {
+                double startDistanceTime = time.seconds();
+                while (distance.getDistance(DistanceUnit.CM) > 3.5) {
+                    drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
-                telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
-                telemetry.update();
+                    telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
+                    telemetry.update();
 
-                if (time.seconds() - startDistanceTime > 3) {
-                    drive.simpleBrake();
-                    drive.tankRotatePID(Math.PI / 2, 0.6, false);
-                    failed = true;
-                    break;
+                    if (time.seconds() - startDistanceTime > 3) {
+                        drive.simpleBrake();
+                        drive.tankRotatePID(Math.PI / 2, 0.6, false);
+                        failed = true;
+                        break;
+                    }
+
                 }
+
+
+                drive.simpleBrake();
 
             }
 
-            int distanceDriven = (int) Math.abs(drive.avgPos() - startDrivePos);
 
-            drive.simpleBrake();
-
-             */
 
             score.setGrabberPosition(Constants.grabbing);
 
