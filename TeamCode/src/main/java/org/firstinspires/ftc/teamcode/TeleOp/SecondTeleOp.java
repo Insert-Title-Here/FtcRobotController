@@ -70,19 +70,19 @@ public class SecondTeleOp extends LinearOpMode {
                         if(score.getEncoderPosition() > constant.getHeightLimit()){
                             score.setPower(constant.getSteadyPow());
                         }else{
-                            score.setPower(0.9);
+                            score.setPower(0.7);
                         }
                     }else if(gamepad1.left_bumper) {
                         if(score.getEncoderPosition() < 7){
                             score.setPower(0);
                         }else{
-                            score.setPower(-0.4);
+                            score.setPower(-0.2);
                         }
                     }else{
                         if(score.getEncoderPosition() > 100){
-                            if(!clawStackFlag.get()){
+                            //if(!clawStackFlag.get()){
                                 score.setPower(constant.getSteadyPow());
-                            }
+                            //}
                         }
                     }
                     //moves the slides all the way down
@@ -111,6 +111,22 @@ public class SecondTeleOp extends LinearOpMode {
                     if(gamepad1.options){
                         score = new ScoringSystem(hardwareMap, telemetry);
                     }
+                    /*
+                    if(gamepad1.a && stackFlag.get()) {
+                        if(!clawStackFlag.get()){
+                            score.goToPosition(240, 0.8);
+                        }
+                        clawStackFlag.set(true);
+                        stackFlag.set(false);
+                        score.stackUp();
+                    }else if(gamepad1.y && stackFlag.get()){
+                        clawStackFlag.set(true);
+                        stackFlag.set(false);
+                        score.stackDown();
+                    }else if(!gamepad1.a){
+                        stackFlag.set(true);
+                    }
+                     */
                     //lowers the height of the slides for the stack of 5 cones
                     if(gamepad1.a && stackFlag.get()){
                         clawStackFlag.set(true);
@@ -147,7 +163,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     score.goToPosition(constant.getHeightBottom(),1);
                                     clawMoveDownToggle.set(false);
                                 }else{
-                                    score.goToPosition(score.getEncoderPosition() - 113, 1);
+                                    score.goToPosition(score.getEncoderPosition() - 113, 0.5);
                                     clawMoveDownToggle.set(true);
                                 }
                             }else{
@@ -181,7 +197,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+330, 1);
+                                    score.goToPosition(score.getEncoderPosition()+100, 1);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
 
@@ -209,7 +225,11 @@ public class SecondTeleOp extends LinearOpMode {
                     // closes claw using color sensor
                     if (score.getClawPosition() == 0.0) {
                         try {
-                            score.grabCone(true);
+                            if(clawStackFlag.get()){
+                                score.grabCone(true);
+                            }else{
+                                score.grabCone(false);
+                            }
                             clawOpenCloseToggle.set(true);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -248,12 +268,18 @@ public class SecondTeleOp extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
-                drive.turn(-Math.PI/4, 0);
+                if(-Math.PI/4 < imu.getAngularOrientation().firstAngle  && imu.getAngularOrientation().firstAngle < Math.PI/4){
+                    drive.turn(-Math.PI, 0);
+                }else{
+                    drive.turn(Math.PI,0);
+                }
             }
+            /*
             if(gamepad1.dpad_up){
                 drive.goToPosition(0, 0, 0, 0, 2000, "test");
             }
 
+             */
             //resets the drive motor encoders
             if (gamepad1.share) {
                 drive.resetEncoders();

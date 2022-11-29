@@ -138,7 +138,7 @@ public class ScoringSystem {
         if (colorCone.getDistance(DistanceUnit.CM) < 0.9) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
-            sleep(400);
+            sleep(500);
             // lift up
             goToPosition(getEncoderPosition() + 100, 1);
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
@@ -154,10 +154,9 @@ public class ScoringSystem {
         if (colorCone.getDistance(DistanceUnit.CM) < 1) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
-            sleep(400);
+            sleep(500);
             // lift up
             if(stack){
-                sleep(300);
                 goToPosition(getEncoderPosition() + 330, 1);
             }else{
                 goToPosition(getEncoderPosition() + 100, 1);
@@ -177,7 +176,7 @@ public class ScoringSystem {
             // grab cone
             setClawPosition(constant.getClawClosePos());
             try {
-                sleep(400);
+                sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -192,42 +191,49 @@ public class ScoringSystem {
     public double getDistance() {
         return colorCone.getDistance(DistanceUnit.CM);
     }
-    /*
-    //TODO Test the actual heights
-    int height1 = 174;
-    int height2 = 124;
-    int height3 = 74;
-    int height4 = 24;
-    int height5 = 24;
-    int currentHeight = 174;
+
+    //TODO logic needs work
+    int height1 = 240;
+    int height2 = 180;
+    int height3 = 120;
+    int height4 = 60;
+    int height5 = 15;
+    int currentHeight = height1;
     public void stackUp(){
-        if(getEncoderPosition() >= height1){
-            currentHeight = height1;
-        }else if(getEncoderPosition() >= height2){
-            currentHeight = height2;
-        }else if(){
-            currentHeight = height3;
-        }else if(){
+        if(currentHeight <= height5){
+            goToPosition(currentHeight, 0.8);
             currentHeight = height4;
-        }else{
-            currentHeight = height5;
+        }else if(currentHeight <= height4){
+            goToPosition(currentHeight, 0.8);
+            currentHeight = height3;
+        }else if(currentHeight <= height3){
+            goToPosition(currentHeight, 0.8);
+            currentHeight = height2;
+        }else if(currentHeight <= height2){
+            goToPosition(currentHeight, 0.8);
+            currentHeight = height1;
+        }else if(currentHeight <= height1){
+            goToPosition(currentHeight, 0.8);
+            currentHeight = height1;
         }
     }
     public void stackDown(){
-        if(){
-            currentHeight = height1;
-        }else if(){
-            currentHeight = height2;
-        }else if(){
-            currentHeight = height3;
-        }else if(){
+        if(currentHeight <= height1){
+            goToPosition(currentHeight, 0.5);
             currentHeight = height4;
-        }else{
-            currentHeight = height5;
+        }else if(currentHeight <= height4){
+            goToPosition(currentHeight, 0.5);
+            currentHeight = height3;
+        }else if(currentHeight <= height3){
+            goToPosition(currentHeight, 0.5);
+            currentHeight = height2;
+        }else if(currentHeight <= height2){
+            goToPosition(currentHeight, 0.5);
+            currentHeight = height1;
         }
     }
 
-     */
+
 }
 
 
