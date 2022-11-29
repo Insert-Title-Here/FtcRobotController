@@ -5,11 +5,13 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @TeleOp
 public class SpecialTeleOp extends LinearOpMode {
@@ -17,12 +19,15 @@ public class SpecialTeleOp extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     Thread liftThread;
-    AtomicBoolean pause;
-    AtomicBoolean discontinue;
+    AtomicBoolean clawOpenCloseToggle;
+    AtomicBoolean clawStackFlag;
+    AtomicBoolean clawMoveDownToggle;
+    AtomicInteger stackHeight;
+    AtomicBoolean stackFlag;
+    Constants constant;
     BNO055IMU imu;
-
-    private final double NORMAL_LINEAR_MODIFIER = 0.55;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.6;
+    private final double NORMAL_LINEAR_MODIFIER = 0.7;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
     @Override
@@ -36,12 +41,20 @@ public class SpecialTeleOp extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
-        pause = new AtomicBoolean();
-        discontinue = new AtomicBoolean();
-        pause.set(true);
-        discontinue.set(false);
+        clawOpenCloseToggle = new AtomicBoolean();
+        constant = new Constants();
+        clawMoveDownToggle = new AtomicBoolean();
+        clawStackFlag = new AtomicBoolean();
+        stackHeight = new AtomicInteger();
+        stackFlag = new AtomicBoolean();
+        stackFlag.set(true);
+        stackHeight.set(constant.getStackHeight());
+        clawMoveDownToggle.set(false);
+        clawOpenCloseToggle.set(true);
+        clawStackFlag.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         //Open
@@ -53,107 +66,171 @@ public class SpecialTeleOp extends LinearOpMode {
                 while(opModeIsActive()){
                     //manually lifts slides up and down
                     if(gamepad1.right_bumper){
-                        if(score.getEncoderPosition() > 2390){
-                            score.setPower(0);
+                        //if bumper get to max height sets power stop moving up
+                        if(score.getEncoderPosition() > constant.getHeightLimit()){
+                            score.setPower(constant.getSteadyPow());
                         }else{
-                            score.setPower(0.6);
+                            score.setPower(0.7);
                         }
                     }else if(gamepad1.left_bumper) {
-                        if(score.getEncoderPosition() < 2){
+                        if(score.getEncoderPosition() < 7){
                             score.setPower(0);
                         }else{
-                            score.setPower(-0.7);
+                            score.setPower(-0.2);
                         }
                     }else{
-                        if(!discontinue.get()){
-                            score.setPower(0.1);
+                        if(score.getEncoderPosition() > 100){
+                            //if(!clawStackFlag.get()){
+                            score.setPower(constant.getSteadyPow());
+                            //}
                         }
                     }
                     //moves the slides all the way down
                     if(gamepad1.dpad_down) {
-                        score.goToPosition(0, 0.4);
+                        score.goToPosition(constant.getHeightBottom(),1);
                     }
                     //moves the slides to highest pole height
                     if (gamepad1.right_stick_button) {
-                        //high cone
-                        score.goToPosition(2330, 0.95);
-                        score.setPower(0.1);
+                        //high cone Max limit is 1370
+                        score.goToPosition(constant.getHeightHigh(), 0.95);
+                        score.setPower(constant.getSteadyPow());
                     }
                     //moves slides to medium pole height
                     if(gamepad1.left_stick_button){
                         //medium cone
-                        score.goToPosition(1660, 0.95);
-                        score.setPower(0.1);
+                        score.goToPosition(constant.getHeightMed(), 0.95);
+                        score.setPower(constant.getSteadyPow());
                     }
                     //temporary command that will move the slides to the low pole height
                     if(gamepad1.x){
                         //low cone
-                        score.goToPosition(870, 0.8);
-                        score.setPower(0.08);
+                        score.goToPosition(constant.getHeightLow(), 0.8);
+                        score.setPower(constant.getSteadyPow());
                     }
                     //resets the slidemotor encoder
                     if(gamepad1.options){
                         score = new ScoringSystem(hardwareMap, telemetry);
                     }
+                    /*
+                    if(gamepad1.a && stackFlag.get()) {
+                        if(!clawStackFlag.get()){
+                            score.goToPosition(240, 0.8);
+                        }
+                        clawStackFlag.set(true);
+                        stackFlag.set(false);
+                        score.stackUp();
+                    }else if(gamepad1.y && stackFlag.get()){
+                        clawStackFlag.set(true);
+                        stackFlag.set(false);
+                        score.stackDown();
+                    }else if(!gamepad1.a){
+                        stackFlag.set(true);
+                    }
+                     */
+                    //lowers the height of the slides for the stack of 5 cones
+                    if(gamepad1.a && stackFlag.get()){
+                        clawStackFlag.set(true);
+                        stackFlag.set(false);
+                        if((stackHeight.get() - constant.getStackIntervalHeight()) > 0){
+                            stackHeight.set(stackHeight.get()-constant.getStackIntervalHeight());
+                            score.goToPosition(stackHeight.get(), 0.8);
+                        }
+                        //moves the slides to the stack of 5 cones height
+                    }else if(gamepad1.y && stackFlag.get()){
+                        clawStackFlag.set(true);
+                        stackFlag.set(false);
+                        if(stackHeight.get() < constant.getStackHeight()){
+                            score.goToPosition(stackHeight.get(), 0.8);
+                            stackHeight.set(stackHeight.get() + constant.getStackIntervalHeight());
+                        }else if(stackHeight.get() == constant.getStackHeight()){
+                            score.goToPosition(constant.getStackHeight(), 0.8);
+                        }
+                    }else if(!gamepad1.a){
+                        stackFlag.set(true);
+                    }
                     //closes the claw(manually) and opens the claw(like a toggle)
-                    if(gamepad1.right_trigger > 0.1 && pause.get()){
-                        if(0.24 < score.getClawPosition() && score.getClawPosition() < 0.27){
-                            if(score.getEncoderPosition() > 900){
-                                score.goToPosition(score.getEncoderPosition() - 300, 0.5);
-                            }
-                            score.setClawPosition(0);
-
-                            try {
-                                Thread.sleep(800);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            score.goToPosition(0, 0.4);
-                        }else{
-                            if(score.getEncoderPosition() < 200){
-                                if(discontinue.get()){
-                                    score.setClawPosition(0.26);
+                    if(gamepad1.right_trigger > 0.1 && clawOpenCloseToggle.get()){
+                        if(constant.getClawLowThreshold() < score.getClawPosition() && score.getClawPosition() < constant.getClawHighThreshold()){
+                            //if liftpos is low height ish or higher
+                            if(score.getEncoderPosition() > constant.getHeightLow() - 80){
+                                if(clawMoveDownToggle.get()){
+                                    score.setClawPosition(constant.getClawOpenPos());
                                     try {
-                                        Thread.sleep(300);
+                                        Thread.sleep(800);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+300,0.6);
-                                    discontinue.set(false);
+                                    score.goToPosition(constant.getHeightBottom(),1);
+                                    clawMoveDownToggle.set(false);
                                 }else{
-                                    score.setClawPosition(0.26);
-                                    try {
-                                        Thread.sleep(300);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    score.goToPosition(120, 0.35);
+                                    score.goToPosition(score.getEncoderPosition() - 113, 0.5);
+                                    clawMoveDownToggle.set(true);
                                 }
                             }else{
-                                if(discontinue.get()){
-                                    score.setClawPosition(0.26);
+                                score.setClawPosition(0);
+                                try {
+                                    Thread.sleep(700);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                score.goToPosition(constant.getHeightBottom(),0.8);
+                            }
+
+                        }else{
+                            //if lifts system is below 95
+                            if(score.getEncoderPosition() < 95){
+                                //for stack only
+                                if(clawStackFlag.get()){
+                                    score.setClawPosition(constant.getClawClosePos());
                                     try {
-                                        Thread.sleep(300);
+                                        Thread.sleep(600);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+330,0.6);
-                                    discontinue.set(false);
+                                    score.goToPosition(score.getEncoderPosition()+113,1);
+                                    score.setPower(constant.getSteadyPow());
+                                    clawStackFlag.set(false);
                                 }else{
-                                    score.setClawPosition(0.25);
+                                    score.setClawPosition(constant.getClawClosePos());
+                                    try {
+                                        Thread.sleep(600);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    score.goToPosition(score.getEncoderPosition()+100, 1);
+                                    score.setPower(constant.getSteadyPow());
+                                    clawOpenCloseToggle.set(false);
+
+                                }
+                            }else{
+                                if(clawStackFlag.get()){
+                                    score.setClawPosition(constant.getClawClosePos());
+                                    try {
+                                        Thread.sleep(600);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    score.goToPosition(score.getEncoderPosition()+125,1);
+                                    score.setPower(constant.getSteadyPow());
+                                    clawStackFlag.set(false);
+                                }else{
+                                    score.setClawPosition(constant.getClawClosePos());
                                 }
                             }
                         }
-                        //2220
-                        pause.set(false);
+                        clawOpenCloseToggle.set(false);
                     }else if(gamepad1.right_trigger < 0.1){
-                        pause.set(true);
+                        clawOpenCloseToggle.set(true);
                     }
                     // closes claw using color sensor
                     if (score.getClawPosition() == 0.0) {
                         try {
-                            score.grabCone(true);
-                            discontinue.set(false);
+                            if(clawStackFlag.get()){
+                                score.grabCone(true);
+                            }else{
+                                score.grabCone(false);
+                            }
+                            clawOpenCloseToggle.set(true);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -165,9 +242,6 @@ public class SpecialTeleOp extends LinearOpMode {
         score.setClawPosition(0);
         waitForStart();
         liftThread.start();
-        int stackHeight = 305;
-        boolean stackDoubleDown = true;
-        boolean stackDoubleUp = true;
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -184,8 +258,8 @@ public class SpecialTeleOp extends LinearOpMode {
             if (gamepad1.left_trigger > 0.1) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }else {
-                if(score.getEncoderPosition() > 1000){
-                    drive.setPower(new Vector2D(gamepadX * 0.4, gamepadY * 0.4), gamepad1.right_stick_x * 0.4, false);
+                if(score.getEncoderPosition() > 500){
+                    drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.7, false);
                 }else{
                     drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
@@ -194,31 +268,14 @@ public class SpecialTeleOp extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
-                drive.turn(Math.PI/4, 0.3);
-            }
-            //lowers the height of the slides for the stack of 5 cones
-            if(gamepad1.a && stackDoubleDown){
-                discontinue.set(true);
-                stackDoubleDown = false;
-                if((stackHeight - 80) > 0){
-                    stackHeight -= 80;
-                    score.goToPosition(stackHeight, 0.4);
+                if(-Math.PI/4 < imu.getAngularOrientation().firstAngle  && imu.getAngularOrientation().firstAngle < Math.PI/4){
+                    drive.turn(-Math.PI, 0);
+                }else{
+                    drive.turn(Math.PI,0);
                 }
-            }if(gamepad1.a && !stackDoubleDown){
-                stackDoubleDown = true;
             }
-            //moves the slides to the stack of 5 cones height
-            if(gamepad1.y && stackDoubleUp){
-                discontinue.set(true);
-                stackDoubleUp = false;
-                if(stackHeight < 305){
-                    score.goToPosition(stackHeight, 0.6);
-                    stackHeight +=80;
-                }else if(stackHeight == 305){
-                    score.goToPosition(305, 0.6);
-                }
-            }if(gamepad1.y && !stackDoubleUp){
-                stackDoubleUp = true;
+            if(gamepad1.dpad_up){
+                drive.goToPosition(0, 0, 0, 0, 2000, "test");
             }
 
             //resets the drive motor encoders
@@ -231,13 +288,13 @@ public class SpecialTeleOp extends LinearOpMode {
             telemetry.addData("frPos", drive.getFRPosition());
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());
-            telemetry.addData("flPow", drive.getPower());
+            telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
+            telemetry.addData("realDrivePow", drive.getPower());
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
-            telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
-            telemetry.addData("booleanCheck(Discontinue)", discontinue.get());
-            telemetry.addData("stackHeight", stackHeight);
+            telemetry.addData("stack", stackHeight.get());
+            telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());
             //  telemetry.update();
@@ -245,7 +302,10 @@ public class SpecialTeleOp extends LinearOpMode {
             telemetry.update();
 
 
+
         }
+        drive.writeLoggerToFile();
+        score.writeLoggerToFile();
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
         score.setClawPosition(1);
