@@ -30,6 +30,7 @@ public class V2AutoPerfect extends LinearOpMode {
     Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
+    int cycles;
 
     ColorRangeSensor distance, color;
     Servo cameraServo;
@@ -40,7 +41,6 @@ public class V2AutoPerfect extends LinearOpMode {
 
     int normalizeDistance;
     boolean failed;
-
 
 
     @Override
@@ -67,13 +67,15 @@ public class V2AutoPerfect extends LinearOpMode {
 
         distance.setGain(300);
 
+        cycles = 5;
 
-        armThread = new Thread(){
+
+        armThread = new Thread() {
             @Override
             public void run() {
                 //score.setLinkagePosition(0.7);
-                while(opModeIsActive()) {
-                    if(armUp.get()) {
+                while (opModeIsActive()) {
+                    if (armUp.get()) {
                         hold.set(false);
                         score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
 
@@ -93,18 +95,18 @@ public class V2AutoPerfect extends LinearOpMode {
                             e.printStackTrace();
                         }
                         armUp.set(false);
-                    }else if(armDown.get()){
+                    } else if (armDown.get()) {
                         hold.set(false);
                         score.setLinkagePosition(Constants.linkageUpV2);
                         score.moveToPosition(0, 0.5);
                         //score.setLinkagePositionLogistic(Constants.linkageDown, 250, 30);
                         armDown.set(false);
-                    }else if(finalMove.get()){
+                    } else if (finalMove.get()) {
 
                         score.setLinkagePositionLogistic(Constants.linkageUpV2, 100);
                         finalMove.set(false);
 
-                    }else if(linkageUp.get()){
+                    } else if (linkageUp.get()) {
                         try {
                             sleep(200);
                         } catch (InterruptedException e) {
@@ -115,8 +117,6 @@ public class V2AutoPerfect extends LinearOpMode {
                     }
 
 
-
-
                 }
 
                 //Might need this
@@ -125,18 +125,16 @@ public class V2AutoPerfect extends LinearOpMode {
         };
 
 
-
-        feedForward = new Thread(){
+        feedForward = new Thread() {
             @Override
             public void run() {
-                while(opModeIsActive()){
-                    if(hold.get()){
+                while (opModeIsActive()) {
+                    if (hold.get()) {
                         score.setPower(0.2);
                     }
                 }
             }
         };
-
 
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -164,11 +162,7 @@ public class V2AutoPerfect extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
-
-
-
         cameraServo.setPosition(Constants.sleeveV2);
-
 
 
 
@@ -178,15 +172,16 @@ public class V2AutoPerfect extends LinearOpMode {
 
         parkPos = pipeline.getPosition();
 
+        if(parkPos == KevinGodPipelineV2.ParkPos.LEFT){
+            cycles = 4;
+        }
+
         //parkPos = KevinGodPipelineV2.ParkPos.LEFT;
         //pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
 
 
-
-
         armThread.start();
         feedForward.start();
-
 
 
         pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
@@ -206,9 +201,9 @@ public class V2AutoPerfect extends LinearOpMode {
 
         drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.5);
 
-        pipeline.normalize(0.2, 147, 3);
+        pipeline.normalize(0.2, 159, 3);
 
-        //drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.3);
+        drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
 
         score.moveToPosition(1330, 1);
 
@@ -228,24 +223,23 @@ public class V2AutoPerfect extends LinearOpMode {
 
         score.moveToPosition(0, 0.8);
 
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < cycles; i++) {
 
 
-
-            if(i == 0) {
+            if (i == 0) {
                 double startDistanceTime = time.seconds();
-                while (distance.getDistance(DistanceUnit.CM) > 3.5) {
+                while (distance.getDistance(DistanceUnit.CM) > 2.75) {
                     drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                     telemetry.update();
 
-                    if (time.seconds() - startDistanceTime > 3) {
+                    /*if (time.seconds() - startDistanceTime > 3) {
                         drive.simpleBrake();
                         drive.tankRotatePID(Math.PI / 2, 0.6, false);
                         failed = true;
                         break;
-                    }
+                    }*/
 
                 }
 
@@ -254,6 +248,9 @@ public class V2AutoPerfect extends LinearOpMode {
 
             }
 
+            if (failed == true) {
+                break;
+            }
 
 
             score.setGrabberPosition(Constants.grabbing);
@@ -264,7 +261,7 @@ public class V2AutoPerfect extends LinearOpMode {
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 147, 3);
+            pipeline.normalize(0.2, 159, 3);
 
             score.moveToPosition(1330, 1);
 
@@ -286,7 +283,7 @@ public class V2AutoPerfect extends LinearOpMode {
 
             score.moveToPosition(0, 0.8);
 
-            if(time.seconds() - startTime > 24) {
+            if (time.seconds() - startTime > 26) {
                 i = 5;
             }
 
@@ -300,14 +297,14 @@ public class V2AutoPerfect extends LinearOpMode {
 
         if (parkPos == KevinGodPipelineV2.ParkPos.CENTER) {
             drive.simpleMoveToPosition(-750, MecDrive.MovementType.STRAIGHT, 1);
-        } else if (parkPos == KevinGodPipelineV2.ParkPos.LEFT){
+        } else if (parkPos == KevinGodPipelineV2.ParkPos.LEFT) {
             drive.simpleMoveToPosition(-1500, MecDrive.MovementType.STRAIGHT, 1);
         }
 
         sleep(500);
 
     }
-
-
-
 }
+
+
+

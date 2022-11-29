@@ -23,10 +23,10 @@ import java.util.List;
 public class KevinGodPipelineV2 extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
-    public static int H1 = 22;
-    public static int S1 = 80;
-    public static int V1 = 110;
-    public static int H2 = 25;
+    public static int H1 = 17;
+    public static int S1 = 70;
+    public static int V1 = 80;
+    public static int H2 = 30;
     public static int S2 = 255;
     public static int V2 = 255;
 
@@ -385,7 +385,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
         }
-        return input;
+        return temp;
     }
 
     // Get x coordinate of center of largest contour (pole)
