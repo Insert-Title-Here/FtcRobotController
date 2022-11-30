@@ -49,8 +49,8 @@ public class MecDrive {
     PIDCoefficients rotate = new PIDCoefficients(0.975, 0, 0.02);
 
 
-    PIDCoefficients rotateFaster = new PIDCoefficients(1.09, 0, 0.002);
-    //PIDCoefficients rotateFaster = new PIDCoefficients(0.975, 0, 0.02);
+    //PIDCoefficients rotateFaster = new PIDCoefficients(1.09, 0, 0.002);
+    PIDCoefficients rotateFaster = new PIDCoefficients(0.975, 0, 0.02);
 
 
 
