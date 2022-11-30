@@ -434,13 +434,14 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
         }
         drive.simpleBrake();
 
+        /*
         if(wrongWay) {
             while ((getXContour() > xMax || getXContour() < xMin)) {
-            /*if(getPolePosition() > xMax) {
+            if(getPolePosition() > xMax) {
                 drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
             } else {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }*/
+            }
 
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
 
@@ -449,6 +450,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             drive.simpleBrake();
         }
+        */
 
         isNormalizing = false;
 

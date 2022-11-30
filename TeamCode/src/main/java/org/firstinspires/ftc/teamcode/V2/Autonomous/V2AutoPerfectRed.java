@@ -200,7 +200,7 @@ public class V2AutoPerfectRed extends LinearOpMode {
 
         drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.5);
 
-        pipeline.normalize(-0.2, 159, 3);
+        pipeline.normalize(0.2, 159, 3);
 
 
         //drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
@@ -276,7 +276,7 @@ public class V2AutoPerfectRed extends LinearOpMode {
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(-0.2, 159, 3);
+            pipeline.normalize(0.2, 159, 3);
 
             score.moveToPosition(1320, 1);
 
