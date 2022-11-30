@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Common;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -14,7 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+@Config
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
@@ -22,8 +23,17 @@ public class MecanumDrive {
     AtomicBoolean active;
     BNO055IMU imu;
     ColorRangeSensor colorTape;
-    double accumulatedError;
-    double error;
+
+//    OpenCvWebcam webcam;
+//    ContourMultiScore detect;
+
+    private double accumulatedError;
+    private double error;
+
+    public static double proportionCoefficient = 0.001;//0.75
+    public static double integralCoefficient = 0;
+    public static double derivativeCoefficient = 1.2;//0.8
+
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("driveTelemetry.txt");
     // holds data
@@ -45,6 +55,28 @@ public class MecanumDrive {
         active = new AtomicBoolean();
         colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
         accumulatedError = 0;
+
+
+
+//        detect = new ContourMultiScore(telemetry);
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+//        webcam.setPipeline(detect);
+//
+//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+//
+//            @Override
+//            public void onOpened() {
+//                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+//            }
+//
+//            @Override
+//            public void onError(int errorCode) {
+//                telemetry.addData("Camera Init Error", errorCode);
+//                telemetry.update();
+//            }
+//        });
+
 
 
         //initiallises drive motors
@@ -73,6 +105,10 @@ public class MecanumDrive {
         fr.setDirection(DcMotor.Direction.FORWARD);
         bl.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.FORWARD);
+
+//        // ftc dashboard
+//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+
 
     }
     /*current motor positions*/
@@ -140,8 +176,8 @@ public class MecanumDrive {
 
         // won't work for turns, only forward and backward
         //avg position from all four drive motors
-        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-                Math.abs(br.getCurrentPosition())) / 4;
+        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition())*/ +
+                Math.abs(br.getCurrentPosition())) / 3;
 
         telemetry.addData("motorPosition", position);
         telemetry.update();
@@ -151,8 +187,8 @@ public class MecanumDrive {
         while ((Math.abs(tics) - position) > 0) {
             difference = System.currentTimeMillis() - time;
             setPower(flPow, frPow, blPow, brPow);
-            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-                    Math.abs(br.getCurrentPosition())) / 4;
+            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition()) */+
+                    Math.abs(br.getCurrentPosition())) / 3;
         }
 
         setPower(0, 0, 0, 0);
@@ -251,8 +287,8 @@ public class MecanumDrive {
 
         // won't work for turns, only forward and backward
 
-        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-                Math.abs(br.getCurrentPosition())) / 4;
+        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition())*/ +
+                Math.abs(br.getCurrentPosition())) / 3;
 
         telemetry.addData("motorPosition", position);
         telemetry.update();
@@ -387,9 +423,9 @@ public class MecanumDrive {
      */
     //PID testing not currently operational
     public double PIDTurnPower(double priorError, double currentError, double timeChange) {
-        double proportionCoefficient = 0.707;//0.75
+        double proportionCoefficient = 0.845;//0.845
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.68;//0.8
+        double derivativeCoefficient = 0.5;//0.5
         error = currentError;
         /*
         loggingString += "PriorAngleError: " + priorError + "   ";
@@ -404,9 +440,9 @@ public class MecanumDrive {
     }
     //TODO
     public double PIDDrivePower(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.001;//0.75
-        double integralCoefficient = 0;
-        double derivativeCoefficient = 1.2;//0.8
+        double proportionCoefficient = 0.35;//0.75
+        double integralCoefficient =0 ;
+        double derivativeCoefficient = 0.0011;//0.8
         double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
         loggingString += "PriorError: " + priorError + "   ";
         loggingString += "CurrentError: " + currentError + "   ";

@@ -1,14 +1,21 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,6 +33,9 @@ public class SecondTeleOp extends LinearOpMode {
     AtomicBoolean stackFlag;
     Constants constant;
     BNO055IMU imu;
+    OpenCvWebcam webcam;
+    ContourMultiScore detect;
+
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
@@ -42,6 +52,7 @@ public class SecondTeleOp extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        detect = new ContourMultiScore(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
@@ -57,6 +68,28 @@ public class SecondTeleOp extends LinearOpMode {
         clawStackFlag.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.setPipeline(detect);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
+
+        // ftc dashboard
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+
         //Open
         //Thread for the slides
 
@@ -274,12 +307,13 @@ public class SecondTeleOp extends LinearOpMode {
                     drive.turn(Math.PI,0);
                 }
             }
-            /*
+
             if(gamepad1.dpad_up){
-                drive.goToPosition(0, 0, 0, 0, 2000, "test");
+                drive.goToPositionPID(1500, "asdf");
             }
 
-             */
+
+
             //resets the drive motor encoders
             if (gamepad1.share) {
                 drive.resetEncoders();
@@ -297,6 +331,7 @@ public class SecondTeleOp extends LinearOpMode {
             telemetry.addData("liftPow", score.getPower());
             telemetry.addData("stack", stackHeight.get());
             telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
+            telemetry.addData("imu", imu.getAngularOrientation().firstAngle);
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());
             //  telemetry.update();
