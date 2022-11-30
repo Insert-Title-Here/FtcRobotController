@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.MultiAuto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
+import org.firstinspires.ftc.teamcode.Auto.DetectionAlgorithmTest;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -16,7 +18,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class CamwithContours extends LinearOpMode {
+public class MultiBlueRightHigh extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     AtomicBoolean cont;
@@ -97,27 +99,27 @@ public class CamwithContours extends LinearOpMode {
         detect.park = false;
         // turn servo of cam forward for poles
         score.setCamPosition(0.15);
-        blueLeft();
+        blueRight();
     }
-    public void blueLeft() throws InterruptedException {
+    public void blueRight() throws InterruptedException {
         //lift claw a little bit
         score.goToPosition(50, 0.7);
         // go forward next to pole
         drive.goToPositionPID(drive.avgPosition(1476, 1456, 1447, 1442), "go forward next to pole");
-        // turn to left 45 degrees to medium pole
-        drive.turn(-Math.PI / 4);
+        // turn to right 45 degrees to medium pole
+        drive.turn(Math.PI / 4);
         // go to pole a bit
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, 200, "go forward some to pole");
         // camera position correction
         if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
             while (detect.getcX() < properCX - 5) {
-                // strafe to the right
-                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+                // strafe to the left
+                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
             }
             while (detect.getcX() > properCX + 5) {
-                // strafe to the left (change fr and bl)
-                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
+                // strafe to the right (change fr and bl)
+                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
 
             }
         }
@@ -136,20 +138,20 @@ public class CamwithContours extends LinearOpMode {
         drive.goToPosition(-0.4, -0.4, -0.4, -0.4, -284, "back up");
         //put lift down
 
-        // turn 90 to the right
+        // turn 90 to the left
         drive.turn(Math.PI / 2);
-        // strafe right
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, drive.avgPosition(-1727, 1651, 1650, -891), "strafe right");
+        // strafe left
+        drive.goToPosition(0.4, -0.4, -0.4, 0.4, drive.avgPosition(1727, -1651, -1650, 891), "strafe right");
         // camera position correction
         if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
             while (detect.getcX() < properCX - 5) {
-                // strafe to the right
-                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+                // strafe to the left
+                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
             }
             while (detect.getcX() > properCX + 5) {
-                // strafe to the left (change fr and bl)
-                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
+                // strafe to the right (change fr and bl)
+                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
 
             }
         }

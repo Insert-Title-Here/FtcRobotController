@@ -5,7 +5,9 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -24,6 +26,7 @@ public class BlueRightHigh extends LinearOpMode {
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
     BNO055IMU imu;
+    Constants constants;
     double radius;
 
     @Override
@@ -44,6 +47,7 @@ public class BlueRightHigh extends LinearOpMode {
         score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
         cont.set(false);
+        constants = new Constants();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -81,8 +85,8 @@ public class BlueRightHigh extends LinearOpMode {
             public void run(){
                 while(opModeIsActive()){
                     // keeps the slides from sliding down on its own
-                    if((score.getEncoderPosition() > 1200 && cont.get())){
-                        score.setPower(0.1);
+                    if((score.getEncoderPosition() > constants.getHeightLow()-50 && cont.get())){
+                        score.setPower(constants.getSteadyPow());
                     }
                     telemetry.addData("liftPow", score.getPower());
                     telemetry.addData("liftPos", score.getEncoderPosition());
@@ -95,7 +99,7 @@ public class BlueRightHigh extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         //close claw
-        score.setClawPosition(0.24);
+        score.setClawPosition(constants.getClawClosePos());
         waitForStart();
         webcam.stopStreaming();
         liftThread.start();
@@ -107,7 +111,7 @@ public class BlueRightHigh extends LinearOpMode {
         telemetry.addData("anglePos", imu.getAngularOrientation().firstAngle);
         telemetry.update();
         //lift claw a little bit
-        score.goToPosition(150, 0.7);
+        score.goToPosition(270, 0.7);
         sleep(200);
         // move forward a square and push sleeved cone out of the way
         drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1300, 1300, 1359, 1200), "forward");
@@ -123,7 +127,7 @@ public class BlueRightHigh extends LinearOpMode {
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
         sleep(100);
         // move arm to max
-        score.goToPosition(2340, 0.85);
+        score.goToPosition(constants.getHeightHigh(), 1);
         //begin thread for maintaining height of slides
         cont.set(true);
         //move forward closer to pole
@@ -132,7 +136,7 @@ public class BlueRightHigh extends LinearOpMode {
 
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
-        score.setClawPosition(0);
+        score.setClawPosition(constants.getClawOpenPos());
         sleep(300);
 
         //move back from pole to strafe right
@@ -169,11 +173,11 @@ public class BlueRightHigh extends LinearOpMode {
         //3 far right
         drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1152, -1177, -1164, 1196), "strafe right");
     */
-        score.setClawPosition(0);
+        score.setClawPosition(constants.getClawOpenPos());
     }
 
     public int avgPosition(int fl, int fr, int bl, int br){
-        return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
+        return (int)(Math.abs(fl) + Math.abs(fr) /*+ Math.abs(bl)*/ + Math.abs(br))/3;
     }
 
 

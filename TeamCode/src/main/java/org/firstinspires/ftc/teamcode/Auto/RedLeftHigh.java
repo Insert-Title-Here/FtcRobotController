@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -21,11 +24,12 @@ public class RedLeftHigh extends LinearOpMode {
     Thread liftThread;
     DetectionAlgorithmTest detect;
     OpenCvWebcam webcam;
-//    BNO055IMU imu;
+    Constants constants;
+    BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-/*/        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
@@ -36,7 +40,7 @@ public class RedLeftHigh extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
- */
+
         // initializations
         detect = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
@@ -70,8 +74,8 @@ public class RedLeftHigh extends LinearOpMode {
             @Override
             public void run(){
                 while(opModeIsActive()){
-                    if((score.getEncoderPosition() > 1200 && cont.get())){
-                        score.setPower(0.1);
+                    if((score.getEncoderPosition() > constants.getHeightLow()-50 && cont.get())){
+                        score.setPower(constants.getSteadyPow());
                     }
 
 
@@ -98,7 +102,7 @@ public class RedLeftHigh extends LinearOpMode {
         telemetry.addData("liftPos", score.getEncoderPosition());telemetry.update();
         telemetry.update();
         //lift claw a little bit
-        score.goToPosition(370, 0.7);
+        score.goToPosition(270, 0.7);
         sleep(200);
         // move forward a bit more than a square (pushes sleeve out of way)
         drive.goToPosition(0.3,  0.3,  0.3, 0.3, avgPosition(1500, 1500, 1400, 1300), "forward");
@@ -114,7 +118,7 @@ public class RedLeftHigh extends LinearOpMode {
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
         sleep(100);
         // move arm max
-        score.goToPosition(2340, 0.85);
+        score.goToPosition(constants.getHeightHigh(), 0.85);
         cont.set(true);
         // drive to cone
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(100, 100, 140, 100), "move to pole");
@@ -124,7 +128,7 @@ public class RedLeftHigh extends LinearOpMode {
         // slide goes down 300 tics from it's original position
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
         // cone released
-        score.setClawPosition(0);
+        score.setClawPosition(constants.getClawOpenPos());
         sleep(300);
 
         // drive backwards to center-ish of squares (y direction)
@@ -181,12 +185,12 @@ public class RedLeftHigh extends LinearOpMode {
         drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1152, 1177, 1164, -1196), "strafe left");
 
     */
-        score.setClawPosition(0);
+        score.setClawPosition(constants.getClawOpenPos());
 
     }
     // returns the average tics for mecanum wheels
     public int avgPosition(int fl, int fr, int bl, int br){
-        return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
+        return (int)(Math.abs(fl) + Math.abs(fr) /*+ Math.abs(bl)*/ + Math.abs(br))/3;
     }
 
 }

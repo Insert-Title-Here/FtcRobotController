@@ -193,7 +193,8 @@ public class MecanumDrive {
         while ((Math.abs(tics) - position) > 0) {
             double drivePower = 0;
             double addedDrivePow = 0;
-
+            //This below is PID for each individual wheel
+            //setPower(PIDfl(priorError, currentError, timeDifference), PIDfr(priorError, currentError, timeDifference), PIDbl(priorError, currentError, timeDifference), PIDbr(priorError, currentError, timeDifference));
             drivePower = PIDDrivePower(priorError, currentError, timeDifference);
             addedDrivePow = additionalPow(priorAngleError, currentAngleError, timeDifference);
             priorAngleError = currentAngleError;
@@ -208,8 +209,8 @@ public class MecanumDrive {
              */
                 setPower(drivePower, drivePower, drivePower, drivePower);
             //}
-            //position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-                    //Math.abs(br.getCurrentPosition())) / 4;
+            //position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition())*/ +
+                    //Math.abs(br.getCurrentPosition())) / 3;
             position = (int)Math.abs(fr.getCurrentPosition());
             currentError = tics - position;
             currentAngleError = Math.abs(imu.getAngularOrientation().firstAngle);
@@ -262,7 +263,7 @@ public class MecanumDrive {
 
     }
     // Turns a certain amount of given radians useing imu
-    public void turn(double radians, double power) {
+    public void turn(double radians) {
         double integralPow;
         double derivativePow;
         double proportionPow;
@@ -389,7 +390,7 @@ public class MecanumDrive {
     public double PIDTurnPower(double priorError, double currentError, double timeChange) {
         double proportionCoefficient = 0.707;//0.75
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.68;//0.8
+        double derivativeCoefficient = 0.8;//0.8
         error = currentError;
         /*
         loggingString += "PriorAngleError: " + priorError + "   ";
@@ -414,6 +415,39 @@ public class MecanumDrive {
         loggingString += "proportionPower: " + currentError * proportionCoefficient+ "   ";
         loggingString += "integralPower: " + getAccumulatedError() * integralCoefficient + "   ";
         loggingString += "DrivePower: " + totalPower + "\n";
+        error = currentError;
+        return totalPower;
+    }
+    public double PIDfl(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+        error = currentError;
+        return totalPower;
+    }
+
+    public double PIDbl(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+        error = currentError;
+        return totalPower;
+    }
+    public double PIDfr(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+        error = currentError;
+        return totalPower;
+    }
+    public double PIDbr(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
         error = currentError;
         return totalPower;
     }

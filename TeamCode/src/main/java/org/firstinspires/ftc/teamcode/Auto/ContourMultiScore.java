@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class ContourMultiScore extends OpenCvPipeline {
-    boolean park = true;
+    public boolean park = true;
 
     /*
    YELLOW  = Parking Left
