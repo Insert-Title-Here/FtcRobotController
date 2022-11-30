@@ -128,7 +128,7 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
                         score.moveToPosition(830, 1);
                         hold.set(true);
 
-                        score.setLinkagePositionLogistic(Constants.linkageScore, 100, 50);
+
 
 
                         armUp.set(false);
@@ -233,11 +233,19 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
         drive.goTOPIDPos(-2000, 0.5,MecDrive.MovementType.STRAIGHT);
         sleep(50);
 
-        armUp.set(true);
+        hold.set(false);
+        score.moveToPosition(830, 1);
+        hold.set(true);
+
         drive.tankRotatePID(Math.PI / 4.5, 0.7, true);
-        sleep(200);
+
+
+
+        sleep(50);
         //drive.simpleMoveToPosition(-250, MecDrive.MovementType.ROTATE, 0.4);
         normalizeDistance = pipeline.normalize(0.2, 172, 2);
+        score.setLinkagePositionLogistic(Constants.linkageScore, 100, 50);
+
 
         try {
             Thread.sleep(400);
@@ -287,7 +295,7 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
             //drive.simpleMoveToPosition(-370 - normalizeDistance, MecDrive.MovementType.ROTATE, 0.4);
             //pipeline.normalizeToPole(0.3, 82, 10);
 
-            score.setGrabberPosition(0.55);
+            score.setGrabberPosition(0.63);
 
 
             //drive.tankRotatePID(Math.PI/2, 1);            //pipeline.normalizeToPole(0.3, 42, 5);
@@ -318,7 +326,7 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
             }
 */
 
-                pipeline.normalizeStrafe(-0.25, 166, 3);
+                pipeline.normalizeStrafe(0.25, 148, 3);
 
 
                 if(pipeline.getNormalizationBroke()){
@@ -363,13 +371,13 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
                 score.moveToPosition(220, 1);
                 hold.set(true);
                 sleep(200);
-                finalMove.set(true);
+                //finalMove.set(true);
 
 
                 pipeline.changeMode(KevinGodPipeline.Mode.POLE);
                 cameraServo.setPosition(Constants.pole);
 
-                drive.goTOPIDPos(-1055, 1, MecDrive.MovementType.STRAIGHT);
+                drive.goTOPIDPos(-900, 1, MecDrive.MovementType.STRAIGHT);
                 if (time.seconds() - startTime > 26) {
                     break;
                 }
@@ -398,11 +406,14 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
                 //drive.simpleMoveToPosition(290, MecDrive.MovementType.ROTATE, 0.4);
                 normalizeDistance = pipeline.normalize(0.2, 172, 2);
 
-                score.setLinkagePositionLogistic(Constants.linkageScore, 100, 50);
+                drive.simpleMoveToPosition(-35 + (i * 5), MecDrive.MovementType.STRAIGHT, 0.3);
 
-                if(i == 2) {
-                    drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAIGHT, 0.3);
-                }
+
+                score.setLinkagePositionLogistic(Constants.linkageScore, 200, 50);
+
+                sleep(100);
+
+
 
                 sleep(400);
                 score.setGrabberPosition(0.3);
@@ -441,7 +452,7 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
                 //drive.simpleMoveToPosition(150, MecDrive.MovementType.STRAFE, 0.4);
                 //drive.goTOPIDPos(150, 1, MecDrive.MovementType.STRAIGHT);
 
-                score.setGrabberPosition(0.55);
+                score.setGrabberPosition(0.63);
 
 
             }
@@ -467,7 +478,7 @@ public class TryingToFixBrokenAutoRed extends LinearOpMode {
 
             } else {
                 if (parkPos == KevinGodPipeline.ParkPos.LEFT) {
-                    drive.simpleMoveToPosition(-500, MecDrive.MovementType.STRAIGHT, 0.8);
+                    drive.simpleMoveToPosition(-550, MecDrive.MovementType.STRAIGHT, 0.8);
 
                 } else if (parkPos == KevinGodPipeline.ParkPos.RIGHT) {
                     drive.simpleMoveToPosition(700, MecDrive.MovementType.STRAIGHT, 1);

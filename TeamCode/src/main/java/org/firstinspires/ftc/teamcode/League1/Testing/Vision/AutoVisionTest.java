@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class AutoVisionTest extends LinearOpMode {
     Servo servo;
     OpenCvWebcam camera;
-    KevinGodPipelineV2 pipeline;
+    KevinGodPipeline pipeline;
     MecDrive drive;
 
 
@@ -34,11 +34,11 @@ public class AutoVisionTest extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineV2(telemetry, drive, KevinGodPipelineV2.AutoSide.RED_RIGHT);
+        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.RED_RIGHT);
 
         camera.setPipeline(pipeline);
 
-        servo.setPosition(Constants.poleV2);
+        servo.setPosition(Constants.cone);
 
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
@@ -57,7 +57,7 @@ public class AutoVisionTest extends LinearOpMode {
 
             }
         });
-        pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
+        pipeline.changeMode(KevinGodPipeline.Mode.REDCONE);
 
         while(opModeInInit()){
 
