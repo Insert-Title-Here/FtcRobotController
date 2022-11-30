@@ -418,15 +418,15 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
         }
 
         while((getXContour() > xMax || getXContour() < xMin)) {
-            /*if(getPolePosition() > xMax) {
+            if(getXContour() > xMax) {
                 drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
             } else {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }*/
+            }
 
             drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
 
-            if(time.seconds() - startTime > 1){
+            if(time.seconds() - startTime > 2){
                 //normlizationBroke = true;
                 wrongWay = true;
                 break;

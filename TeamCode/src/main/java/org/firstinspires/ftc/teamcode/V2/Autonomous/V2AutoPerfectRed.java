@@ -9,11 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipelineV2;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -23,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class V2AutoPerfect extends LinearOpMode {
+public class V2AutoPerfectRed extends LinearOpMode {
     MecDrive drive;
     ScoringSystemV2 score;
     Constants constants;
@@ -202,12 +200,12 @@ public class V2AutoPerfect extends LinearOpMode {
 
         drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.5);
 
-        pipeline.normalize(0.2, 159, 3);
+        pipeline.normalize(-0.2, 159, 3);
 
 
         //drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
 
-        if(distance.getNormalizedColors().blue > 0.85) {
+        if(distance.getNormalizedColors().red > 0.85) {
             score.moveToPosition(1340, 1);
 
             sleep(150);
@@ -278,7 +276,7 @@ public class V2AutoPerfect extends LinearOpMode {
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 159, 3);
+            pipeline.normalize(-0.2, 159, 3);
 
             score.moveToPosition(1320, 1);
 
