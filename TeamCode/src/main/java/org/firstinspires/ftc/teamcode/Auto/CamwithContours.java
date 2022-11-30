@@ -22,7 +22,6 @@ public class CamwithContours extends LinearOpMode {
     AtomicBoolean cont;
     Thread liftThread;
     ContourMultiScore detect;
-    DetectionAlgorithmTest park;
     Constants constants;
     OpenCvWebcam webcam;
 
@@ -32,7 +31,6 @@ public class CamwithContours extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         detect = new ContourMultiScore(telemetry);
-        park = new DetectionAlgorithmTest(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();
@@ -83,7 +81,7 @@ public class CamwithContours extends LinearOpMode {
 
 
         // code to turn servo of cam
-        score.setCamPosition(position);
+        score.setCamPosition(constants.getSleeveCamPos());
         detect.park = true;
         // ftc dashboard
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
@@ -96,7 +94,7 @@ public class CamwithContours extends LinearOpMode {
         waitForStart();
         detect.park = false;
         // turn servo of cam forward for poles
-        score.setCamPosition(0.15);
+        score.setCamPosition(constants.getStrafeCamPos());
         blueLeft();
     }
     public void blueLeft() throws InterruptedException {
@@ -198,6 +196,8 @@ public class CamwithContours extends LinearOpMode {
                 drive.goToPosition(-0.2, -0.2, -0.2, -0.2);
             }
         }
+
+
         sleep(500);
 
         //lower cone onto pole

@@ -30,7 +30,7 @@ public class NormalizationTesting extends OpenCvPipeline {
     private Point[] mainContour;
     private ArrayList<Double> leftContour, rightContour;
     private Point[] loopSpecificPoints;
-    private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference = 0;
+    private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference, boundArea = 0;
     // for points on contour
     double numCurrent, num1Prev, num2Prev, num3Prev, num4Prev, num5Prev = 0;
     boolean toggle, toggle2;
@@ -99,11 +99,11 @@ public class NormalizationTesting extends OpenCvPipeline {
 
         // loop through contours to find max
         int indexOfMax = 0;
-        double largestArea = 0;
+        boundArea = 0;
         for (int i = 0; i < contours.size(); i++) {
             double area = Imgproc.contourArea(contours.get(i));
-            if (area > largestArea) {
-                largestArea = area;
+            if (area > boundArea) {
+                boundArea = area;
                 indexOfMax = i;
             }
         }
@@ -253,6 +253,7 @@ public class NormalizationTesting extends OpenCvPipeline {
             telemetry.addData("width", perWidth);
             telemetry.addData("width v.2", boundRect.width);
             telemetry.addData("distanceInches", distance);
+            telemetry.addData("area", boundArea);
 //                telemetry.addData("array", mainContour[0].x + " " + mainContour[0].y);
 //                telemetry.addData("array", mainContour[1].x + " " + mainContour[1].y);
 //                telemetry.addData("leftcontour size", leftContour.size());
@@ -303,6 +304,10 @@ public class NormalizationTesting extends OpenCvPipeline {
 
     public double getDistance() {
         return distance;
+    }
+
+    public double getBoundArea() {
+        return boundArea;
     }
 
     // logs string into file

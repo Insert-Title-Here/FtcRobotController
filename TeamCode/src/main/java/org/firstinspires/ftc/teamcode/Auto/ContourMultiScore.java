@@ -34,8 +34,11 @@ public class ContourMultiScore extends OpenCvPipeline {
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
+    private static int box_x = 111;
+    private static int box_y = 101;
+
     // top left point of submat (original 320, 176)
-    public static final Point BOX_TOPLEFT = new Point(175,114); // 175, 150
+    private static Point BOX_TOPLEFT = new Point(box_x,box_y); // 175, 150
 
     // width and height of submat
     public static int BOX_WIDTH = 23;
@@ -159,9 +162,9 @@ public class ContourMultiScore extends OpenCvPipeline {
             // yellow 190
 //        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
             Core.inRange(yelMat, new Scalar(160), new Scalar(205), yelMat);
-            // cyan 169
+            // cyan 183
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-            Core.inRange(cyaMat, new Scalar(160), new Scalar(184), cyaMat);
+            Core.inRange(cyaMat, new Scalar(170), new Scalar(194), cyaMat);
             // magenta 186
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
             Core.inRange(magMat, new Scalar(161), new Scalar(195), magMat);

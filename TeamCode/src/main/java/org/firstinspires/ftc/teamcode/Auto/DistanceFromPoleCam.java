@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -18,17 +19,19 @@ public class DistanceFromPoleCam extends LinearOpMode {
     MecanumDrive drive;
     NormalizationTesting detect;
     ScoringSystem score;
-
+    Constants constants;
     OpenCvWebcam webcam;
 
-    public static double position = -0.5;
+    private double properCX = 67;
+    public static int positive_negative = 1;
+    public static int turnDenom = 4;
 
     @Override
     public void runOpMode() throws InterruptedException {
         detect = new NormalizationTesting(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
-
+        constants = new Constants();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -56,20 +59,45 @@ public class DistanceFromPoleCam extends LinearOpMode {
         telemetry.update();
 
         // code to turn servo of cam
-        score.setCamPosition(position);
-        while (opModeInInit()) {
-            score.setCamPosition(position);
-        }
+        score.setCamPosition(constants.getStrafeCamPos());
+//        while (opModeInInit()) {
+//            score.setCamPosition(position);
+//        }
         waitForStart();
 
         // go forward next to pole
-        drive.goToPositionPID(drive.avgPosition(1476, 1456, 1447, 1442), "go forward next to pole");
+        drive.goToPositionPID(1100, "go forward next to pole");
         // turn to left 45 degrees to medium pole
         drive.turn(-Math.PI / 4, 0);
         // go to pole a bit
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 200, "go forward some to pole");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 100, "go forward some to pole");
+        // camera position correction
+        if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
+            while (detect.getcX() < properCX - 5) {
+                // strafe to the right
+//                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
+            }
+            while (detect.getcX() > properCX + 5) {
+                // strafe to the left (change fr and bl)
+                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+
+//                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
+
+            }
+            drive.goToPosition(0,0,0,0);
+        }
+
+//        3700 - 3800
+//        while (detect.getBoundArea() >= 3850.0 || detect.getcX() >= 18) {
+//            drive.goToPosition(0.1, 0.1, 0.1, 0.1);
+
+//        }
+//        drive.goToPosition(0, 0, 0, 0);
 
 
     }
+
+
 }
