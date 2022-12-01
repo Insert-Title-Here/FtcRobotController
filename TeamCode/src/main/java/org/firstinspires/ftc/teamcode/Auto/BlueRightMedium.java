@@ -94,7 +94,7 @@ public class BlueRightMedium extends LinearOpMode {
         drive.goToPosition(0.3, 0.3,  0.3, 0.3, avgPosition(1346, 1263, 1321, 1206), "forward");
         // turning to left --> -540, 527, -577, 566
         double radians = 3.14159 / 4;
-        drive.turn(radians, 0.3);
+        drive.turn(radians);
         sleep(500);
         // turn
         //drive.goToPosition(-0.3, 0.3, -0.3, 0.3, avgPosition(-311, 325, -345, 333), "turn to pole");
@@ -113,12 +113,12 @@ public class BlueRightMedium extends LinearOpMode {
         score.goToPosition(0, 0.3);
         radians = -3.14159 / 4;
         // turns back forward
-        drive.turn(radians, 0.3);
+        drive.turn(radians);
         // moves forward 1 square (perpendicular to cone stack)
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(980, 950, 1016, 937), "move forward a square");
         // turn toward cone stack (90 degrees)
         radians = -3.14159 / 2;
-        drive.turn(radians, 0.3);
+        drive.turn(radians);
         // position of highest cone in stack
         score.goToPosition(320, 0.4);
         // color sensor movement forward (tape) if not using encoder based
@@ -129,7 +129,7 @@ public class BlueRightMedium extends LinearOpMode {
         //move backwards a bit
         drive.goToPosition(-0.4, -0.4, -0.4, -0.4, avgPosition(-500, -500, -500, -500), "move backwards a bit");
         // turn 180
-        drive.turn(3.14159, 0.3);
+        drive.turn(3.14159);
 //        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(900, 900, 1016, 1000), "move forward a square");
 
         // move forward a bit more
@@ -148,13 +148,13 @@ public class BlueRightMedium extends LinearOpMode {
         drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 200, "backwards");
         //turn
         radians = 3.14 * 7 / 6;
-        drive.turn(radians, 0.5); // TODO: make sure drive.turn works
+        drive.turn(radians); // TODO: make sure drive.turn works
         // TODO: implement contours...find pole & distance from pole
         // move forward some
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(500, 500, 500, 500), "move forward some");
         // turn left towards medium cone
         radians = 3.14159 / 4;
-        drive.turn(radians, 0.3);
+        drive.turn(radians);
         // move arm up
         score.goToPosition(1660, 0.85);
         cont.set(true);
@@ -171,7 +171,7 @@ public class BlueRightMedium extends LinearOpMode {
         score.goToPosition(0, 0.3);
         //turn
         radians = -3.14159 / 4;
-        drive.turn(radians, 0.3);
+        drive.turn(radians);
         //park (only have to move forward or backwards...currently in center position (cyan)
         if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
             // move to left TODO: measure drive encoder values

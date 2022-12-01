@@ -33,8 +33,8 @@ public class SecondTeleOp extends LinearOpMode {
     AtomicBoolean stackFlag;
     Constants constant;
     BNO055IMU imu;
-    OpenCvWebcam webcam;
-    ContourMultiScore detect;
+    //OpenCvWebcam webcam;
+    //ContourMultiScore detect;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -52,7 +52,7 @@ public class SecondTeleOp extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        detect = new ContourMultiScore(telemetry);
+       // detect = new ContourMultiScore(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
@@ -68,7 +68,7 @@ public class SecondTeleOp extends LinearOpMode {
         clawStackFlag.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
+        /*
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
@@ -87,8 +87,10 @@ public class SecondTeleOp extends LinearOpMode {
             }
         });
 
+
+         */
         // ftc dashboard
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+        //FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         //Open
         //Thread for the slides
@@ -183,6 +185,7 @@ public class SecondTeleOp extends LinearOpMode {
                     }
                     //closes the claw(manually) and opens the claw(like a toggle)
                     if(gamepad1.right_trigger > 0.1 && clawOpenCloseToggle.get()){
+                        //Checks if claw position is between 2 values to check if claw should open or close
                         if(constant.getClawLowThreshold() < score.getClawPosition() && score.getClawPosition() < constant.getClawHighThreshold()){
                             //if liftpos is low height ish or higher
                             if(score.getEncoderPosition() > constant.getHeightLow() - 80){
@@ -212,7 +215,7 @@ public class SecondTeleOp extends LinearOpMode {
                         }else{
                             //if lifts system is below 95
                             if(score.getEncoderPosition() < 95){
-                                //for stack only
+                                //claw code for stack only
                                 if(clawStackFlag.get()){
                                     score.setClawPosition(constant.getClawClosePos());
                                     try {
@@ -236,6 +239,7 @@ public class SecondTeleOp extends LinearOpMode {
 
                                 }
                             }else{
+                                //claw code for stack only
                                 if(clawStackFlag.get()){
                                     score.setClawPosition(constant.getClawClosePos());
                                     try {
@@ -302,9 +306,9 @@ public class SecondTeleOp extends LinearOpMode {
                 //turn test
                 //drive.turnToInitialPosition();
                 if(-Math.PI/4 < imu.getAngularOrientation().firstAngle  && imu.getAngularOrientation().firstAngle < Math.PI/4){
-                    drive.turn(-Math.PI, 0);
+                    drive.turn(-Math.PI);
                 }else{
-                    drive.turn(Math.PI,0);
+                    drive.turn(Math.PI);
                 }
             }
 

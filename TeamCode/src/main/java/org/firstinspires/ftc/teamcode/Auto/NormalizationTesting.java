@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.opencv.core.Core;
@@ -18,7 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-
+@Config
 public class NormalizationTesting extends OpenCvPipeline {
 
     // defining vars
@@ -48,7 +50,8 @@ public class NormalizationTesting extends OpenCvPipeline {
     public static int lower3 = 10;
     public static int upper1 = 255;
     public static int upper2 = 255;
-    public static int upper3 = 105; //value was 80 when servo was perpendicular to the ground
+    public static int upper3 = 114; //value was 80 when servo was perpendicular to the ground
+    //upper3 value 105 when in robotics lab
     public static double widthRemoveConstant = 3.1;
 
 

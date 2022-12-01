@@ -14,15 +14,19 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Autonomous @Config
 public class DistanceFromPoleCam extends LinearOpMode {
+    Thread liftThread;
     MecanumDrive drive;
     NormalizationTesting detect;
     ScoringSystem score;
     Constants constants;
     OpenCvWebcam webcam;
+    AtomicBoolean cont;
 
-    private double properCX = 67;
+    private double properCX = 172; //67
     public static int positive_negative = 1;
     public static int turnDenom = 4;
 
@@ -32,6 +36,8 @@ public class DistanceFromPoleCam extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();
+        cont = new AtomicBoolean();
+        cont.set(false);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -51,6 +57,22 @@ public class DistanceFromPoleCam extends LinearOpMode {
             }
         });
 
+        liftThread = new Thread() {
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    if((score.getEncoderPosition() > 200 && cont.get())){
+                        score.setPower(constants.getSteadyPow());
+                    }
+
+
+                    telemetry.addData("liftPow", score.getPower());
+                    telemetry.addData("liftPos", score.getEncoderPosition());
+                    telemetry.update();
+                }
+
+            }
+        };
 
         // ftc dashboard
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
@@ -60,43 +82,88 @@ public class DistanceFromPoleCam extends LinearOpMode {
 
         // code to turn servo of cam
         score.setCamPosition(constants.getStrafeCamPos());
+
+        score.setClawPosition(constants.getClawClosePos());
 //        while (opModeInInit()) {
 //            score.setCamPosition(position);
 //        }
+
         waitForStart();
+        liftThread.start();
+        cont.set(true);
+        //lift claw a little bit
+        score.goToPosition(50, 0.7);
 
         // go forward next to pole
         drive.goToPositionPID(1100, "go forward next to pole");
         // turn to left 45 degrees to medium pole
-        drive.turn(-Math.PI / 4, 0);
+        drive.turn(-Math.PI / 4);
         // go to pole a bit
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, 100, "go forward some to pole");
+        sleep(10);
+
+
         // camera position correction
         if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
-            while (detect.getcX() < properCX - 5) {
+            if (detect.getcX() < properCX - 5) {
                 // strafe to the right
 //                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
                 drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
             }
-            while (detect.getcX() > properCX + 5) {
+            if(detect.getcX() > properCX + 5) {
                 // strafe to the left (change fr and bl)
                 drive.goToPosition(0.2, -0.2, -0.2, 0.2);
 
 //                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
             }
-            drive.goToPosition(0,0,0,0);
+            if (detect.getcX() >= properCX - 5 || detect.getcX() <= properCX + 5) {
+                drive.goToPosition(0, 0, 0, 0);
+            }
         }
 
-//        3700 - 3800
-//        while (detect.getBoundArea() >= 3850.0 || detect.getcX() >= 18) {
-//            drive.goToPosition(0.1, 0.1, 0.1, 0.1);
-
-//        }
-//        drive.goToPosition(0, 0, 0, 0);
 
 
+        scoreCone(184, 165, 163, 147);
+
+
+    }
+
+    public void scoreCone(int fl, int fr, int bl, int br) {
+
+        // move arm medium
+        score.goToPosition(constants.getHeightMed(), 0.85);
+        //begin thread for maintaining height of slides
+
+
+        //3700 - 3800
+        drive.goToPosition(0.2, 0.2, 0.2, 0.2);
+        while (detect.getBoundArea() <= 9550.0 || detect.getBoundArea() >= 10000) {
+            if (detect.getBoundArea() >= 9600.0 && detect.getBoundArea() <= 10500 && detect.getDistance() <= 5.3/*|| detect.getcX() <= 18*/) {
+                drive.goToPosition(0, 0, 0, 0);
+            }
+
+        }
+
+
+
+        drive.goToPosition(0, 0, 0, 0);
+
+
+        sleep(500);
+
+        //lower cone onto pole
+        score.goToPosition(score.getEncoderPosition()-300, 0.4);
+        score.setClawPosition(constants.getClawOpenPos());
+        sleep(300);
+
+        //move back from pole
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl, fr, bl, br), "move back from pole");
+        cont.set(false);
+        //moves slides down
+        score.goToPosition(0, 0.3);
+        sleep(300);
     }
 
 

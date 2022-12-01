@@ -60,7 +60,7 @@ public class ColorSensor {
             drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 200, "backwards");
             //turn
             radians = 3.14 * 7 / 6;
-            drive.turn(radians, 0.5); // TODO: make sure drive.turn works
+            drive.turn(radians); // TODO: make sure drive.turn works
             telemetry.addData("red", currentConeRedColor());
             telemetry.addData("blue", currentConeBlueColor());
             telemetry.update();

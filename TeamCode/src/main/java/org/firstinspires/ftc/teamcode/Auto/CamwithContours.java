@@ -26,7 +26,7 @@ public class CamwithContours extends LinearOpMode {
     OpenCvWebcam webcam;
 
     public double position = -0.1;
-    private double properCX = 89;
+    private double properCX = 95; //89
 
     @Override
     public void runOpMode() throws InterruptedException {
