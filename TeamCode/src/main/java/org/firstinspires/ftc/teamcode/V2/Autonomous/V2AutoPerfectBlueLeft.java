@@ -9,11 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipelineV2;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -23,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class V2AutoPerfect extends LinearOpMode {
+public class V2AutoPerfectBlueLeft extends LinearOpMode {
     MecDrive drive;
     ScoringSystemV2 score;
     Constants constants;
@@ -141,7 +139,7 @@ public class V2AutoPerfect extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineV2(telemetry, drive, KevinGodPipelineV2.AutoSide.BLUE_RIGHT);
+        pipeline = new KevinGodPipelineV2(telemetry, drive, KevinGodPipelineV2.AutoSide.BLUE_LEFT);
 
         camera.setPipeline(pipeline);
 
@@ -190,35 +188,34 @@ public class V2AutoPerfect extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.simpleMoveToPosition(-1540, MecDrive.MovementType.STRAIGHT, 0.85);
+        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.85);
 
         sleep(100);
 
-        drive.tankRotatePID(Math.PI / 2, 1, false);
+        drive.tankRotatePID(-Math.PI / 2, 1, false);
 
-        drive.simpleMoveToPosition(670, MecDrive.MovementType.STRAIGHT, 0.6);
+        drive.simpleMoveToPosition(700, MecDrive.MovementType.STRAIGHT, 0.6);
 
-        drive.tankRotatePID(3 * Math.PI / 8, 1, false);
+        drive.tankRotatePID(-3 * Math.PI / 8, 1, false);
 
-        drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.5);
+        drive.simpleMoveToPosition(85, MecDrive.MovementType.STRAFE, 0.5);
 
-        pipeline.normalize(0.2, 159, 3);
+        pipeline.normalize(0.15, 159, 3);
 
 
         //drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
 
         if(distance.getNormalizedColors().blue > 0.85) {
-            score.moveToPosition(1340, 1);
+            score.moveToPosition(1340, 1, 1.4);
 
-            sleep(150);
 
             score.setLinkagePositionLogistic(0.8, 100);
 
-            sleep(100);
+            sleep(50);
 
             score.setGrabberPosition(Constants.score);
 
-            sleep(100);
+            sleep(150);
 
             score.setLinkagePositionLogistic(0.245, 100);
 
@@ -241,7 +238,7 @@ public class V2AutoPerfect extends LinearOpMode {
             if(i == 0 && preloadSuccess) {
 
                 double startDistanceTime = time.seconds();
-                while (distance.getDistance(DistanceUnit.CM) > 2.75) {
+                while (distance.getDistance(DistanceUnit.CM) > 3.5) {
                     drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
@@ -272,21 +269,20 @@ public class V2AutoPerfect extends LinearOpMode {
 
             score.setGrabberPosition(Constants.grabbing);
 
-            sleep(100);
+            sleep(70);
 
             score.setLinkagePositionLogistic(Constants.linkageUpV2, 100);
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 159, 3);
+            //pipeline.normalize(0.2, 137, 3);
 
-            score.moveToPosition(1320, 1);
+            score.moveToPosition(1380, 1, 1.4);
 
-            sleep(150);
 
             score.setLinkagePositionLogistic(0.8, 100);
 
-            sleep(100);
+            sleep(50);
 
             score.setGrabberPosition(Constants.score);
 
@@ -306,7 +302,7 @@ public class V2AutoPerfect extends LinearOpMode {
 
         }
 
-        drive.simpleMoveToPosition(-160, MecDrive.MovementType.ROTATE, 0.5);
+        drive.simpleMoveToPosition(100, MecDrive.MovementType.ROTATE, 0.5);
 
         sleep(50);
 
@@ -318,7 +314,7 @@ public class V2AutoPerfect extends LinearOpMode {
 
         score.setGrabberPosition(Constants.grabbing);
 
-        sleep(500);
+        sleep(50);
 
     }
 }

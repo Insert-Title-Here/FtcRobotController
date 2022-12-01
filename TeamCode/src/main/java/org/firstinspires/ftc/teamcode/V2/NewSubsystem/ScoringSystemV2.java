@@ -288,7 +288,7 @@ public class ScoringSystemV2 {
 
             }
         }else{
-            while ((time.seconds() - startTime) < 4 &&   (rLiftPos > tics || lLiftPos > tics)) {
+            while ((time.seconds() - startTime) < 2.5 &&   (rLiftPos > tics || lLiftPos > tics)) {
 
                 //TODO: figure out if we need to negate either of them
 

@@ -24,8 +24,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
     public static int H1 = 17;
-    public static int S1 = 70;
-    public static int V1 = 80;
+    public static int S1 = 100; //was 70
+    public static int V1 = 150; //was 80
     public static int H2 = 30;
     public static int S2 = 255;
     public static int V2 = 255;
@@ -385,7 +385,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
         }
-        return temp;
+        return input;
     }
 
     // Get x coordinate of center of largest contour (pole)
@@ -413,9 +413,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
         double startPos = drive.avgPos();
         int startPolePosition = getXContour();
 
-        if(startPolePosition < xMax){
-            power *= -1;
-        }
+
 
         while((getXContour() > xMax || getXContour() < xMin)) {
             if(getXContour() > xMax) {
@@ -424,8 +422,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
             }
 
-            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
-
+//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
             if(time.seconds() - startTime > 2){
                 //normlizationBroke = true;
                 wrongWay = true;
