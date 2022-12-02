@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
@@ -23,6 +24,7 @@ public class MecanumDrive {
     AtomicBoolean active;
     BNO055IMU imu;
     ColorRangeSensor colorTape;
+
 
 //    OpenCvWebcam webcam;
 //    ContourMultiScore detect;
@@ -40,7 +42,6 @@ public class MecanumDrive {
     public String loggingString;
     //constructor
     public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
-        //initializes imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -110,6 +111,18 @@ public class MecanumDrive {
 //        FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
 
+    }
+    public void resetIMU(){
+        //initializes imu
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
     }
     /*current motor positions*/
     public int getFLPosition() {
@@ -330,7 +343,7 @@ public class MecanumDrive {
             if(time.milliseconds() - priorTime > 1300) break;
 
         }
-
+        resetIMU();
         error = 0;
     }
     // turns to the starting position
