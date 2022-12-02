@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,8 +28,8 @@ public class MecanumDrive {
     ColorRangeSensor colorTape;
 
 
-//    OpenCvWebcam webcam;
-//    ContourMultiScore detect;
+   //OpenCvWebcam webcam;
+    //ContourMultiScore detect;
 
     private double accumulatedError;
     private double error;
@@ -343,7 +345,7 @@ public class MecanumDrive {
             if(time.milliseconds() - priorTime > 1300) break;
 
         }
-        resetIMU();
+        //resetIMU();
         error = 0;
     }
     // turns to the starting position
@@ -439,7 +441,7 @@ public class MecanumDrive {
     public double PIDTurnPower(double priorError, double currentError, double timeChange) {
         double proportionCoefficient = 0.845;//0.845
         double integralCoefficient = 0;
-            double derivativeCoefficient = 0.5;//0.5
+        double derivativeCoefficient = 0.5;//0.5
         error = currentError;
         /*
         loggingString += "PriorAngleError: " + priorError + "   ";

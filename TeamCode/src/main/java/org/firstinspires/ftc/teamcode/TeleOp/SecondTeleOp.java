@@ -285,7 +285,7 @@ public class SecondTeleOp extends LinearOpMode {
         score.setUprighterPosition(0);
         waitForStart();
         liftThread.start();
-        score.goToPosition(150, 0.8);
+        score.goToPosition(0, 0.8);
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -312,12 +312,17 @@ public class SecondTeleOp extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
+                /*
                 if(-Math.PI/4 < imu.getAngularOrientation().firstAngle  && imu.getAngularOrientation().firstAngle < Math.PI/4){
                     drive.turn(-Math.PI);
                 }else{
                     drive.turn(Math.PI);
                 }
+
+                 */
+                drive.turn(-Math.PI/1.2);
             }
+
             /*
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
@@ -332,7 +337,6 @@ public class SecondTeleOp extends LinearOpMode {
             }
 
              */
-
 
             //resets the drive motor encoders
             if (gamepad1.share) {
