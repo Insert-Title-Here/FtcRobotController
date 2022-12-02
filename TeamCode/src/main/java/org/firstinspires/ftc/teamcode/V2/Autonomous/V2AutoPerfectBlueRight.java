@@ -190,7 +190,7 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.simpleMoveToPosition(-1620, MecDrive.MovementType.STRAIGHT, 0.85);
+        drive.simpleMoveToPosition(-1580, MecDrive.MovementType.STRAIGHT, 0.85);
 
         sleep(100);
 
@@ -200,7 +200,7 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
 
         drive.tankRotatePID(3 * Math.PI / 8, 1, false);
 
-        drive.simpleMoveToPosition(-65, MecDrive.MovementType.STRAFE, 0.5);
+        drive.simpleMoveToPosition(-30, MecDrive.MovementType.STRAFE, 0.5);
 
         drive.simpleMoveToPosition(-20, MecDrive.MovementType.ROTATE, 0.5);
 
@@ -224,7 +224,7 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
 
             score.setLinkagePositionLogistic(0.245, 100);
 
-            score.setGrabberPosition(Constants.openV2 - 0.1);
+            score.setGrabberPosition(Constants.openV2 - 0.03);
 
             score.moveToPosition(0, 0.8);
 
@@ -232,7 +232,7 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
         } else {
             cycles = 5;
             drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.5);
-            score.setGrabberPosition(Constants.openV2 - 0.1);
+            score.setGrabberPosition(Constants.openV2 - 0.03);
             score.setLinkagePositionLogistic(0.245, 100);
         }
 
@@ -264,7 +264,7 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
                 drive.simpleBrake();
 
             } else {
-                drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.5);
+                drive.simpleMoveToPosition(10, MecDrive.MovementType.STRAIGHT, 0.5);
             }
 
 
@@ -277,9 +277,9 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            //pipeline.normalize(0.2, 159, 3);
+            pipeline.normalize(0.15, 159, 3);
 
-            score.moveToPosition(1340, 1, 1.4);
+            score.moveToPosition(1360, 1, 1.4);
 
 
             score.setLinkagePositionLogistic(0.8, 100);
@@ -291,7 +291,7 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
             sleep(100);
 
             score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 100);
-            score.setGrabberPosition(Constants.openV2 - 0.1);
+            score.setGrabberPosition(Constants.openV2 - 0.03);
 
 
 
