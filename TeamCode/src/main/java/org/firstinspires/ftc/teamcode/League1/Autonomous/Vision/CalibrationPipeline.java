@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-public class KevinGodPipelineV2 extends OpenCvPipeline {
+public class CalibrationPipeline extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
     public static int H1 = 17;
-    public static int S1 = 70; //was 100
-    public static int V1 = 80; //was 150
+    public static int S1 = 70;
+    public static int V1 = 80;
     public static int H2 = 30;
     public static int S2 = 255;
     public static int V2 = 255;
@@ -75,8 +75,15 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     public static int boxWidthLeftBlue = 20;
     public static int boxHeightLeftBlue = 40;
 
+    public static int topLeftXPole = 135;
+    public static int topLeftYPole = 25;
+    public static int boxWidthPole = 20;
+    public static int boxHeightPole = 40;
+
     public int contourTarget = 0;
+    public double origY, origCr, origCb, origH, origS, origV;
     public boolean isNormalizing = false;
+    public boolean isReturningTemp = false;
     private boolean normlizationBroke = false;
 
 
@@ -147,6 +154,11 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
             new Point(topLeftXLeftBlue + boxWidthLeftBlue, topLeftYLeftBlue + boxHeightLeftBlue)
     );
 
+    static final Rect POLE_TUNING_BOUNDING_BOX = new Rect (
+            new Point(topLeftXPole, topLeftYPole),
+            new Point(topLeftXPole + boxWidthPole, topLeftYPole + boxHeightPole)
+    );
+
     public static int topLeftXCone = 75;
     public static int topLeftYCone = 25;
     public static int bottomLeftXCone = 265;
@@ -163,7 +175,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     Mode sleeveSense = Mode.SLEEVE;
     ParkPos position = ParkPos.CENTER;
 
-    public KevinGodPipelineV2(Telemetry telemetry){
+    public CalibrationPipeline(Telemetry telemetry){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
@@ -171,7 +183,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
         this.telemetry = telemetry;
     }
 
-    public KevinGodPipelineV2(Telemetry telemetry, MecDrive drive){
+    public CalibrationPipeline(Telemetry telemetry, MecDrive drive){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
@@ -181,7 +193,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     }
 
 
-    public KevinGodPipelineV2(Telemetry telemetry, MecDrive drive, AutoSide autoSide){
+    public CalibrationPipeline(Telemetry telemetry, MecDrive drive, AutoSide autoSide){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
@@ -207,7 +219,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
             // Convert image to YCrCb color space and extract the Y channel
             Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(ycrcb, temp, 0);
-            telemetry.addData("Orig Y", Core.mean(temp.submat(MIDDLE)).val[0]);
+            origY = Core.mean(temp.submat(MIDDLE)).val[0];
+            //telemetry.addData("Orig Y", origY);
 
             // Make a binary image of values within the desired range and calculate avg color
             Core.inRange(temp, new Scalar(YLower), new Scalar(YUpper), temp);
@@ -216,7 +229,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             // Extract Cr channel
             Core.extractChannel(ycrcb, temp, 1);
-            telemetry.addData("Orig Cr", Core.mean(temp.submat(MIDDLE)).val[0]);
+            origCr = Core.mean(temp.submat(MIDDLE)).val[0];
+            //telemetry.addData("Orig Cr", origCr);
 
             // Make binary image and calculate avg color
             Core.inRange(temp, new Scalar(CrLower), new Scalar(CrUpper), temp);
@@ -228,7 +242,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             // Extract Cb channel
             Core.extractChannel(ycrcb, temp, 2);
-            telemetry.addData("Orig Cb", Core.mean(temp.submat(MIDDLE)).val[0]);
+            origCb = Core.mean(temp.submat(MIDDLE)).val[0];
+            //telemetry.addData("Orig Cb", origCb);
 
             // Make binary image and calculate avg color
             Core.inRange(temp, new Scalar(CbLower), new Scalar(CbUpper), temp);
@@ -237,6 +252,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
             // Telemetry
+            /*
             telemetry.addData("countY", countY);
             telemetry.addData("countCr", countCr);
             telemetry.addData("countCb", countCb);
@@ -244,15 +260,17 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
             telemetry.addData("newCr", newCr);
             telemetry.addData("newCb", newCb);
 
+             */
+
             // Check if certain channels are within certain ranges to determine color
             if(countY > 100 && countCb < 90) {
-                telemetry.addData("Color", "Yellow - Left");
+                //telemetry.addData("Color", "Yellow - Left");
                 position = ParkPos.LEFT;
             } else if(countCr > 200 /*&& countCb > 200*/) {
-                telemetry.addData("Color", "Magenta - Right");
+                //telemetry.addData("Color", "Magenta - Right");
                 position = ParkPos.RIGHT;
             } else {
-                telemetry.addData("Color", "Cyan - Center ");
+                //telemetry.addData("Color", "Cyan - Center ");
                 position = ParkPos.CENTER;
             }
 
@@ -292,6 +310,10 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             // Convert to HSV color space
             Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
+
+            origH = Core.mean(temp.submat(POLE_TUNING_BOUNDING_BOX)).val[0];
+            origS = Core.mean(temp.submat(POLE_TUNING_BOUNDING_BOX)).val[1];
+            origV = Core.mean(temp.submat(POLE_TUNING_BOUNDING_BOX)).val[2];
 
             // Make binary image of yellow pixels
 
@@ -385,7 +407,12 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
         }
-        return input;
+
+        if (isReturningTemp) {
+            return temp;
+        } else {
+            return input;
+        }
     }
 
     // Get x coordinate of center of largest contour (pole)
@@ -413,7 +440,9 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
         double startPos = drive.avgPos();
         int startPolePosition = getXContour();
 
-
+        if(startPolePosition < xMax){
+            power *= -1;
+        }
 
         while((getXContour() > xMax || getXContour() < xMin)) {
             if(getXContour() > xMax) {
@@ -422,7 +451,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
             }
 
-//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+
             if(time.seconds() - startTime > 2){
                 //normlizationBroke = true;
                 wrongWay = true;
@@ -616,6 +646,53 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
         }
     }
 
+    public void toggleReturnedMat() {
+        isReturningTemp = !isReturningTemp;
+    }
+
+    public void setPoleValues(double h1, double s1, double v1, double h2, double s2, double v2) {
+        H1 = (int)h1;
+        S1 = (int)s1;
+        V1 = (int)v1;
+        H2 = (int)h2;
+        S2 = (int)s2;
+        V2 = (int)v2;
+    }
+
+    public void setBlueConeValues(double h1, double s1, double v1, double h2, double s2, double v2) {
+        H3 = (int)h1;
+        S3 = (int)s1;
+        V3 = (int)v1;
+        H4 = (int)h2;
+        S4 = (int)s2;
+        V4 = (int)v2;
+    }
+
+    public void setRedConeValues(double h1, double s1, double v1, double h2, double s2, double v2) {
+        H5 = (int)h1;
+        S5 = (int)s1;
+        V5 = (int)v1;
+        H6 = (int)h2;
+        S6 = (int)s2;
+        V6 = (int)v2;
+    }
+
+    public void setSignalValues(double yUpper, double yLower, double crUpper, double crLower, double cbUpper, double cbLower) {
+        YUpper = (int)yUpper;
+        YLower = (int)yLower;
+        CrUpper = (int)crUpper;
+        CrLower = (int)crLower;
+        CbUpper = (int)cbUpper;
+        CbLower = (int)cbLower;
+    }
+
+    public Scalar getYCrCbColors() {
+        return new Scalar(origY, origCr, origCb);
+    }
+
+    public Scalar getHSVColors() {
+        return new Scalar(origH, origS, origV);
+    }
 
 
 }

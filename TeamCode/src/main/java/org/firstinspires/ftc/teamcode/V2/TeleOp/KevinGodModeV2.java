@@ -64,7 +64,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
         //score.setLinkagePositionLogistic(constants.linkageDown, 500);
-        score.setGrabberPosition(constants.open - 0.07);
+        score.setGrabberPosition(constants.open - 0.15);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         color = hardwareMap.get(ColorRangeSensor.class, "color");
@@ -82,10 +82,15 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     //Lift up to scoring position
                     if(gamepad1.left_trigger > 0.1){
-                        score.autoGoToPosition();
                         //score.setPower(0.2);
-                        score.setLinkagePosition(constants.linkageScoreV2 - 0.02);
-                        passive = PassivePower.EXTENDED;
+                        if(score.getScoringMode() != ScoringSystemV2.ScoringMode.ULTRA) {
+                            score.autoGoToPosition();
+
+                            score.setLinkagePosition(constants.linkageScoreV2 - 0.02);
+                            passive = PassivePower.EXTENDED;
+                        }else{
+                            score.setLinkagePosition(0.15);
+                        }
 
                     }else {
                         if(passive == PassivePower.EXTENDED){
@@ -98,7 +103,9 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     //Scoring feature
                     if(gamepad1.right_trigger > 0.1){
-                        score.setGrabberPosition(constants.score);
+
+                        if(score.getScoringMode() != ScoringSystemV2.ScoringMode.ULTRA) {
+                            score.setGrabberPosition(constants.score);
 
                         /*//Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
                         if(score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW && score.isExtended()) {
@@ -113,27 +120,35 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                         }
 */
-                        try {
-                            sleep(600);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            try {
+                                sleep(600);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            linkageDown = true;
+
+
+                            //Do nothing during movement phase
+                            //Reset to zero and no passive power
+                            score.moveToPosition(0, 0.75);
+                            passive = PassivePower.ZERO;
+
+                            //Open Grabber and reset linkage
+                            score.setGrabberPosition(constants.open - 0.15);
+                            //score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
+                            //score.setLinkagePositionLogistic(0.8, 500);
+                        }else{
+
+                            score.setGrabberPosition(constants.open - 0.15);
+                            try {
+                                sleep(700);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
                         }
-
-
-                        linkageDown = true;
-
-
-
-
-                        //Do nothing during movement phase
-                        //Reset to zero and no passive power
-                        score.moveToPosition(0, 0.75);
-                        passive = PassivePower.ZERO;
-
-                        //Open Grabber and reset linkage
-                        score.setGrabberPosition(constants.open - 0.07);
-                        //score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
-                        //score.setLinkagePositionLogistic(0.8, 500);
 
                         //TODO: fix this
                         /*score.lowerConeStack();
@@ -180,7 +195,8 @@ public class KevinGodModeV2 extends LinearOpMode {
                         autoLinkageFlag = false;
 
                         //Goes up automatically if in ultra mode
-                        if(score.getScoringMode() == ScoringSystemV2.ScoringMode.ULTRA){
+
+                        /*if(score.getScoringMode() == ScoringSystemV2.ScoringMode.ULTRA){
                             score.autoGoToPosition();
                             //score.setPower(0.2);
                             try {
@@ -193,7 +209,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                             passive = PassivePower.EXTENDED;
 
 
-                        }
+                        }*/
                     }
 
                     //TODO: tune this (both raise and lower)
@@ -236,8 +252,8 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     //Manual open and close grabber
                     if(gamepad1.start && manualFlag){
-                        if(score.getGrabberPosition() != constants.open - 0.07) {
-                            score.setGrabberPosition(constants.open - 0.07);
+                        if(score.getGrabberPosition() != constants.open - 0.15) {
+                            score.setGrabberPosition(constants.open - 0.15);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -459,6 +475,6 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
 
-        score.setGrabberPosition(constants.open - 0.07);
+        score.setGrabberPosition(constants.open - 0.15);
     }
 }
