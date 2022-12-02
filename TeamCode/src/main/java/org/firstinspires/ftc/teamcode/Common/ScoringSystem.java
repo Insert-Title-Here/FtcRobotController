@@ -19,6 +19,7 @@ public class ScoringSystem {
     private DcMotor liftMotor;
     private Servo claw;
     private Servo camTurn;
+    private Servo uprighter;
     MecanumDrive drive;
     ColorRangeSensor colorCone;
     Telemetry telemetry;
@@ -32,6 +33,7 @@ public class ScoringSystem {
         constant = new Constants();
         claw = hardwareMap.get(Servo.class, "claw");
         camTurn = hardwareMap.get(Servo.class, "camTurn");
+        uprighter = hardwareMap.get(Servo.class, "uprighter");
         liftMotor = hardwareMap.get(DcMotor.class, "motor");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "colorCone");
         drive = new MecanumDrive(hardwareMap, telemetry);
@@ -107,6 +109,8 @@ public class ScoringSystem {
         camTurn.setPosition(position);
     }
 
+    public void setUprighterPosition(double position) { uprighter.setPosition(position);}
+
     public int getEncoderPosition() {
         return liftMotor.getCurrentPosition();
     }
@@ -117,6 +121,7 @@ public class ScoringSystem {
     public double getCamPosition() {
         return camTurn.getPosition();
     }
+    public double getUprighterPosition() { return uprighter.getPosition(); }
 
     public void resetLiftEncoder(){
          liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@TeleOp
+@TeleOp @Config
 public class SecondTeleOp extends LinearOpMode {
     //TODO: change names if you want to
     MecanumDrive drive;
@@ -33,13 +34,18 @@ public class SecondTeleOp extends LinearOpMode {
     AtomicBoolean stackFlag;
     Constants constant;
     BNO055IMU imu;
-    //OpenCvWebcam webcam;
-    //ContourMultiScore detect;
+
+    OpenCvWebcam webcam;
+    ContourMultiScore detect;
+
+    private boolean uprighterToggle = true;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
+
+    public static double pos = 0.9;
     @Override
     public void runOpMode() throws InterruptedException {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -68,7 +74,7 @@ public class SecondTeleOp extends LinearOpMode {
         clawStackFlag.set(false);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        /*
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
@@ -88,9 +94,9 @@ public class SecondTeleOp extends LinearOpMode {
         });
 
 
-         */
+
         // ftc dashboard
-        //FtcDashboard.getInstance().startCameraStream(webcam, 0);
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         //Open
         //Thread for the slides
@@ -223,9 +229,10 @@ public class SecondTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+113,1);
+                                    score.goToPosition(score.getEncoderPosition()+300,1);
                                     score.setPower(constant.getSteadyPow());
                                     clawStackFlag.set(false);
+
                                 }else{
                                     score.setClawPosition(constant.getClawClosePos());
                                     try {
@@ -233,7 +240,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+100, 1);
+                                    score.goToPosition(score.getEncoderPosition()+300, 1);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
 
@@ -247,7 +254,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+125,1);
+                                    score.goToPosition(score.getEncoderPosition()+300,1);
                                     score.setPower(constant.getSteadyPow());
                                     clawStackFlag.set(false);
                                 }else{
@@ -277,8 +284,11 @@ public class SecondTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(0);
+        score.setUprighterPosition(0);
         waitForStart();
+
         liftThread.start();
+        score.goToPosition(150, 0.8);
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -310,6 +320,20 @@ public class SecondTeleOp extends LinearOpMode {
                 }else{
                     drive.turn(Math.PI);
                 }
+            }
+
+            if (gamepad1.dpad_right && uprighterToggle) {
+                //cone uprighter
+                if (score.getUprighterPosition() == 0) {
+                    score.setUprighterPosition(1);
+                    score.goToPosition(0,0.3);
+                } else if (score.getUprighterPosition() == 1) {
+                    score.setUprighterPosition(0);
+                    score.goToPosition(200, 0.8);
+                }
+                uprighterToggle = false;
+            }else if(!gamepad1.dpad_right){
+                uprighterToggle = true;
             }
 
             if(gamepad1.dpad_up){

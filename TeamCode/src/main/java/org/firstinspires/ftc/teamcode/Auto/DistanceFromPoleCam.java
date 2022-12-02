@@ -26,9 +26,11 @@ public class DistanceFromPoleCam extends LinearOpMode {
     OpenCvWebcam webcam;
     AtomicBoolean cont;
 
-    private double properCX = 172; //67
+    private double properCX = 141; //67
     public static int positive_negative = 1;
     public static int turnDenom = 4;
+
+    private boolean left, right = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,10 +67,10 @@ public class DistanceFromPoleCam extends LinearOpMode {
                         score.setPower(constants.getSteadyPow());
                     }
 
-
-                    telemetry.addData("liftPow", score.getPower());
-                    telemetry.addData("liftPos", score.getEncoderPosition());
-                    telemetry.update();
+//
+//                    telemetry.addData("liftPow", score.getPower());
+//                    telemetry.addData("liftPos", score.getEncoderPosition());
+//                    telemetry.update();
                 }
 
             }
@@ -93,41 +95,77 @@ public class DistanceFromPoleCam extends LinearOpMode {
         cont.set(true);
         //lift claw a little bit
         score.goToPosition(50, 0.7);
-
+        sleep(200);
         // go forward next to pole
-        drive.goToPositionPID(1100, "go forward next to pole");
+        drive.goToPositionPID(1060, "go forward next to pole");
         // turn to left 45 degrees to medium pole
-        drive.turn(-Math.PI / 4);
+        drive.turn(-Math.PI / 4.3);
         // go to pole a bit
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 100, "go forward some to pole");
-        sleep(10);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 90, "go forward some to pole");
+        sleep(100);
 
 
         // camera position correction
-        if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
-            if (detect.getcX() < properCX - 5) {
+        while (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
+            if (detect.getcX() < properCX - 5 && left) {
                 // strafe to the right
-//                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
-                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
-
+//                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
+                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+                left = false;
             }
-            if(detect.getcX() > properCX + 5) {
+            if(detect.getcX() > properCX + 5 && right) {
                 // strafe to the left (change fr and bl)
-                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
 
-//                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
-
+//                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+                right = false;
             }
-            if (detect.getcX() >= properCX - 5 || detect.getcX() <= properCX + 5) {
+            if (detect.getcX() >= properCX - 5 && detect.getcX() <= properCX + 5) {
                 drive.goToPosition(0, 0, 0, 0);
             }
         }
 
+        sleep(200);
+
+        scoreCone(438, 416, 437, 426);
 
 
+
+        /*
+        // turn back straight
+        drive.turn(Math.PI / 4.3);
+        //go forward to blue cone tape adjacent mat
+        drive.goToPositionPID(drive.avgPosition(1028, 1056, 1041, 1026), "go forward to next mat");
+        // turn to tape/cones
+        drive.turn(-Math.PI / 2);
+        // find tape, get cone
+        useColorSensor();
+        // back up
+        drive.goToPosition(-0.4, -0.4, -0.4, -0.4, -284, "back up");
+        //put lift down
+
+        // turn 90 to the right
+        drive.turn(Math.PI / 2);
+        // strafe right
+        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, drive.avgPosition(-1727, 1651, 1650, -891), "strafe right");
+        // camera position correction
+        if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
+            while (detect.getcX() < properCX - 5) {
+                // strafe to the right
+                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+
+            }
+            while (detect.getcX() > properCX + 5) {
+                // strafe to the left (change fr and bl)
+                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
+
+            }
+        }
+        // scoring cone
         scoreCone(184, 165, 163, 147);
 
 
+         */
     }
 
     public void scoreCone(int fl, int fr, int bl, int br) {
@@ -138,9 +176,10 @@ public class DistanceFromPoleCam extends LinearOpMode {
 
 
         //3700 - 3800
-        drive.goToPosition(0.2, 0.2, 0.2, 0.2);
+        drive.goToPosition(0.15, 0.15, 0.15, 0.15);
+        sleep(100);
         while (detect.getBoundArea() <= 9550.0 || detect.getBoundArea() >= 10000) {
-            if (detect.getBoundArea() >= 9600.0 && detect.getBoundArea() <= 10500 && detect.getDistance() <= 5.3/*|| detect.getcX() <= 18*/) {
+            if (detect.getBoundArea() >= 9600.0 && detect.getBoundArea() <= 10000 && detect.getDistance() <= 4/*|| detect.getcX() <= 18*/) {
                 drive.goToPosition(0, 0, 0, 0);
             }
 
@@ -166,5 +205,11 @@ public class DistanceFromPoleCam extends LinearOpMode {
         sleep(300);
     }
 
+    public void useColorSensor() {
+        drive.findTape();
+        score.goToPosition(174, 0.7);
+        score.grabConeAuto();
 
+
+    }
 }
