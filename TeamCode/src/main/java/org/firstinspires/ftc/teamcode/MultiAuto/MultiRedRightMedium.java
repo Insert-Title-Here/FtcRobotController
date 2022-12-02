@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class MultiRedRightHigh extends LinearOpMode {
+public class MultiRedRightMedium extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     AtomicBoolean cont;

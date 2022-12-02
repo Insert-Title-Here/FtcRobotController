@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 //TODO:Needs testing
-@Autonomous
+//@Autonomous
 public class BlueLeftSpecial extends LinearOpMode {
 
     MecanumDrive drive;

@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-@Autonomous
+//@Autonomous
 public class RedRightHigh extends LinearOpMode {
     // instantiations
     MecanumDrive drive;

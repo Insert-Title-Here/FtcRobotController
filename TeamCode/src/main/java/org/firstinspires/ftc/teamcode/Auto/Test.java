@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
  */
 
-@Autonomous
+//@Autonomous
 public class Test extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;

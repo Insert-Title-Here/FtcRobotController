@@ -9,7 +9,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous
+//@Autonomous
 public class CamTest extends LinearOpMode {
     DetectionAlgorithmTest detect;
     String position; //temp

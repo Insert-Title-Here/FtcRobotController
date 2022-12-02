@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 //use servo programmer to find out 0 and 1 position
 
-@Autonomous
+//@Autonomous
 public class ClawTest extends LinearOpMode {
     ScoringSystem intake;
 

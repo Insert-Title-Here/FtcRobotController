@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @TeleOp @Config
+// This teleop does not contain the colorsensor code
 public class SecondTeleOp extends LinearOpMode {
     //TODO: change names if you want to
     MecanumDrive drive;
@@ -98,7 +99,7 @@ public class SecondTeleOp extends LinearOpMode {
         // ftc dashboard
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
-        //Open
+
         //Thread for the slides
 
         liftThread = new Thread(){
@@ -106,14 +107,14 @@ public class SecondTeleOp extends LinearOpMode {
             public void run(){
                 while(opModeIsActive()){
                     //manually lifts slides up and down
-                    if(gamepad1.right_bumper){
+                    if(gamepad1.dpad_up){
                         //if bumper get to max height sets power stop moving up
                         if(score.getEncoderPosition() > constant.getHeightLimit()){
                             score.setPower(constant.getSteadyPow());
                         }else{
                             score.setPower(0.7);
                         }
-                    }else if(gamepad1.left_bumper) {
+                    }else if(gamepad1.dpad_down) {
                         if(score.getEncoderPosition() < 7){
                             score.setPower(0);
                         }else{
@@ -127,9 +128,12 @@ public class SecondTeleOp extends LinearOpMode {
                         }
                     }
                     //moves the slides all the way down
+                    /*
                     if(gamepad1.dpad_down) {
                         score.goToPosition(constant.getHeightBottom(),1);
                     }
+
+                     */
                     //moves the slides to highest pole height
                     if (gamepad1.right_stick_button) {
                         //high cone Max limit is 1370
@@ -203,6 +207,7 @@ public class SecondTeleOp extends LinearOpMode {
                                         e.printStackTrace();
                                     }
                                     score.goToPosition(constant.getHeightBottom(),1);
+                                    //score.setUprighterPosition(0);
                                     clawMoveDownToggle.set(false);
                                 }else{
                                     score.goToPosition(score.getEncoderPosition() - 113, 0.5);
@@ -216,6 +221,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     e.printStackTrace();
                                 }
                                 score.goToPosition(constant.getHeightBottom(),0.8);
+                                //score.setUprighterPosition(0);
                             }
 
                         }else{
@@ -243,7 +249,12 @@ public class SecondTeleOp extends LinearOpMode {
                                     score.goToPosition(score.getEncoderPosition()+300, 1);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
+                                    /*
+                                    if(!uprighterToggle){
+                                        score.setUprighterPosition(1);
+                                    }
 
+                                     */
                                 }
                             }else{
                                 //claw code for stack only
@@ -266,19 +277,6 @@ public class SecondTeleOp extends LinearOpMode {
                     }else if(gamepad1.right_trigger < 0.1){
                         clawOpenCloseToggle.set(true);
                     }
-                    // closes claw using color sensor
-                    if (score.getClawPosition() == 0.0) {
-                        try {
-                            if(clawStackFlag.get()){
-                                score.grabCone(true);
-                            }else{
-                                score.grabCone(false);
-                            }
-                            clawOpenCloseToggle.set(true);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
                 }
             }
@@ -286,7 +284,6 @@ public class SecondTeleOp extends LinearOpMode {
         score.setClawPosition(0);
         score.setUprighterPosition(0);
         waitForStart();
-
         liftThread.start();
         score.goToPosition(150, 0.8);
         while(opModeIsActive()){
@@ -321,25 +318,20 @@ public class SecondTeleOp extends LinearOpMode {
                     drive.turn(Math.PI);
                 }
             }
-
-            if (gamepad1.dpad_right && uprighterToggle) {
+            /*
+            if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
-                if (score.getUprighterPosition() == 0) {
-                    score.setUprighterPosition(1);
-                    score.goToPosition(0,0.3);
-                } else if (score.getUprighterPosition() == 1) {
-                    score.setUprighterPosition(0);
-                    score.goToPosition(200, 0.8);
-                }
                 uprighterToggle = false;
-            }else if(!gamepad1.dpad_right){
+                if (score.getUprighterPosition() == 0) {
+                    constant.setHeightBottom(0);
+                } else if (score.getUprighterPosition() == 1) {
+                    constant.setHeightBottom(150);
+                }
+            }else if(!gamepad1.right_bumper){
                 uprighterToggle = true;
             }
 
-            if(gamepad1.dpad_up){
-                drive.goToPositionPID(1500, "asdf");
-            }
-
+             */
 
 
             //resets the drive motor encoders

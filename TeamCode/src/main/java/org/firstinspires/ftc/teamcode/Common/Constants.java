@@ -58,6 +58,9 @@ public class Constants {
     public int getHeightBottom(){
         return heightBottom;
     }
+    public void setHeightBottom(int tics){
+        heightBottom = tics;
+    }
     public double getSleeveCamPos() {
         return sleeveCamPos;
     }

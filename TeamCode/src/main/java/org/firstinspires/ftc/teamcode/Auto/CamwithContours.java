@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous
+//@Autonomous
 public class CamwithContours extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;

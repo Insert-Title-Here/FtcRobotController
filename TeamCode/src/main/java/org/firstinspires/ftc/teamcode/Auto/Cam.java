@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import org.firstinspires.ftc.teamcode.Auto.DetectionAlgorithm.ParkingPosition;
 
-@Autonomous
+//@Autonomous
 public class Cam extends LinearOpMode {
     DetectionAlgorithm detect;
     String position; //temp
