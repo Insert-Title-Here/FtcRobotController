@@ -76,28 +76,13 @@ public class V2AutoPerfectCopy extends LinearOpMode {
                 while (opModeIsActive()) {
                     if (armUp.get()) {
                         hold.set(false);
-                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
-
-                        score.moveToPosition(1400, 1);
+                        score.moveToPosition(1350, 1);
                         hold.set(true);
 
-
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        score.setGrabberPosition(0.3);
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         armUp.set(false);
                     } else if (armDown.get()) {
                         hold.set(false);
-                        score.setLinkagePosition(Constants.linkageUpV2);
-                        score.moveToPosition(0, 0.5);
+                        score.moveToPosition(0, 0.8);
                         //score.setLinkagePositionLogistic(Constants.linkageDown, 250, 30);
                         armDown.set(false);
                     } else if (finalMove.get()) {
@@ -200,15 +185,18 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
         drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.5);
 
-        pipeline.normalize(0.2, 159, 3);
-
-
         //drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
 
         if(distance.getNormalizedColors().blue > 0.85) {
-            score.moveToPosition(1320, 1);
 
-            sleep(150);
+            pipeline.normalize(0.2, 159, 3);
+
+            hold.set(false);
+            score.moveToPosition(1340, 1);
+            hold.set(true);
+
+
+            sleep(350);
 
             score.setLinkagePositionLogistic(0.8, 100);
 
@@ -222,10 +210,13 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
             score.setGrabberPosition(Constants.openV2);
 
+            hold.set(false);
             score.moveToPosition(0, 0.8);
+            hold.set(true);
 
             preloadSuccess = true;
         } else {
+            pipeline.normalize(0.2, 159, 3);
             cycles = 5;
             drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.5);
             score.setGrabberPosition(Constants.openV2);
@@ -236,10 +227,10 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
 
 
-            if(i == 0 && preloadSuccess) {
+            if(i == 0) {
 
                 double startDistanceTime = time.seconds();
-                while (distance.getDistance(DistanceUnit.CM) > 4.75) {
+                while (distance.getDistance(DistanceUnit.CM) > 6) {
                     drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
@@ -260,7 +251,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
                 drive.simpleBrake();
 
             } else {
-                //drive.simpleMoveToPosition(12, MecDrive.MovementType.STRAIGHT, 0.5);
+                drive.simpleMoveToPosition(12, MecDrive.MovementType.STRAIGHT, 0.5);
             }
 
             if (failed == true) {
@@ -272,13 +263,15 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
             sleep(100);
 
-            score.setLinkagePositionLogistic(Constants.linkageUpV2, 100);
+            score.setLinkagePositionLogistic(Constants.linkageUpV2, 50);
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
             pipeline.normalize(0.2, 159, 3);
 
-            score.moveToPosition(1320, 1);
+            hold.set(false);
+            score.moveToPosition(1340, 1);
+            hold.set(true);
 
             sleep(150);
 
@@ -290,15 +283,17 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
             sleep(150);
 
-            score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 100);
+            score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 50);
             score.setGrabberPosition(Constants.openV2);
 
 
             //sleep(250);
 
+            hold.set(false);
             score.moveToPosition(0, 0.8);
+            hold.set(true);
 
-            if (time.seconds() - startTime > 26) {
+            if (time.seconds() - startTime > 25) {
                 i = 5;
             }
 
