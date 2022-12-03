@@ -9,10 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -350,16 +347,16 @@ public class MecanumDrive {
     }
     // turns to the starting position
     //TODO: Needs Testing
-    public void turnToInitialPosition() {
+    public void turnToInitialPosition(double radians) {
         boolean over = true;
-        double rad = imu.getAngularOrientation().firstAngle;
+        double rad = radians;
         if (rad > 0.04 || rad < -0.04) {
             while ((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005 && over) {
-                double radians = imu.getAngularOrientation().firstAngle;
-                if (0 < radians) {
+                double currentRadians = imu.getAngularOrientation().firstAngle;
+                if (0 < currentRadians) {
                     //turn right # of radians
                     setPower(0.2, -0.2, 0.2, -0.2);
-                } else if (radians < 0) {
+                } else if (currentRadians < 0) {
                     //turn left # of radians
                     setPower(-0.2, 0.2, -0.2, 0.2);
                 } else {

@@ -44,14 +44,14 @@ public class ContourMultiScore extends OpenCvPipeline {
     public static int BOX_WIDTH = 23;
     public static int BOX_HEIGHT = -38;
 
-    enum ParkingPosition {
+    public enum ParkingPosition {
         LEFT,
         CENTER,
         RIGHT
     }
 
     // Running variable storing the parking position
-    private volatile DetectionAlgorithmTest.ParkingPosition position = DetectionAlgorithmTest.ParkingPosition.LEFT;
+    private volatile DetectionAlgorithmRight.ParkingPosition position = DetectionAlgorithmRight.ParkingPosition.LEFT;
 
     // submat to center cone
     Point box_top_left = new Point(
@@ -189,24 +189,24 @@ public class ContourMultiScore extends OpenCvPipeline {
             if (yelPercent > cyaPercent) {
                 if (yelPercent > magPercent) {
                     // yellow greatest, position left
-                    position = DetectionAlgorithmTest.ParkingPosition.LEFT;
+                    position = DetectionAlgorithmRight.ParkingPosition.LEFT;
                     //telemetry.addData("park position", position);
                     Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), YELLOW, 2);
                 } else {
                     // magenta greatest, position right
-                    position = DetectionAlgorithmTest.ParkingPosition.RIGHT;
+                    position = DetectionAlgorithmRight.ParkingPosition.RIGHT;
                     //telemetry.addData("park position", position);
                     Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
                 }
             } else if(cyaPercent > magPercent) {
                 // cyan greatest, position center
-                position = DetectionAlgorithmTest.ParkingPosition.CENTER;
+                position = DetectionAlgorithmRight.ParkingPosition.CENTER;
                 //telemetry.addData("park position", position);
                 Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
             } else {
 
                 // magenta greatest, position right
-                position = DetectionAlgorithmTest.ParkingPosition.RIGHT;
+                position = DetectionAlgorithmRight.ParkingPosition.RIGHT;
                 //telemetry.addData("park position", position);
                 Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
 
@@ -495,7 +495,7 @@ public class ContourMultiScore extends OpenCvPipeline {
     }
 
     // Returns an enum being the current position where the robot will park
-    public DetectionAlgorithmTest.ParkingPosition getPosition() {
+    public DetectionAlgorithmRight.ParkingPosition getParkPosition() {
         return position;
     }
 }

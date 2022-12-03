@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -21,7 +20,7 @@ public class BlueLeftHigh extends LinearOpMode {
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
-    DetectionAlgorithmTest detect;
+    DetectionAlgorithmRight detect;
     OpenCvWebcam webcam;
     BNO055IMU imu;
     Constants constants;
@@ -41,7 +40,7 @@ public class BlueLeftHigh extends LinearOpMode {
         imu.initialize(parameters);
 
 
-        detect = new DetectionAlgorithmTest(telemetry);
+        detect = new DetectionAlgorithmRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
@@ -150,14 +149,14 @@ public class BlueLeftHigh extends LinearOpMode {
         sleep(300);
         //drive.turn(-Math.PI/2, 0.3);
         //moves robot to correct parking position
-        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+        if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-5007,2941,3226,-3036), "strafe left (more left)");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(600,600,600,650), "strafe right");
             //drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 3410, "strafe right");
             //drive.goToPosition(-0.3, 0.3, 0.3, -0.3, 300, "strafe right");
 
-        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
+        } else if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.CENTER) {
             // move to center
             drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");

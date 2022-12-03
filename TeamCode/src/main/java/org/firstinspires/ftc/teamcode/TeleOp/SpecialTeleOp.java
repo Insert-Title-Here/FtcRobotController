@@ -288,7 +288,7 @@ public class SpecialTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(0);
-        score.setUprighterPosition(0);
+//        score.setUprighterPosition(0);
         waitForStart();
 
         liftThread.start();
@@ -325,20 +325,20 @@ public class SpecialTeleOp extends LinearOpMode {
                     drive.turn(Math.PI);
                 }
             }
-
-            if (gamepad1.right_bumper && uprighterToggle) {
-                //cone uprighter
-                if (score.getUprighterPosition() == 0) {
-                    score.setUprighterPosition(1);
-                    score.goToPosition(0,0.3);
-                } else if (score.getUprighterPosition() == 1) {
-                    score.setUprighterPosition(0);
-                    score.goToPosition(200, 0.8);
-                }
-                uprighterToggle = false;
-            }else if(!gamepad1.right_bumper){
-                uprighterToggle = true;
-            }
+//
+//            if (gamepad1.right_bumper && uprighterToggle) {
+//                //cone uprighter
+//                if (score.getUprighterPosition() == 0) {
+//                    score.setUprighterPosition(1);
+//                    score.goToPosition(0,0.3);
+//                } else if (score.getUprighterPosition() == 1) {
+//                    score.setUprighterPosition(0);
+//                    score.goToPosition(200, 0.8);
+//                }
+//                uprighterToggle = false;
+//            }else if(!gamepad1.right_bumper){
+//                uprighterToggle = true;
+//            }
 
 
             //resets the drive motor encoders

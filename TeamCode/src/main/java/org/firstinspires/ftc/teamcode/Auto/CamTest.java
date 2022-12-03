@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -11,7 +10,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 //@Autonomous
 public class CamTest extends LinearOpMode {
-    DetectionAlgorithmTest detect;
+    DetectionAlgorithmRight detect;
     String position; //temp
     OpenCvWebcam webcam;
     int parkLocation;
@@ -19,7 +18,7 @@ public class CamTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new DetectionAlgorithmTest(telemetry);
+        detect = new DetectionAlgorithmRight(telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);

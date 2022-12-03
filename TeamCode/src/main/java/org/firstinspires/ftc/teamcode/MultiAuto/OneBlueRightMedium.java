@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
 import org.firstinspires.ftc.teamcode.Auto.DetectionAlgorithmRight;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
@@ -16,23 +17,22 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//@Autonomous
-public class MultiBlueRightMedium extends LinearOpMode {
+@Autonomous @Config
+public class OneBlueRightMedium extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
-    ContourMultiScore detect;
     DetectionAlgorithmRight park;
     Constants constants;
     OpenCvWebcam webcam;
 
-    public double position = -0.1;
+
     private double properCX = 89;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new ContourMultiScore(telemetry);
+
         park = new DetectionAlgorithmRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
@@ -44,7 +44,7 @@ public class MultiBlueRightMedium extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        webcam.setPipeline(detect);
+        webcam.setPipeline(park);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
 
@@ -69,8 +69,8 @@ public class MultiBlueRightMedium extends LinearOpMode {
             @Override
             public void run(){
                 while(opModeIsActive()){
-                    if((score.getEncoderPosition() > 1200 && cont.get())){
-                        score.setPower(0.1);
+                    if((score.getEncoderPosition() > 200 && cont.get())){
+                        score.setPower(constants.getSteadyPow());
                     }
 
 
@@ -84,8 +84,8 @@ public class MultiBlueRightMedium extends LinearOpMode {
 
 
         // code to turn servo of cam
-        score.setCamPosition(position);
-        detect.park = true;
+        score.setCamPosition(constants.getSleeveCamPos());
+
         // ftc dashboard
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
         telemetry.addData("Status", "Initialized");
@@ -95,88 +95,43 @@ public class MultiBlueRightMedium extends LinearOpMode {
         //close claw
         score.setClawPosition(constants.getClawClosePos());
         waitForStart();
-        detect.park = false;
-        // turn servo of cam forward for poles
-        score.setCamPosition(0.15);
+        liftThread.start();
+        webcam.stopStreaming();
+
         blueRight();
     }
     public void blueRight() throws InterruptedException {
         //lift claw a little bit
         score.goToPosition(50, 0.7);
         // go forward next to pole
-        drive.goToPositionPID(drive.avgPosition(1476, 1456, 1447, 1442), "go forward next to pole");
-        // turn to right 45 degrees to medium pole
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1300, 1330, 1350, 1320), "go forward");
+        // turn to left 45 degrees to medium pole
         drive.turn(Math.PI / 4);
-        // go to pole a bit
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 200, "go forward some to pole");
-        // camera position correction
-        if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
-            while (detect.getcX() < properCX - 5) {
-                // strafe to the left
-                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
-
-            }
-            while (detect.getcX() > properCX + 5) {
-                // strafe to the right (change fr and bl)
-                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
-
-            }
-        }
-
         // scoring cone
-        scoreCone(438, 416, 437, 426);
+        scoreCone(291, 250, 212, 283);
         // turn back straight
-        drive.turn(Math.PI / 4);
-        //go forward to blue cone tape adjacent mat
-        drive.goToPositionPID( drive.avgPosition(1028, 1056, 1041, 1026), "go forward to next mat");
-        // turn to tape/cones
-        drive.turn(-Math.PI / 2);
-        // find tape, get cone
-        useColorSensor();
-        // back up
-        drive.goToPosition(-0.4, -0.4, -0.4, -0.4, -284, "back up");
-        //put lift down
+        drive.turn(Math.PI / 5);
 
-        // turn 90 to the left
-        drive.turn(Math.PI / 2);
-        // strafe left
-        drive.goToPosition(0.4, -0.4, -0.4, 0.4, drive.avgPosition(1727, -1651, -1650, 891), "strafe right");
-        // camera position correction
-        if (detect.getcX() < properCX - 5 || detect.getcX() > properCX + 5) {
-            while (detect.getcX() < properCX - 5) {
-                // strafe to the left
-                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
-
-            }
-            while (detect.getcX() > properCX + 5) {
-                // strafe to the right (change fr and bl)
-                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
-
-            }
-        }
-        // scoring cone
-        scoreCone(184, 165, 163, 147);
-/*
         //moves robot to correct parking position
-        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+        if (park.getPosition() == DetectionAlgorithmRight.ParkingPosition.LEFT) {
             // move to left park (strafe right)
-            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, drive.avgPosition(-5007,2941,3226,-3036), "strafe left (more left)");
-            drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(600,600,600,650), "strafe right");
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3 , 1000, "move forward");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3 , 200, "strafe right");
 
 
-        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
-            // move to center park (strafe left)
-            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, drive.avgPosition(-1759,1748,1937,-1784), "strafe left (center)");
-            drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(400,400,400,400), "strafe right");
+
+        } else if (park.getPosition() == DetectionAlgorithmRight.ParkingPosition.CENTER) {
+            // move to center park (don't move at all)
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3 , 200, "strafe right");
 
         } else {
             // move to right park (strafe more left)
-            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, drive.avgPosition(-560,565,642,-585), "strafe left");
-            drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(400,400,400,400), "strafe right");
+            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1372, "move backwards");
+            drive.goToPosition(0.3, -0.3, -0.3, 0.3 , 200, "strafe right");
 
 
         }
-*/
+
 
         score.setClawPosition(constants.getClawOpenPos());
 
@@ -185,21 +140,15 @@ public class MultiBlueRightMedium extends LinearOpMode {
     }
 
     public void scoreCone(int fl, int fr, int bl, int br) {
-
-        // move arm max
-        score.goToPosition(2340, 0.85);
-        //begin thread for maintaining height of slides
         cont.set(true);
-        //move forward closer to pole
-        if (detect.getDistance() >= 6 || detect.getDistance() <= 4) {
-            while (detect.getDistance() >= 6) {
-                drive.goToPosition(0.2, 0.2, 0.2, 0.2);
-            }
-            while (detect.getDistance() < 5) {
-                drive.goToPosition(-0.2, -0.2, -0.2, -0.2);
-            }
-        }
-        sleep(500);
+        // move arm med
+        score.goToPosition(constants.getHeightMed(), 0.8);
+        //begin thread for maintaining height of slides
+
+
+        //move forward to pole
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(fl, fr, bl, br), "move to pole");
+
 
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
@@ -207,7 +156,7 @@ public class MultiBlueRightMedium extends LinearOpMode {
         sleep(300);
 
         //move back from pole
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl, fr, bl, br), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl+200, fr, bl, br), "move back from pole");
         cont.set(false);
         //moves slides down
         score.goToPosition(0, 0.3);

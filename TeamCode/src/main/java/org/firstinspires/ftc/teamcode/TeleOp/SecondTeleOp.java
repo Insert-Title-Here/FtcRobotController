@@ -44,7 +44,7 @@ public class SecondTeleOp extends LinearOpMode {
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
-    private final double SPRINT_ROTATIONAL_MODIFIER = 1;
+    private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
 
     public static double pos = 0.9;
     @Override
@@ -115,11 +115,15 @@ public class SecondTeleOp extends LinearOpMode {
                             score.setPower(0.7);
                         }
                     }else if(gamepad1.dpad_down) {
+                       /*
                         if(score.getEncoderPosition() < 7){
                             score.setPower(0);
                         }else{
                             score.setPower(-0.2);
                         }
+
+                        */
+                        score.setPower(-0.17);
                     }else{
                         if(score.getEncoderPosition() > 100){
                             //if(!clawStackFlag.get()){
@@ -155,12 +159,16 @@ public class SecondTeleOp extends LinearOpMode {
                     //resets the slidemotor encoder
                     if(gamepad1.options){
                         score = new ScoringSystem(hardwareMap, telemetry);
+                        drive.resetEncoders();
                     }
                     /*
                     if(gamepad1.a && stackFlag.get()) {
+
                         if(!clawStackFlag.get()){
                             score.goToPosition(240, 0.8);
                         }
+
+
                         clawStackFlag.set(true);
                         stackFlag.set(false);
                         score.stackUp();
@@ -171,7 +179,9 @@ public class SecondTeleOp extends LinearOpMode {
                     }else if(!gamepad1.a){
                         stackFlag.set(true);
                     }
-                     */
+                */
+
+
                     //lowers the height of the slides for the stack of 5 cones
                     if(gamepad1.a && stackFlag.get()){
                         clawStackFlag.set(true);
@@ -193,6 +203,8 @@ public class SecondTeleOp extends LinearOpMode {
                     }else if(!gamepad1.a){
                         stackFlag.set(true);
                     }
+
+
                     //closes the claw(manually) and opens the claw(like a toggle)
                     if(gamepad1.right_trigger > 0.1 && clawOpenCloseToggle.get()){
                         //Checks if claw position is between 2 values to check if claw should open or close
@@ -210,7 +222,7 @@ public class SecondTeleOp extends LinearOpMode {
                                     //score.setUprighterPosition(0);
                                     clawMoveDownToggle.set(false);
                                 }else{
-                                    score.goToPosition(score.getEncoderPosition() - 113, 0.5);
+                                    score.goToPosition(score.getEncoderPosition() - 200, 0.5);
                                     clawMoveDownToggle.set(true);
                                 }
                             }else{
@@ -277,15 +289,28 @@ public class SecondTeleOp extends LinearOpMode {
                     }else if(gamepad1.right_trigger < 0.1){
                         clawOpenCloseToggle.set(true);
                     }
+                    // closes claw using color sensor
+                    if (score.getClawPosition() == 0.0) {
+                        try {
+                            if(clawStackFlag.get()){
+                                score.grabCone(true);
+                            }else{
+                                score.grabCone(false);
+                            }
+                            clawOpenCloseToggle.set(true);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
 
                 }
             }
         };
         score.setClawPosition(0);
-        score.setUprighterPosition(0);
+
         waitForStart();
         liftThread.start();
-        score.goToPosition(0, 0.8);
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -303,22 +328,25 @@ public class SecondTeleOp extends LinearOpMode {
                 drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }else {
                 if(score.getEncoderPosition() > 500){
-                    drive.setPower(new Vector2D(gamepadX * 0.4, gamepadY * 0.4), gamepad1.right_stick_x * 0.4, false);
+                    drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
                 }else{
                     drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
             //Used for testing purposes-turns a certain number of radians
-            if (gamepad1.dpad_left) {
+            if (gamepad1.right_bumper) {
                 //turn test
                 //drive.turnToInitialPosition();
 
-                if(-Math.PI/4 < imu.getAngularOrientation().firstAngle  && imu.getAngularOrientation().firstAngle < Math.PI/4){
-                    drive.turn(-Math.PI/1.2);
+                /*
+                if(-Math.PI/4 < imu.getAngularOrientation().firstAngle && imu.getAngularOrientation().firstAngle < Math.PI/4){
+                    drive.turn(-Math.PI/1.3);
                 }else{
-                    drive.turn(Math.PI/1.2);
+                    drive.turn(Math.PI/1.3);
                 }
 
+                 */
+                drive.turn(Math.PI/1.2);
             }
 
             /*
@@ -338,7 +366,7 @@ public class SecondTeleOp extends LinearOpMode {
 
             //resets the drive motor encoders
             if (gamepad1.share) {
-                drive.resetEncoders();
+                drive.resetIMU();
             }
 
             //TODO: add telemtry for gamepad a and y positions when you press them

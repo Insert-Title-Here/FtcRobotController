@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
-import org.firstinspires.ftc.teamcode.Auto.DetectionAlgorithmTest;
+import org.firstinspires.ftc.teamcode.Auto.DetectionAlgorithmRight;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -17,14 +16,14 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous
+//@Autonomous
 public class MultiRedRightMedium extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
     ContourMultiScore detect;
-    DetectionAlgorithmTest park;
+    DetectionAlgorithmRight park;
     Constants constants;
     OpenCvWebcam webcam;
 
@@ -34,7 +33,7 @@ public class MultiRedRightMedium extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         detect = new ContourMultiScore(telemetry);
-        park = new DetectionAlgorithmTest(telemetry);
+        park = new DetectionAlgorithmRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();

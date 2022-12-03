@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auto;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -20,7 +19,7 @@ public class BlueRightMedium extends LinearOpMode {
     AtomicBoolean cont;
     Thread liftThread;
     String parkLocation;
-    DetectionAlgorithmTest detect;
+    DetectionAlgorithmRight detect;
     OpenCvWebcam webcam;
     BNO055IMU imu;
 
@@ -36,7 +35,7 @@ public class BlueRightMedium extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        detect = new DetectionAlgorithmTest(telemetry);
+        detect = new DetectionAlgorithmRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
@@ -173,10 +172,10 @@ public class BlueRightMedium extends LinearOpMode {
         radians = -3.14159 / 4;
         drive.turn(radians);
         //park (only have to move forward or backwards...currently in center position (cyan)
-        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+        if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.LEFT) {
             // move to left TODO: measure drive encoder values
             drive.goToPosition(0.3, 0.3, -0.3, 0.3, avgPosition(1000,1000,900,900), "move forward");
-        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
+        } else if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.CENTER) {
             // move to center TODO: measure drive encoder values
 //            drive.goToPosition(0.3, -0.3, -0.3, 0.3, avgPosition(1784,-1820,-1811,1856), "strafe right (center)");
         } else {
