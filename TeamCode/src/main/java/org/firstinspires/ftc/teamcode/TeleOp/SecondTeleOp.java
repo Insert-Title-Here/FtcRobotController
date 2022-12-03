@@ -312,15 +312,13 @@ public class SecondTeleOp extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
-                /*
+
                 if(-Math.PI/4 < imu.getAngularOrientation().firstAngle  && imu.getAngularOrientation().firstAngle < Math.PI/4){
-                    drive.turn(-Math.PI);
+                    drive.turn(-Math.PI/1.2);
                 }else{
-                    drive.turn(Math.PI);
+                    drive.turn(Math.PI/1.2);
                 }
 
-                 */
-                drive.turn(-Math.PI/1.2);
             }
 
             /*

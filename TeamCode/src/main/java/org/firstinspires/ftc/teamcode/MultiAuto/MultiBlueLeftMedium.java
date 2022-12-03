@@ -100,7 +100,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         // go forward next to pole
         drive.goToPositionPID(1060, "go forward next to pole");
         // turn to left 45 degrees to medium pole
-        drive.turn(-Math.PI / 4.3);
+        drive.turn(-Math.PI / 4);
         // go to pole a bit
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, 90, "go forward some to pole");
         sleep(100);
