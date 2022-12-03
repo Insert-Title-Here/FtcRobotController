@@ -19,7 +19,7 @@ public class ScoringSystem {
     private DcMotor liftMotor;
     private Servo claw;
     private Servo camTurn;
-    private Servo uprighter;
+//    private Servo uprighter;
     MecanumDrive drive;
     ColorRangeSensor colorCone;
     Telemetry telemetry;
@@ -33,7 +33,7 @@ public class ScoringSystem {
         constant = new Constants();
         claw = hardwareMap.get(Servo.class, "claw");
         camTurn = hardwareMap.get(Servo.class, "camTurn");
-        uprighter = hardwareMap.get(Servo.class, "uprighter");
+//        uprighter = hardwareMap.get(Servo.class, "uprighter");
         liftMotor = hardwareMap.get(DcMotor.class, "motor");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "colorCone");
         drive = new MecanumDrive(hardwareMap, telemetry);
@@ -109,7 +109,7 @@ public class ScoringSystem {
         camTurn.setPosition(position);
     }
 
-    public void setUprighterPosition(double position) { uprighter.setPosition(position);}
+//    public void setUprighterPosition(double position) { uprighter.setPosition(position);}
 
     public int getEncoderPosition() {
         return liftMotor.getCurrentPosition();
@@ -121,7 +121,7 @@ public class ScoringSystem {
     public double getCamPosition() {
         return camTurn.getPosition();
     }
-    public double getUprighterPosition() { return uprighter.getPosition(); }
+//    public double getUprighterPosition() { return uprighter.getPosition(); }
 
     public void resetLiftEncoder(){
          liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -206,38 +206,38 @@ public class ScoringSystem {
     int currentHeight = height1;
     public void stackUp(){
         if(currentHeight <= height5){
-            goToPosition(currentHeight, 0.8);
+            goToPosition(currentHeight, 0.6);
             currentHeight = height4;
         }else if(currentHeight <= height4){
-            goToPosition(currentHeight, 0.8);
+            goToPosition(currentHeight, 0.6);
             currentHeight = height3;
         }else if(currentHeight <= height3){
-            goToPosition(currentHeight, 0.8);
+            goToPosition(currentHeight, 0.6);
             currentHeight = height2;
         }else if(currentHeight <= height2){
-            goToPosition(currentHeight, 0.8);
+            goToPosition(currentHeight, 0.6);
             currentHeight = height1;
         }else if(currentHeight <= height1){
-            goToPosition(currentHeight, 0.8);
+            goToPosition(currentHeight, 0.6);
             currentHeight = height2;
         }
     }
     public void stackDown(){
-        if(currentHeight <= height1){
-            goToPosition(currentHeight, 0.5);
-            currentHeight = height2;
-        }else if(currentHeight <= height2){
-            goToPosition(currentHeight, 0.5);
-            currentHeight = height3;
-        }else if(currentHeight <= height3){
-            goToPosition(currentHeight, 0.5);
+        if(currentHeight <= height5){
+            goToPosition(currentHeight, 0.4);
             currentHeight = height4;
         }else if(currentHeight <= height4){
-            goToPosition(currentHeight, 0.5);
+            goToPosition(currentHeight, 0.4);
             currentHeight = height5;
-        }else if(currentHeight <= height5){
-            goToPosition(currentHeight, 0.8);
+        }else if(currentHeight <= height3){
+            goToPosition(currentHeight, 0.4);
             currentHeight = height4;
+        } else if(currentHeight <= height2){
+            goToPosition(currentHeight, 0.4);
+            currentHeight = height3;
+        }else if(currentHeight <= height1){
+            goToPosition(currentHeight, 0.5);
+            currentHeight = height2;
         }
     }
 

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -22,7 +21,7 @@ public class BlueLeftSpecial extends LinearOpMode {
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
-    DetectionAlgorithmTest detect;
+    DetectionAlgorithmRight detect;
     OpenCvWebcam webcam;
     BNO055IMU imu;
     @Override
@@ -38,7 +37,7 @@ public class BlueLeftSpecial extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        detect = new DetectionAlgorithmTest(telemetry);
+        detect = new DetectionAlgorithmRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
@@ -124,10 +123,10 @@ public class BlueLeftSpecial extends LinearOpMode {
         drive.goToPosition(-0.3,-0.3,-0.3,-0.3, avgPosition(-400,-420,-450,-450),"drive backward");
         score.goToPosition(0, 0.3);
 
-        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+        if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(-0.3, 0.3, 0.3, -0.3, avgPosition(-1823,1783,1921,-1812), "strafe more left");
-        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
+        } else if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.CENTER) {
             // move to center
             drive.goToPosition(-0.3, 0.3, 0.3,-0.3, avgPosition(-597,587,641,-592),"strafe left (center)");
         } else {

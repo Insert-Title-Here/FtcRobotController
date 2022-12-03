@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -11,8 +13,8 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-//TODO: check if camera angle works @Config
-public class DetectionAlgorithmTest extends OpenCvPipeline {
+@Config //TODO: check if camera angle works
+public class DetectionAlgorithmRight extends OpenCvPipeline {
     Telemetry telemetry;
     /*
    YELLOW  = Parking Left
@@ -23,8 +25,11 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
+    public static int x = 224; // 224
+    public static int y = 95; //95
+
     // top left point of submat (original 320, 176)
-    public static final Point BOX_TOPLEFT = new Point(175,114); // 175, 150
+    public static Point BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
 
     // width and height of submat
     public static int BOX_WIDTH = 23;
@@ -62,13 +67,25 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
             CYAN    = new Scalar(0, 255, 255),
             MAGENTA = new Scalar(255, 0, 255);
 
-    public DetectionAlgorithmTest(Telemetry telemetry){
+    public DetectionAlgorithmRight(Telemetry telemetry){
         this.telemetry = telemetry;
     }
 
 
     @Override
     public Mat processFrame(Mat input) {
+        BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
+
+        // width and height of submat
+        BOX_WIDTH = 23;
+        BOX_HEIGHT = -38;
+
+        Point box_top_left = new Point(
+                BOX_TOPLEFT.x,
+                BOX_TOPLEFT.y);
+        Point box_bottom_right = new Point(
+                BOX_TOPLEFT.x + BOX_WIDTH,
+                BOX_TOPLEFT.y + BOX_HEIGHT);
         Mat befChange = new Mat();
 
         input.copyTo(original);

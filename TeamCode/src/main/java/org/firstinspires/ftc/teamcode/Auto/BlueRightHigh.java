@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
@@ -23,7 +21,7 @@ public class BlueRightHigh extends LinearOpMode {
     AtomicBoolean cont;
     Thread liftThread;
     String parkLocation;
-    DetectionAlgorithmTest detect;
+    DetectionAlgorithmRight detect;
     OpenCvWebcam webcam;
     BNO055IMU imu;
     Constants constants;
@@ -42,7 +40,7 @@ public class BlueRightHigh extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        detect = new DetectionAlgorithmTest(telemetry);
+        detect = new DetectionAlgorithmRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
@@ -146,12 +144,12 @@ public class BlueRightHigh extends LinearOpMode {
         score.goToPosition(0, 0.3);
         sleep(300);
         //moves robot to correct parking position
-        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+        if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(750,-700,-600,500), "strafe right");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right"  );
 
-        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
+        } else if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.CENTER) {
             // move to center
             drive.goToPosition(0.5, -0.5, -0.5, 0.5, avgPosition(892+892,-900-900,-905-905,900+900), "strafe right (center)");
             drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(400,400,400,400), "strafe right");

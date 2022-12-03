@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -22,7 +21,7 @@ public class RedLeftHigh extends LinearOpMode {
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
-    DetectionAlgorithmTest detect;
+    DetectionAlgorithmRight detect;
     OpenCvWebcam webcam;
     Constants constants;
     BNO055IMU imu;
@@ -42,7 +41,7 @@ public class RedLeftHigh extends LinearOpMode {
 
 
         // initializations
-        detect = new DetectionAlgorithmTest(telemetry);
+        detect = new DetectionAlgorithmRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         cont = new AtomicBoolean();
@@ -140,7 +139,7 @@ public class RedLeftHigh extends LinearOpMode {
 //        drive.turn(-Math.PI/2, 0.3);
 
         // parking
-        if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.LEFT) {
+        if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.LEFT) {
             // move to left
             drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-5007,2941,3226,-3036), "strafe left (more left)");
             // move forward a bit to guarantee park
@@ -148,7 +147,7 @@ public class RedLeftHigh extends LinearOpMode {
 //            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 3410, "strafe right");
 //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3, 300, "strafe right");
 
-        } else if (detect.getPosition() == DetectionAlgorithmTest.ParkingPosition.CENTER) {
+        } else if (detect.getPosition() == DetectionAlgorithmRight.ParkingPosition.CENTER) {
             // move to center
             drive.goToPosition(-0.5, 0.5, 0.5, -0.5, avgPosition(-1759,1648,1737,-1784), "strafe left (center)");
             // move forward a bit to guarantee park
