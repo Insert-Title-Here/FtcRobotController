@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.Vision;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -41,7 +41,7 @@ public class AutoVisionTest extends LinearOpMode {
         servo.setPosition(Constants.poleV2);
 
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

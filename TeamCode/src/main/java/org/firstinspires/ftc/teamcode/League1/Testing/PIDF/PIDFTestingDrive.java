@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.PIDF;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 
 @Disabled
 @Autonomous
-@Config
+//@Config
 public class PIDFTestingDrive extends LinearOpMode {
     MecDrive drive;
     ScoringSystemV2 score;
@@ -62,7 +62,7 @@ public class PIDFTestingDrive extends LinearOpMode {
 
         score.setLinkagePosition(Constants.linkageDownV2);
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
         waitForStart();

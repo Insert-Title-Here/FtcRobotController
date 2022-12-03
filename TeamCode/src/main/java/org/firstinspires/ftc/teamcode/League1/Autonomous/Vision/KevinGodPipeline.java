@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Config
+//@Config
 public class KevinGodPipeline extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color

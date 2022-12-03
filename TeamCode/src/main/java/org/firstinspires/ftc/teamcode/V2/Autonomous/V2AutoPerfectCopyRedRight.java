@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.V2.Autonomous;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -143,7 +143,7 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
             }
         });
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         cameraServo.setPosition(Constants.sleeveV2);
