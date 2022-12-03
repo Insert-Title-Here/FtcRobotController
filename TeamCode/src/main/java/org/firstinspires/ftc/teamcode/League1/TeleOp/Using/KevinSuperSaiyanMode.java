@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.TeleOp.Using;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 
 //TODO: figure out bulk read
 
+@Disabled
 @TeleOp (name = "KevinIsActuallyInsaneAndWeAreGoingToTotallyBreakTheRobot")
 public class KevinSuperSaiyanMode extends LinearOpMode {
 

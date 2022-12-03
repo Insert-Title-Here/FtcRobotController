@@ -336,6 +336,7 @@ public class CalibrationPipeline extends OpenCvPipeline {
                 Imgproc.rectangle(input, CONE_AREA, new Scalar(255, 92, 90), 2);
             } else {
                 Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+                Imgproc.rectangle(input, POLE_TUNING_BOUNDING_BOX, new Scalar(255, 92, 90), 2);
             }
 
             for(int i = 0; i < contours.size(); i++){

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.TeleOp.Using;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -21,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 //TODO: figure out bulk read
 
+@Disabled
 @TeleOp (name = "KevinGodMode")
 public class KevinGodMode2 extends LinearOpMode {
 

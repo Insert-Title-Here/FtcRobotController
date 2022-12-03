@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 
+@Disabled
 @Autonomous
 @Config
 public class PIDFTestingDrive extends LinearOpMode {

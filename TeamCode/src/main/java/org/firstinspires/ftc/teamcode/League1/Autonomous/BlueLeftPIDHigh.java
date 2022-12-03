@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.League1.Autonomous;
 import android.provider.ContactsContract;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -22,6 +23,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Disabled
 @Autonomous
 public class BlueLeftPIDHigh extends LinearOpMode {
 

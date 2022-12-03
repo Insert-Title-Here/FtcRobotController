@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.V2.Autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,6 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Disabled
 @Autonomous
 public class V2AutoPerfectRedLeft extends LinearOpMode {
     MecDrive drive;

@@ -192,7 +192,7 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1350, 1, 1.5);
+            score.moveToPosition(1320, 1, 1.5);
             hold.set(true);
 
 
@@ -230,19 +230,23 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
             if(i == 0) {
 
                 double startDistanceTime = time.seconds();
-                while (distance.getDistance(DistanceUnit.CM) > 2.5) {
+                while (distance.getDistance(DistanceUnit.CM) > 4) {
                     drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                     telemetry.update();
 
-                    /*if (time.seconds() - startDistanceTime > 3) {
+                    if (time.seconds() - startDistanceTime > 3) {
                         drive.simpleBrake();
                         drive.tankRotatePID(Math.PI / 2, 0.6, false);
                         failed = true;
                         break;
-                    }*/
+                    }
 
+                }
+
+                if (failed) {
+                    break;
                 }
 
 
@@ -251,7 +255,7 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
                 drive.simpleBrake();
 
             } else {
-                drive.simpleMoveToPosition(12, MecDrive.MovementType.STRAIGHT, 0.5);
+                drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.5);
             }
 
             if (failed == true) {
@@ -270,7 +274,7 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1360, 1, 1.5);
+            score.moveToPosition(1320, 1, 1.5);
             hold.set(true);
 
             sleep(150);

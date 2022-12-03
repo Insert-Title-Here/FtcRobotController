@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 //TODO: FIX THIS
 
-
+@Disabled
 @TeleOp
 public class CommandTestingTeleOp extends CommandOpMode {
 
