@@ -47,16 +47,16 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     public static int V6 = 255;
 
     // Config variables for signal pipeline
-    public static int YUpper = 255;
-    public static int YLower = 165;
+    public static int YUpper = 170;
+    public static int YLower = 100;
     public static int CrUpper = 210;
-    public static int CrLower = 180;
-    public static int CbUpper = 190;
+    public static int CrLower = 160;
+    public static int CbUpper = 200;
     public static int CbLower = 170;
 
     // Config variables for bounding box
     public static int topLeftXRightRed = 225 ;
-    public static int topLeftYRightRed = 20;
+    public static int topLeftYRightRed = 50;
     public static int boxWidthRightRed = 20;
     public static int boxHeightRightRed = 40;
 

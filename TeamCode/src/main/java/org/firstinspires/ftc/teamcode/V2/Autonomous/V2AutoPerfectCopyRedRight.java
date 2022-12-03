@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class V2AutoPerfectRedLeft extends LinearOpMode {
+public class V2AutoPerfectCopyRedRight extends LinearOpMode {
     MecDrive drive;
     ScoringSystemV2 score;
     Constants constants;
@@ -49,7 +49,7 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
 
         drive = new MecDrive(hardwareMap, false, telemetry, color);
         constants = new Constants();
-        score = new ScoringSystemV2(hardwareMap, constants);
+        score = new ScoringSystemV2(hardwareMap, constants, telemetry);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
@@ -76,28 +76,13 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
                 while (opModeIsActive()) {
                     if (armUp.get()) {
                         hold.set(false);
-                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
-
-                        score.moveToPosition(1400, 1);
+                        score.moveToPosition(1350, 1);
                         hold.set(true);
 
-
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        score.setGrabberPosition(0.3);
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         armUp.set(false);
                     } else if (armDown.get()) {
                         hold.set(false);
-                        score.setLinkagePosition(Constants.linkageUpV2);
-                        score.moveToPosition(0, 0.5);
+                        score.moveToPosition(0, 0.8);
                         //score.setLinkagePositionLogistic(Constants.linkageDown, 250, 30);
                         armDown.set(false);
                     } else if (finalMove.get()) {
@@ -139,7 +124,7 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineV2(telemetry, drive, KevinGodPipelineV2.AutoSide.RED_LEFT);
+        pipeline = new KevinGodPipelineV2(telemetry, drive, KevinGodPipelineV2.AutoSide.RED_RIGHT);
 
         camera.setPipeline(pipeline);
 
@@ -188,51 +173,50 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.simpleMoveToPosition(-1600, MecDrive.MovementType.STRAIGHT, 0.85);
+        drive.simpleMoveToPosition(-1540, MecDrive.MovementType.STRAIGHT, 0.85);
 
         sleep(100);
 
-        drive.tankRotatePID(-Math.PI / 2, 1, false);
+        drive.tankRotatePID(Math.PI / 2, 1, false);
 
-        drive.simpleMoveToPosition(700, MecDrive.MovementType.STRAIGHT, 0.6);
+        drive.simpleMoveToPosition(670, MecDrive.MovementType.STRAIGHT, 0.6);
 
-        drive.tankRotatePID(-3 * Math.PI / 8, 1, false);
+        drive.tankRotatePID(3 * Math.PI / 8, 1, false);
 
-        drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAFE, 0.5);
-
-        pipeline.normalize(0.15, 146, 3);
-
+        drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.5);
 
         //drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
 
         if(distance.getNormalizedColors().red > 0.85) {
 
+            pipeline.normalize(0.2, 159, 3);
+
             hold.set(false);
-
-            score.moveToPosition(1280, 1, 1.4);
-
+            score.moveToPosition(1350, 1, 1.5);
             hold.set(true);
 
 
+            sleep(350);
 
             score.setLinkagePositionLogistic(0.8, 100);
 
-            sleep(50);
+            sleep(100);
 
             score.setGrabberPosition(Constants.score);
 
-            sleep(100);
+            sleep(300);
 
             score.setLinkagePositionLogistic(0.245, 100);
 
-            score.setGrabberPosition(Constants.openV2);
+            score.setGrabberPosition(Constants.openV2 - 0.05);
 
             hold.set(false);
-
             score.moveToPosition(0, 0.8);
+            hold.set(true);
 
             preloadSuccess = true;
         } else {
+            pipeline.normalize(0.2, 159, 3);
             cycles = 5;
             drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.5);
             score.setGrabberPosition(Constants.openV2);
@@ -243,10 +227,10 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
 
 
 
-            if(i == 0 && preloadSuccess) {
+            if(i == 0) {
 
                 double startDistanceTime = time.seconds();
-                while (distance.getDistance(DistanceUnit.CM) > 3.5) {
+                while (distance.getDistance(DistanceUnit.CM) > 2.5) {
                     drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
@@ -267,7 +251,7 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
                 drive.simpleBrake();
 
             } else {
-                drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.5);
+                drive.simpleMoveToPosition(12, MecDrive.MovementType.STRAIGHT, 0.5);
             }
 
             if (failed == true) {
@@ -277,28 +261,27 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
 
             score.setGrabberPosition(Constants.grabbing);
 
-            sleep(70);
+            sleep(100);
 
-            score.setLinkagePositionLogistic(Constants.linkageUpV2, 100);
+            score.setLinkagePositionLogistic(Constants.linkageUpV2, 50);
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            //pipeline.normalize(0.2, 159, 3);
+            pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-
-            score.moveToPosition(1340, 1, 1.4);
+            score.moveToPosition(1360, 1, 1.5);
             hold.set(true);
 
+            sleep(150);
 
+            score.setLinkagePositionLogistic(0.8, 80);
 
-            score.setLinkagePositionLogistic(0.8, 100);
-
-            sleep(50);
+            sleep(100);
 
             score.setGrabberPosition(Constants.score);
 
-            sleep(100);
+            sleep(150);
 
             score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 100);
             score.setGrabberPosition(Constants.openV2);
@@ -307,16 +290,16 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
             //sleep(250);
 
             hold.set(false);
-
             score.moveToPosition(0, 0.8);
+            hold.set(true);
 
-            if (time.seconds() - startTime > 26) {
+            if (time.seconds() - startTime > 25 && parkPos != KevinGodPipelineV2.ParkPos.RIGHT) {
                 i = 5;
             }
 
         }
 
-        drive.simpleMoveToPosition(100, MecDrive.MovementType.ROTATE, 0.5);
+        drive.simpleMoveToPosition(-160, MecDrive.MovementType.ROTATE, 0.5);
 
         sleep(50);
 
@@ -328,7 +311,7 @@ public class V2AutoPerfectRedLeft extends LinearOpMode {
 
         score.setGrabberPosition(Constants.grabbing);
 
-        sleep(50);
+        sleep(500);
 
     }
 }

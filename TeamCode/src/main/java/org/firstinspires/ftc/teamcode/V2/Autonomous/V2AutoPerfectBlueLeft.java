@@ -206,7 +206,10 @@ public class V2AutoPerfectBlueLeft extends LinearOpMode {
         //drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
 
         if(distance.getNormalizedColors().blue > 0.85) {
+
+            hold.set(false);
             score.moveToPosition(1340, 1, 1.4);
+            hold.set(true);
 
 
             score.setLinkagePositionLogistic(0.8, 100);
@@ -221,6 +224,7 @@ public class V2AutoPerfectBlueLeft extends LinearOpMode {
 
             score.setGrabberPosition(Constants.openV2);
 
+            hold.set(false);
             score.moveToPosition(0, 0.8);
 
             preloadSuccess = true;
@@ -277,7 +281,10 @@ public class V2AutoPerfectBlueLeft extends LinearOpMode {
 
             //pipeline.normalize(0.2, 137, 3);
 
+            hold.set(false);
+
             score.moveToPosition(1380, 1, 1.4);
+            hold.set(true);
 
 
             score.setLinkagePositionLogistic(0.8, 100);
@@ -293,6 +300,8 @@ public class V2AutoPerfectBlueLeft extends LinearOpMode {
 
 
             //sleep(250);
+
+            hold.set(false);
 
             score.moveToPosition(0, 0.8);
 
