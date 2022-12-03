@@ -277,15 +277,28 @@ public class SecondTeleOp extends LinearOpMode {
                     }else if(gamepad1.right_trigger < 0.1){
                         clawOpenCloseToggle.set(true);
                     }
+                    // closes claw using color sensor
+                    if (score.getClawPosition() == 0.0) {
+                        try {
+                            if(clawStackFlag.get()){
+                                score.grabCone(true);
+                            }else{
+                                score.grabCone(false);
+                            }
+                            clawOpenCloseToggle.set(true);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
 
                 }
             }
         };
         score.setClawPosition(0);
-        score.setUprighterPosition(0);
+
         waitForStart();
         liftThread.start();
-        score.goToPosition(0, 0.8);
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;

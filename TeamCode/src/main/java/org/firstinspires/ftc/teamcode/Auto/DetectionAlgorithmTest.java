@@ -11,7 +11,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-//TODO: check if camera angle works
+//TODO: check if camera angle works @Config
 public class DetectionAlgorithmTest extends OpenCvPipeline {
     Telemetry telemetry;
     /*
@@ -30,7 +30,7 @@ public class DetectionAlgorithmTest extends OpenCvPipeline {
     public static int BOX_WIDTH = 23;
     public static int BOX_HEIGHT = -38;
 
-    enum ParkingPosition {
+    public enum ParkingPosition {
         LEFT,
         CENTER,
         RIGHT
