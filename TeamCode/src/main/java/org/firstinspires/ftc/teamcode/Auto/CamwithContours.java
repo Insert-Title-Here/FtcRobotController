@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+//import com.acmerobotics.dashboard.FtcDashboard;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -83,9 +83,9 @@ public class CamwithContours extends LinearOpMode {
         // code to turn servo of cam
         score.setCamPosition(constants.getSleeveCamPos());
         detect.park = true;
-        // ftc dashboard
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
-        telemetry.addData("Status", "Initialized");
+//        // ftc dashboard
+//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+//        telemetry.addData("Status", "Initialized");
 
         telemetry.update();
 

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
-import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -13,7 +13,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@Config //TODO: check if camera angle works
+//@Config //TODO: check if camera angle works
 public class DetectionAlgorithmLeft extends OpenCvPipeline {
     Telemetry telemetry;
     /*

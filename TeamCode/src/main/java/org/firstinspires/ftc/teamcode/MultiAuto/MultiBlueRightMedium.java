@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -86,9 +85,9 @@ public class MultiBlueRightMedium extends LinearOpMode {
         // code to turn servo of cam
         score.setCamPosition(position);
         detect.park = true;
-        // ftc dashboard
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
-        telemetry.addData("Status", "Initialized");
+//        // ftc dashboard
+//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+//        telemetry.addData("Status", "Initialized");
 
         telemetry.update();
 

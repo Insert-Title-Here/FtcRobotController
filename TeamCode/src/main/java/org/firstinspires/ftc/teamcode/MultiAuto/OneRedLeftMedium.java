@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -86,9 +85,9 @@ public class OneRedLeftMedium extends LinearOpMode {
         // code to turn servo of cam
         score.setCamPosition(constants.getSleeveCamPos());
 
-        // ftc dashboard
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
-        telemetry.addData("Status", "Initialized");
+//        // ftc dashboard
+//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+//        telemetry.addData("Status", "Initialized");
 
         telemetry.update();
 
@@ -104,11 +103,11 @@ public class OneRedLeftMedium extends LinearOpMode {
         //lift claw a little bit
         score.goToPosition(50, 0.7);
         // go forward next to pole
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1450, 1480, 1475, 1470), "go forward");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1550, 1450, 1450, 1450), "go forward");
         // turn to left 45 degrees to medium pole
-        drive.turn(-Math.PI / 4);
+        drive.turn(-Math.PI / 4.1);
         // scoring cone
-        scoreCone(200, 100, 100, 100);
+        scoreCone(200, 200, 200, 200);
         // turn back straight
         drive.turn(-Math.PI / 5);
         //moves robot to correct parking position
@@ -148,7 +147,7 @@ public class OneRedLeftMedium extends LinearOpMode {
 
         //move forward to pole
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(fl, fr, bl, br), "move to pole");
-
+        sleep(200);
 
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
@@ -156,7 +155,7 @@ public class OneRedLeftMedium extends LinearOpMode {
         sleep(300);
 
         //move back from pole
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl+300, fr, bl, br), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl+400, fr, bl, br), "move back from pole");
         cont.set(false);
         //moves slides down
         score.goToPosition(0, 0.3);

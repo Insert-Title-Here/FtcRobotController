@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,7 +15,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous @Config
+@Autonomous
 public class OneBlueRightMedium extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
@@ -86,9 +84,9 @@ public class OneBlueRightMedium extends LinearOpMode {
         // code to turn servo of cam
         score.setCamPosition(constants.getSleeveCamPos());
 
-        // ftc dashboard
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
-        telemetry.addData("Status", "Initialized");
+//        // ftc dashboard
+//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+//        telemetry.addData("Status", "Initialized");
 
         telemetry.update();
 
@@ -104,11 +102,11 @@ public class OneBlueRightMedium extends LinearOpMode {
         //lift claw a little bit
         score.goToPosition(50, 0.7);
         // go forward next to pole
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1300, 1330, 1350, 1320), "go forward");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1450, 1480, 1400, 1420), "go forward");
         // turn to left 45 degrees to medium pole
         drive.turn(Math.PI / 4);
         // scoring cone
-        scoreCone(291, 250, 212, 283);
+        scoreCone(271, 200, 212, 183);
         // turn back straight
         drive.turn(Math.PI / 5);
 
@@ -148,7 +146,7 @@ public class OneBlueRightMedium extends LinearOpMode {
 
         //move forward to pole
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(fl, fr, bl, br), "move to pole");
-
+        sleep(200);
 
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
@@ -156,7 +154,7 @@ public class OneBlueRightMedium extends LinearOpMode {
         sleep(300);
 
         //move back from pole
-        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl+200, fr, bl, br), "move back from pole");
+        drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl+400, fr, bl, br), "move back from pole");
         cont.set(false);
         //moves slides down
         score.goToPosition(0, 0.3);

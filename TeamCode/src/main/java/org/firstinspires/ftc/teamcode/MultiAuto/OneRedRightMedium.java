@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,7 +15,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous @Config
+@Autonomous
 public class OneRedRightMedium extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
@@ -86,9 +84,9 @@ public class OneRedRightMedium extends LinearOpMode {
         // code to turn servo of cam
         score.setCamPosition(constants.getSleeveCamPos());
 
-        // ftc dashboard
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
-        telemetry.addData("Status", "Initialized");
+//        // ftc dashboard
+//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+//        telemetry.addData("Status", "Initialized");
 
         telemetry.update();
 
@@ -104,7 +102,7 @@ public class OneRedRightMedium extends LinearOpMode {
         //lift claw a little bit
         score.goToPosition(50, 0.7);
         // go forward next to pole
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1300, 1310, 1310, 1310), "go forward");
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1380, 1410, 1410, 1450), "go forward");
         // turn to left 45 degrees to medium pole
         drive.turn(Math.PI / 4);
         // scoring cone
@@ -148,7 +146,7 @@ public class OneRedRightMedium extends LinearOpMode {
 
         //move forward to pole
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(fl, fr, bl, br), "move to pole");
-
+        sleep(200);
 
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);

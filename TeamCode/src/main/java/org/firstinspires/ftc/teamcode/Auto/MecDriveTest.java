@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
@@ -18,7 +17,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
  */
 
-@Autonomous
+//@Autonomous
 public class MecDriveTest extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;

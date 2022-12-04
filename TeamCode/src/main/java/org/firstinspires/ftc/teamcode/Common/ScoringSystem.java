@@ -145,7 +145,7 @@ public class ScoringSystem {
             setClawPosition(constant.getClawClosePos());
             sleep(500);
             // lift up
-            goToPosition(getEncoderPosition() + 100, 1);
+            goToPosition(getEncoderPosition() + 200, 0.9);
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
             telemetry.update();
             return true;

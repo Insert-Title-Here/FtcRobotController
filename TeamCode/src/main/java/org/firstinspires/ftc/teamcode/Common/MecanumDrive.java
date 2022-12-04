@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Common;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -15,7 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-@Config
+//@Config
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;

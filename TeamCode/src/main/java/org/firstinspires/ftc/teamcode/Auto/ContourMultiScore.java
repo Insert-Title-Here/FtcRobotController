@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
-import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-@Config
+//@Config
 public class ContourMultiScore extends OpenCvPipeline {
     public boolean park = true;
 

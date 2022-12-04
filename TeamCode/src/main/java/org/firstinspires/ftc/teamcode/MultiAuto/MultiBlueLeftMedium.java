@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,8 +14,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous
-@Config
+
 public class MultiBlueLeftMedium extends LinearOpMode {
     Thread liftThread;
     MecanumDrive drive;
@@ -81,9 +77,9 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         // code to turn servo of cam
         score.setCamPosition(constants.getSleeveCamPos());
         detect1.park = true;
-        // ftc dashboard
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
-        telemetry.addData("Status", "Initialized");
+//        // ftc dashboard
+//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+//        telemetry.addData("Status", "Initialized");
 
         telemetry.update();
 
