@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.V2.Autonomous;
+package org.firstinspires.ftc.teamcode.V2.Autonomous.Using;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -185,14 +185,14 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
         drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAFE, 0.5);
 
-        //drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.3);
+        drive.simpleMoveToPosition(-10, MecDrive.MovementType.ROTATE, 0.3);
 
         if(distance.getNormalizedColors().blue > 0.85) {
 
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1350, 1);
+            score.moveToPosition(1350, 1, 1.8);
             hold.set(true);
 
 
@@ -266,7 +266,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
             score.setGrabberPosition(Constants.grabbing);
 
-            sleep(100);
+            sleep(200);
 
             score.setLinkagePositionLogistic(Constants.linkageUpV2, 50);
 
@@ -275,7 +275,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1350, 1);
+            score.moveToPosition(1350, 1, 1.8);
             hold.set(true);
 
             sleep(150);
@@ -306,6 +306,8 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
         if (!failed) {
             drive.simpleMoveToPosition(-160, MecDrive.MovementType.ROTATE, 0.5);
+        } else {
+            drive.tankRotatePID(Math.PI / 2, 1, false);
         }
 
         sleep(50);

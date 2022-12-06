@@ -215,7 +215,7 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
         if(distance.getNormalizedColors().blue > 0.85) {
 
             hold.set(false);
-            score.moveToPosition(1340, 1, 1.4);
+            score.moveToPosition(1340, 1, 1.2);
             hold.set(true);
 
 
@@ -288,7 +288,7 @@ public class V2AutoPerfectBlueRight extends LinearOpMode {
 
             hold.set(false);
 
-            score.moveToPosition(1360, 1, 1.4);
+            score.moveToPosition(1360, 1, 1.2);
 
             hold.set(false);
 

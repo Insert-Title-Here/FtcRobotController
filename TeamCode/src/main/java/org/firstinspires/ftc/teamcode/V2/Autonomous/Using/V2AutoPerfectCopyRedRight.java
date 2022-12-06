@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.V2.Autonomous;
+package org.firstinspires.ftc.teamcode.V2.Autonomous.Using;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous
+@Autonomous(name="Red Right")
 public class V2AutoPerfectCopyRedRight extends LinearOpMode {
     MecDrive drive;
     ScoringSystemV2 score;
@@ -173,13 +173,13 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
 
 
         linkageUp.set(true);
-        drive.simpleMoveToPosition(-1540, MecDrive.MovementType.STRAIGHT, 0.85);
+        drive.simpleMoveToPosition(-1565, MecDrive.MovementType.STRAIGHT, 0.85);
 
         sleep(100);
 
         drive.tankRotatePID(Math.PI / 2, 1, false);
 
-        drive.simpleMoveToPosition(670, MecDrive.MovementType.STRAIGHT, 0.6);
+        drive.simpleMoveToPosition(620, MecDrive.MovementType.STRAIGHT, 0.6);
 
         drive.tankRotatePID(3 * Math.PI / 8, 1, false);
 
@@ -192,19 +192,18 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1320, 1, 1.5);
+            score.moveToPosition(1340, 1, 1.8);
             hold.set(true);
 
 
-            sleep(350);
 
             score.setLinkagePositionLogistic(0.8, 100);
 
-            sleep(100);
+            sleep(50);
 
             score.setGrabberPosition(Constants.score);
 
-            sleep(300);
+            sleep(100);
 
             score.setLinkagePositionLogistic(0.245, 100);
 
@@ -255,7 +254,7 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
                 drive.simpleBrake();
 
             } else {
-                drive.simpleMoveToPosition(20, MecDrive.MovementType.STRAIGHT, 0.5);
+                drive.simpleMoveToPosition(5, MecDrive.MovementType.STRAIGHT, 0.5);
             }
 
             if (failed == true) {
@@ -265,7 +264,7 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
 
             score.setGrabberPosition(Constants.grabbing);
 
-            sleep(100);
+            sleep(200);
 
             score.setLinkagePositionLogistic(Constants.linkageUpV2, 50);
 
@@ -274,18 +273,17 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1320, 1, 1.5);
+            score.moveToPosition(1340, 1, 1.8);
             hold.set(true);
 
-            sleep(150);
 
             score.setLinkagePositionLogistic(0.8, 80);
 
-            sleep(100);
+            sleep(50);
 
             score.setGrabberPosition(Constants.score);
 
-            sleep(150);
+            sleep(100);
 
             score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 100);
             score.setGrabberPosition(Constants.openV2);
@@ -303,19 +301,23 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
 
         }
 
-        drive.simpleMoveToPosition(-160, MecDrive.MovementType.ROTATE, 0.5);
+        if (!failed) {
+            drive.simpleMoveToPosition(-160, MecDrive.MovementType.ROTATE, 0.5);
+        } else {
+            drive.tankRotatePID(Math.PI / 2, 1, false);
+        }
 
         sleep(50);
 
         if (parkPos == KevinGodPipelineV2.ParkPos.CENTER) {
             drive.simpleMoveToPosition(-730, MecDrive.MovementType.STRAIGHT, 1);
         } else if (parkPos == KevinGodPipelineV2.ParkPos.LEFT) {
-            drive.simpleMoveToPosition(-1500, MecDrive.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-1450, MecDrive.MovementType.STRAIGHT, 1);
         }
 
         score.setGrabberPosition(Constants.grabbing);
 
-        sleep(500);
+        sleep(50);
 
     }
 }

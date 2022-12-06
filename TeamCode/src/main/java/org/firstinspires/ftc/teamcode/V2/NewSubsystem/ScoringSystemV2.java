@@ -203,7 +203,7 @@ public class ScoringSystemV2 {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            moveToPosition(1375, 1, 2.25);
+            moveToPosition(1400, 1, 2.25);
 
         }else if(height == ScoringMode.MEDIUM){
             moveToPosition(650, 1);

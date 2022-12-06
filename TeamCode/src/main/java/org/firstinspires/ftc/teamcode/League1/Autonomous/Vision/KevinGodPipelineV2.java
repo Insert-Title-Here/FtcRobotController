@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
 //import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -24,8 +25,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
     public static int H1 = 17;
-    public static int S1 = 70; //was 100
-    public static int V1 = 80; //was 150
+    public static int S1 = 100; //was 100
+    public static int V1 = 150; //was 150
     public static int H2 = 30;
     public static int S2 = 255;
     public static int V2 = 255;
@@ -55,7 +56,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     public static int CbLower = 170;
 
     // Config variables for bounding box
-    public static int topLeftXRightRed = 225 ;
+    public static int topLeftXRightRed = 180 ;
     public static int topLeftYRightRed = 50;
     public static int boxWidthRightRed = 20;
     public static int boxHeightRightRed = 40;

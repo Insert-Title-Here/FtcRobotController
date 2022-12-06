@@ -7,15 +7,12 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 
 
-
-@TeleOp (name = "KevinGodModeV2")
-public class KevinGodModeV2 extends LinearOpMode {
+@TeleOp (name = "UnsafeV2")
+public class KevinGodModeV2Unsafe extends LinearOpMode {
 
     Constants constants = new Constants();
     ScoringSystemV2 score;
@@ -162,27 +159,27 @@ public class KevinGodModeV2 extends LinearOpMode {
                         score.setExtended(false);
 
                         //Automated Grab
-                    }else if((distance.getDistance(DistanceUnit.CM) < 2) && grabFlag) {
+                    }/*else if((distance.getDistance(DistanceUnit.CM) < 2) && grabFlag) {
                         score.setGrabberPosition(constants.grabbing);
 
                         grabFlag = false;
                         try {
-                            sleep(200);
+                            sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
 
 
 
-                    }
+                    }*/
 
 
                     //TODO: see if need to fix this logic
                     //Auto linkage up logic after sensing a cone
-                    if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
+                    /*if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
 
                         try {
-                            sleep(200);
+                            sleep(600);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -215,8 +212,8 @@ public class KevinGodModeV2 extends LinearOpMode {
                             passive = PassivePower.EXTENDED;
 
 
-                        }*/
-                    }
+                        }
+                    }*/
 
                     //TODO: tune this (both raise and lower)
                     //Linkage stack cone heights with dpad up and down
@@ -257,7 +254,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
                     //Manual open and close grabber
-                    if(gamepad1.start && manualFlag){
+                    if(gamepad1.right_stick_button && manualFlag){
                         if(score.getGrabberPosition() != constants.open - 0.15) {
                             score.setGrabberPosition(constants.open - 0.15);
                             try {
@@ -276,7 +273,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                             grabFlag = false;
                         }
                         manualFlag = false;
-                    }else if(!gamepad1.start){
+                    }else if(!gamepad1.right_stick_button){
                         manualFlag = true;
                     }
 
@@ -396,13 +393,13 @@ public class KevinGodModeV2 extends LinearOpMode {
                         linkageUp = false;
                     }else if(linkageDown) {
 
-                        score.setLinkagePosition(Constants.linkageUpV2);
+                        score.setLinkagePosition(Constants.linkageUpV2 - 0.03);
                         try {
-                            Thread.currentThread().sleep(70);
+                            Thread.currentThread().sleep(120);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
+                        score.setLinkagePosition(Constants.linkageDownV2);
                         linkageDown = false;
                     }
                 }
