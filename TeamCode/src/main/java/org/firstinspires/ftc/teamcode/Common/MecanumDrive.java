@@ -556,9 +556,9 @@ public class MecanumDrive {
     //checks if the color sensor identifies tape color
     public void findTape() {
         while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
-            goToPosition(0, 0.8, 0.8, 0, 300, "right diagonal");
+            goToPosition(0.2, 0.4, 0.4, 0.2, 300, "right diagonal");
             // strafe diagonal left
-            goToPosition(0.8, 0, 0, 0.8);
+            goToPosition(0.4, 0.2, 0.2, 0.4);
 
         }
         goToPosition(0,0,0,0);
