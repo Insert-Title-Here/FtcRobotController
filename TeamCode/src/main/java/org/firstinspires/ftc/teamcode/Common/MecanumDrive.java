@@ -293,6 +293,7 @@ public class MecanumDrive {
 
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // Marcus Lam waas here...
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -300,16 +301,27 @@ public class MecanumDrive {
         //avg position from all four drive motors
         //int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
         //Math.abs(br.getCurrentPosition())) / 4;
-        int position = (int)(Math.abs(fr.getCurrentPosition()));
-
-        telemetry.addData("motorPosition", position);
-        telemetry.update();
+        int positionFl = (int)(Math.abs(fl.getCurrentPosition()));
+        int positionBl = (int)(Math.abs(bl.getCurrentPosition()));
+        int positionFr = (int)(Math.abs(fr.getCurrentPosition()));
+        int positionBr = (int)(Math.abs(br.getCurrentPosition()));
+        int position = 0;
         long time = System.currentTimeMillis();
         long timeDifference = 0;
         double priorError = tics;
         double currentError = tics;
         double priorAngleError = 0;
         double currentAngleError = 0;
+
+        double priorErrorFl = tics;
+        double priorErrorBl = tics;
+        double priorErrorFr = tics;
+        double priorErrorBr = tics;
+
+        double currentErrorFl = 0;
+        double currentErrorBl = 0;
+        double currentErrorFr = 0;
+        double currentErrorBr = 0;
         //Encoder based gotoposition
         //Math.abs(currentError) > 0.001
         while ((Math.abs(tics) - position) > 0) {
@@ -318,28 +330,21 @@ public class MecanumDrive {
             //This below is PID for each individual wheel
             //setPower(PIDfl(priorError, currentError, timeDifference), PIDfr(priorError, currentError, timeDifference), PIDbl(priorError, currentError, timeDifference), PIDbr(priorError, currentError, timeDifference));
             drivePower = PIDDrivePower(priorError, currentError, timeDifference);
-            addedDrivePow = additionalPow(priorAngleError, currentAngleError, timeDifference);
-            priorAngleError = currentAngleError;
             priorError = currentError;
-            /*
-            if(imu.getAngularOrientation().firstAngle > 0){
-                setPower(drivePower, drivePower - addedDrivePow, drivePower, drivePower - addedDrivePow);
-            }else if(imu.getAngularOrientation().firstAngle < 0){
-                setPower(drivePower - addedDrivePow, drivePower, drivePower - addedDrivePow, drivePower);
-            }else{
 
-             */
             setPower(drivePower, drivePower, drivePower, drivePower);
-            //}
-            //position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition())*/ +
-            //Math.abs(br.getCurrentPosition())) / 3;
-            position = (int)Math.abs(fr.getCurrentPosition());
+
+            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
+            Math.abs(br.getCurrentPosition())) / 3;
             currentError = tics - position;
             currentAngleError = Math.abs(imu.getAngularOrientation().firstAngle);
             timeDifference = System.currentTimeMillis() - time;
             accumulateError(timeDifference, currentError);
             if(timeDifference > tics * 1)break;
         }
+
+        // DDD
+
         accumulatedError = 0;
         loggingString +="----------------------------------------------------------------------------\n";
         /*
