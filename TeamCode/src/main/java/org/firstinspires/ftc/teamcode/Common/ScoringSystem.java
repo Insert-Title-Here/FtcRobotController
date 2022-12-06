@@ -173,23 +173,29 @@ public class ScoringSystem {
         }
         return false;
     }
+
+    boolean temp = true;
     // auto version
     public void grabConeAuto() {
+
         drive.goToPosition(0.5, 0.5, 0.5, 0.5);
-        if (colorCone.getDistance(DistanceUnit.CM) < 1) {
+        while (temp) {
+            if (colorCone.getDistance(DistanceUnit.CM) < 1) {
 
-            // grab cone
-            setClawPosition(constant.getClawClosePos());
-            try {
-                sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                // grab cone
+                setClawPosition(constant.getClawClosePos());
+                try {
+                    sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                // lift up
+                goToPosition(getEncoderPosition() + 50, 1);
+
+                telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
+                telemetry.update();
+                temp = false;
             }
-            // lift up
-            goToPosition(getEncoderPosition() + 50, 1);
-
-            telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
-            telemetry.update();
         }
     }
 
