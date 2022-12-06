@@ -553,12 +553,16 @@ public class MecanumDrive {
     public int currentRedColor() {
         return colorTape.red(); // if current color is really high // 177
     }
+    boolean temp = true;
     //checks if the color sensor identifies tape color
     public void findTape() {
         while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
-            goToPosition(0.2, 0.4, 0.4, 0.2, 300, "right diagonal");
-            // strafe diagonal left
-            goToPosition(0.4, 0.2, 0.2, 0.4);
+            if (temp) {
+                goToPosition(0.2, 0.4, 0.4, 0.2, 300, "right diagonal");
+                // strafe diagonal left
+                goToPosition(0.4, 0, 0, 0.4);
+                temp = false;
+            }
 
         }
         goToPosition(0,0,0,0);
