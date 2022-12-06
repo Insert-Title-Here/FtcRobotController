@@ -204,11 +204,11 @@ public class ScoringSystem {
     }
 
     //TODO logic needs work
-    int height1 = 240;
-    int height2 = 180;
-    int height3 = 120;
-    int height4 = 60;
-    int height5 = 15;
+    int height1 = 234;
+    int height2 = 165;
+    int height3 = 114;
+    int height4 = 68;
+    int height5 = 2;
     int currentHeight = 0;
     public void stackUp(){
         if(currentHeight == 0){
