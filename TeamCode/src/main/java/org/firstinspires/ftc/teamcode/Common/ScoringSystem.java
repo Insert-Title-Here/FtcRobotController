@@ -214,31 +214,31 @@ public class ScoringSystem {
         if(currentHeight == 0){
             goToPosition(height1, 0.6);
             currentHeight = height1;
-        }else if(currentHeight <= height5){
+        }else if(currentHeight == height5){
             goToPosition(height4, 0.6);
             currentHeight = height4;
-        }else if(currentHeight <= height4){
+        }else if(currentHeight == height4){
             goToPosition(height3, 0.6);
             currentHeight = height3;
-        }else if(currentHeight <= height3){
+        }else if(currentHeight == height3){
             goToPosition(height2, 0.6);
             currentHeight = height2;
-        }else if(currentHeight <= height2){
+        }else if(currentHeight == height2){
             goToPosition(height1, 0.6);
             currentHeight = height1;
         }
     }
     public void stackDown(){
-        if(currentHeight <= height1){
+        if(currentHeight == height1){
             goToPosition(height2, 0.4);
             currentHeight = height2;
-        }else if(currentHeight <= height2){
+        }else if(currentHeight == height2){
             goToPosition(height3, 0.4);
             currentHeight = height3;
-        }else if(currentHeight <= height3){
+        }else if(currentHeight == height3){
             goToPosition(height4, 0.4);
             currentHeight = height4;
-        }else if(currentHeight <= height4){
+        }else if(currentHeight == height4){
             goToPosition(height5, 0.4);
             currentHeight = height5;
         }

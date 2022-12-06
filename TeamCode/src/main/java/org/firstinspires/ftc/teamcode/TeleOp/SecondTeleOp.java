@@ -161,7 +161,7 @@ public class SecondTeleOp extends LinearOpMode {
                         drive.resetEncoders();
                     }
 
-                    if(gamepad1.a && stackFlag.get()) {
+                    if(gamepad1.y && stackFlag.get()) {
                         /*
                         if(!clawStackFlag.get()){
                             score.goToPosition(240, 0.8);
@@ -172,11 +172,11 @@ public class SecondTeleOp extends LinearOpMode {
                         clawStackFlag.set(true);
                         stackFlag.set(false);
                         score.stackUp();
-                    }else if(gamepad1.y && stackFlag.get()){
+                    }else if(gamepad1.a && stackFlag.get()){
                         clawStackFlag.set(true);
                         stackFlag.set(false);
                         score.stackDown();
-                    }else if(!gamepad1.a){
+                    }else if(!gamepad1.y && !gamepad1.a){
                         stackFlag.set(true);
                     }
 
