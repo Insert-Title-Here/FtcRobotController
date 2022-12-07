@@ -486,7 +486,7 @@ public class TestingAudio extends LinearOpMode {
             telemetry.addData("coneStack", score.getConeStack());
             telemetry.update();
 
-            sleep(150);
+            sleep(750);
 
         }
 
