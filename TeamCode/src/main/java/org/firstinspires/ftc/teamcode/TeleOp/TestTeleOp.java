@@ -44,10 +44,15 @@ public class TestTeleOp extends LinearOpMode {
                     e.printStackTrace();
                 }
             }
+            telemetry.addData("blue", drive.currentBlueColor());
+            telemetry.addData("red", drive.currentRedColor());
+            telemetry.update();
 
         }
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
         score.setClawPosition(1);
+
+
     }
 }
