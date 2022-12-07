@@ -198,7 +198,23 @@ public class ScoringSystem {
             }
         }
     }
-
+    boolean high = false;
+    boolean mid = false;
+    boolean low = false;
+    public void setScoreBoolean(boolean h, boolean m, boolean l){
+        high = h;
+        mid = m;
+        low = l;
+    }
+    public boolean scoreHigh(){
+        return high;
+    }
+    public boolean scoreMid(){
+        return mid;
+    }
+    public boolean scoreLow(){
+        return low;
+    }
     public double getDistance() {
         return colorCone.getDistance(DistanceUnit.CM);
     }

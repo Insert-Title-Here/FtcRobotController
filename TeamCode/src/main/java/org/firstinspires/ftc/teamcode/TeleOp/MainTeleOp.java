@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
 import org.firstinspires.ftc.teamcode.Common.Constants;
@@ -32,6 +33,7 @@ public class MainTeleOp extends LinearOpMode {
     AtomicBoolean clawMoveDownToggle;
     AtomicBoolean turnScoring;
     AtomicBoolean stackFlag;
+    AtomicBoolean triggerScoreToggle;
     Constants constant;
     BNO055IMU imu;
 
@@ -67,6 +69,8 @@ public class MainTeleOp extends LinearOpMode {
         clawStackFlag = new AtomicBoolean();
         turnScoring = new AtomicBoolean();
         stackFlag = new AtomicBoolean();
+        triggerScoreToggle = new AtomicBoolean();
+        triggerScoreToggle.set(true);
         stackFlag.set(true);
         turnScoring.set(false);
         clawMoveDownToggle.set(false);
@@ -132,30 +136,31 @@ public class MainTeleOp extends LinearOpMode {
                     }
 
 
-                    //moves the slides to highest pole height
-                    if (gamepad1.y) {
-                        //high cone Max limit is 1370
-                        score.goToPosition(constant.getHeightHigh(), 0.95);
-                        score.setPower(constant.getSteadyPow());
 
-                    }
-                    //moves slides to medium pole height
-                    if(gamepad1.x){
-                        //medium cone
-                        score.goToPosition(constant.getHeightMed(), 0.95);
-                        score.setPower(constant.getSteadyPow());
-                    }
-                    //moves slides to low pole
-                    if(gamepad1.a){
-                        //low cone
-                        score.goToPosition(constant.getHeightLow(), 0.8);
-                        score.setPower(constant.getSteadyPow());
+                    if(gamepad1.left_trigger > 0.1 && triggerScoreToggle.get()){
+                        if(score.scoreHigh()){
+                            //high cone Max limit is 1370
+                            score.goToPosition(constant.getHeightHigh(), 0.95);
+                            score.setPower(constant.getSteadyPow());
+                        }else if(score.scoreMid()){
+                            //medium cone
+                            score.goToPosition(constant.getHeightMed(), 0.95);
+                            score.setPower(constant.getSteadyPow());
+                        }else if(score.scoreLow()){
+                            //low cone
+                            score.goToPosition(constant.getHeightLow(), 0.8);
+                            score.setPower(constant.getSteadyPow());
+                        }
+                        triggerScoreToggle.set(false);
+                    }else if(gamepad1.right_trigger < 0.1){
+                        triggerScoreToggle.set(true);
                     }
                     //resets the slidemotor encoder
                     if(gamepad1.options){
                         score = new ScoringSystem(hardwareMap, telemetry);
                         drive.resetEncoders();
                     }
+
                     //stack code
                     if(gamepad1.dpad_up && stackFlag.get()) {
                         clawStackFlag.set(true);
@@ -277,6 +282,7 @@ public class MainTeleOp extends LinearOpMode {
 
         waitForStart();
         liftThread.start();
+        boolean turnScoreToggle = true;
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -290,7 +296,7 @@ public class MainTeleOp extends LinearOpMode {
                 gamepadY = 0;
             }
             //robot movement(using controls/gamepads) with sprint mode
-            if (gamepad1.left_trigger > 0.1) { // replace this with a button for sprint
+            if (gamepad1.right_bumper) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
             }else {
                 if(score.getEncoderPosition() > 500){
@@ -299,28 +305,35 @@ public class MainTeleOp extends LinearOpMode {
                     drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
-            //Used for testing purposes-turns a certain number of radians
-            if (gamepad1.right_bumper) {
+            //Toggle for turn scoring
+            if (gamepad1.left_bumper ) {
                 if(turnScoring.get()){
                     turnScoring.set(false);
-                }else if(!turnScoring.get()){
-                    turnScoring.set(false);
+                }else if(!turnScoring.get()) {
+                    turnScoring.set(true);
                 }
             }
-            if(turnScoring.get()){
-                //moves the slides to highest pole height
-                if (gamepad1.y) {
-                    drive.turn(Math.PI/1.15);
-                }else
-                //moves slides to medium pole height
-                if (gamepad1.x) {
-                    drive.turn(Math.PI/1.15);
-                }else
-                //moves slides to low pole
-                if (gamepad1.a) {
-                    drive.turn(Math.PI/1.15);
-                }
+            if(turnScoring.get() && gamepad1.left_trigger > 0.1){
+                drive.turn(Math.PI/1.15);
             }
+            //Sets the booleans for which pole to go to for lifts system
+            if (gamepad1.y) {
+                //high cone
+                score.setScoreBoolean(true, false, false);
+
+            }
+            //moves slides to medium pole height
+            if(gamepad1.x){
+                //medium cone
+                score.setScoreBoolean(false, true, false);
+            }
+            //moves slides to low pole
+            if(gamepad1.a){
+                //low cone
+                score.setScoreBoolean(false,false,true);
+            }
+
+
 
             /*
             if (gamepad1.right_bumper && uprighterToggle) {
