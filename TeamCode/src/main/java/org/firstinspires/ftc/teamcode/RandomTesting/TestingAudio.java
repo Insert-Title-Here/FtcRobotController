@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.V2.TeleOp;
+package org.firstinspires.ftc.teamcode.RandomTesting;
 
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -11,11 +12,13 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
+import org.openftc.revextensions2.ExpansionHubEx;
+
+import java.io.File;
 
 
-
-@TeleOp (name = "KevinGodModeV2Broken")
-public class KevinGodModeV2 extends LinearOpMode {
+@TeleOp (name = "KevinGodModeV2")
+public class TestingAudio extends LinearOpMode {
 
     Constants constants = new Constants();
     ScoringSystemV2 score;
@@ -30,6 +33,8 @@ public class KevinGodModeV2 extends LinearOpMode {
     volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown;
 
     Thread liftThread,/* capThread,*/ linkageThread;
+
+    ExpansionHubEx ehub, chub;
 
     //Enums for feed forward
     public enum PassivePower{
@@ -72,6 +77,13 @@ public class KevinGodModeV2 extends LinearOpMode {
         //Color sensor gain values
         color.setGain(300);
         distance.setGain(300);
+
+        ehub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        chub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
+
+        ehub.setLedColor(255, 0, 0);
+        chub.setLedColor(255, 0, 0);
+
 
 
         //Lift Thread
@@ -175,6 +187,8 @@ public class KevinGodModeV2 extends LinearOpMode {
 
 
                     }
+
+                    SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, new File("thing.mp3"));
 
 
                     //TODO: see if need to fix this logic
@@ -423,8 +437,12 @@ public class KevinGodModeV2 extends LinearOpMode {
         while(opModeIsActive()){
 
             //N S E W Drive
-            double leftStickX = gamepad1.left_stick_x;
-            double leftStickY = gamepad1.left_stick_y;
+            double random1 = Math.random();
+            double random2 = Math.random();
+            double random3 = Math.random();
+
+            double leftStickX = random1 * gamepad1.left_stick_x;
+            double leftStickY = random2 * gamepad1.left_stick_y;
 
             if(Math.abs(leftStickX) > Math.abs(leftStickY)){
                 leftStickY = 0;
@@ -438,12 +456,12 @@ public class KevinGodModeV2 extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), random3 * gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
             } else if(score.isExtended()){
                 //Slow down when slides are extended
-                drive.setPower(new Vector2D(leftStickX * constants.EXTENDED_LINEAR_MODIFIER, leftStickY * constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * constants.EXTENDED_LINEAR_MODIFIER, leftStickY * constants.EXTENDED_LINEAR_MODIFIER), random3 * gamepad1.right_stick_x * constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else{
-                drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), random3 *gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
@@ -467,6 +485,8 @@ public class KevinGodModeV2 extends LinearOpMode {
             telemetry.addData("passive", passive);
             telemetry.addData("coneStack", score.getConeStack());
             telemetry.update();
+
+            sleep(150);
 
         }
 
