@@ -635,15 +635,27 @@ public class MecanumDrive {
     }
     boolean temp = true;
     //checks if the color sensor identifies tape color
-    public void findTape() {
-        while(currentBlueColor() < 70){ //blue tape TODO: get a num for "70"
-            if (temp) {
-                goToPosition(0.2, 0.4, 0.4, 0.2, 300, "right diagonal");
-                // strafe diagonal left
-                goToPosition(0.4, 0, 0, 0.4);
-                temp = false;
-            }
+    public void findTape(String color) {
+        if (color.equalsIgnoreCase("blue")) {
+            while (currentBlueColor() < 400) { //blue tape
+                if (temp) {
+                    goToPosition(0.2, 0.4, 0.4, 0.2);
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
 
+            }
+        } else if (color.equalsIgnoreCase("red")) {
+            while (currentRedColor() < 195) { //red tape
+                if (temp) {
+                    goToPosition(0.4, 0.2, 0.2, 0.4);
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
         }
         goToPosition(0,0,0,0);
     }

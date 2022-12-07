@@ -172,39 +172,59 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         //go forward to blue cone tape adjacent mat
         drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(828, 856, 941, 926), "go forward to next mat");
         // turn to tape/cones
-        drive.turn(Math.PI / 2);
+        drive.turn(Math.PI / 4);
+        drive.turn(Math.PI / 4);
 
 
         // find tape, get cone
         useColorSensor();
+/*
 
-        /*
         // back up
         drive.goToPosition(-0.4, -0.4, -0.4, -0.4, -284, "back up");
-        //put lift down
 
-        // turn 90 to the right
+
+        // turn 90 to the left
         drive.turn(Math.PI / 2);
-        // strafe right
-        drive.goToPosition(-0.4, 0.4, 0.4, -0.4, drive.avgPosition(-1727, 1651, 1650, -891), "strafe right");
-        // camera position correction
-        if (detect1.getcX() < properCX - 5 || detect1.getcX() > properCX + 5) {
-            while (detect1.getcX() < properCX - 5) {
-                // strafe to the right
-                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+        right = true;
+        left = true;
 
-            }
-            while (detect1.getcX() > properCX + 5) {
-                // strafe to the left (change fr and bl)
+        // camera position correction
+        while (detect1.getcX() < properCX - 5 || detect1.getcX() > properCX + 5) {
+            telemetry.addData("success", "sucess");
+            telemetry.update();
+            if (detect1.getcX() < properCX - 5 && right) {
+                // strafe to the right
+//                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
                 drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
+                telemetry.addData("success 1", "sucess");
+                telemetry.update();
+                right = false;
             }
+            if(detect1.getcX() > properCX + 5 && left) {
+                // strafe to the left (change fr and bl)
+                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+
+//                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+
+                telemetry.addData("success 2", "sucess");
+                telemetry.update();
+                left = false;
+            }
+//            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
+//                drive.goToPosition(0, 0, 0, 0);
+//            }
         }
+
+        drive.goToPosition(0, 0, 0, 0);
         // scoring cone
         scoreCone(184, 165, 163, 147);
 
 
-         */
+
+ */
+
     }
 
     public void scoreCone(int fl, int fr, int bl, int br) {
