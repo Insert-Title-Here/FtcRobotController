@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-//import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.FtcDashboard;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -31,9 +31,9 @@ public class PoleCalibration extends LinearOpMode {
     int yRange = 10;
     int crRange = 10;
     int cbRange = 10;
-    int hRange = 10;
-    int sRange = 10;
-    int vRange = 3;
+    int hRange = 15;
+    int sRange = 35;
+    int vRange = 35;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -50,7 +50,9 @@ public class PoleCalibration extends LinearOpMode {
         cameraServo.setPosition(Constants.pole);
 
 
-        //FtcDashboard.getInstance().startCameraStream(camera, 0);
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
+
+        pipeline.isReturningTemp = true;
 
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

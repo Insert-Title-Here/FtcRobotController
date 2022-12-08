@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.openftc.revextensions2.ExpansionHubEx;
 
@@ -188,7 +189,7 @@ public class TestingAudio extends LinearOpMode {
 
                     }
 
-                    SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, new File("thing.mp3"));
+                    SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, R.raw.amongus);
 
 
                     //TODO: see if need to fix this logic

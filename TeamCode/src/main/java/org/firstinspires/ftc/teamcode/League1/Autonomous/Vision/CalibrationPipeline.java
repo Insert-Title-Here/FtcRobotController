@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
 //import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -19,16 +20,16 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Config
+@Config
 public class CalibrationPipeline extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
-    public static int H1 = 17;
-    public static int S1 = 70;
-    public static int V1 = 80;
-    public static int H2 = 30;
-    public static int S2 = 255;
-    public static int V2 = 255;
+    public static int H1 = 11;
+    public static int S1 = 59;
+    public static int V1 = 146;
+    public static int H2 = 41;
+    public static int S2 = 129;
+    public static int V2 = 216;
 
     //Blue cone color
     public static int H3 = 105;
@@ -76,9 +77,9 @@ public class CalibrationPipeline extends OpenCvPipeline {
     public static int boxHeightLeftBlue = 40;
 
     public static int topLeftXPole = 135;
-    public static int topLeftYPole = 25;
+    public static int topLeftYPole = 40;
     public static int boxWidthPole = 20;
-    public static int boxHeightPole = 40;
+    public static int boxHeightPole = 100;
 
     public int contourTarget = 0;
     public double origY, origCr, origCb, origH, origS, origV;
