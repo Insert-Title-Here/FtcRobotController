@@ -279,7 +279,7 @@ public class MainTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(0);
-
+        score.setScoreBoolean(true, false, false);
         waitForStart();
         liftThread.start();
         boolean turnScoreToggle = true;
@@ -296,22 +296,28 @@ public class MainTeleOp extends LinearOpMode {
                 gamepadY = 0;
             }
             //robot movement(using controls/gamepads) with sprint mode
-            if (gamepad1.right_bumper) { // replace this with a button for sprint
+            if (gamepad1.left_stick_button) { // replace this with a button for sprint
                 drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-            }else {
+            }else{
                 if(score.getEncoderPosition() > 500){
                     drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
                 }else{
                     drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
+            if(gamepad1.right_stick_button){
+                drive.turn(Math.PI/2.2);
+            }
             //Toggle for turn scoring
-            if (gamepad1.left_bumper ) {
+            if (gamepad1.left_bumper && turnScoreToggle) {
                 if(turnScoring.get()){
                     turnScoring.set(false);
                 }else if(!turnScoring.get()) {
                     turnScoring.set(true);
                 }
+                turnScoreToggle = false;
+            }else if(!gamepad1.left_bumper){
+                turnScoreToggle = true;
             }
             if(turnScoring.get() && gamepad1.left_trigger > 0.1){
                 drive.turn(Math.PI/1.15);

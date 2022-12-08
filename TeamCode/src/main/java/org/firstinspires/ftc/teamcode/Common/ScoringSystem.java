@@ -180,7 +180,7 @@ public class ScoringSystem {
 
         drive.goToPosition(0.5, 0.5, 0.5, 0.5);
         while (temp) {
-            if (colorCone.getDistance(DistanceUnit.CM) < 1) {
+            if (colorCone.getDistance(DistanceUnit.CM) < 3) {
 
                 // grab cone
                 setClawPosition(constant.getClawClosePos());

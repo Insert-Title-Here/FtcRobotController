@@ -162,7 +162,7 @@ public class OneBlueRightMedium extends LinearOpMode {
     }
 
     public void useColorSensor() {
-        drive.findTape();
+       // drive.findTape();
         score.goToPosition(174, 0.7);
         score.grabConeAuto();
 
