@@ -27,8 +27,6 @@ public class MecanumDrive {
    //OpenCvWebcam webcam;
     //ContourMultiScore detect;
 
-    private double accumulatedError;
-    private double error;
 
     public static double proportionCoefficient = 0.001;//0.75
     public static double integralCoefficient = 0;
@@ -282,9 +280,14 @@ public class MecanumDrive {
         setPower(0, 0, 0, 0);
 
     }
-    public void goToPositionPIDUltra(int tics) {
-        //fl fr bl br
-
+    private double accumulatedErrorFl;
+    private double accumulatedErrorBl;
+    private double accumulatedErrorFr;
+    private double accumulatedErrorBr;
+    private double accumulatedError;
+    private double error;
+    public void goToPositionPIDFlBlFrBr(int tics) {
+        //front left, front right, back left, back right
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -293,25 +296,14 @@ public class MecanumDrive {
 
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        // Marcus Lam waas here...
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // won't work for turns, only forward and backward
-        //avg position from all four drive motors
-        //int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-        //Math.abs(br.getCurrentPosition())) / 4;
         int positionFl = (int)(Math.abs(fl.getCurrentPosition()));
         int positionBl = (int)(Math.abs(bl.getCurrentPosition()));
         int positionFr = (int)(Math.abs(fr.getCurrentPosition()));
         int positionBr = (int)(Math.abs(br.getCurrentPosition()));
-        int position = 0;
-        long time = System.currentTimeMillis();
-        long timeDifference = 0;
-        double priorError = tics;
-        double currentError = tics;
-        double priorAngleError = 0;
-        double currentAngleError = 0;
+        int avgPosition = (positionFl + positionBl + positionFr + positionBr)/4;
 
         double priorErrorFl = tics;
         double priorErrorBl = tics;
@@ -322,31 +314,42 @@ public class MecanumDrive {
         double currentErrorBl = 0;
         double currentErrorFr = 0;
         double currentErrorBr = 0;
+
+        long time = System.currentTimeMillis();
+        long timeDifference = 0;
+
         //Encoder based gotoposition
-        //Math.abs(currentError) > 0.001
-        while ((Math.abs(tics) - position) > 0) {
-            double drivePower = 0;
-            double addedDrivePow = 0;
-            //This below is PID for each individual wheel
-            //setPower(PIDfl(priorError, currentError, timeDifference), PIDfr(priorError, currentError, timeDifference), PIDbl(priorError, currentError, timeDifference), PIDbr(priorError, currentError, timeDifference));
-            drivePower = PIDDrivePower(priorError, currentError, timeDifference);
-            priorError = currentError;
+        while ((Math.abs(tics) - positionFl) > 0 && (Math.abs(tics) - positionBl) > 0 && (Math.abs(tics) - positionFr) > 0 && (Math.abs(tics) - positionBr) > 0) {
+            priorErrorFl = currentErrorFl;
+            priorErrorBl = currentErrorBl;
+            priorErrorFr = currentErrorFr;
+            priorErrorBr = currentErrorBr;
 
-            setPower(drivePower, drivePower, drivePower, drivePower);
+            setPower(PIDfl(priorErrorFl, currentErrorFl, timeDifference), PIDfr(priorErrorFr, currentErrorFr, timeDifference), PIDbl(priorErrorBl, currentErrorBl, timeDifference), PIDbr(priorErrorBr, currentErrorBr, timeDifference));
 
-            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-            Math.abs(br.getCurrentPosition())) / 3;
-            currentError = tics - position;
-            currentAngleError = Math.abs(imu.getAngularOrientation().firstAngle);
+            positionFl = (int)(Math.abs(fl.getCurrentPosition()));
+            positionBl = (int)(Math.abs(bl.getCurrentPosition()));
+            positionFr = (int)(Math.abs(fr.getCurrentPosition()));
+            positionBr = (int)(Math.abs(br.getCurrentPosition()));
+            avgPosition = (positionFl + positionBl + positionFr + positionBr)/4;
+
+            currentErrorFl = tics - positionFl;
+            currentErrorBl = tics - positionBl;
+            currentErrorFr = tics - positionFr;
+            currentErrorBr = tics - positionBr;
+
             timeDifference = System.currentTimeMillis() - time;
-            accumulateError(timeDifference, currentError);
+
+            accumulateErrorFlBlFrBr(timeDifference, currentErrorFl, currentErrorBl, currentErrorFr, currentErrorBr);
             if(timeDifference > tics * 1)break;
         }
+        setPower(0, 0, 0, 0);
 
         // DDD
 
         accumulatedError = 0;
-        loggingString +="----------------------------------------------------------------------------\n";
+        error = 0;
+        //loggingString +="----------------------------------------------------------------------------\n";
         /*
         loggingString += action.toUpperCase() + "\n";
         loggingString += "FL Position: " + getFLPosition() + "\n";
@@ -359,7 +362,6 @@ public class MecanumDrive {
 
         // loggingString += "Claw (Intake) Position: " + score.getClawPosition()
 
-        setPower(0, 0, 0, 0);
 
     }
 
@@ -590,11 +592,29 @@ public class MecanumDrive {
     public double getError(){
         return error;
     }
-    public void accumulateError(double delta_time, double error){
-        accumulatedError += error * delta_time;
+    public void accumulateError(double deltaTime, double error){
+        accumulatedError += error * deltaTime;
+    }
+    public void accumulateErrorFlBlFrBr(double deltaTime, double errorFl, double errorBl, double errorFr, double errorBr){
+        accumulatedErrorFl += errorFl * deltaTime;
+        accumulatedErrorBl += errorBl * deltaTime;
+        accumulatedErrorFr += errorFr * deltaTime;
+        accumulatedErrorBr += errorBr * deltaTime;
     }
     public double getAccumulatedError(){
         return accumulatedError;
+    }
+    public double getAccumulatedErrorFl(){
+        return accumulatedErrorFl;
+    }
+    public double getAccumulatedErrorBl(){
+        return accumulatedErrorBl;
+    }
+    public double getAccumulatedErrorFr(){
+        return accumulatedErrorFr;
+    }
+    public double getAccumulatedErrorBr(){
+        return accumulatedErrorBr;
     }
     // resets encoders
     public void resetEncoders() {
