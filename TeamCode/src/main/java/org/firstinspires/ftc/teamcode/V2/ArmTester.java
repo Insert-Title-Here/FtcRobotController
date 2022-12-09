@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 import org.firstinspires.ftc.teamcode.V2.TeleOp.KevinGodModeV2;
 
 import java.io.FileNotFoundException;
@@ -23,7 +24,7 @@ public class ArmTester extends OpModeWrapper {
     //Servo lServo, rServo, grabber;
     //DcMotor rMotor, lMotor;
     MecDrive drive;
-    ScoringSystemV2 score;
+    ScoringSystemV2EpicLift score;
     Constants constants;
 
     Thread armThread, linkageThread;
@@ -59,7 +60,7 @@ public class ArmTester extends OpModeWrapper {
         passive = PassivePower.ZERO;
 
         //constants = new Constants();
-        score = new ScoringSystemV2(hardwareMap, constants);
+        score = new ScoringSystemV2EpicLift(hardwareMap, constants);
 
         constants = new Constants();
         drive = new MecDrive(hardwareMap, false, telemetry);
@@ -176,13 +177,13 @@ public class ArmTester extends OpModeWrapper {
 
                     //Changing scoring modes (toggle)
                     if(gamepad1.y){
-                        score.setScoringMode(ScoringSystemV2.ScoringMode.LOW);
+                        score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.LOW);
 
                     }else if(gamepad1.x){
-                        score.setScoringMode(ScoringSystemV2.ScoringMode.MEDIUM);
+                        score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.MEDIUM);
 
                     }else if(gamepad1.b){
-                        score.setScoringMode(ScoringSystemV2.ScoringMode.HIGH);
+                        score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.HIGH);
 
                     }
 
@@ -196,7 +197,7 @@ public class ArmTester extends OpModeWrapper {
                     }else{
 
                         //Feedforward if slides are extended
-                        if(score.isExtended() == true && (score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2.ScoringMode.MEDIUM)){
+                        if(score.isExtended() == true && (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.MEDIUM)){
                             passive = PassivePower.EXTENDED;
                         }else{
                             passive = PassivePower.ZERO;
