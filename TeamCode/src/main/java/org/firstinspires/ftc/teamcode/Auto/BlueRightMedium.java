@@ -132,7 +132,7 @@ public class BlueRightMedium extends LinearOpMode {
 //        drive.goToPosition(0.3, 0.3, 0.3, 0.3, avgPosition(900, 900, 1016, 1000), "move forward a square");
 
         // move forward a bit more
-        drive.findTape();
+        //drive.findTape();
         //go forward until...
         while (!score.grabCone()) {
             drive.goToPosition(0.4, 0.4, 0.4, 0.4);
