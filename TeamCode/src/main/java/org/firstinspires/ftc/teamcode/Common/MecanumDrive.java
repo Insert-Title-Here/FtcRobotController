@@ -206,8 +206,9 @@ public class MecanumDrive {
 
     //TODO: Consider to do PID for each individual wheel
     public void goToPositionPID(int tics, String action) {
-        //fl fr bl br
+        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
 
+        //fl fr bl br
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -219,65 +220,55 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // won't work for turns, only forward and backward
-        //avg position from all four drive motors
-        //int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) +
-                //Math.abs(br.getCurrentPosition())) / 4;
-        int position = (int)(Math.abs(fr.getCurrentPosition()));
-
         telemetry.addData("motorPosition", position);
         telemetry.update();
+
         long time = System.currentTimeMillis();
         long timeDifference = 0;
+
         double priorError = tics;
         double currentError = tics;
-        double priorAngleError = 0;
-        double currentAngleError = 0;
+        //double priorAngleError = 0;
+        //double currentAngleError = 0;
+
         //Encoder based gotoposition
-        //Math.abs(currentError) > 0.001
         while ((Math.abs(tics) - position) > 0) {
             double drivePower = 0;
-            double addedDrivePow = 0;
-            //This below is PID for each individual wheel
-            //setPower(PIDfl(priorError, currentError, timeDifference), PIDfr(priorError, currentError, timeDifference), PIDbl(priorError, currentError, timeDifference), PIDbr(priorError, currentError, timeDifference));
             drivePower = PIDDrivePower(priorError, currentError, timeDifference);
-            addedDrivePow = additionalPow(priorAngleError, currentAngleError, timeDifference);
-            priorAngleError = currentAngleError;
-            priorError = currentError;
-            /*
-            if(imu.getAngularOrientation().firstAngle > 0){
-                setPower(drivePower, drivePower - addedDrivePow, drivePower, drivePower - addedDrivePow);
-            }else if(imu.getAngularOrientation().firstAngle < 0){
-                setPower(drivePower - addedDrivePow, drivePower, drivePower - addedDrivePow, drivePower);
-            }else{
 
-             */
-                setPower(drivePower, drivePower, drivePower, drivePower);
-            //}
-            //position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition())*/ +
-                    //Math.abs(br.getCurrentPosition())) / 3;
-            position = (int)Math.abs(fr.getCurrentPosition());
+            //double addedDrivePow = 0;
+            //addedDrivePow = additionalPow(priorAngleError, currentAngleError, timeDifference);
+
+            //priorAngleError = currentAngleError;
+            priorError = currentError;
+
+            setPower(drivePower, drivePower, drivePower, drivePower);
+
+            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
+
             currentError = tics - position;
-            currentAngleError = Math.abs(imu.getAngularOrientation().firstAngle);
-            timeDifference = System.currentTimeMillis() - time;
+            //currentAngleError = Math.abs(imu.getAngularOrientation().firstAngle);
+
             accumulateError(timeDifference, currentError);
+
+            timeDifference = System.currentTimeMillis() - time;
             if(timeDifference > tics * 1)break;
         }
         accumulatedError = 0;
-        loggingString +="----------------------------------------------------------------------------\n";
+        error = 0;
+        setPower(0, 0, 0, 0);
+
         /*
+        loggingString +="----------------------------------------------------------------------------\n";
         loggingString += action.toUpperCase() + "\n";
         loggingString += "FL Position: " + getFLPosition() + "\n";
         loggingString += "FR Position: " + getFRPosition() + "\n";
         loggingString += "BL Position: " + getBLPosition() + "\n";
         loggingString += "BR Position: " + getBRPosition() + "\n";
         loggingString += "---------------------" + "\n";
-
+        loggingString += "Claw (Intake) Position: " + score.getClawPosition();
          */
 
-        // loggingString += "Claw (Intake) Position: " + score.getClawPosition()
-
-        setPower(0, 0, 0, 0);
 
     }
     private double accumulatedErrorFl;
@@ -338,9 +329,10 @@ public class MecanumDrive {
             currentErrorFr = tics - positionFr;
             currentErrorBr = tics - positionBr;
 
+            accumulateErrorFlBlFrBr(timeDifference, currentErrorFl, currentErrorBl, currentErrorFr, currentErrorBr);
+
             timeDifference = System.currentTimeMillis() - time;
 
-            accumulateErrorFlBlFrBr(timeDifference, currentErrorFl, currentErrorBl, currentErrorFr, currentErrorBr);
             if(timeDifference > tics * 1)break;
         }
         setPower(0, 0, 0, 0);
@@ -391,6 +383,7 @@ public class MecanumDrive {
         setPower(flPow, frPow, blPow, brPow);
 
     }
+    //relative turning
     // Turns a certain amount of given radians useing imu
     public void turn(double radians) {
         double integralPow;
@@ -426,7 +419,7 @@ public class MecanumDrive {
         //resetIMU();
         error = 0;
     }
-    // turns to the starting position
+    // Absolute turning
     //TODO: Needs Testing
     public void turnToInitialPosition(double radians) {
         boolean over = true;

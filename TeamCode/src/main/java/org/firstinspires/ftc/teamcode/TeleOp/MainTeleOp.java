@@ -110,14 +110,14 @@ public class MainTeleOp extends LinearOpMode {
             public void run(){
                 while(opModeIsActive()){
                     //manually lifts slides up and down
-                    if(gamepad1.dpad_up){
+                    if(gamepad1.dpad_right){
                         //if bumper get to max height sets power stop moving up
                         if(score.getEncoderPosition() > constant.getHeightLimit()){
                             score.setPower(constant.getSteadyPow());
                         }else{
                             score.setPower(0.55);
                         }
-                    }else if(gamepad1.dpad_down) {
+                    }else if(gamepad1.dpad_left) {
                        /*
                         if(score.getEncoderPosition() < 7){
                             score.setPower(0);
@@ -136,7 +136,7 @@ public class MainTeleOp extends LinearOpMode {
                     }
 
 
-
+                    // normal scoring
                     if(gamepad1.left_trigger > 0.1 && triggerScoreToggle.get()){
                         if(score.scoreHigh()){
                             //high cone Max limit is 1370
@@ -155,6 +155,12 @@ public class MainTeleOp extends LinearOpMode {
                     }else if(gamepad1.right_trigger < 0.1){
                         triggerScoreToggle.set(true);
                     }
+                    //turn scoring(turn in other thread)
+                    if (gamepad1.left_bumper) {
+                        score.goToPosition(constant.getHeightHigh(), 0.95);
+                        score.setPower(constant.getSteadyPow());
+                    }
+
                     //resets the slidemotor encoder
                     if(gamepad1.options){
                         score = new ScoringSystem(hardwareMap, telemetry);
@@ -282,7 +288,7 @@ public class MainTeleOp extends LinearOpMode {
         score.setScoreBoolean(true, false, false);
         waitForStart();
         liftThread.start();
-        boolean turnScoreToggle = true;
+        boolean scoreToggle = true;
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -308,18 +314,8 @@ public class MainTeleOp extends LinearOpMode {
             if(gamepad1.right_stick_button){
                 drive.turn(Math.PI/2.2);
             }
-            //Toggle for turn scoring
-            if (gamepad1.left_bumper && turnScoreToggle) {
-                if(turnScoring.get()){
-                    turnScoring.set(false);
-                }else if(!turnScoring.get()) {
-                    turnScoring.set(true);
-                }
-                turnScoreToggle = false;
-            }else if(!gamepad1.left_bumper){
-                turnScoreToggle = true;
-            }
-            if(turnScoring.get() && gamepad1.left_trigger > 0.1){
+            //turn scoring
+            if (gamepad1.left_bumper) {
                 drive.turn(Math.PI/1.15);
             }
             //Sets the booleans for which pole to go to for lifts system

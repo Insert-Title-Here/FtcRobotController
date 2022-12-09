@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.Common;
 
 public class Constants {
     //TODO: Edit values
-    private int heightTrueLimit = 1680;
-    private int heightLimit = 1675;
-    private int heightHigh = 1605;
-    private int heightMed = 1177;
-    private int heightLow = 675;
+    private int heightTrueLimit = 1814;
+    private int heightLimit = 1720;
+    private int heightHigh = 1688;
+    private int heightMed = 1228;
+    private int heightLow = 750;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.3;
     private double clawClosePos = 0.395; // was 0.38 for old design
