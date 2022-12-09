@@ -650,9 +650,11 @@ public class MecanumDrive {
     //checks if the color sensor identifies tape color
     public void findTape(String color) {
         if (color.equalsIgnoreCase("blue")) {
+            goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
             while (currentBlueColor() < 400) { //blue tape
                 if (temp) {
-                    goToPosition(0.2, 0.4, 0.4, 0.2);
+                    goToPosition(0.4, 0, 0, 0.4);
+
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -660,9 +662,10 @@ public class MecanumDrive {
 
             }
         } else if (color.equalsIgnoreCase("red")) {
+            goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
             while (currentRedColor() < 195) { //red tape
                 if (temp) {
-                    goToPosition(0.4, 0.2, 0.2, 0.4);
+                    goToPosition(0, 0.4, 0.4, 0);
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -671,6 +674,18 @@ public class MecanumDrive {
             }
         }
         goToPosition(0,0,0,0);
+    }
+
+    public void findTape() {
+        while (currentBlueColor() < 400 || currentRedColor() < 195) {
+
+            goToPosition(0.2, 0.4, 0.4, 0.2);
+            // strafe diagonal left
+            //goToPosition(0.4, 0, 0, 0.4);
+
+
+
+        }
     }
     public double angleWrap(double radians){
         while(radians > Math.PI){

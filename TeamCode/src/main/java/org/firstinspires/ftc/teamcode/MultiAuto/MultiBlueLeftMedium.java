@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
 public class MultiBlueLeftMedium extends LinearOpMode {
+    // instantiating
     Thread liftThread;
     MecanumDrive drive;
     NormalizationTesting detect1;
@@ -26,6 +27,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     OpenCvWebcam webcam;
     AtomicBoolean cont;
 
+    // ftc dashboard values + properCX
     private double properCX = 141; //67
     public static int positive_negative = 1;
     public static int turnDenom = 4;
@@ -34,6 +36,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        // value initializing
         detect1 = new NormalizationTesting(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
@@ -41,6 +44,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         cont = new AtomicBoolean();
         cont.set(false);
 
+        // camera setup
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect1);
@@ -59,6 +63,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
             }
         });
 
+        // thread for keeping lift up
         liftThread = new Thread() {
             @Override
             public void run(){
@@ -77,9 +82,10 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         };
 
         // code to turn servo of cam
-//        score.setCamPosition(constants.getSleeveCamPos());
+        //score.setCamPosition(constants.getSleeveCamPos());
         //detect1.park = true;
-        // ftc dashboard
+
+        // ftc dashboard setup
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
         telemetry.addData("Status", "Initialized");
 
@@ -89,10 +95,12 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         score.setClawPosition(constants.getClawClosePos());
         waitForStart();
         //detect1.park = false;
+
         // turn servo of cam forward for poles
         score.setCamPosition(constants.getStrafeCamPos());
 
         liftThread.start();
+
         //lift claw a little bit
         score.goToPosition(50, 0.7);
         sleep(200);
@@ -178,6 +186,10 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
         // find tape, get cone
         useColorSensor();
+
+        // stack height
+        score.goToPosition(constants.getStackHeight(), 0.8);
+        score.grabConeAuto();
 /*
 
         // back up
@@ -220,6 +232,12 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         drive.goToPosition(0, 0, 0, 0);
         // scoring cone
         scoreCone(184, 165, 163, 147);
+
+        //turn back toward cones
+        drive.turn(-Math.PI / 2);
+
+        //find tape, get cone
+        useColorSensor();
 
 
 
@@ -265,7 +283,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     }
 
     public void useColorSensor() {
-        //drive.findTape();
+        drive.findTape("blue");
         score.goToPosition(174, 0.7);
         score.grabConeAuto();
 

@@ -179,19 +179,19 @@ public class ScoringSystem {
     // auto version
     public void grabConeAuto() {
 
-        drive.goToPosition(0.5, 0.5, 0.5, 0.5);
+        drive.goToPosition(0.4, 0.4, 0.4, 0.4);
         while (temp) {
             if (colorCone.getDistance(DistanceUnit.CM) < 3) {
-
+                drive.goToPosition(0, 0, 0, 0);
                 // grab cone
                 setClawPosition(constant.getClawClosePos());
                 try {
-                    sleep(500);
+                    sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 // lift up
-                goToPosition(getEncoderPosition() + 50, 1);
+                goToPosition(getEncoderPosition() + 50, 0.8);
 
                 telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
                 telemetry.update();
