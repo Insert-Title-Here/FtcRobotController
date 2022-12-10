@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Autonomous(name="Blue Right")
 public class V2AutoPerfectCopy extends LinearOpMode {
     MecDrive drive;
-    ScoringSystemV2 score;
+    ScoringSystemV2EpicLift score;
     Constants constants;
     Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
@@ -49,7 +50,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
         drive = new MecDrive(hardwareMap, false, telemetry, color);
         constants = new Constants();
-        score = new ScoringSystemV2(hardwareMap, constants, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
