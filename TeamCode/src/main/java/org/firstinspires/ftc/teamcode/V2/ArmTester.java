@@ -204,7 +204,7 @@ public class ArmTester extends OpModeWrapper {
                     //Manual slides (dpad right and left)
                     if(gamepad1.dpad_right){
                         //passive = PassivePower.MOVEMENT;
-                        score.setPower(1);
+                        score.setPower(0.5);
                     }else if(gamepad1.dpad_left){
                         //passive = PassivePower.MOVEMENT;
                         score.setPower(-0.5);
