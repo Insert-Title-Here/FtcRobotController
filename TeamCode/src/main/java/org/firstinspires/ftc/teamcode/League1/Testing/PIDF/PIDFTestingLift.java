@@ -1,0 +1,156 @@
+package org.firstinspires.ftc.teamcode.League1.Testing.PIDF;
+
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.League1.Common.Constants;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.MecDriveV2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
+
+//@Disabled
+@Autonomous
+@Config
+public class PIDFTestingLift extends LinearOpMode {
+
+    ScoringSystemV2EpicLift score;
+    Constants constants;
+
+    public static int target = 300;
+    public static double p = 0, i = 0, d = 0;
+
+    int rightPreviousError = 0;
+    int leftPreviousError = 0;
+
+    int rightIntegralSum = 0;
+    int leftIntegralSum = 0;
+
+
+    double currentTime;
+    double startTime;
+    ElapsedTime time = new ElapsedTime();
+
+
+    //For Rotate method (tankRotatePID)
+
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        constants = new Constants();
+        score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
+
+        score.setLinkagePosition(Constants.linkageUpV2);
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+
+
+
+        waitForStart();
+        startTime = time.seconds();
+
+
+        //Straight, Strafe, Encoder Rotate
+        //TODO: return constants
+        //drive.goTOPIDPos(-3000, 0.5, MecDrive.MovementType.STRAIGHT);
+
+        //drive.autoDiagonals(true);
+
+
+        //drive.goTOPIDPosAvg(3000, 1, MecDrive.MovementType.STRAIGHT);
+        //sleep(1000);
+        //drive.goTOPIDPos(-2120, 1,MecDrive.MovementType.STRAIGHT);
+
+        //drive.goTOPIDPos(-250, 1, MecDrive.MovementType.STRAFE);0/
+
+
+        //IMU Rotate
+        //drive.tankRotatePID(Math.PI, 0.85);
+
+        while (opModeIsActive()) {
+
+            newLiftPID(target);
+
+
+            telemetry.addData("rightPos", -1 * score.getRightEncoderPos());
+            telemetry.addData("leftPos", score.getLeftEncoderPos());
+            telemetry.addData("target", target);
+
+            telemetry.update();
+
+        }
+        score.setPower(0);
+    }
+
+
+    public void newLiftPID(int tics) {
+        currentTime = time.seconds();
+
+
+        //TODO: check if we need to negate any
+
+        int rightPos = -1 * score.getRightEncoderPos();
+        int leftPos = score.getLeftEncoderPos();
+
+        int rightError = tics - rightPos;
+        int leftError = tics - leftPos;
+
+
+
+        //TODO: check if we need to negate any
+
+
+        rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
+        leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
+
+
+        //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
+        if (rightIntegralSum > 20000) {
+            rightIntegralSum = 20000;
+        } else if (rightIntegralSum < -20000) {
+            rightIntegralSum = -20000;
+        }
+
+        if (leftIntegralSum > 20000) {
+            leftIntegralSum = 20000;
+        } else if (leftIntegralSum < -20000) {
+            leftIntegralSum = -20000;
+        }
+
+
+        double rightDerivative = (rightError - rightPreviousError) / (currentTime - startTime);
+        double leftDerivative = (leftError - leftPreviousError) / (currentTime - startTime);
+
+
+        double rightPower = ((p * rightError) + (i * rightIntegralSum) + (d * rightDerivative));
+        double leftPower = ((p * leftError) + (i * leftIntegralSum) + (d * leftDerivative));
+
+
+        score.setPower(rightPower, leftPower);
+
+
+        startTime = currentTime;
+        rightPreviousError = rightError;
+        leftPreviousError = leftError;
+
+
+        telemetry.update();
+
+
+    }
+
+
+
+
+}

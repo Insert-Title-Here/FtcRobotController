@@ -7,18 +7,16 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.EndgameSystems;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 
 
-
-@TeleOp (name = "KevinGodModeV2Pretending")
-public class KevinGodModeV2 extends LinearOpMode {
+@TeleOp (name = "KevinGodModeV2EpicLift")
+public class QuadMotorLift extends LinearOpMode {
 
     Constants constants = new Constants();
-    ScoringSystemV2 score;
+    ScoringSystemV2EpicLift score;
     MecDrive drive;
     //EndgameSystems systems;
 
@@ -57,7 +55,7 @@ public class KevinGodModeV2 extends LinearOpMode {
         //Feed forward is going to be off
         passive = PassivePower.ZERO;
 
-        score = new ScoringSystemV2(hardwareMap, constants);
+        score = new ScoringSystemV2EpicLift(hardwareMap, constants);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         //systems = new EndgameSystems(hardwareMap);
@@ -83,7 +81,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                     //Lift up to scoring position
                     if(gamepad1.left_trigger > 0.1){
                         //score.setPower(0.2);
-                        if(score.getScoringMode() != ScoringSystemV2.ScoringMode.ULTRA) {
+                        if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
                             score.autoGoToPosition();
 
                             score.setLinkagePosition(constants.linkageScoreV2 - 0.03);
@@ -94,7 +92,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     }else {
                         if(passive == PassivePower.EXTENDED){
-                            score.setPower(0.23);
+                            score.setPowerSingular(0.23);
                         }else if(passive == PassivePower.ZERO){
                             score.setPower(0);
                         }
@@ -104,7 +102,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                     //Scoring feature
                     if(gamepad1.right_trigger > 0.1){
 
-                        if(score.getScoringMode() != ScoringSystemV2.ScoringMode.ULTRA) {
+                        if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
                             score.setGrabberPosition(constants.score);
 
                         /*//Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
@@ -189,7 +187,7 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                         score.setGrabberPosition(constants.grabbing);
 
-                        if(score.getScoringMode() == ScoringSystemV2.ScoringMode.ULTRA){
+                        if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA){
                             try {
                                 sleep(400);
                             } catch (InterruptedException e) {
@@ -284,17 +282,17 @@ public class KevinGodModeV2 extends LinearOpMode {
 
                     //Changing scoring modes (toggle)
                     if(gamepad1.y){
-                        score.setScoringMode(ScoringSystemV2.ScoringMode.LOW);
+                        score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.LOW);
 
                     }else if(gamepad1.x){
-                        score.setScoringMode(ScoringSystemV2.ScoringMode.MEDIUM);
+                        score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.MEDIUM);
 
                     }else if(gamepad1.b){
-                        score.setScoringMode(ScoringSystemV2.ScoringMode.HIGH);
+                        score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.HIGH);
 
                     }else if(gamepad1.a){
                         //Ultra
-                        score.setScoringMode(ScoringSystemV2.ScoringMode.ULTRA);
+                        score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.ULTRA);
                     }
 
 
@@ -308,7 +306,7 @@ public class KevinGodModeV2 extends LinearOpMode {
                     }else{
 
                         //Feedforward if slides are extended
-                        if(score.isExtended() && (score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2.ScoringMode.MEDIUM)){
+                        if(score.isExtended() && (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.MEDIUM)){
                             passive = PassivePower.EXTENDED;
                         }else{
                             passive = PassivePower.ZERO;

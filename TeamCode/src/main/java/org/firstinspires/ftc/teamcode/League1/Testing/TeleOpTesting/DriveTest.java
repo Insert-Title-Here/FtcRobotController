@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 
 //TODO: figure out bulk read
 
-@Disabled
 @TeleOp
 public class DriveTest extends LinearOpMode {
 
@@ -25,14 +24,11 @@ public class DriveTest extends LinearOpMode {
 
 
     MecDrive drive;
-    Robot robot;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Robot(hardwareMap);
-        drive = new MecDrive(hardwareMap, robot, false, telemetry);
+        drive = new MecDrive(hardwareMap, false, telemetry);
 
-        robot.start();
 
 
         waitForStart();
@@ -45,14 +41,13 @@ public class DriveTest extends LinearOpMode {
             drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
-            LynxModule.BulkData data = robot.getBulkPacket(true);
 
 
 
-            telemetry.addData("flPos: ", data.getMotorCurrentPosition(0));
-            telemetry.addData("frPos: ", data.getMotorCurrentPosition(1));
-            telemetry.addData("blPos: ", data.getMotorCurrentPosition(2));
-            telemetry.addData("brPos: ", data.getMotorCurrentPosition(3));
+            telemetry.addData("flPos: ", drive.getFLEncoder());
+            telemetry.addData("frPos: ", drive.getFREncoder());
+            telemetry.addData("blPos: ", drive.getBLEncoder());
+            telemetry.addData("brPos: ", drive.getBREncoder());
             telemetry.update();
 
         }

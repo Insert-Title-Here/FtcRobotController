@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 
 public class ScoringSystemV2EpicLift {
-    DcMotorEx lLift1, rLift1, lLift2, rLift2;
+    public DcMotorEx lLift1, rLift1, lLift2, rLift2;
     public Servo grabber;
     ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
@@ -22,7 +22,7 @@ public class ScoringSystemV2EpicLift {
     Constants constants;
     private int coneStack;
     Telemetry telemetry;
-    PIDCoefficients lift = new PIDCoefficients(0, 0, 0);
+    PIDCoefficients pidf = new PIDCoefficients(0, 0, 0);
 
 
 
@@ -35,6 +35,7 @@ public class ScoringSystemV2EpicLift {
     }
 
     public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Constants constants) {
+
 
         //coneStack = 2;
         height = ScoringMode.HIGH;
@@ -213,6 +214,11 @@ public class ScoringSystemV2EpicLift {
 
         rLift2.setPower(-power);
         lLift2.setPower(power);
+    }
+
+    public void setPowerSingular(double power) {
+        rLift1.setPower(-power);
+        lLift1.setPower(power);
     }
 
     public void setPower(double rightPower, double leftPower){
@@ -629,8 +635,8 @@ public class ScoringSystemV2EpicLift {
             telemetry.addData("rightDerivative", rightDerivative);
             telemetry.addData("leftDerivative", leftDerivative);
 
-            double leftPower = ((leftError * lift.p) + (leftIntegralSum * lift.i) + (leftDerivative * lift.d));
-            double rightPower = ((rightError * lift.p) + (rightIntegralSum * lift.i) + (rightDerivative * lift.d));
+            double leftPower = ((leftError * pidf.p) + (leftIntegralSum * pidf.i) + (leftDerivative * pidf.d));
+            double rightPower = ((rightError * pidf.p) + (rightIntegralSum * pidf.i) + (rightDerivative * pidf.d));
 
             telemetry.addData("rightPower", rightPower);
             telemetry.addData("leftPower", leftPower);
@@ -784,6 +790,112 @@ public class ScoringSystemV2EpicLift {
     public boolean isBusy(){
         return rLift1.isBusy() && lLift1.isBusy();
     }
+
+
+    public void newLiftPID(int tics, double power, MecDriveV2.MovementType movement){
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+
+
+
+        //TODO: check if we need to negate any
+
+        int rightPos = - 1 * getRightEncoderPos();
+        int leftPos = getLeftEncoderPos();
+
+        int rightError = tics - rightPos;
+        int leftError = tics - leftPos;
+
+        int rightPreviousError = rightError;
+        int leftPreviousError = leftError;
+
+        int rightIntegralSum = 0;
+        int leftIntegralSum = 0;
+
+
+        while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < 1.5){
+            telemetry.addData("target", tics);
+
+
+            //TODO: check if we need to negate any
+
+            rightPos = -1 * getRightEncoderPos();
+            leftPos = getLeftEncoderPos();
+
+
+            telemetry.addData("rightPos", rightPos);
+            telemetry.addData("leftPos", leftPos);
+
+            rightError = tics - rightPos;
+            leftError = tics - leftPos;
+
+            double currentTime = time.seconds();
+
+            telemetry.addData("rightError", rightError);
+            telemetry.addData("leftError", leftError);
+
+
+            rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
+            leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
+
+            telemetry.addData("rightIntegralSum", rightIntegralSum);
+            telemetry.addData("leftIntegralSum", leftIntegralSum);
+
+
+
+            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
+            if(rightIntegralSum > 20000){
+                rightIntegralSum = 20000;
+            }else if(rightIntegralSum < -20000){
+                rightIntegralSum = -20000;
+            }
+
+            if(leftIntegralSum > 20000){
+                leftIntegralSum = 20000;
+            }else if(leftIntegralSum < -20000){
+                leftIntegralSum = -20000;
+            }
+
+
+
+            double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
+            double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
+
+            telemetry.addData("rightDerivative", rightDerivative);
+            telemetry.addData("leftDerivative", leftDerivative);
+
+            double rightPower = ((pidf.p * rightError) + (pidf.i * rightIntegralSum) + (pidf.d * rightDerivative));
+            double leftPower = ((pidf.p * leftError) + (pidf.i * leftIntegralSum) + (pidf.d * leftDerivative));
+
+
+
+
+
+            telemetry.addData("rightError", rightError);
+            telemetry.addData("leftError", leftError);
+
+
+
+
+            setPower(rightPower, leftPower);
+
+
+            startTime = currentTime;
+            rightPreviousError = rightError;
+            leftPreviousError = leftError;
+
+
+            telemetry.update();
+
+
+        }
+
+        //setPower(0,0,0,0);
+        setPower(0);
+    }
+
+
 
 
 

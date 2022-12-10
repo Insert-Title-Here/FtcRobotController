@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 import org.firstinspires.ftc.teamcode.V2.TeleOp.KevinGodModeV2;
+import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.io.FileNotFoundException;
 
@@ -26,6 +27,8 @@ public class ArmTester extends OpModeWrapper {
     MecDrive drive;
     ScoringSystemV2EpicLift score;
     Constants constants;
+
+    public ExpansionHubMotor rMotor1, lMotor1, rMotor2, lMotor2;
 
     Thread armThread, linkageThread;
 
@@ -49,6 +52,9 @@ public class ArmTester extends OpModeWrapper {
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
+
+
+
 
         autoLinkageFlag = true;
         grabFlag = true;
@@ -76,6 +82,8 @@ public class ArmTester extends OpModeWrapper {
 
                     //Lift up to scoring position
                     if(gamepad1.left_trigger > 0.1){
+
+                        passive = PassivePower.MOVEMENT;
                         score.autoGoToPosition();
                         //score.setPower(0.2);
                         score.setLinkagePosition(constants.linkageScoreV2 - 0.02);
@@ -83,9 +91,11 @@ public class ArmTester extends OpModeWrapper {
 
                     }else {
                         if(passive == PassivePower.EXTENDED){
-                            score.setPower(0.23);
+                            score.setPowerSingular(0.23);
                         }else if(passive == PassivePower.ZERO){
-                            score.setPower(0);
+                            score.setPowerSingular(0);
+                        }else if(passive == PassivePower.MOVEMENT){
+
                         }
                     }
 
@@ -121,8 +131,9 @@ public class ArmTester extends OpModeWrapper {
 
                         //Do nothing during movement phase
                         //Reset to zero and no passive power
+                        passive = PassivePower.MOVEMENT;
+
                         score.moveToPosition(0, 0.75);
-                        passive = PassivePower.ZERO;
 
                         //Open Grabber and reset linkage
                         score.setGrabberPosition(constants.open - 0.07);
@@ -139,6 +150,9 @@ public class ArmTester extends OpModeWrapper {
 
                         //Not extended anymore
                         score.setExtended(false);
+
+                        passive = PassivePower.ZERO;
+
 
                         //Automated Grab
                     }
@@ -197,7 +211,7 @@ public class ArmTester extends OpModeWrapper {
                     }else{
 
                         //Feedforward if slides are extended
-                        if(score.isExtended() == true && (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.MEDIUM)){
+                        if(score.isExtended() == true){
                             passive = PassivePower.EXTENDED;
                         }else{
                             passive = PassivePower.ZERO;
