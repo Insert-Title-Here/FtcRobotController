@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.V2.Autonomous.Using;
 
-//import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -115,7 +115,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
             public void run() {
                 while (opModeIsActive()) {
                     if (hold.get()) {
-                        score.setPower(0.2);
+                        score.setPowerSingular(0.2);
                     }
                 }
             }
@@ -144,7 +144,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
             }
         });
 
-        //FtcDashboard.getInstance().startCameraStream(camera, 0);
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         cameraServo.setPosition(Constants.sleeveV2);
@@ -158,7 +158,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
         parkPos = pipeline.getPosition();
 
         if(parkPos == KevinGodPipelineV2.ParkPos.LEFT){
-            cycles = 4;
+            //cycles = 4;
         }
 
         //parkPos = KevinGodPipelineV2.ParkPos.LEFT;
@@ -180,7 +180,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
         drive.tankRotatePID(Math.PI / 2, 1, false);
 
-        drive.simpleMoveToPosition(670, MecDrive.MovementType.STRAIGHT, 0.6);
+        drive.simpleMoveToPosition(750, MecDrive.MovementType.STRAIGHT, 0.6);
 
         drive.tankRotatePID(3 * Math.PI / 8, 1, false);
 
@@ -188,12 +188,12 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
         drive.simpleMoveToPosition(-10, MecDrive.MovementType.ROTATE, 0.3);
 
-        if(distance.getNormalizedColors().blue > 0.85) {
+        if(distance.getNormalizedColors().blue > 0.65) {
 
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1350, 1, 1.8);
+            score.moveToPosition(1205, 1, 1.8);
             hold.set(true);
 
 
@@ -205,7 +205,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
             score.setGrabberPosition(Constants.score);
 
-            sleep(100);
+            sleep(200);
 
             score.setLinkagePositionLogistic(0.245, 100);
 
@@ -267,27 +267,27 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
             score.setGrabberPosition(Constants.grabbing);
 
-            sleep(200);
+            sleep(100);
 
-            score.setLinkagePositionLogistic(Constants.linkageUpV2, 50);
+            score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 50);
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 159, 3);
+            pipeline.normalize(0.2, 159, 4);
 
             hold.set(false);
-            score.moveToPosition(1350, 1, 1.8);
+            score.moveToPosition(1215, 1, 1.8);
             hold.set(true);
 
-            sleep(150);
+            sleep(50);
 
-            score.setLinkagePositionLogistic(0.8, 100);
+            score.setLinkagePosition(0.8);
 
             sleep(100);
 
-            score.setGrabberPosition(Constants.score);
+            score.setGrabberPosition(Constants.open);
 
-            sleep(150);
+            sleep(600);
 
             score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 50);
             score.setGrabberPosition(Constants.openV2);

@@ -35,6 +35,7 @@ public class Constants {
     //V2 Positions
     public static final double linkageDownV2 = 0.135; // was 0.875
     public static final double linkageUpV2 = 0.55;
+    public static final double linkageUpV2Auto = 0.65;
     public static final double linkageScoreV2 = 0.77;
 
 

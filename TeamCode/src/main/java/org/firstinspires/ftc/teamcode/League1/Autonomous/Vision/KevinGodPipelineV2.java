@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-//import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.Config;
 //import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,14 +20,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Config
+@Config
 public class KevinGodPipelineV2 extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color
-    public static int H1 = 17;
+    public static int H1 = 0;
     public static int S1 = 100; //was 100
-    public static int V1 = 150; //was 150
-    public static int H2 = 30;
+    public static int V1 = 80; //was 150
+    public static int H2 = 50;
     public static int S2 = 255;
     public static int V2 = 255;
 
@@ -386,7 +386,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
         }
-        return input;
+        return temp;
     }
 
     // Get x coordinate of center of largest contour (pole)
