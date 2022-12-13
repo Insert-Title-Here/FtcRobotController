@@ -57,7 +57,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
         linkageUp = new AtomicBoolean(false);
         armDown = new AtomicBoolean(false);
 
-        score.setLinkagePosition(Constants.linkageDownV2);
+        score.setLinkagePosition(Constants.linkageScoreV2 - 0.07);
         score.setGrabberPosition(constants.grabbing);
 
 
@@ -173,7 +173,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
         cameraServo.setPosition(Constants.poleV2);
 
 
-        linkageUp.set(true);
+        //linkageUp.set(true);
         drive.simpleMoveToPosition(-1540, MecDrive.MovementType.STRAIGHT, 0.85);
 
         sleep(100);
@@ -193,7 +193,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1205, 1, 1.8);
+            score.moveToPosition(1230, 1, 1.8);
             hold.set(true);
 
 
