@@ -105,7 +105,7 @@ public class MultiBlueRightMedium extends LinearOpMode {
         // go forward next to pole
         drive.goToPositionPID(drive.avgPosition(1476, 1456, 1447, 1442), "go forward next to pole");
         // turn to right 45 degrees to medium pole
-        drive.turn(Math.PI / 4);
+        drive.turn45(Math.PI / 4);
         // go to pole a bit
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, 200, "go forward some to pole");
         // camera position correction
@@ -125,11 +125,11 @@ public class MultiBlueRightMedium extends LinearOpMode {
         // scoring cone
         scoreCone(438, 416, 437, 426);
         // turn back straight
-        drive.turn(Math.PI / 4);
+        drive.turn45(Math.PI / 4);
         //go forward to blue cone tape adjacent mat
         drive.goToPositionPID( drive.avgPosition(1028, 1056, 1041, 1026), "go forward to next mat");
         // turn to tape/cones
-        drive.turn(-Math.PI / 2);
+        drive.turn45(-Math.PI / 2);
         // find tape, get cone
         useColorSensor();
         // back up
@@ -137,7 +137,7 @@ public class MultiBlueRightMedium extends LinearOpMode {
         //put lift down
 
         // turn 90 to the left
-        drive.turn(Math.PI / 2);
+        drive.turn45(Math.PI / 2);
         // strafe left
         drive.goToPosition(0.4, -0.4, -0.4, 0.4, drive.avgPosition(1727, -1651, -1650, 891), "strafe right");
         // camera position correction

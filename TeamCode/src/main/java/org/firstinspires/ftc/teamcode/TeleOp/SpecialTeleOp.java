@@ -312,9 +312,9 @@ public class SpecialTeleOp extends LinearOpMode {
                 //turn test
                 //drive.turnToInitialPosition();
                 if(-Math.PI/4 < imu.getAngularOrientation().firstAngle  && imu.getAngularOrientation().firstAngle < Math.PI/4){
-                    drive.turn(-Math.PI);
+                    drive.turn45(-Math.PI);
                 }else{
-                    drive.turn(Math.PI);
+                    drive.turn45(Math.PI);
                 }
             }
 //

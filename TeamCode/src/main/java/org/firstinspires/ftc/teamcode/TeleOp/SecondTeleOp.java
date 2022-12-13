@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@TeleOp //@Config
+@TeleOp @Config
 // This teleop does not contain the colorsensor code
 public class SecondTeleOp extends LinearOpMode {
     //TODO: change names if you want to
@@ -268,6 +269,8 @@ public class SecondTeleOp extends LinearOpMode {
                                     }
 
                                      */
+
+
                                 }
                             }else{
                                 //claw code for stack only
@@ -347,7 +350,7 @@ public class SecondTeleOp extends LinearOpMode {
                 }
 
                  */
-                drive.turn(Math.PI/1.15);
+               // drive.goToPositionPIDFlBlFrBr(2000);
             }
 
             /*
@@ -365,14 +368,14 @@ public class SecondTeleOp extends LinearOpMode {
 
              */
             if(gamepad1.dpad_left){
-
+                drive.goToPosition(0.5,0.5, 0.5, 0.5, 2000, "s");
             }
 
             //resets the drive motor encoders
             if (gamepad1.share) {
                 drive.resetIMU();
             }
-
+            /*
             //TODO: add telemtry for gamepad a and y positions when you press them
             telemetry.addData("flPos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());
@@ -391,6 +394,8 @@ public class SecondTeleOp extends LinearOpMode {
             //  telemetry.update();
             //telemetry.update();
             telemetry.update();
+
+             */
 
 
 

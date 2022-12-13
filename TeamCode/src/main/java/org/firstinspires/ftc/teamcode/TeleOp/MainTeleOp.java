@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -28,17 +29,17 @@ public class MainTeleOp extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;
     Thread liftThread;
+    Thread imuThread;
+    Constants constant;
+    BNO055IMU imu;
+    OpenCvWebcam webcam;
+    ContourMultiScore detect;
+
     AtomicBoolean clawOpenCloseToggle;
     AtomicBoolean clawStackFlag;
     AtomicBoolean clawMoveDownToggle;
-    AtomicBoolean turnScoring;
     AtomicBoolean stackFlag;
     AtomicBoolean triggerScoreToggle;
-    Constants constant;
-    BNO055IMU imu;
-
-    OpenCvWebcam webcam;
-    ContourMultiScore detect;
 
     private boolean uprighterToggle = true;
 
@@ -46,8 +47,8 @@ public class MainTeleOp extends LinearOpMode {
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
+    volatile boolean isTurning = false;
 
-    public static double pos = 0.9;
     @Override
     public void runOpMode() throws InterruptedException {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -67,29 +68,23 @@ public class MainTeleOp extends LinearOpMode {
         constant = new Constants();
         clawMoveDownToggle = new AtomicBoolean();
         clawStackFlag = new AtomicBoolean();
-        turnScoring = new AtomicBoolean();
         stackFlag = new AtomicBoolean();
         triggerScoreToggle = new AtomicBoolean();
+
         triggerScoreToggle.set(true);
         stackFlag.set(true);
-        turnScoring.set(false);
         clawMoveDownToggle.set(false);
         clawOpenCloseToggle.set(true);
         clawStackFlag.set(false);
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
-
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-
             @Override
             public void onOpened() {
                 webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
             public void onError(int errorCode) {
                 telemetry.addData("Camera Init Error", errorCode);
@@ -97,14 +92,11 @@ public class MainTeleOp extends LinearOpMode {
             }
         });
 
-
-
         //ftc dashboard
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
+        //FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         //Thread for the slides
-
         liftThread = new Thread(){
             @Override
             public void run(){
@@ -115,23 +107,13 @@ public class MainTeleOp extends LinearOpMode {
                         if(score.getEncoderPosition() > constant.getHeightLimit()){
                             score.setPower(constant.getSteadyPow());
                         }else{
-                            score.setPower(0.55);
+                            score.setPower(0.6);
                         }
                     }else if(gamepad1.dpad_left) {
-                       /*
-                        if(score.getEncoderPosition() < 7){
-                            score.setPower(0);
-                        }else{
-                            score.setPower(-0.2);
-                        }
-
-                        */
-                        score.setPower(-0.18);
+                        score.setPower(-0.25);
                     }else{
                         if(score.getEncoderPosition() > 100){
-                            //if(!clawStackFlag.get()){
                             score.setPower(constant.getSteadyPow());
-                            //}
                         }
                     }
 
@@ -210,7 +192,7 @@ public class MainTeleOp extends LinearOpMode {
                                     e.printStackTrace();
                                 }
                                 score.goToPosition(constant.getHeightBottom(),0.8);
-                                //score.setUprighterPosition(0);
+                               // score.setUprighterPosition(0);
                             }
 
                         }else{
@@ -224,7 +206,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+300,1);
+                                    score.goToPosition(score.getEncoderPosition()+200,1);
                                     score.setPower(constant.getSteadyPow());
                                     clawStackFlag.set(false);
 
@@ -235,7 +217,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+300, 1);
+                                    score.goToPosition(score.getEncoderPosition()+100, 1);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
                                     /*
@@ -244,6 +226,8 @@ public class MainTeleOp extends LinearOpMode {
                                     }
 
                                      */
+
+
                                 }
                             }else{
                                 //claw code for stack only
@@ -284,11 +268,52 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
         };
+
+
+
+        //thread for imu and sensors(if needed)
+        imuThread = new Thread(){
+            @Override
+            public void run(){
+                while(opModeIsActive()){
+                    if(gamepad1.right_stick_button) {
+                        //while(opModeisActive(){
+                        // Orientation angle = imu.getAngularOrientation();
+                        /*
+                        synchronized Orientation getAngularOrientation();
+                        }
+                         */
+                        if(imu.getAngularOrientation().firstAngle < 0){
+                            isTurning = true;
+                            drive.turn180(Math.PI);
+                            isTurning = false;
+                        }else{
+                            isTurning = true;
+                            drive.turn180(-Math.PI);
+                            isTurning = false;
+                        }
+                    }
+                    //turn scoring
+                    if (gamepad1.left_bumper) {
+                        if(imu.getAngularOrientation().firstAngle < 0){
+                            isTurning = true;
+                            drive.turn180(Math.PI);
+                            isTurning = false;
+                        }else{
+                            isTurning = true;
+                            drive.turn180(-Math.PI);
+                            isTurning = false;
+                        }
+
+                    }
+                }
+            }
+        };
         score.setClawPosition(0);
         score.setScoreBoolean(true, false, false);
         waitForStart();
         liftThread.start();
-        boolean scoreToggle = true;
+        imuThread.start();
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -302,24 +327,19 @@ public class MainTeleOp extends LinearOpMode {
                 gamepadY = 0;
             }
             //robot movement(using controls/gamepads) with sprint mode
-            if (gamepad1.left_stick_button) { // replace this with a button for sprint
-                drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-            }else{
-                if(score.getEncoderPosition() > 500){
-                    drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
-                }else{
-                    drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+            if(!isTurning) {
+                if (gamepad1.left_stick_button) { // replace this with a button for sprint
+                    drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+                } else {
+                    if (score.getEncoderPosition() > 500) {
+                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
+                    } else {
+                        drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                    }
                 }
             }
-            if(gamepad1.right_stick_button){
-                drive.turn(Math.PI/2.2);
-            }
-            //turn scoring
-            if (gamepad1.left_bumper) {
-                drive.turn(Math.PI/1.15);
-            }
             //Sets the booleans for which pole to go to for lifts system
-            if (gamepad1.y) {
+            if (gamepad1.a) {
                 //high cone
                 score.setScoreBoolean(true, false, false);
 
@@ -330,7 +350,7 @@ public class MainTeleOp extends LinearOpMode {
                 score.setScoreBoolean(false, true, false);
             }
             //moves slides to low pole
-            if(gamepad1.a){
+            if(gamepad1.b){
                 //low cone
                 score.setScoreBoolean(false,false,true);
             }

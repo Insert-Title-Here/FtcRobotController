@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Common;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -14,7 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-//@Config
+@Config
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
@@ -23,19 +24,14 @@ public class MecanumDrive {
     BNO055IMU imu;
     ColorRangeSensor colorTape;
 
+    private double accumulatedError;
+    private double error;
 
-   //OpenCvWebcam webcam;
-    //ContourMultiScore detect;
-
-
-    public static double proportionCoefficient = 0.001;//0.75
-    public static double integralCoefficient = 0;
-    public static double derivativeCoefficient = 1.2;//0.8
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("driveTelemetry.txt");
-    // holds data
     public String loggingString;
+
     //constructor
     public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -44,7 +40,6 @@ public class MecanumDrive {
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
-
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
@@ -52,29 +47,6 @@ public class MecanumDrive {
         active = new AtomicBoolean();
         colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
         accumulatedError = 0;
-
-
-
-//        detect = new ContourMultiScore(telemetry);
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-//        webcam.setPipeline(detect);
-//
-//        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-//
-//            @Override
-//            public void onOpened() {
-//                webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode) {
-//                telemetry.addData("Camera Init Error", errorCode);
-//                telemetry.update();
-//            }
-//        });
-
-
 
         //initiallises drive motors
         fl = hardwareMap.get(DcMotor.class, "fl");
@@ -102,25 +74,24 @@ public class MecanumDrive {
         fr.setDirection(DcMotor.Direction.FORWARD);
         bl.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.FORWARD);
-
-//        // ftc dashboard
-//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
-
-
     }
     public void resetIMU(){
-        //initializes imu
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
-
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
     }
-    /*current motor positions*/
+
+    /*
+
+    Current motor positions
+
+    */
+
     public int getFLPosition() {
         return fl.getCurrentPosition();
     }
@@ -139,8 +110,11 @@ public class MecanumDrive {
         return br.getCurrentPosition();
 
     }
+    /*
 
+    SetPower methods
 
+     */
     public void setPower(Vector2D velocity, double turnValue, boolean isSwapped) {
         turnValue = -turnValue;
         double direction = velocity.getDirection();
@@ -168,10 +142,30 @@ public class MecanumDrive {
         bl.setPower(blPow);
         br.setPower(brPow);
     }
+    /*
+
+     GoToPosition methods, including PID
+
+     */
+
+    public void goToPosition(double flPow, double frPow, double blPow, double brPow) {
+        //fl fr bl br
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        setPower(flPow, frPow, blPow, brPow);
+    }
 
     public void goToPosition(double flPow, double frPow, double blPow, double brPow, int tics, String action) {
         //fl fr bl br
-
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -183,72 +177,51 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // won't work for turns, only forward and backward
-        //avg position from all four drive motors
-        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition())*/ +
-                Math.abs(br.getCurrentPosition())) / 3;
-
-        telemetry.addData("motorPosition", position);
-        telemetry.update();
+        int avgPosition = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
         long time = System.currentTimeMillis();
         long difference;
-        //Encoder based gotoposition
-        while ((Math.abs(tics) - position) > 0) {
-            difference = System.currentTimeMillis() - time;
+
+        // If error is greater than zero, than run while loop
+        while ((Math.abs(tics) - avgPosition) > 0) {
             setPower(flPow, frPow, blPow, brPow);
-            position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition()) */+
-                    Math.abs(br.getCurrentPosition())) / 3;
+            avgPosition = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
+            difference = System.currentTimeMillis() - time;
+            if(difference > 10000)break;
         }
 
         setPower(0, 0, 0, 0);
-
     }
 
-    //TODO: Consider to do PID for each individual wheel
     public void goToPositionPID(int tics, String action) {
-        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
-
         //fl fr bl br
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        telemetry.addData("motorPosition", position);
-        telemetry.update();
+        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
 
         long time = System.currentTimeMillis();
         long timeDifference = 0;
 
         double priorError = tics;
         double currentError = tics;
-        //double priorAngleError = 0;
-        //double currentAngleError = 0;
 
-        //Encoder based gotoposition
+        //While error is greater than zero
         while ((Math.abs(tics) - position) > 0) {
-            double drivePower = 0;
+            double drivePower;
             drivePower = PIDDrivePower(priorError, currentError, timeDifference);
 
-            //double addedDrivePow = 0;
-            //addedDrivePow = additionalPow(priorAngleError, currentAngleError, timeDifference);
-
-            //priorAngleError = currentAngleError;
             priorError = currentError;
-
             setPower(drivePower, drivePower, drivePower, drivePower);
-
             position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
 
             currentError = tics - position;
-            //currentAngleError = Math.abs(imu.getAngularOrientation().firstAngle);
-
             accumulateError(timeDifference, currentError);
 
             timeDifference = System.currentTimeMillis() - time;
@@ -258,25 +231,31 @@ public class MecanumDrive {
         error = 0;
         setPower(0, 0, 0, 0);
 
-        /*
-        loggingString +="----------------------------------------------------------------------------\n";
-        loggingString += action.toUpperCase() + "\n";
-        loggingString += "FL Position: " + getFLPosition() + "\n";
-        loggingString += "FR Position: " + getFRPosition() + "\n";
-        loggingString += "BL Position: " + getBLPosition() + "\n";
-        loggingString += "BR Position: " + getBRPosition() + "\n";
-        loggingString += "---------------------" + "\n";
-        loggingString += "Claw (Intake) Position: " + score.getClawPosition();
-         */
-
-
     }
+
+     /*
+     Four Wheel PID below that doesn't work well due to hardware of turning while going straight
+      */
+
+    /*
+    public static double flproportionCoefficient = 0.001;//0.75
+    public static double flintegralCoefficient = 0;
+    public static double flderivativeCoefficient = 1.2;//0.8
+    public static double blproportionCoefficient = 0.001;//0.75
+    public static double blintegralCoefficient = 0;
+    public static double blderivativeCoefficient = 1.2;//0.8
+    public static double frproportionCoefficient = 0.001;//0.75
+    public static double frintegralCoefficient = 0;
+    public static double frderivativeCoefficient = 1.2;//0.8
+    public static double brproportionCoefficient = 0.001;//0.75
+    public static double brintegralCoefficient = 0;
+    public static double brderivativeCoefficient = 1.2;//0.8
+
     private double accumulatedErrorFl;
     private double accumulatedErrorBl;
     private double accumulatedErrorFr;
     private double accumulatedErrorBr;
-    private double accumulatedError;
-    private double error;
+
     public void goToPositionPIDFlBlFrBr(int tics) {
         //front left, front right, back left, back right
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -317,6 +296,12 @@ public class MecanumDrive {
             priorErrorBr = currentErrorBr;
 
             setPower(PIDfl(priorErrorFl, currentErrorFl, timeDifference), PIDfr(priorErrorFr, currentErrorFr, timeDifference), PIDbl(priorErrorBl, currentErrorBl, timeDifference), PIDbr(priorErrorBr, currentErrorBr, timeDifference));
+            loggingString += " fltotalPower: " + PIDfl(priorErrorFl, currentErrorFl, timeDifference);
+            loggingString += " bltotalPower: " + PIDbl(priorErrorBl, currentErrorBl, timeDifference);
+            loggingString += " frtotalPower: " + PIDfr(priorErrorFr, currentErrorFr, timeDifference);
+            loggingString += " brtotalPower: " + PIDbr(priorErrorBr, currentErrorBr, timeDifference);
+            loggingString +="----------------------------------------------------------------------------\n";
+
 
             positionFl = (int)(Math.abs(fl.getCurrentPosition()));
             positionBl = (int)(Math.abs(bl.getCurrentPosition()));
@@ -342,7 +327,7 @@ public class MecanumDrive {
         accumulatedError = 0;
         error = 0;
         //loggingString +="----------------------------------------------------------------------------\n";
-        /*
+
         loggingString += action.toUpperCase() + "\n";
         loggingString += "FL Position: " + getFLPosition() + "\n";
         loggingString += "FR Position: " + getFRPosition() + "\n";
@@ -350,16 +335,72 @@ public class MecanumDrive {
         loggingString += "BR Position: " + getBRPosition() + "\n";
         loggingString += "---------------------" + "\n";
 
-         */
+
 
         // loggingString += "Claw (Intake) Position: " + score.getClawPosition()
 
 
     }
 
-    public void goToPosition(double flPow, double frPow, double blPow, double brPow) {
-        //fl fr bl br
+    public double PIDfl(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * flproportionCoefficient + ((currentError-priorError)/timeChange) * flderivativeCoefficient + getAccumulatedError() * flintegralCoefficient;
+        error = currentError;
+        return totalPower;
+    }
 
+    public double PIDbl(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * blproportionCoefficient + ((currentError-priorError)/timeChange) * blderivativeCoefficient + getAccumulatedError() * blintegralCoefficient;
+        error = currentError;
+        return totalPower;
+    }
+    public double PIDfr(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * frproportionCoefficient + ((currentError-priorError)/timeChange) * frderivativeCoefficient + getAccumulatedError() * frintegralCoefficient - (0.1);
+        error = currentError;
+        return totalPower;
+    }
+    public double PIDbr(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;//0.75
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 1.2;//0.8
+        double totalPower = currentError * brproportionCoefficient + ((currentError-priorError)/timeChange) * brderivativeCoefficient + getAccumulatedError() * brintegralCoefficient;
+        error = currentError;
+        return totalPower;
+    }
+
+    public void accumulateErrorFlBlFrBr(double deltaTime, double errorFl, double errorBl, double errorFr, double errorBr){
+        accumulatedErrorFl += errorFl * deltaTime;
+        accumulatedErrorBl += errorBl * deltaTime;
+        accumulatedErrorFr += errorFr * deltaTime;
+        accumulatedErrorBr += errorBr * deltaTime;
+    }
+
+    public double getAccumulatedErrorFl(){
+        return accumulatedErrorFl;
+    }
+    public double getAccumulatedErrorBl(){
+        return accumulatedErrorBl;
+    }
+    public double getAccumulatedErrorFr(){
+        return accumulatedErrorFr;
+    }
+    public double getAccumulatedErrorBr(){
+        return accumulatedErrorBr;
+    }
+
+     */
+
+    //TODO: Needs Testing
+    public void goToPositionFBPID(int tics) {
+        //front left, front right, back left, back right
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -371,33 +412,68 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // won't work for turns, only forward and backward
-
-        int position = (int) (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) /*+ Math.abs(bl.getCurrentPosition())*/ +
-                Math.abs(br.getCurrentPosition())) / 3;
-
-        telemetry.addData("motorPosition", position);
-        telemetry.update();
+        int positionFl = (int)(Math.abs(fl.getCurrentPosition()));
+        int positionBl = (int)(Math.abs(bl.getCurrentPosition()));
+        int positionFr = (int)(Math.abs(fr.getCurrentPosition()));
+        int positionBr = (int)(Math.abs(br.getCurrentPosition()));
+        int avgPosition = (positionFl + positionBl + positionFr + positionBr)/4;
 
 
-        setPower(flPow, frPow, blPow, brPow);
+        double priorErrorFront = tics;
+        double priorErrorBack = tics;
 
+        double currentErrorFront = 0;
+        double currentErrorBack = 0;
+
+        long time = System.currentTimeMillis();
+        long timeDifference = 0;
+
+        //Encoder based gotoposition
+        while ((Math.abs(tics) - positionFl) > 0 && (Math.abs(tics) - positionBl) > 0 && (Math.abs(tics) - positionFr) > 0 && (Math.abs(tics) - positionBr) > 0) {
+            priorErrorFront = currentErrorFront;
+            priorErrorBack = currentErrorBack;
+
+
+            setPower(frontPow(priorErrorFront, currentErrorFront, timeDifference), frontPow(priorErrorFront, currentErrorFront, timeDifference), backPow(priorErrorBack, currentErrorBack, timeDifference), backPow(priorErrorBack, currentErrorBack, timeDifference));
+
+
+            positionFl = (int)(Math.abs(fl.getCurrentPosition()));
+            positionBl = (int)(Math.abs(bl.getCurrentPosition()));
+            positionFr = (int)(Math.abs(fr.getCurrentPosition()));
+            positionBr = (int)(Math.abs(br.getCurrentPosition()));
+            avgPosition = (positionFl + positionBl + positionFr + positionBr)/4;
+
+            currentErrorFront = tics - (positionFl + positionFr)/2;
+            currentErrorBack = tics - (positionBl + positionBr)/2;
+
+
+            timeDifference = System.currentTimeMillis() - time;
+            if(timeDifference > tics * 1)break;
+        }
+        setPower(0, 0, 0, 0);
+        accumulatedError = 0;
+        error = 0;
     }
-    //relative turning
-    // Turns a certain amount of given radians useing imu
-    public void turn(double radians) {
-        double integralPow;
-        double derivativePow;
-        double proportionPow;
-        ElapsedTime time = new ElapsedTime();
+
+
+    /*
+
+    Rotate PID's and Rotate methods Below
+
+     */
+
+    // IMU based PID turning, most optimal for 45 degree turning.
+    public void turn45(double radians) {
         double initialAngle = imu.getAngularOrientation().firstAngle;
+
         double currentAngleError = angleWrap(radians);
         double priorAngleError = angleWrap(radians);
+
+        ElapsedTime time = new ElapsedTime();
         double priorTime = time.milliseconds();
         double timeDifference = 0;
-        double before;
-        double after;
-       // loggingString += "CurrentAngle: " + initialAngle + "\n";
+
+        // Relative turning
         while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
             double drivePower = 0;
             if(currentAngleError == priorAngleError){
@@ -405,26 +481,98 @@ public class MecanumDrive {
             }else{
                 priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
             }
-            accumulateError(timeDifference, currentAngleError);
 
-            drivePower = PIDTurnPower(priorAngleError, currentAngleError, timeDifference);
-            //turn left # of radians
+            drivePower = PIDTurnPower45(priorAngleError, currentAngleError, timeDifference);
             setPower(-drivePower, drivePower, -drivePower, drivePower);
 
-            timeDifference = time.milliseconds() - priorTime;
-            currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
-            if(time.milliseconds() - priorTime > 1300) break;
 
+            accumulateError(timeDifference, currentAngleError);
+            currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+
+
+            timeDifference = time.milliseconds() - priorTime;
+            if(time.milliseconds() - priorTime > 700) break;
         }
         //resetIMU();
         error = 0;
     }
-    // Absolute turning
-    //TODO: Needs Testing
+
+    //IMU based PID turning, most optimal for 90 degree turns.
+    public void turn90(double radians) {
+        double initialAngle = imu.getAngularOrientation().firstAngle;
+
+        double currentAngleError = angleWrap(radians);
+        double priorAngleError = angleWrap(radians);
+
+        ElapsedTime time = new ElapsedTime();
+        double priorTime = time.milliseconds();
+        double timeDifference = 0;
+
+        // Relative turning
+        while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
+            double drivePower = 0;
+            if(currentAngleError == priorAngleError){
+                //values stay the same
+            }else{
+                priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+            }
+
+            drivePower = PIDTurnPower90(priorAngleError, currentAngleError, timeDifference);
+            setPower(-drivePower, drivePower, -drivePower, drivePower);
+
+
+            accumulateError(timeDifference, currentAngleError);
+            currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+
+
+            timeDifference = time.milliseconds() - priorTime;
+            if(time.milliseconds() - priorTime > 800) break;
+        }
+        //resetIMU();
+        error = 0;
+    }
+
+    //IMU based PID turning, most optimal for 180 degree turning.
+    public void turn180(double radians) {
+        double initialAngle = imu.getAngularOrientation().firstAngle;
+
+        double currentAngleError = angleWrap(radians);
+        double priorAngleError = angleWrap(radians);
+
+        ElapsedTime time = new ElapsedTime();
+        double priorTime = time.milliseconds();
+        double timeDifference = 0;
+
+        // Relative turning
+        while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
+            double drivePower = 0;
+            if(currentAngleError == priorAngleError){
+                //values stay the same
+            }else{
+                priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+            }
+
+            drivePower = PIDTurnPower180(priorAngleError, currentAngleError, timeDifference);
+            setPower(-drivePower, drivePower, -drivePower, drivePower);
+
+
+            accumulateError(timeDifference, currentAngleError);
+            currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
+
+
+            timeDifference = time.milliseconds() - priorTime;
+            if(time.milliseconds() - priorTime > 900) break;
+        }
+        //resetIMU();
+        error = 0;
+    }
+
+    // TODO: Needs Testing and more work
     public void turnToInitialPosition(double radians) {
         boolean over = true;
         double rad = radians;
         if (rad > 0.04 || rad < -0.04) {
+            // Absolute turning
             while ((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005 && over) {
                 double currentRadians = imu.getAngularOrientation().firstAngle;
                 if (0 < currentRadians) {
@@ -440,80 +588,14 @@ public class MecanumDrive {
         }
     }
     /*
-    //DO NOT USE currently does not work
-    public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action) {
-        //fl fr bl br
-        active.set(true);
-        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        driveThread = new Thread() {
-            @Override
-            public void run() {
-                boolean flDone = false;
-                boolean frDone = false;
-                boolean blDone = false;
-                boolean brDone = false;
+    Methods for updating PID(numbers for PIDs go here)
 
-                while (active.get()) {
-                    if (flDone && frDone && blDone && brDone) {
-                        active.set(false);
-                    } else {
-                        //fl
-                        if ((Math.abs(flTics) - Math.abs(fl.getCurrentPosition())) > 0) {
-                            setPower(power, power, power, power);
-                        } else {
-                            flDone = true;
-                        }
-                        //fr
-                        if ((Math.abs(frTics) - Math.abs(fr.getCurrentPosition())) > 0) {
-                            setPower(power, power, power, power);
-                        } else {
-                            frDone = true;
-                        }
-                        //bl
-                        if ((Math.abs(blTics) - Math.abs(bl.getCurrentPosition())) > 0) {
-                            setPower(power, power, power, power);
-                        } else {
-                            blDone = true;
-                        }
-                        //br
-                        if ((Math.abs(brTics) - Math.abs(br.getCurrentPosition())) > 0) {
-                            setPower(power, power, power, power);
-                        } else {
-                            brDone = true;
-                        }
-                        telemetry.addData("flPos", getFLPosition());
-                        telemetry.addData("frPos", getFRPosition());
-                        telemetry.addData("blPos", getBLPosition());
-                        telemetry.addData("brPos", getBRPosition());
-                        telemetry.addData("red", currentRedColor());
-                        telemetry.addData("blue", currentBlueColor());
-                        telemetry.update();
-                    }
-
-                }
-                setPower(0, 0, 0, 0);
-            }
-        };
-        driveThread.start();
-
-
-    }
-    //TODO: do liftsystem PID
      */
-    //PID testing not currently operational
-    public double PIDTurnPower(double priorError, double currentError, double timeChange) {
-        double proportionCoefficient = 0.845;//0.845
-        double integralCoefficient = 0;
-        double derivativeCoefficient = 0.5;//0.5
-        error = currentError;
+
+    //Outputs the value of the power used in them method turn45()
+    //You "plug" in the values for turn45() PID here
+    public double PIDTurnPower45(double priorError, double currentError, double timeChange) {
         /*
         loggingString += "PriorAngleError: " + priorError + "   ";
         loggingString += "CurrentAngleError: " + currentError + "   ";
@@ -523,13 +605,66 @@ public class MecanumDrive {
         loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
 
          */
+
+        double proportionCoefficient = 0.845;//0.845
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 0.5;//0.5
+
+        error = currentError;
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+
     }
-    //TODO
+
+    //Outputs the value of the power used in them method turn90()
+    //You "plug" in the values for turn90() PID here
+    public double PIDTurnPower90(double priorError, double currentError, double timeChange) {
+        /*
+        loggingString += "PriorAngleError: " + priorError + "   ";
+        loggingString += "CurrentAngleError: " + currentError + "   ";
+        loggingString += "DrivePower: " +  currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient + "   ";
+        loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
+        loggingString += "proportionPower: " + getAccumulatedError() * integralCoefficient + "   ";
+        loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
+
+         */
+
+        double proportionCoefficient = 0.6;//0.6
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 0.3;//0.3
+
+        error = currentError;
+        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+
+    }
+
+    //Outputs the value of the power used in them method turn90()
+    //You "plug" in the values for turn90() PID here
+    public double PIDTurnPower180(double priorError, double currentError, double timeChange) {
+         /*
+        loggingString += "PriorAngleError: " + priorError + "   ";
+        loggingString += "CurrentAngleError: " + currentError + "   ";
+        loggingString += "DrivePower: " +  currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient + "   ";
+        loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
+        loggingString += "proportionPower: " + getAccumulatedError() * integralCoefficient + "   ";
+        loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
+         */
+
+        double proportionCoefficient = 0.5;//0.5
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 0.2;//0.2
+
+        error = currentError;
+        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+
+    }
+
+    //TODO: Needs reworking
+    //Outputs the value of the power used in them method turn180()
+    //You "plug" in the values for turn180() PID here
     public double PIDDrivePower(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.35;//0.75
+        double proportionCoefficient = 0.35;//0.35
         double integralCoefficient =0 ;
-        double derivativeCoefficient = 0.0011;//0.8
+        double derivativeCoefficient = 0.0011;//0.0011
         double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
         loggingString += "PriorError: " + priorError + "   ";
         loggingString += "CurrentError: " + currentError + "   ";
@@ -540,38 +675,20 @@ public class MecanumDrive {
         error = currentError;
         return totalPower;
     }
-    public double PIDfl(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.001;//0.75
-        double integralCoefficient = 0;
-        double derivativeCoefficient = 1.2;//0.8
-        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
-        error = currentError;
-        return totalPower;
-    }
 
-    public double PIDbl(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.001;//0.75
+    public double frontPow(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;
         double integralCoefficient = 0;
-        double derivativeCoefficient = 1.2;//0.8
-        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
-        error = currentError;
-        return totalPower;
+        double derivativeCoefficient = 0;
+        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+
     }
-    public double PIDfr(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.001;//0.75
+    public double backPow(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.001;
         double integralCoefficient = 0;
-        double derivativeCoefficient = 1.2;//0.8
-        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
-        error = currentError;
-        return totalPower;
-    }
-    public double PIDbr(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.001;//0.75
-        double integralCoefficient = 0;
-        double derivativeCoefficient = 1.2;//0.8
-        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
-        error = currentError;
-        return totalPower;
+        double derivativeCoefficient = 0;
+        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+
     }
     //TODO
     //used for robot not moving straight
@@ -588,27 +705,10 @@ public class MecanumDrive {
     public void accumulateError(double deltaTime, double error){
         accumulatedError += error * deltaTime;
     }
-    public void accumulateErrorFlBlFrBr(double deltaTime, double errorFl, double errorBl, double errorFr, double errorBr){
-        accumulatedErrorFl += errorFl * deltaTime;
-        accumulatedErrorBl += errorBl * deltaTime;
-        accumulatedErrorFr += errorFr * deltaTime;
-        accumulatedErrorBr += errorBr * deltaTime;
-    }
     public double getAccumulatedError(){
         return accumulatedError;
     }
-    public double getAccumulatedErrorFl(){
-        return accumulatedErrorFl;
-    }
-    public double getAccumulatedErrorBl(){
-        return accumulatedErrorBl;
-    }
-    public double getAccumulatedErrorFr(){
-        return accumulatedErrorFr;
-    }
-    public double getAccumulatedErrorBr(){
-        return accumulatedErrorBr;
-    }
+
     // resets encoders
     public void resetEncoders() {
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -704,4 +804,76 @@ public class MecanumDrive {
     public int avgPosition(int fl, int fr, int bl, int br){
         return (int)(Math.abs(fl) + Math.abs(fr) + Math.abs(bl) + Math.abs(br))/4;
     }
+
+    /*
+    Got to position useing thread, for more accuracy, does not work , do not use
+     */
+    /*
+    public void goToPositionTest(int flTics, int frTics, int blTics, int brTics, double power, String action) {
+        //fl fr bl br
+        active.set(true);
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveThread = new Thread() {
+            @Override
+            public void run() {
+                boolean flDone = false;
+                boolean frDone = false;
+                boolean blDone = false;
+                boolean brDone = false;
+
+                while (active.get()) {
+                    if (flDone && frDone && blDone && brDone) {
+                        active.set(false);
+                    } else {
+                        //fl
+                        if ((Math.abs(flTics) - Math.abs(fl.getCurrentPosition())) > 0) {
+                            setPower(power, power, power, power);
+                        } else {
+                            flDone = true;
+                        }
+                        //fr
+                        if ((Math.abs(frTics) - Math.abs(fr.getCurrentPosition())) > 0) {
+                            setPower(power, power, power, power);
+                        } else {
+                            frDone = true;
+                        }
+                        //bl
+                        if ((Math.abs(blTics) - Math.abs(bl.getCurrentPosition())) > 0) {
+                            setPower(power, power, power, power);
+                        } else {
+                            blDone = true;
+                        }
+                        //br
+                        if ((Math.abs(brTics) - Math.abs(br.getCurrentPosition())) > 0) {
+                            setPower(power, power, power, power);
+                        } else {
+                            brDone = true;
+                        }
+                        telemetry.addData("flPos", getFLPosition());
+                        telemetry.addData("frPos", getFRPosition());
+                        telemetry.addData("blPos", getBLPosition());
+                        telemetry.addData("brPos", getBRPosition());
+                        telemetry.addData("red", currentRedColor());
+                        telemetry.addData("blue", currentBlueColor());
+                        telemetry.update();
+                    }
+
+                }
+                setPower(0, 0, 0, 0);
+            }
+        };
+        driveThread.start();
+
+
+    }
+
+     */
 }

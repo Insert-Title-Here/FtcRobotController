@@ -172,7 +172,7 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 //turn test
                 //drive.turnToInitialPosition();
-                drive.turn(Math.PI/4);
+                drive.turn45(Math.PI/4);
             }
             if(gamepad1.a){
                 discontinue.set(true);

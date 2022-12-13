@@ -220,7 +220,6 @@ public class ScoringSystem {
         return colorCone.getDistance(DistanceUnit.CM);
     }
 
-    //TODO logic needs work
     int height1 = 234;
     int height2 = 165;
     int height3 = 114;

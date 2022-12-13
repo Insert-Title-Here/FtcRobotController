@@ -107,7 +107,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         // go forward next to pole
         drive.goToPositionPID(1060, "go forward next to pole");
         // turn to left 45 degrees to medium pole
-        drive.turn(-Math.PI / 4);
+        drive.turn45(-Math.PI / 4);
         // go to pole a bit
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, 90, "go forward some to pole");
         sleep(100);
@@ -150,7 +150,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         scoreCone(438, 416, 437, 426);
 
         // turn back straight
-        drive.turn(Math.PI / 4);
+        drive.turn45(Math.PI / 4);
         //moves robot to correct parking position
 //        if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.LEFT) {
 //            // move to left park (strafe right)
@@ -180,8 +180,8 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         //go forward to blue cone tape adjacent mat
         drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(828, 856, 941, 926), "go forward to next mat");
         // turn to tape/cones
-        drive.turn(Math.PI / 4);
-        drive.turn(Math.PI / 4);
+        drive.turn45(Math.PI / 4);
+        drive.turn45(Math.PI / 4);
 
 
         // find tape, get cone

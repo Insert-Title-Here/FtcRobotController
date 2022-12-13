@@ -335,20 +335,6 @@ public class UprighterTeleOp extends LinearOpMode {
                 }
             }
             //Used for testing purposes-turns a certain number of radians
-            if (gamepad1.right_bumper) {
-                //turn test
-                //drive.turnToInitialPosition();
-
-                /*
-                if(-Math.PI/4 < imu.getAngularOrientation().firstAngle && imu.getAngularOrientation().firstAngle < Math.PI/4){
-                    drive.turn(-Math.PI/1.3);
-                }else{
-                    drive.turn(Math.PI/1.3);
-                }
-
-                 */
-                drive.turn(Math.PI/1.15);
-            }
 
             /*
             if (gamepad1.right_bumper && uprighterToggle) {
@@ -356,14 +342,18 @@ public class UprighterTeleOp extends LinearOpMode {
                 uprighterToggle = false;
                 if (score.getUprighterPosition() == 0) {
                     constant.setHeightBottom(0);
+                    score.setUprighterPosition(0);
                 } else if (score.getUprighterPosition() == 1) {
                     constant.setHeightBottom(150);
+                    score.setUprighterPosition(1);
                 }
             }else if(!gamepad1.right_bumper){
                 uprighterToggle = true;
             }
 
              */
+
+
             if(gamepad1.dpad_left){
 
             }

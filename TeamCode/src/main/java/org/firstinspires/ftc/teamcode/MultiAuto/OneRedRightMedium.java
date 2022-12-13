@@ -60,7 +60,7 @@ public class OneRedRightMedium extends LinearOpMode {
 
         // Camera checks sleeve...stores parking location??
 
-        //TODO: Possibly change turns from encoder to IMU angles
+        //TODO: Possibly change turn45s from encoder to IMU angles
         //TODO: Work on auto for all the side (make different methods for each side?)
 
         liftThread = new Thread() {
@@ -81,7 +81,7 @@ public class OneRedRightMedium extends LinearOpMode {
         };
 
 
-        // code to turn servo of cam
+        // code to turn45 servo of cam
         score.setCamPosition(constants.getSleeveCamPos());
 
 //        // ftc dashboard
@@ -103,12 +103,12 @@ public class OneRedRightMedium extends LinearOpMode {
         score.goToPosition(50, 0.7);
         // go forward next to pole
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1380, 1410, 1410, 1450), "go forward");
-        // turn to left 45 degrees to medium pole
-        drive.turn(Math.PI / 4);
+        // turn45 to left 45 degrees to medium pole
+        drive.turn45(Math.PI / 4);
         // scoring cone
         scoreCone(291, 250, 212, 283);
-        // turn back straight
-        drive.turn(Math.PI / 5);
+        // turn45 back straight
+        drive.turn45(Math.PI / 5);
 
         //moves robot to correct parking position
         if (park.getPosition() == DetectionAlgorithmRight.ParkingPosition.LEFT) {
