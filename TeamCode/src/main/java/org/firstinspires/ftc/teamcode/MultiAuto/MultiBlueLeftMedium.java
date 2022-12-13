@@ -101,7 +101,6 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         // turn servo of cam forward for poles
         score.setCamPosition(constants.getStrafeCamPos());
 
-        sleep(200);
         if (toggle) {
             liftThread.start();
 
