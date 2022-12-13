@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,7 +17,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous
+@Autonomous @Config
 public class MultiBlueLeftMedium extends LinearOpMode {
     // instantiating
     Thread liftThread;
@@ -28,9 +29,10 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     AtomicBoolean cont;
 
     // ftc dashboard values + properCX
-    private double properCX = 141; //67
+    private double properCX = 169; //67
     public static int positive_negative = 1;
     public static int turnDenom = 4;
+    public static boolean toggle = false;
 
 
 
@@ -99,149 +101,156 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         // turn servo of cam forward for poles
         score.setCamPosition(constants.getStrafeCamPos());
 
-        liftThread.start();
+        if (toggle) {
+            liftThread.start();
 
-        //lift claw a little bit
-        score.goToPosition(50, 0.7);
-        sleep(200);
-        // go forward next to pole
-        drive.goToPositionPID(1060, "go forward next to pole");
-        // turn to left 45 degrees to medium pole
-        drive.turn(-Math.PI / 4);
-        // go to pole a bit
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, 90, "go forward some to pole");
-        sleep(100);
+            //lift claw a little bit
+            score.goToPosition(50, 0.7);
+            sleep(200);
+            // go forward next to pole
+            drive.goToPositionPID(1060, "go forward next to pole");
+            // turn to left 45 degrees to medium pole
+            drive.turn(-Math.PI / 4);
+            // go to pole a bit
+            drive.goToPosition(0.3, 0.3, 0.3, 0.3, 90, "go forward some to pole");
+            sleep(100);
 
-        boolean right = true;
-        boolean left = true;
+            boolean right = true;
+            boolean left = true;
 
-        // camera position correction
-        while (detect1.getcX() < properCX - 5 || detect1.getcX() > properCX + 5) {
-            telemetry.addData("success", "sucess");
-            telemetry.update();
-            if (detect1.getcX() < properCX - 5 && right) {
-                // strafe to the right
-//                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
-                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
-
-                telemetry.addData("success 1", "sucess");
+            // camera position correction
+            while (detect1.getcX() < properCX - 5 || detect1.getcX() > properCX + 5) {
+                telemetry.addData("success", "sucess");
                 telemetry.update();
-                right = false;
+                if (detect1.getcX() < properCX - 5 && right) {
+                    // strafe to the right
+                    //                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
+                    drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
+
+                    telemetry.addData("success 1", "sucess");
+                    telemetry.update();
+                    right = false;
+                }
+                if (detect1.getcX() > properCX + 5 && left) {
+                    // strafe to the left (change fr and bl)
+                    drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+
+                    //                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+
+                    telemetry.addData("success 2", "sucess");
+                    telemetry.update();
+                    left = false;
+                }
+                //            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
+                //                drive.goToPosition(0, 0, 0, 0);
+                //            }
             }
-            if(detect1.getcX() > properCX + 5 && left) {
-                // strafe to the left (change fr and bl)
-                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
 
-//                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+            drive.goToPosition(0, 0, 0, 0);
 
-                telemetry.addData("success 2", "sucess");
+            sleep(200);
+
+            scoreCone(438, 416, 437, 426);
+
+            // turn back straight
+            drive.turn(Math.PI / 4);
+            //moves robot to correct parking position
+            //        if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.LEFT) {
+            //            // move to left park (strafe right)
+            //            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1372, "move backwards");
+            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
+            //
+            //
+            //
+            //        } else if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.CENTER) {
+            //            // move to center park (don't move at all)
+            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
+            //
+            //        } else {
+            //            // move to right park (strafe more left)
+            //            drive.goToPosition(0.3, 0.3, 0.3, 0.3 , 1000, "move forward");
+            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
+            //
+            //
+            //        }
+
+
+            score.setClawPosition(constants.getClawOpenPos());
+
+
+            //go forward to blue cone tape adjacent mat
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(828, 856, 941, 926), "go forward to next mat");
+            // turn to tape/cones
+            drive.turn(Math.PI / 4);
+            drive.turn(Math.PI / 4);
+
+
+            // find tape, get cone
+            useColorSensor();
+
+
+    /*
+
+            // back up
+            drive.goToPosition(-0.4, -0.4, -0.4, -0.4, -284, "back up");
+
+
+            // turn 90 to the left
+            drive.turn(Math.PI / 2);
+            right = true;
+            left = true;
+
+            // camera position correction
+            while (detect1.getcX() < properCX - 5 || detect1.getcX() > properCX + 5) {
+                telemetry.addData("success", "sucess");
                 telemetry.update();
-                left = false;
+                if (detect1.getcX() < properCX - 5 && right) {
+                    // strafe to the right
+    //                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
+                    drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
+
+                    telemetry.addData("success 1", "sucess");
+                    telemetry.update();
+                    right = false;
+                }
+                if(detect1.getcX() > properCX + 5 && left) {
+                    // strafe to the left (change fr and bl)
+                    drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+
+    //                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+
+                    telemetry.addData("success 2", "sucess");
+                    telemetry.update();
+                    left = false;
+                }
+    //            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
+    //                drive.goToPosition(0, 0, 0, 0);
+    //            }
             }
-//            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
-//                drive.goToPosition(0, 0, 0, 0);
-//            }
+
+            drive.goToPosition(0, 0, 0, 0);
+            // scoring cone
+            scoreCone(184, 165, 163, 147);
+
+            //turn back toward cones
+            drive.turn(-Math.PI / 2);
+
+            //find tape, get cone
+            useColorSensor();
+
+
+
+     */
+        } else {
+            // turn to tape/cones
+            drive.turn(Math.PI / 4);
+            drive.turn(Math.PI / 4);
+
+
+            // find tape, get cone
+            useColorSensor();
+
         }
-
-        drive.goToPosition(0, 0, 0, 0);
-
-        sleep(200);
-
-        scoreCone(438, 416, 437, 426);
-
-        // turn back straight
-        drive.turn(Math.PI / 4);
-        //moves robot to correct parking position
-//        if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.LEFT) {
-//            // move to left park (strafe right)
-//            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1372, "move backwards");
-//            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
-//
-//
-//
-//        } else if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.CENTER) {
-//            // move to center park (don't move at all)
-//            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
-//
-//        } else {
-//            // move to right park (strafe more left)
-//            drive.goToPosition(0.3, 0.3, 0.3, 0.3 , 1000, "move forward");
-//            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
-//
-//
-//        }
-
-
-        score.setClawPosition(constants.getClawOpenPos());
-
-
-
-
-        //go forward to blue cone tape adjacent mat
-        drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(828, 856, 941, 926), "go forward to next mat");
-        // turn to tape/cones
-        drive.turn(Math.PI / 4);
-        drive.turn(Math.PI / 4);
-
-
-        // find tape, get cone
-        useColorSensor();
-
-        // stack height
-        score.goToPosition(constants.getStackHeight(), 0.8);
-        score.grabConeAuto();
-/*
-
-        // back up
-        drive.goToPosition(-0.4, -0.4, -0.4, -0.4, -284, "back up");
-
-
-        // turn 90 to the left
-        drive.turn(Math.PI / 2);
-        right = true;
-        left = true;
-
-        // camera position correction
-        while (detect1.getcX() < properCX - 5 || detect1.getcX() > properCX + 5) {
-            telemetry.addData("success", "sucess");
-            telemetry.update();
-            if (detect1.getcX() < properCX - 5 && right) {
-                // strafe to the right
-//                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
-                drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
-
-                telemetry.addData("success 1", "sucess");
-                telemetry.update();
-                right = false;
-            }
-            if(detect1.getcX() > properCX + 5 && left) {
-                // strafe to the left (change fr and bl)
-                drive.goToPosition(0.2, -0.2, -0.2, 0.2);
-
-//                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
-
-                telemetry.addData("success 2", "sucess");
-                telemetry.update();
-                left = false;
-            }
-//            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
-//                drive.goToPosition(0, 0, 0, 0);
-//            }
-        }
-
-        drive.goToPosition(0, 0, 0, 0);
-        // scoring cone
-        scoreCone(184, 165, 163, 147);
-
-        //turn back toward cones
-        drive.turn(-Math.PI / 2);
-
-        //find tape, get cone
-        useColorSensor();
-
-
-
- */
 
     }
 
@@ -255,8 +264,8 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         //3700 - 3800
         drive.goToPosition(0.15, 0.15, 0.15, 0.15);
         sleep(100);
-        while (detect1.getBoundArea() <= 9550.0 || detect1.getBoundArea() >= 10000) {
-            if (detect1.getBoundArea() >= 9600.0 && detect1.getBoundArea() <= 10000 && detect1.getDistance() <= 4/*|| detect1.getcX() <= 18*/) {
+        while (detect1.getBoundArea() <= 8000.0 || detect1.getBoundArea() >= 9600) {
+            if (detect1.getBoundArea() >= 8000.0 && detect1.getBoundArea() <= 9600 && detect1.getDistance() <= 6/*|| detect1.getcX() <= 18*/) {
                 drive.goToPosition(0, 0, 0, 0);
             }
 
@@ -278,13 +287,14 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl, fr, bl, br), "move back from pole");
         cont.set(false);
         //moves slides down
-        score.goToPosition(0, 0.3);
+        score.goToPosition(0, 0.6);
         sleep(300);
     }
 
     public void useColorSensor() {
         drive.findTape("blue");
-        score.goToPosition(174, 0.7);
+        score.goToPosition(constants.getStackHeight(), 0.7);
+
         score.grabConeAuto();
 
 
