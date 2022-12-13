@@ -751,9 +751,9 @@ public class MecanumDrive {
     public void findTape(String color) {
         if (color.equalsIgnoreCase("blue")) {
             goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
-            while (currentBlueColor() < 400) { //blue tape
+            while (currentBlueColor() < 150) { //blue tape
                 if (temp) {
-                    goToPosition(0.4, 0, 0, 0.4);
+                    goToPosition(0.3, 0, 0, 0.3);
 
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);

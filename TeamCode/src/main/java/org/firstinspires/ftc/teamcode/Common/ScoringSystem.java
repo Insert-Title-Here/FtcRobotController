@@ -4,7 +4,6 @@ import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -179,7 +178,7 @@ public class ScoringSystem {
     // auto version
     public void grabConeAuto() {
 
-        drive.goToPosition(0.4, 0.4, 0.4, 0.4);
+        drive.goToPosition(0.3, 0.3, 0.3, 0.3);
         while (temp) {
             if (colorCone.getDistance(DistanceUnit.CM) < 3) {
                 drive.goToPosition(0, 0, 0, 0);
