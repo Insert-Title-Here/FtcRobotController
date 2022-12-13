@@ -13,21 +13,23 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 
 
-@TeleOp (name = "KevinGodModeV2EpicLift")
-public class QuadMotorLift extends LinearOpMode {
+@TeleOp (name = "TryingToMakeTheIController")
+public class IControllerTeleOp extends LinearOpMode {
 
     Constants constants = new Constants();
     ScoringSystemV2EpicLift score;
     MecDrive drive;
 
+    public double currentTime, startTime, rightIntegralSum, leftIntegralSum, rightPreviousError, leftPreviousError, i;
+    //EndgameSystems systems;
 
     ColorRangeSensor distance, color;
 
     PassivePower passive;
 
-    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown;
+    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, setStartTime;
 
-    Thread liftThread, linkageThread;
+    Thread liftThread,/* capThread,*/ linkageThread;
 
     //Enums for feed forward
     public enum PassivePower{
@@ -70,6 +72,7 @@ public class QuadMotorLift extends LinearOpMode {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         color = hardwareMap.get(ColorRangeSensor.class, "color");
 
+        i = score.getI();
 
         //Color sensor gain values
         color.setGain(300);
@@ -96,7 +99,71 @@ public class QuadMotorLift extends LinearOpMode {
 
                     }else {
                         if(passive == PassivePower.EXTENDED){
-                            score.setPowerSingular(0.23);
+
+                            if(setStartTime){
+                                startTime = time.seconds();
+                                setStartTime = false;
+                            }
+
+                            currentTime = time.seconds();
+
+
+                            //TODO: check if we need to negate any
+
+                            int rightPos = -1 * score.getRightEncoderPos();
+                            int leftPos = score.getLeftEncoderPos();
+
+                            int rightError = score.getHeight() - rightPos;
+                            int leftError = score.getHeight() - leftPos;
+
+
+
+
+
+
+                            //TODO: check if we need to negate any
+
+
+                            rightIntegralSum += (50 * (rightError + rightPreviousError) * (currentTime - startTime));
+                            leftIntegralSum += (50 * (leftError + leftPreviousError) * (currentTime - startTime));
+
+
+
+
+                            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
+                            if (rightIntegralSum > 20000) {
+                                rightIntegralSum = 20000;
+                            } else if (rightIntegralSum < -20000) {
+                                rightIntegralSum = -20000;
+                            }
+
+                            if (leftIntegralSum > 20000) {
+                                leftIntegralSum = 20000;
+                            } else if (leftIntegralSum < -20000) {
+                                leftIntegralSum = -20000;
+                            }
+
+
+                            double rightDerivative = (rightError - rightPreviousError) / (currentTime - startTime);
+                            double leftDerivative = (leftError - leftPreviousError) / (currentTime - startTime);
+
+
+                            double rightPower = ((i * rightIntegralSum));
+                            double leftPower = ((i * leftIntegralSum));
+
+
+                            score.setPower(rightPower, leftPower);
+
+
+                            startTime = currentTime;
+                            rightPreviousError = rightError;
+                            leftPreviousError = leftError;
+
+
+                            telemetry.update();
+
+
+                            //score.setPowerSingular(0.23);
                         }else if(passive == PassivePower.ZERO){
                             score.setPower(0);
                         }
@@ -149,6 +216,7 @@ public class QuadMotorLift extends LinearOpMode {
 
                         //Not extended anymore
                         score.setExtended(false);
+                        setStartTime = true;
 
                         //Automated Grab
                     }else if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){

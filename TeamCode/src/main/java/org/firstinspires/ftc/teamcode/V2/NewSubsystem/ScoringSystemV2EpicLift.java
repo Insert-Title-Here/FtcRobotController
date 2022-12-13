@@ -194,13 +194,17 @@ public class ScoringSystemV2EpicLift {
         return height;
     }
 
+    public double getI(){
+        return pidf.i;
+    }
+
 
     //TODO: Fix this
     public int getHeight(){
        if(height == ScoringMode.HIGH){
-           return 1400;
+           return 1350;
        }else if(height == ScoringMode.MEDIUM){
-           return 1000;
+           return 750;
        }else if(height == ScoringMode.LOW){
            return 250;
        }
