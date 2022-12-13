@@ -27,8 +27,12 @@ public class PIDFTestingLift extends LinearOpMode {
     ScoringSystemV2EpicLift score;
     Constants constants;
 
+    public static boolean pid = true;
+
+
+
     public static int target = 300;
-    public static double p = 0, i = 0, d = 0;
+    public static double p = 0.0076, i = 0, d = 0.00025;
 
     int rightPreviousError = 0;
     int leftPreviousError = 0;
@@ -56,7 +60,7 @@ public class PIDFTestingLift extends LinearOpMode {
 
 
 
-
+        boolean thing = true;
         waitForStart();
         startTime = time.seconds();
 
@@ -80,12 +84,33 @@ public class PIDFTestingLift extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            newLiftPID(target);
+            if(pid) {
+
+                newLiftPID(target);
+                thing = true;
+            }else{
 
 
+
+                if(thing){
+                    rightIntegralSum = 0;
+                    leftIntegralSum = 0;
+                    leftPreviousError = 0;
+                    rightPreviousError = 0;
+                    thing = false;
+                }
+                newLiftID(target);
+            }
+
+            telemetry.addData("rightIntegral", rightIntegralSum);
+            telemetry.addData("leftIntegral",leftIntegralSum);
             telemetry.addData("rightPos", -1 * score.getRightEncoderPos());
             telemetry.addData("leftPos", score.getLeftEncoderPos());
-            telemetry.addData("target", target);
+
+
+
+
+
 
             telemetry.update();
 
@@ -111,8 +136,55 @@ public class PIDFTestingLift extends LinearOpMode {
         //TODO: check if we need to negate any
 
 
-        rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
-        leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
+
+
+
+        double rightDerivative = (rightError - rightPreviousError) / (currentTime - startTime);
+        double leftDerivative = (leftError - leftPreviousError) / (currentTime - startTime);
+
+
+        double rightPower = ((p * rightError) + (d * rightDerivative));
+        double leftPower = ((p * leftError)+ (d * leftDerivative));
+
+
+        score.setPower(rightPower, leftPower);
+
+
+        startTime = currentTime;
+        rightPreviousError = rightError;
+        leftPreviousError = leftError;
+
+
+        telemetry.update();
+
+
+    }
+
+
+    public void newLiftID(int tics) {
+        currentTime = time.seconds();
+
+
+        //TODO: check if we need to negate any
+
+        int rightPos = -1 * score.getRightEncoderPos();
+        int leftPos = score.getLeftEncoderPos();
+
+        int rightError = tics - rightPos;
+        int leftError = tics - leftPos;
+
+
+
+
+
+
+        //TODO: check if we need to negate any
+
+
+        rightIntegralSum += (50 * (rightError + rightPreviousError) * (currentTime - startTime));
+        leftIntegralSum += (50 * (leftError + leftPreviousError) * (currentTime - startTime));
+
+
 
 
         //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
@@ -133,8 +205,8 @@ public class PIDFTestingLift extends LinearOpMode {
         double leftDerivative = (leftError - leftPreviousError) / (currentTime - startTime);
 
 
-        double rightPower = ((p * rightError) + (i * rightIntegralSum) + (d * rightDerivative));
-        double leftPower = ((p * leftError) + (i * leftIntegralSum) + (d * leftDerivative));
+        double rightPower = ((i * rightIntegralSum));
+        double leftPower = ((i * leftIntegralSum));
 
 
         score.setPower(rightPower, leftPower);

@@ -82,9 +82,9 @@ public class QuadMotorLift extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         //score.setPower(0.2);
                         if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
-                            score.autoGoToPosition();
+                            score.epicAutoGoToPosition();
 
-                            score.setLinkagePosition(constants.linkageScoreV2 - 0.03);
+                            score.setLinkagePosition(constants.linkageScoreV2 - 0.05);
                             passive = PassivePower.EXTENDED;
                         }else{
                             score.setLinkagePosition(0.15);
@@ -92,7 +92,66 @@ public class QuadMotorLift extends LinearOpMode {
 
                     }else {
                         if(passive == PassivePower.EXTENDED){
-                            score.setPowerSingular(0.23);
+                            
+                            currentTime = time.seconds();
+
+
+                            //TODO: check if we need to negate any
+
+                            int rightPos = -1 * score.getRightEncoderPos();
+                            int leftPos = score.getLeftEncoderPos();
+
+                            int rightError = tics - rightPos;
+                            int leftError = tics - leftPos;
+
+
+
+
+
+
+                            //TODO: check if we need to negate any
+
+
+                            rightIntegralSum += (50 * (rightError + rightPreviousError) * (currentTime - startTime));
+                            leftIntegralSum += (50 * (leftError + leftPreviousError) * (currentTime - startTime));
+
+
+
+
+                            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
+                            if (rightIntegralSum > 20000) {
+                                rightIntegralSum = 20000;
+                            } else if (rightIntegralSum < -20000) {
+                                rightIntegralSum = -20000;
+                            }
+
+                            if (leftIntegralSum > 20000) {
+                                leftIntegralSum = 20000;
+                            } else if (leftIntegralSum < -20000) {
+                                leftIntegralSum = -20000;
+                            }
+
+
+                            double rightDerivative = (rightError - rightPreviousError) / (currentTime - startTime);
+                            double leftDerivative = (leftError - leftPreviousError) / (currentTime - startTime);
+
+
+                            double rightPower = ((i * rightIntegralSum));
+                            double leftPower = ((i * leftIntegralSum));
+
+
+                            score.setPower(rightPower, leftPower);
+
+
+                            startTime = currentTime;
+                            rightPreviousError = rightError;
+                            leftPreviousError = leftError;
+
+
+                            telemetry.update();
+
+
+                            //score.setPowerSingular(0.23);
                         }else if(passive == PassivePower.ZERO){
                             score.setPower(0);
                         }
@@ -105,19 +164,6 @@ public class QuadMotorLift extends LinearOpMode {
                         if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
                             score.setGrabberPosition(constants.score);
 
-                        /*//Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
-                        if(score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW && score.isExtended()) {
-                            try {
-                                sleep(500);
-                            } catch (InterruptedException e) {
-
-                            }
-                            //passive = PassivePower.ZERO;
-                            //score.moveToPosition(constants.lowOperation, 1);
-                            //passive = PassivePower.EXTENDED;
-
-                        }
-*/
                             try {
                                 sleep(600);
                             } catch (InterruptedException e) {
@@ -160,32 +206,18 @@ public class QuadMotorLift extends LinearOpMode {
                         score.setExtended(false);
 
                         //Automated Grab
-                    }else if((distance.getDistance(DistanceUnit.CM) < 2) && grabFlag) {
+                    }else if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
+
+
                         score.setGrabberPosition(constants.grabbing);
 
                         grabFlag = false;
+
                         try {
-                            sleep(200);
+                            Thread.currentThread().sleep(150);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-
-
-
-                    }
-
-
-                    //TODO: see if need to fix this logic
-                    //Auto linkage up logic after sensing a cone
-                    if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
-
-                        try {
-                            sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        score.setGrabberPosition(constants.grabbing);
 
                         if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA){
                             try {
@@ -198,23 +230,29 @@ public class QuadMotorLift extends LinearOpMode {
                         linkageUp = true;
                         autoLinkageFlag = false;
 
-                        //Goes up automatically if in ultra mode
 
-                        /*if(score.getScoringMode() == ScoringSystemV2.ScoringMode.ULTRA){
-                            score.autoGoToPosition();
-                            //score.setPower(0.2);
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                            score.setLinkagePosition(constants.linkageScoreV2 - 0.02);
-                            passive = PassivePower.EXTENDED;
-
-
-                        }*/
                     }
+
+
+                    /*else if((distance.getDistance(DistanceUnit.CM) < 2) && grabFlag) {
+                        score.setGrabberPosition(constants.grabbing);
+
+                        grabFlag = false;
+                        try {
+                            sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                    }
+                    */
+
+
+                    //TODO: see if need to fix this logic
+                    //Auto linkage up logic after sensing a cone
+
 
                     //TODO: tune this (both raise and lower)
                     //Linkage stack cone heights with dpad up and down
@@ -248,7 +286,7 @@ public class QuadMotorLift extends LinearOpMode {
 
                     //Linkage up position
                     if(gamepad1.left_stick_button){
-                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.03);
+                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
 
                     }
 
@@ -390,7 +428,7 @@ public class QuadMotorLift extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.03);
+                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
                         linkageUp = false;
                     }else if(linkageDown) {
 

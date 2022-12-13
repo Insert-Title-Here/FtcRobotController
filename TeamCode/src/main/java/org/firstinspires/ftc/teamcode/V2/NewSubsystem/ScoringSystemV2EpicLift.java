@@ -22,7 +22,7 @@ public class ScoringSystemV2EpicLift {
     Constants constants;
     private int coneStack;
     Telemetry telemetry;
-    PIDCoefficients pidf = new PIDCoefficients(0, 0, 0);
+    PIDCoefficients pidf = new PIDCoefficients(0.0076, 0.0000275, 0.00025);
 
 
 
@@ -251,6 +251,22 @@ public class ScoringSystemV2EpicLift {
 
         }else if(height == ScoringMode.LOW){
             moveToPosition(150, 1);
+
+        }
+
+        extended = true;
+    }
+
+    public void epicAutoGoToPosition(){
+        if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
+            newLiftPID(1350);
+
+        }else if(height == ScoringMode.MEDIUM){
+            newLiftPID(750);
+
+
+        }else if(height == ScoringMode.LOW){
+            newLiftPID(250);
 
         }
 
@@ -792,7 +808,9 @@ public class ScoringSystemV2EpicLift {
     }
 
 
-    public void newLiftPID(int tics, double power, MecDriveV2.MovementType movement){
+    public void newLiftPID(int tics){
+
+
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double actualStartTime = startTime;
@@ -801,21 +819,20 @@ public class ScoringSystemV2EpicLift {
 
         //TODO: check if we need to negate any
 
-        int rightPos = - 1 * getRightEncoderPos();
+        int rightPos = -1 * getRightEncoderPos();
         int leftPos = getLeftEncoderPos();
 
         int rightError = tics - rightPos;
         int leftError = tics - leftPos;
 
-        int rightPreviousError = rightError;
-        int leftPreviousError = leftError;
+        int rightPreviousError = 0;
+        int leftPreviousError = 0;
 
         int rightIntegralSum = 0;
         int leftIntegralSum = 0;
 
-
         while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < 1.5){
-            telemetry.addData("target", tics);
+            //telemetry.addData("target", tics);
 
 
             //TODO: check if we need to negate any
@@ -824,23 +841,23 @@ public class ScoringSystemV2EpicLift {
             leftPos = getLeftEncoderPos();
 
 
-            telemetry.addData("rightPos", rightPos);
-            telemetry.addData("leftPos", leftPos);
+            //telemetry.addData("rightPos", rightPos);
+            //telemetry.addData("leftPos", leftPos);
 
             rightError = tics - rightPos;
             leftError = tics - leftPos;
 
             double currentTime = time.seconds();
 
-            telemetry.addData("rightError", rightError);
-            telemetry.addData("leftError", leftError);
+            //telemetry.addData("rightError", rightError);
+            //telemetry.addData("leftError", leftError);
 
 
             rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
             leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
 
-            telemetry.addData("rightIntegralSum", rightIntegralSum);
-            telemetry.addData("leftIntegralSum", leftIntegralSum);
+            //telemetry.addData("rightIntegralSum", rightIntegralSum);
+            //telemetry.addData("leftIntegralSum", leftIntegralSum);
 
 
 
@@ -862,21 +879,15 @@ public class ScoringSystemV2EpicLift {
             double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
             double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
 
-            telemetry.addData("rightDerivative", rightDerivative);
-            telemetry.addData("leftDerivative", leftDerivative);
+            //telemetry.addData("rightDerivative", rightDerivative);
+            //telemetry.addData("leftDerivative", leftDerivative);
 
             double rightPower = ((pidf.p * rightError) + (pidf.i * rightIntegralSum) + (pidf.d * rightDerivative));
             double leftPower = ((pidf.p * leftError) + (pidf.i * leftIntegralSum) + (pidf.d * leftDerivative));
 
 
-
-
-
-            telemetry.addData("rightError", rightError);
-            telemetry.addData("leftError", leftError);
-
-
-
+            //telemetry.addData("rightError", rightError);
+            //telemetry.addData("leftError", leftError);
 
             setPower(rightPower, leftPower);
 
@@ -886,7 +897,7 @@ public class ScoringSystemV2EpicLift {
             leftPreviousError = leftError;
 
 
-            telemetry.update();
+            //telemetry.update();
 
 
         }
