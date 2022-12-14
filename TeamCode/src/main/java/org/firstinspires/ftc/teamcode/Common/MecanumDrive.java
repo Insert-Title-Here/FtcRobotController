@@ -92,6 +92,7 @@ public class MecanumDrive {
 
     */
 
+    public double getAngularOrientation() { return imu.getAngularOrientation().firstAngle;}
     public int getFLPosition() {
         return fl.getCurrentPosition();
     }
@@ -568,22 +569,19 @@ public class MecanumDrive {
     }
 
     // TODO: Needs Testing and more work
-    public void turnToInitialPosition(double radians) {
-        boolean over = true;
+    public void turn(double radians) {
         double rad = radians;
-        if (rad > 0.04 || rad < -0.04) {
-            // Absolute turning
-            while ((Math.abs(imu.getAngularOrientation().firstAngle)) > 0.005 && over) {
-                double currentRadians = imu.getAngularOrientation().firstAngle;
-                if (0 < currentRadians) {
-                    //turn right # of radians
-                    setPower(0.2, -0.2, 0.2, -0.2);
-                } else if (currentRadians < 0) {
-                    //turn left # of radians
-                    setPower(-0.2, 0.2, -0.2, 0.2);
-                } else {
-                    over = false;
-                }
+        // Absolute turning
+        while (Math.abs(imu.getAngularOrientation().firstAngle-radians) > 0.08) {
+            double currentRadians = imu.getAngularOrientation().firstAngle;
+            if (radians < currentRadians) {
+                //turn right # of radians
+                setPower(0.15, -0.15, 0.15, -0.15);
+            } else if (currentRadians < radians) {
+                //turn left # of radians
+                setPower(-0.15, 0.15, -0.15, 0.15);
+            } else {
+               break;
             }
         }
     }
@@ -626,7 +624,7 @@ public class MecanumDrive {
         loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
          */
 
-        double proportionCoefficient = 0.6;//0.6
+        double proportionCoefficient = 0.55;//0.6
         double integralCoefficient = 0;
         double derivativeCoefficient = 0.3;//0.3
 
@@ -771,6 +769,33 @@ public class MecanumDrive {
             while (currentRedColor() < 195) { //red tape
                 if (temp) {
                     goToPosition(0, 0.4, 0.4, 0);
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        }
+        goToPosition(0,0,0,0);
+    }
+    // special method for after the 1+1 auto (finding tape is different)
+    public void findTapeMulti(String color) {
+        if (color.equalsIgnoreCase("blue")) {
+            while (currentBlueColor() < 150) { //blue tape
+                if (temp) {
+                    goToPosition(0.3, -0.3, -0.3, 0.3);
+
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        } else if (color.equalsIgnoreCase("red")) {
+            goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
+            while (currentRedColor() < 195) { //red tape
+                if (temp) {
+                    goToPosition(-0.3, 0.3, 0.3, -0.3);
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;

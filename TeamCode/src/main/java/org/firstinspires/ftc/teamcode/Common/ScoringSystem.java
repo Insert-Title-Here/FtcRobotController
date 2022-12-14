@@ -140,7 +140,7 @@ public class ScoringSystem {
     }
     // Uses color sensor to grab cone
     public boolean grabCone() throws InterruptedException {
-        if (colorCone.getDistance(DistanceUnit.CM) < 0.9) {
+        if (colorCone.getDistance(DistanceUnit.CM) < 3) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
             sleep(500);
@@ -156,7 +156,7 @@ public class ScoringSystem {
     //uses color sensor to grab cone(this one is used when trying to grab from the stack of 5 cones
     // tele version
     public boolean grabCone(boolean stack) throws InterruptedException {
-        if (colorCone.getDistance(DistanceUnit.CM) < 1) {
+        if (colorCone.getDistance(DistanceUnit.CM) < 3) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
             sleep(500);
@@ -180,17 +180,17 @@ public class ScoringSystem {
 
         drive.goToPosition(0.3, 0.3, 0.3, 0.3);
         while (temp) {
-            if (colorCone.getDistance(DistanceUnit.CM) < 3) {
+            if (colorCone.getDistance(DistanceUnit.CM) < 4) {
                 drive.goToPosition(0, 0, 0, 0);
                 // grab cone
                 setClawPosition(constant.getClawClosePos());
                 try {
-                    sleep(100);
+                    sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 // lift up
-                goToPosition(getEncoderPosition() + 50, 0.8);
+                goToPosition(getEncoderPosition() + 200, 0.8);
 
                 telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
                 telemetry.update();
