@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
 import org.firstinspires.ftc.teamcode.Common.Constants;
@@ -20,7 +17,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @TeleOp //@Config
 // This teleop does not contain the colorsensor code
@@ -306,38 +302,41 @@ public class MainTeleOp extends LinearOpMode {
                         }
 
                     }
-                }
+                    //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
+                    double gamepadX = gamepad1.left_stick_x;
+                    double gamepadY = gamepad1.left_stick_y;
+                    if(Math.abs(gamepadX) < Math.abs(gamepadY)){
+                        gamepadX = 0;
+                    }else if(Math.abs(gamepadX) > Math.abs(gamepadY)){
+                        gamepadY = 0;
+                    }else{
+                        gamepadX = 0;
+                        gamepadY = 0;
+                    }
+                    //robot movement(using controls/gamepads) with sprint mode
+                    //if(!isTurning) {
+                        if (gamepad1.left_stick_button) { // replace this with a button for sprint
+                            drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+                        } else {
+                            if (score.getEncoderPosition() > 500) {
+                                drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
+                            } else {
+                                drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                            }
+                        }
+                    }
+                //}
             }
         };
-        score.setClawPosition(0);
+        score.setClawPosition(constant.getClawOpenPos());
         score.setScoreBoolean(true, false, false);
+        telemetry.addData("status", "initialized");
+        telemetry.update();
         waitForStart();
         liftThread.start();
         imuThread.start();
         while(opModeIsActive()){
-            //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
-            double gamepadX = gamepad1.left_stick_x;
-            double gamepadY = gamepad1.left_stick_y;
-            if(Math.abs(gamepadX) < Math.abs(gamepadY)){
-                gamepadX = 0;
-            }else if(Math.abs(gamepadX) > Math.abs(gamepadY)){
-                gamepadY = 0;
-            }else{
-                gamepadX = 0;
-                gamepadY = 0;
-            }
-            //robot movement(using controls/gamepads) with sprint mode
-            if(!isTurning) {
-                if (gamepad1.left_stick_button) { // replace this with a button for sprint
-                    drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-                } else {
-                    if (score.getEncoderPosition() > 500) {
-                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
-                    } else {
-                        drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
-                    }
-                }
-            }
+
             //Sets the booleans for which pole to go to for lifts system
             if (gamepad1.a) {
                 //high cone

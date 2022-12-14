@@ -4,14 +4,14 @@ public class Constants {
     //TODO: Edit values
     private int heightTrueLimit = 1814;
     private int heightLimit = 1720;
-    private int heightHigh = 1688;
-    private int heightMed = 1228;
-    private int heightLow = 750;
+    private int heightHigh = 1665;
+    private int heightMed = 1225;
+    private int heightLow = 728;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.3;
     private double clawClosePos = 0.41; // was 0.38 for old design
     private double clawHighThreshold = 0.48;
-    private int stackHeight = 220;
+    private int stackHeight = 210;
     private double steadyPow = 0.12;
     private int stackIntervalHeight = 50;
     private int heightBottom = 5;
