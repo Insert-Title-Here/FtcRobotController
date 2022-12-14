@@ -603,7 +603,6 @@ public class MecanumDrive {
         loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
         loggingString += "proportionPower: " + getAccumulatedError() * integralCoefficient + "   ";
         loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
-
          */
 
         double proportionCoefficient = 0.845;//0.845
@@ -625,7 +624,6 @@ public class MecanumDrive {
         loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
         loggingString += "proportionPower: " + getAccumulatedError() * integralCoefficient + "   ";
         loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
-
          */
 
         double proportionCoefficient = 0.6;//0.6
@@ -634,11 +632,10 @@ public class MecanumDrive {
 
         error = currentError;
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
-
     }
 
-    //Outputs the value of the power used in them method turn90()
-    //You "plug" in the values for turn90() PID here
+    //Outputs the value of the power used in the method turn180()
+    //You "plug" in the values for turn180() PID here
     public double PIDTurnPower180(double priorError, double currentError, double timeChange) {
          /*
         loggingString += "PriorAngleError: " + priorError + "   ";
@@ -658,24 +655,30 @@ public class MecanumDrive {
 
     }
 
-    //TODO: Needs reworking
-    //Outputs the value of the power used in them method turn180()
-    //You "plug" in the values for turn180() PID here
+    //TODO: Possibly needs reworking
+    //Outputs the value of the power used in the method gotoPositionPID()
+    //You "plug" in the values for gotoPositionPID() here
     public double PIDDrivePower(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.35;//0.35
-        double integralCoefficient =0 ;
-        double derivativeCoefficient = 0.0011;//0.0011
-        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+          /*
         loggingString += "PriorError: " + priorError + "   ";
         loggingString += "CurrentError: " + currentError + "   ";
         loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
         loggingString += "proportionPower: " + currentError * proportionCoefficient+ "   ";
         loggingString += "integralPower: " + getAccumulatedError() * integralCoefficient + "   ";
         loggingString += "DrivePower: " + totalPower + "\n";
+         */
+
+        double proportionCoefficient = 0.35;//0.35
+        double integralCoefficient = 0;
+        double derivativeCoefficient = 0.0011;//0.0011
+        double totalPower = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+
         error = currentError;
         return totalPower;
     }
 
+    //Outputs the value of the front power used in the method goToPositionFBPID()
+    //You "plug" in the values for goToPositionFBPID() here
     public double frontPow(double priorError, double currentError, double timeChange){
         double proportionCoefficient = 0.001;
         double integralCoefficient = 0;
@@ -683,6 +686,9 @@ public class MecanumDrive {
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
 
     }
+
+    //Outputs the value of the back power used in the method goToPositionFBPID()
+    //You "plug" in the values for goToPositionFBPID() here
     public double backPow(double priorError, double currentError, double timeChange){
         double proportionCoefficient = 0.001;
         double integralCoefficient = 0;
@@ -690,15 +696,13 @@ public class MecanumDrive {
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
 
     }
-    //TODO
-    //used for robot not moving straight
-    public double additionalPow(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.1;
-        double integralCoefficient = 0;
-        double derivativeCoefficient = 0.06;
-        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
 
-    }
+    /*
+
+  Color Sensor / Distance Sensor code for claw / Miscellaneous helper methods
+
+   */
+
     public double getError(){
         return error;
     }
@@ -721,13 +725,11 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     // returns the power of a mecanum wheel
     public double getPower(){
         return fl.getPower();
     }
-
-
-
 
     // logs string into file
     public void writeLoggerToFile(){
@@ -738,14 +740,17 @@ public class MecanumDrive {
             e.printStackTrace();
         }
     }
+
     // for color sensor, returns the blue color
     public int currentBlueColor() {
         return colorTape.blue(); // if current color is really high // 410
     }
+
     // for color sensor, returns the blue colo
     public int currentRedColor() {
         return colorTape.red(); // if current color is really high // 177
     }
+
     boolean temp = true;
     //checks if the color sensor identifies tape color
     public void findTape(String color) {
@@ -783,8 +788,6 @@ public class MecanumDrive {
             // strafe diagonal left
             //goToPosition(0.4, 0, 0, 0.4);
 
-
-
         }
     }
     public double angleWrap(double radians){
@@ -796,6 +799,7 @@ public class MecanumDrive {
         }
         return radians;
     }
+
     // returns the average tics for mecanum wheels
     public int avgPosition(){
         return (int)(Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition()))/4;
