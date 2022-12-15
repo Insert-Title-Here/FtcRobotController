@@ -29,8 +29,8 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     AtomicBoolean cont;
 
     // ftc dashboard values + properCX
-    private double properCX = 169; //67
-    private double properCXLow = 145;
+    private double properCX = 187; //67
+    private double properCXLow = 171;
     public static int positive_negative = 1;
     public static int turnDenom = 4;
     public static boolean toggle = false;
@@ -77,9 +77,8 @@ public class MultiBlueLeftMedium extends LinearOpMode {
                     }
 
 //
-//                    telemetry.addData("liftPow", score.getPower());
-//                    telemetry.addData("liftPos", score.getEncoderPosition());
-//                    telemetry.update();
+                 telemetry.addData("imu", drive.currentAngle());
+                   telemetry.update();
                 }
 
             }
@@ -96,17 +95,17 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         telemetry.update();
 
         //close claw
-        score.setClawPosition(constants.getClawOpenPos()); //TODO
+        score.setClawPosition(constants.getClawClosePos()); //TODO
 
         // turn servo of cam forward for poles
-        score.setCamPosition(constants.getSleeveCamPos());
+        score.setCamPosition(constants.getStrafeMedCamPos());
+
 
         waitForStart();
         liftThread.start();
         //detect1.park = false;
 
-        // turn servo of cam forward for poles
-        score.setCamPosition(constants.getStrafeCamPos());
+
 
         if (toggle) {
 
@@ -186,13 +185,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
             //go forward to blue cone tape adjacent mat
             drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(828, 856, 941, 926), "go forward to next mat");
-            // turn to tape/cones
-            drive.turn45(Math.PI / 4);
-            drive.turn45(Math.PI / 4);
 
-
-            // find tape, get cone
-            useColorSensor();
 
 
     /*
@@ -249,8 +242,95 @@ public class MultiBlueLeftMedium extends LinearOpMode {
      */
         } else {
             cont.set(true);
+            //lift claw a little bit
+            score.goToPosition(50, 0.8);
+            sleep(100);
+            // go forward next to pole
+            drive.goToPositionPID(1060, "go forward next to pole");
+            // turn to left 45 degrees to medium pole
+            drive.turn45(-Math.PI / 4);
+            // go to pole a bit
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 90, "go forward some to pole");
+            sleep(50);
+
+            boolean right = true;
+            boolean left = true;
+
+            // camera position correction
+            while (detect1.getcX() < properCX - 5 || detect1.getcX() > properCX + 5) {
+                telemetry.addData("success", "sucess");
+                telemetry.update();
+                if (detect1.getcX() < properCX - 5 && right) {
+                    // strafe to the right
+                    //                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
+                    drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
+
+                    telemetry.addData("success 1", "sucess");
+                    telemetry.update();
+                    right = false;
+                }
+                if (detect1.getcX() > properCX + 5 && left) {
+                    // strafe to the left (change fr and bl)
+                    drive.goToPosition(0.2, -0.2, -0.2, 0.2);
+
+                    //                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+
+                    telemetry.addData("success 2", "sucess");
+                    telemetry.update();
+                    left = false;
+                }
+                //            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
+                //                drive.goToPosition(0, 0, 0, 0);
+                //            }
+            }
+
+            drive.goToPosition(0, 0, 0, 0);
+
+
+            scoreConeMed(438, 416, 437, 426);
+
+            // turn back straight
+            drive.turn45(Math.PI / 4);
+            //moves robot to correct parking position
+            //        if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.LEFT) {
+            //            // move to left park (strafe right)
+            //            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1372, "move backwards");
+            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
+            //
+            //
+            //
+            //        } else if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.CENTER) {
+            //            // move to center park (don't move at all)
+            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
+            //
+            //        } else {
+            //            // move to right park (strafe more left)
+            //            drive.goToPosition(0.3, 0.3, 0.3, 0.3 , 1000, "move forward");
+            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
+            //
+            //
+            //        }
+
+
             score.setClawPosition(constants.getClawOpenPos());
-            score.setCamPosition(constants.getSleeveCamPos());
+
+
+            //go forward to blue cone tape adjacent mat
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4, drive.avgPosition(828, 856, 941, 926), "go forward to next mat");
+
+
+
+
+            // +'s ---------------------------------------->
+
+
+
+
+
+
+
+            score.setClawPosition(constants.getClawOpenPos());
+            score.setCamPosition(constants.getStrafeLowCamPos());
             // turn to tape/cones
             drive.turn90(Math.PI / 2);
 
@@ -259,13 +339,15 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
             // find tape, get cone
             useColorSensor();
-            sleep(200);
-            drive.goToPosition(-0.5, -0.5, -0.5, -0.5, 400, "go backwards");
+            sleep(50);
+            drive.goToPosition(-0.5, -0.5, -0.5, -0.5, 500, "go backwards");
 
             drive.turn90(Math.PI / 2);
+            score.goToPosition(constants.getHeightLow(), 0.85);
 
-            boolean right = true;
-            boolean left = true;
+            sleep(50);
+            right = true;
+            left = true;
 
             // camera position correction
             while (detect1.getcX() < properCXLow - 5 || detect1.getcX() > properCXLow + 5) {
@@ -297,11 +379,11 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
             drive.goToPosition(0, 0, 0, 0);
 
-            scoreConeLow(100, 100, 100, 100);
-
-            sleep(100);
+            scoreConeLow(150, 150, 150, 150);
 
 
+
+            drive.resetIMU();
 
 
             //next cone ------------------------------------------------------>
@@ -314,17 +396,20 @@ public class MultiBlueLeftMedium extends LinearOpMode {
             drive.findTapeMulti("blue");
             //makes sure actually turned 90 degrees
             if(Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.15){
-                drive.turn(Math.PI/2);
+                drive.turn(-Math.PI/2);
             }
 
-            score.goToPosition(constants.getStackHeight()-5, 0.7);
+            score.goToPosition(constants.getStackHeight()-constants.getStackIntervalHeight(), 0.7);
 
             score.grabConeAuto();
 
-            sleep(200);
-            drive.goToPosition(-0.5, -0.5, -0.5, -0.5, 400, "go backwards");
+            sleep(100);
+            drive.goToPosition(-0.5, -0.5, -0.5, -0.5, 500, "go backwards");
 
             drive.turn90(Math.PI / 2);
+
+            score.goToPosition(constants.getHeightLow(), 0.85);
+            sleep(50);
 
             right = true;
             left = true;
@@ -359,9 +444,9 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
             drive.goToPosition(0, 0, 0, 0);
 
-            scoreConeLow(100, 100, 100, 100);
+            scoreConeLow(150, 150, 150, 150);
 
-            sleep(200);
+            sleep(50);
 
         }
 
@@ -400,7 +485,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl, fr, bl, br), "move back from pole");
         //moves slides down
         score.goToPosition(0, 0.6);
-        sleep(300);
+        sleep(100);
     }
 
     public void scoreConeLow(int fl, int fr, int bl, int br) {
@@ -410,11 +495,12 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         //begin thread for maintaining height of slides
 
 
+
         //3700 - 3800
         drive.goToPosition(0.15, 0.15, 0.15, 0.15);
         sleep(100);
-        while (detect1.getBoundArea() <= 10000.0 || detect1.getBoundArea() >= 11500) {
-            if (detect1.getBoundArea() >= 10000.0 && detect1.getBoundArea() <= 11500 && detect1.getDistance() <= 5/*|| detect1.getcX() <= 18*/) {
+        while (detect1.getBoundArea() <= 8500.0 || detect1.getBoundArea() >= 10000) {
+            if (detect1.getBoundArea() >= 8500.0 && detect1.getBoundArea() <= 10000 && detect1.getDistance() <= 4.2/*|| detect1.getcX() <= 18*/) {
                 drive.goToPosition(0, 0, 0, 0);
             }
 
@@ -436,7 +522,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl, fr, bl, br), "move back from pole");
         //moves slides down
         score.goToPosition(0, 0.6);
-        sleep(300);
+        sleep(100);
     }
 
     public void useColorSensor() {
@@ -446,7 +532,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
             drive.turn(Math.PI/2);
         }
 
-        score.goToPosition(constants.getStackHeight()-5, 0.7);
+        score.goToPosition(constants.getStackHeight()+15, 0.7);
 
         score.grabConeAuto();
 

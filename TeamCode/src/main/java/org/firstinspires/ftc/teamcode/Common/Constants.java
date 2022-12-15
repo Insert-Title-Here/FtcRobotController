@@ -15,9 +15,10 @@ public class Constants {
     private double steadyPow = 0.12;
     private int stackIntervalHeight = 50;
     private int heightBottom = 5;
-    private double sleeveCamPos = 0.4;
-    private double straightCamPos = 0.5;
-    private double strafeCamPos = 0.6;
+    private double sleeveCamPos = 0.55;
+    private double straightCamPos = 0.65;
+    private double strafeMedCamPos = 0.75;
+    private double strafeLowCamPos = 0.51;
     //TODO: add comments
     public double getClawOpenPos(){
         return clawOpenPos;
@@ -64,11 +65,15 @@ public class Constants {
     public double getSleeveCamPos() {
         return sleeveCamPos;
     }
-    public double getStrafeCamPos() {
-        return strafeCamPos;
+    public double getStrafeMedCamPos() {
+        return strafeMedCamPos;
     }
     public double getStraightCamPos() {
         return straightCamPos;
+    }
+
+    public double getStrafeLowCamPos() {
+        return strafeLowCamPos;
     }
 }
 

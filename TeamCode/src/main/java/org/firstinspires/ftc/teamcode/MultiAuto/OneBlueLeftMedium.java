@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -85,9 +86,9 @@ public class OneBlueLeftMedium extends LinearOpMode {
         // code to turn45 servo of cam
         score.setCamPosition(constants.getSleeveCamPos());
 
-//        // ftc dashboard
-//        FtcDashboard.getInstance().startCameraStream(webcam, 0);
-//        telemetry.addData("Status", "Initialized");
+        // ftc dashboard
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+        telemetry.addData("Status", "Initialized");
 
         telemetry.update();
 

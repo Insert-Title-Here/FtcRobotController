@@ -48,6 +48,7 @@ public class MecanumDrive {
         colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
         accumulatedError = 0;
 
+        colorTape.setGain(100);
         //initiallises drive motors
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -740,21 +741,23 @@ public class MecanumDrive {
     }
 
     // for color sensor, returns the blue color
-    public int currentBlueColor() {
-        return colorTape.blue(); // if current color is really high // 410
+    public double currentBlueColor() {
+
+        return Math.round(colorTape.getNormalizedColors().blue * 100.0) / 100.0; // if current color is really high // 410
     }
 
     // for color sensor, returns the blue colo
-    public int currentRedColor() {
-        return colorTape.red(); // if current color is really high // 177
+    public double currentRedColor() {
+        return Math.round(colorTape.getNormalizedColors().red * 100.0) / 100.0; // if current color is really high // 410
     }
 
-    boolean temp = true;
+
     //checks if the color sensor identifies tape color
     public void findTape(String color) {
+        boolean temp = true;
         if (color.equalsIgnoreCase("blue")) {
             goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
-            while (currentBlueColor() < 150) { //blue tape
+            while (currentBlueColor() < 0.85) { //blue tape
                 if (temp) {
                     goToPosition(0.3, 0, 0, 0.3);
 
@@ -766,7 +769,7 @@ public class MecanumDrive {
             }
         } else if (color.equalsIgnoreCase("red")) {
             goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
-            while (currentRedColor() < 195) { //red tape
+            while (currentRedColor() < 0.35) { //red tape
                 if (temp) {
                     goToPosition(0, 0.4, 0.4, 0);
                     // strafe diagonal left
@@ -780,10 +783,11 @@ public class MecanumDrive {
     }
     // special method for after the 1+1 auto (finding tape is different)
     public void findTapeMulti(String color) {
+        boolean temp = true;
         if (color.equalsIgnoreCase("blue")) {
-            while (currentBlueColor() < 150) { //blue tape
+            while (currentBlueColor() < 0.85) { //blue tape
                 if (temp) {
-                    goToPosition(0.3, -0.3, -0.3, 0.3);
+                    goToPosition(0.35, -0.35, -0.35, 0.35);
 
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -793,7 +797,7 @@ public class MecanumDrive {
             }
         } else if (color.equalsIgnoreCase("red")) {
             goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
-            while (currentRedColor() < 195) { //red tape
+            while (currentRedColor() < 0.35) { //red tape
                 if (temp) {
                     goToPosition(-0.3, 0.3, 0.3, -0.3);
                     // strafe diagonal left
@@ -823,6 +827,9 @@ public class MecanumDrive {
             radians += 2 * Math.PI;
         }
         return radians;
+    }
+    public double currentAngle(){
+        return imu.getAngularOrientation().firstAngle;
     }
 
     // returns the average tics for mecanum wheels

@@ -174,13 +174,13 @@ public class ScoringSystem {
         return false;
     }
 
-    boolean temp = true;
+
     // auto version
     public void grabConeAuto() {
-
+        boolean temp = true;
         drive.goToPosition(0.3, 0.3, 0.3, 0.3);
         while (temp) {
-            if (colorCone.getDistance(DistanceUnit.CM) < 4) {
+            if (colorCone.getDistance(DistanceUnit.CM) < 5) {
                 drive.goToPosition(0, 0, 0, 0);
                 // grab cone
                 setClawPosition(constant.getClawClosePos());
@@ -190,7 +190,7 @@ public class ScoringSystem {
                     e.printStackTrace();
                 }
                 // lift up
-                goToPosition(getEncoderPosition() + 200, 0.8);
+                goToPosition(getEncoderPosition() + 300, 0.8);
 
                 telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
                 telemetry.update();

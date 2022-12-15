@@ -94,7 +94,7 @@ public class CamwithContours extends LinearOpMode {
         waitForStart();
         detect.park = false;
         // turn servo of cam forward for poles
-        score.setCamPosition(constants.getStrafeCamPos());
+        score.setCamPosition(constants.getStrafeMedCamPos());
         blueLeft();
     }
     public void blueLeft() throws InterruptedException {

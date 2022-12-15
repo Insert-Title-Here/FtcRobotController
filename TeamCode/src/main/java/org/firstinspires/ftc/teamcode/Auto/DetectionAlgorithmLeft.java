@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -11,7 +13,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-//@Config //TODO: check if camera angle works
+@Config //TODO: check if camera angle works
 public class DetectionAlgorithmLeft extends OpenCvPipeline {
     Telemetry telemetry;
     /*
@@ -23,8 +25,8 @@ public class DetectionAlgorithmLeft extends OpenCvPipeline {
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
-    public static int x = 195; // 224
-    public static int y = 86; //95
+    public static int x = 200; // 224
+    public static int y = 89; //95
 
     // top left point of submat (original 320, 176)
     public static Point BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
