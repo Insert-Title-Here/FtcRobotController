@@ -160,7 +160,7 @@ public class ScoringSystemV2EpicLift {
                 setLinkagePositionLogistic(0.1885, 300);
             }else if(coneStack == 2){
                 setLinkagePositionLogistic(Constants.linkageDownV2, 300);
-            }else if(coneStack == 1){
+            }else{
                 setLinkagePositionLogistic(Constants.linkageDownV2, 300);
             }
         }else {
@@ -172,7 +172,7 @@ public class ScoringSystemV2EpicLift {
                 setLinkagePosition(0.1885);
             } else if (coneStack == 2) {
                 setLinkagePosition(Constants.linkageDownV2);
-            } else if (coneStack == 1) {
+            } else{
                 setLinkagePosition(Constants.linkageDownV2);
             }
         }

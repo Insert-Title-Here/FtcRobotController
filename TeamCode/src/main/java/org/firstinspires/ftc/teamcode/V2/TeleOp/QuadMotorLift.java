@@ -25,7 +25,7 @@ public class QuadMotorLift extends LinearOpMode {
 
     PassivePower passive;
 
-    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown;
+    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, groundDown;
 
     Thread liftThread, linkageThread;
 
@@ -50,6 +50,7 @@ public class QuadMotorLift extends LinearOpMode {
         shiftLinkageFlag = true;
         manualFlag = true;
         linkageDown = false;
+        groundDown = false;
         linkageUp = false;
 
         ElapsedTime time = new ElapsedTime();
@@ -140,7 +141,12 @@ public class QuadMotorLift extends LinearOpMode {
                         }
 
                         //TODO: fix this
-                        score.lowerConeStack();
+
+                        if(score.getConeStack() > 1) {
+                            score.lowerConeStack();
+                        }
+
+                        linkageDown = true;
 
 
                         //Resetting flags
@@ -149,6 +155,12 @@ public class QuadMotorLift extends LinearOpMode {
 
                         //Not extended anymore
                         score.setExtended(false);
+
+                        try {
+                            Thread.currentThread().sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
                         //Automated Grab
                     }else if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
@@ -383,10 +395,22 @@ public class QuadMotorLift extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
+                        //score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
 
                         //TODO: fix cone stack logic
-                        //score.setLinkageConeStack(true);
+                        score.setLinkageConeStack(true);
+                        linkageDown = false;
+                    }else if(groundDown) {
+
+                        score.setLinkagePosition(Constants.linkageUpV2);
+                        try {
+                            Thread.currentThread().sleep(70);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        //score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
+
+                        //TODO: fix cone stack logic
                         linkageDown = false;
                     }
                 }
