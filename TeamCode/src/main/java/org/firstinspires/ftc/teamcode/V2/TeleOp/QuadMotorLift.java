@@ -383,9 +383,10 @@ public class QuadMotorLift extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        //score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
+                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
 
-                        score.setLinkageConeStack(true);
+                        //TODO: fix cone stack logic
+                        //score.setLinkageConeStack(true);
                         linkageDown = false;
                     }
                 }
