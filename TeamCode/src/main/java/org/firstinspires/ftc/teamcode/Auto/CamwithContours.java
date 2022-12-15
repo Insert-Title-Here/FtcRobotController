@@ -21,7 +21,7 @@ public class CamwithContours extends LinearOpMode {
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
-    ContourMultiScore detect;
+    ContourMultiScoreLeft detect;
     Constants constants;
     OpenCvWebcam webcam;
 
@@ -30,7 +30,7 @@ public class CamwithContours extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new ContourMultiScore(telemetry);
+        detect = new ContourMultiScoreLeft(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();

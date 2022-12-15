@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
+import org.firstinspires.ftc.teamcode.Auto.ContourMultiScoreLeft;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -29,7 +29,7 @@ public class MainTeleOp extends LinearOpMode {
     Constants constant;
     BNO055IMU imu;
     OpenCvWebcam webcam;
-    ContourMultiScore detect;
+    ContourMultiScoreLeft detect;
 
     AtomicBoolean clawOpenCloseToggle;
     AtomicBoolean clawStackFlag;

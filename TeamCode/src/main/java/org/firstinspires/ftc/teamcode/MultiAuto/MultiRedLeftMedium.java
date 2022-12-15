@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.MultiAuto;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.ContourMultiScore;
+import org.firstinspires.ftc.teamcode.Auto.ContourMultiScoreLeft;
 import org.firstinspires.ftc.teamcode.Auto.DetectionAlgorithmRight;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
@@ -21,7 +21,7 @@ public class MultiRedLeftMedium extends LinearOpMode {
     ScoringSystem score;
     AtomicBoolean cont;
     Thread liftThread;
-    ContourMultiScore detect;
+    ContourMultiScoreLeft detect;
     DetectionAlgorithmRight park;
     Constants constants;
     OpenCvWebcam webcam;
@@ -31,7 +31,7 @@ public class MultiRedLeftMedium extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new ContourMultiScore(telemetry);
+        detect = new ContourMultiScoreLeft(telemetry);
         park = new DetectionAlgorithmRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Auto.NormalizationTesting;
+import org.firstinspires.ftc.teamcode.Auto.ContourMultiScoreLeft;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -22,7 +22,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     // instantiating
     Thread liftThread;
     MecanumDrive drive;
-    NormalizationTesting detect1;
+    ContourMultiScoreLeft detect1;
     ScoringSystem score;
     Constants constants;
     OpenCvWebcam webcam;
@@ -41,7 +41,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // value initializing
-        detect1 = new NormalizationTesting(telemetry);
+        detect1 = new ContourMultiScoreLeft(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();
@@ -291,26 +291,6 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
             // turn back straight
             drive.turn45(Math.PI / 4);
-            //moves robot to correct parking position
-            //        if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.LEFT) {
-            //            // move to left park (strafe right)
-            //            drive.goToPosition(-0.3, -0.3, -0.3, -0.3, 1372, "move backwards");
-            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
-            //
-            //
-            //
-            //        } else if (detect1.getParkPosition() == ContourMultiScore.ParkingPosition.CENTER) {
-            //            // move to center park (don't move at all)
-            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
-            //
-            //        } else {
-            //            // move to right park (strafe more left)
-            //            drive.goToPosition(0.3, 0.3, 0.3, 0.3 , 1000, "move forward");
-            //            drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
-            //
-            //
-            //        }
-
 
             score.setClawPosition(constants.getClawOpenPos());
 
@@ -448,6 +428,32 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
             sleep(50);
 
+            // PARK ------------------------------------------------------>
+
+            //moves robot to correct parking position
+                if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.LEFT) {
+
+                    //strafes right to left parkign pos
+                    drive.goToPosition(0.35, -0.35, -0.35, 0.35, 400, "strafe right");
+                    //moves forward a bit
+                    drive.goToPosition(0.3, 0.3, 0.3, 0.3 , 400, "move forward");
+
+                } else if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.CENTER) {
+                    // move to center park (strafes left)
+                    drive.goToPosition(-0.35, 0.35, 0.35, -0.35, 400, "strafe right");
+                    //moves forward a bit
+                    drive.goToPosition(0.3, 0.3, 0.3, 0.3 , 400, "move forward");
+
+                } else {
+                    // turn and move forward to the other pos
+                    drive.turn90(Math.PI/2);
+                    drive.goToPositionPID(1000, "hi");
+                    drive.goToPosition(-0.3, 0.3, 0.3, -0.3 , 200, "strafe right");
+
+
+                }
+
+
         }
 
     }
@@ -474,12 +480,12 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         drive.goToPosition(0, 0, 0, 0);
 
 
-        sleep(500);
+        sleep(100);
         cont.set(false);
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(constants.getClawOpenPos());
-        sleep(300);
+        sleep(100);
 
         //move back from pole
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl, fr, bl, br), "move back from pole");
@@ -516,7 +522,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
         //lower cone onto pole
         score.goToPosition(score.getEncoderPosition()-300, 0.4);
         score.setClawPosition(constants.getClawOpenPos());
-        sleep(300);
+        sleep(100);
 
         //move back from pole
         drive.goToPosition(-0.3, -0.3, -0.3, -0.3, drive.avgPosition(fl, fr, bl, br), "move back from pole");

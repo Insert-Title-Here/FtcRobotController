@@ -74,18 +74,19 @@ public class DetectionAlgorithmLeft extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
 
-        // width and height of submat
-        BOX_WIDTH = 23;
-        BOX_HEIGHT = -38;
-
-        Point box_top_left = new Point(
-                BOX_TOPLEFT.x,
-                BOX_TOPLEFT.y);
-        Point box_bottom_right = new Point(
-                BOX_TOPLEFT.x + BOX_WIDTH,
-                BOX_TOPLEFT.y + BOX_HEIGHT);
+//        BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
+//
+//        // width and height of submat
+//        BOX_WIDTH = 23;
+//        BOX_HEIGHT = -38;
+//
+//        Point box_top_left = new Point(
+//                BOX_TOPLEFT.x,
+//                BOX_TOPLEFT.y);
+//        Point box_bottom_right = new Point(
+//                BOX_TOPLEFT.x + BOX_WIDTH,
+//                BOX_TOPLEFT.y + BOX_HEIGHT);
         Mat befChange = new Mat();
 
         input.copyTo(original);
@@ -93,16 +94,8 @@ public class DetectionAlgorithmLeft extends OpenCvPipeline {
         if(original.empty()) {
             return input;
         }
-        // cyan magenta yellow
 
-        /* colors (scalars):
-            magenta -> new Scalar(255, 0, 255)
-            yellow -> new Scalar(255, 255, 0)
-            cyan -> new Scalar(0, 255, 255)
-         */
         changed = original.submat(new Rect(box_top_left, box_bottom_right));
-
-
 
         //Core.extractChannel(changed, changed, 1);
 
