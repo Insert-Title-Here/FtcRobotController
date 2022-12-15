@@ -735,7 +735,7 @@ public class ScoringSystemV2EpicLift {
             startX += step;
             sleep(sleepTime / resolution);
 
-            if(time.milliseconds() - startTime > 1.5 * sleepTime){
+            if(time.milliseconds() - startTime > (2 * sleepTime)){
                 break;
             }
         }

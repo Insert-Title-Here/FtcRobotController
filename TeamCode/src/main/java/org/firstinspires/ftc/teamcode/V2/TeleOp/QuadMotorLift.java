@@ -73,7 +73,7 @@ public class QuadMotorLift extends LinearOpMode {
 
         //Color sensor gain values
         color.setGain(300);
-        distance.setGain(300);
+        distance.setGain(180);
 
 
         //Lift Thread
@@ -118,6 +118,8 @@ public class QuadMotorLift extends LinearOpMode {
 
                             linkageDown = true;
 
+                            score.setGrabberPosition(constants.open - 0.15);
+
 
                             //Do nothing during movement phase
                             //Reset to zero and no passive power
@@ -125,7 +127,7 @@ public class QuadMotorLift extends LinearOpMode {
                             passive = PassivePower.ZERO;
 
                             //Open Grabber and reset linkage
-                            score.setGrabberPosition(constants.open - 0.15);
+
                             //score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
                             //score.setLinkagePositionLogistic(0.8, 500);
                         }else{
@@ -146,6 +148,12 @@ public class QuadMotorLift extends LinearOpMode {
                         //Resetting flags
                         autoLinkageFlag = true;
                         grabFlag = true;
+
+                        try {
+                            Thread.currentThread().sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
                         //Not extended anymore
                         score.setExtended(false);
