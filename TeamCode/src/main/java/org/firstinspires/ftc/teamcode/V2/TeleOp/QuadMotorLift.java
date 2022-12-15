@@ -140,8 +140,8 @@ public class QuadMotorLift extends LinearOpMode {
                         }
 
                         //TODO: fix this
-                        /*score.lowerConeStack();
-                        score.setLinkageConeStack(true);*/
+                        score.lowerConeStack();
+
 
                         //Resetting flags
                         autoLinkageFlag = true;
@@ -383,7 +383,9 @@ public class QuadMotorLift extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
+                        //score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
+
+                        score.setLinkageConeStack(true);
                         linkageDown = false;
                     }
                 }

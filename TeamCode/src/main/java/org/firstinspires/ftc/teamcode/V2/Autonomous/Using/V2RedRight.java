@@ -174,7 +174,7 @@ public class V2RedRight extends LinearOpMode {
 
 
         //linkageUp.set(true);
-        drive.simpleMoveToPosition(-1590, MecDrive.MovementType.STRAIGHT, 0.85);
+        drive.simpleMoveToPosition(-1610, MecDrive.MovementType.STRAIGHT, 0.8);
 
         sleep(100);
 
@@ -193,7 +193,7 @@ public class V2RedRight extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1270, 1);
+            score.moveToPosition(1300, 1);
             hold.set(true);
 
 
@@ -231,7 +231,7 @@ public class V2RedRight extends LinearOpMode {
             if(i == 0) {
 
                 double startDistanceTime = time.seconds();
-                while (distance.getDistance(DistanceUnit.CM) > 6) {
+                while (distance.getDistance(DistanceUnit.CM) > 12) {
                     drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
@@ -273,10 +273,10 @@ public class V2RedRight extends LinearOpMode {
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 159, 4);
+            pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1250, 1);
+            score.moveToPosition(1330, 1);
             hold.set(true);
 
             sleep(50);

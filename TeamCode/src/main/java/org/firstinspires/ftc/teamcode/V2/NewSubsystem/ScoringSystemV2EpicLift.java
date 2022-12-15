@@ -153,25 +153,25 @@ public class ScoringSystemV2EpicLift {
     public void setLinkageConeStack(boolean logistic){
         if(logistic){
             if(coneStack == 5){
-                setLinkagePositionLogistic(0.288, 500);
+                setLinkagePositionLogistic(0.2625, 300);
             }else if(coneStack == 4){
-                setLinkagePositionLogistic(0.2625, 500);
+                setLinkagePositionLogistic(0.2215, 300);
             }else if(coneStack == 3){
-                setLinkagePositionLogistic(0.2215, 500);
+                setLinkagePositionLogistic(0.1885, 300);
             }else if(coneStack == 2){
-                setLinkagePositionLogistic(0.1885, 500);
+                setLinkagePositionLogistic(Constants.linkageDownV2, 300);
             }else if(coneStack == 1){
-                setLinkagePositionLogistic(Constants.linkageDownV2, 500);
+                setLinkagePositionLogistic(Constants.linkageDownV2, 300);
             }
         }else {
             if (coneStack == 5) {
-                setLinkagePosition(0.288);
-            } else if (coneStack == 4) {
                 setLinkagePosition(0.2625);
-            } else if (coneStack == 3) {
+            } else if (coneStack == 4) {
                 setLinkagePosition(0.2215);
-            } else if (coneStack == 2) {
+            } else if (coneStack == 3) {
                 setLinkagePosition(0.1885);
+            } else if (coneStack == 2) {
+                setLinkagePosition(Constants.linkageDownV2);
             } else if (coneStack == 1) {
                 setLinkagePosition(Constants.linkageDownV2);
             }
@@ -720,14 +720,24 @@ public class ScoringSystemV2EpicLift {
     }
 
     public void setLinkagePositionLogistic(double target, int sleepTime) {
+
+        ElapsedTime time = new ElapsedTime();
         int resolution = 100;
         double step = 4.0 / resolution;
         double start = getLeftLinkage();
         double startX = -2.0;
+
+        double startTime = time.milliseconds();
+
+
         for(int i = 0; i < resolution; i++) {
             setLinkagePosition(logistic(startX, start, target));
             startX += step;
             sleep(sleepTime / resolution);
+
+            if(time.milliseconds() - startTime > 1.5 * sleepTime){
+                break;
+            }
         }
         setLinkagePosition(target);
     }

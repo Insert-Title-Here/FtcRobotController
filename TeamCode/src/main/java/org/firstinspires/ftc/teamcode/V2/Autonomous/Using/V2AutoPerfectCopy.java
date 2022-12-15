@@ -180,7 +180,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
         drive.tankRotatePID(Math.PI / 2, 1, false);
 
-        drive.simpleMoveToPosition(715, MecDrive.MovementType.STRAIGHT, 0.6);
+        drive.simpleMoveToPosition(600, MecDrive.MovementType.STRAIGHT, 0.6);
 
         drive.tankRotatePID(3 * Math.PI / 8, 1, false);
 
@@ -273,7 +273,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 159, 4);
+            pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
             score.moveToPosition(1230, 1, 1.8);
