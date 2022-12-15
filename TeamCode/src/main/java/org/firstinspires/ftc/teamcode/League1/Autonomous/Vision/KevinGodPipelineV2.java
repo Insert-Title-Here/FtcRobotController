@@ -386,7 +386,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
         }
-        return input;
+        return temp;
     }
 
     // Get x coordinate of center of largest contour (pole)

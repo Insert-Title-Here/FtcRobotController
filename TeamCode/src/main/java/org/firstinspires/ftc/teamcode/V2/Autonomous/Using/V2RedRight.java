@@ -193,7 +193,7 @@ public class V2RedRight extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1230, 1, 1.8);
+            score.moveToPosition(1270, 1);
             hold.set(true);
 
 
@@ -240,7 +240,7 @@ public class V2RedRight extends LinearOpMode {
                     if (time.seconds() - startDistanceTime > 3) {
                         drive.simpleBrake();
                         score.setLinkagePosition(Constants.linkageUpV2);
-                        drive.tankRotatePID(Math.PI / 2, 0.6, false);
+                        drive.tankRotate(Math.PI / 2, 0.2);
                         failed = true;
                         break;
                     }
@@ -276,7 +276,7 @@ public class V2RedRight extends LinearOpMode {
             pipeline.normalize(0.2, 159, 4);
 
             hold.set(false);
-            score.moveToPosition(1215, 1, 1.8);
+            score.moveToPosition(1250, 1);
             hold.set(true);
 
             sleep(50);

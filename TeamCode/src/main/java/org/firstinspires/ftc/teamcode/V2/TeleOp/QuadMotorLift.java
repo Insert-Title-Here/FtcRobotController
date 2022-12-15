@@ -86,7 +86,7 @@ public class QuadMotorLift extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         //score.setPower(0.2);
                         if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
-                            score.epicAutoGoToPosition();
+                            score.autoGoToPosition();
 
                             score.setLinkagePosition(constants.linkageScoreV2 - 0.05);
                             passive = PassivePower.EXTENDED;

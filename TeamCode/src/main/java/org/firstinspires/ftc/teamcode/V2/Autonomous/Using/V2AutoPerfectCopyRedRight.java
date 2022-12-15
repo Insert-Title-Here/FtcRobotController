@@ -237,7 +237,7 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
 
                     if (time.seconds() - startDistanceTime > 3) {
                         drive.simpleBrake();
-                        drive.tankRotatePID(Math.PI / 2, 0.6, false);
+                        drive.tankRotate(Math.PI / 2, 0.2);
                         failed = true;
                         break;
                     }
@@ -270,7 +270,7 @@ public class V2AutoPerfectCopyRedRight extends LinearOpMode {
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 159, 3);
+            pipeline.normalize(0.2, 165, 3);
 
             hold.set(false);
             score.moveToPosition(1340, 1, 1.8);

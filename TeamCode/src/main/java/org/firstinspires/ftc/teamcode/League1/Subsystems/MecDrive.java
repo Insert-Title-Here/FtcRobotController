@@ -350,6 +350,32 @@ public class MecDrive {
 
     }
 
+
+
+    public void tankRotate(double radians, double power){
+        radians = wrapAngle(radians);
+
+
+        if(radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle){
+            power *= -1;
+        }
+
+
+
+
+        while(Math.abs(radians - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) > 0.01){
+
+           setPowerAuto(power, MovementType.ROTATE);
+        }
+
+        simpleBrake();
+
+
+
+
+    }
+
+
     public void tankRotatePID(double radians, double power, boolean slidesUp, double kickout){
 
         /*if(radians > imu.getAngularOrientation().firstAngle){
