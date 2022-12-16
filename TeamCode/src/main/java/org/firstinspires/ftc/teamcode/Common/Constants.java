@@ -9,7 +9,7 @@ public class Constants {
     private int heightLow = 728;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.3;
-    private double clawClosePos = 0.41; // was 0.38 for old design
+    private double clawClosePos = 0.415; // was 0.38 for old design
     private double clawHighThreshold = 0.48;
     private int stackHeight = 210;
     private double steadyPow = 0.12;

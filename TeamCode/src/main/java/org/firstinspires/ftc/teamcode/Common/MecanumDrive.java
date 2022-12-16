@@ -757,9 +757,9 @@ public class MecanumDrive {
     //checks if the color sensor identifies tape color
     public void findTape(String color) {
         boolean temp = true;
-        if (color.equalsIgnoreCase("blue")) {
+        if (color.equalsIgnoreCase("blueleft")) {
             goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
-            while (currentBlueColor() < 0.85) { //blue tape
+            while (currentBlueColor() < 0.52) { //blue tape
                 if (temp) {
                     goToPosition(0.3, 0, 0, 0.3);
 
@@ -769,11 +769,34 @@ public class MecanumDrive {
                 }
 
             }
-        } else if (color.equalsIgnoreCase("red")) {
+        } else if (color.equalsIgnoreCase("redright")) {
             goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
-            while (currentRedColor() < 0.35) { //red tape
+            while (currentRedColor() < 0.26) { //red tape
                 if (temp) {
-                    goToPosition(0, 0.4, 0.4, 0);
+                    goToPosition(0, 0.3, 0.3, 0);
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        } else if (color.equalsIgnoreCase("blueright")) {
+            goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
+            while (currentBlueColor() < 0.52) { //blue tape
+                if (temp) {
+                    goToPosition(0, 0.3, 0.3, 0);
+
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        } else if (color.equalsIgnoreCase("redleft")) {
+            goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
+            while (currentRedColor() < 0.26) { //red tape
+                if (temp) {
+                    goToPosition(0.3, 0, 0, 0.3);
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -786,8 +809,8 @@ public class MecanumDrive {
     // special method for after the 1+1 auto (finding tape is different)
     public void findTapeMulti(String color) {
         boolean temp = true;
-        if (color.equalsIgnoreCase("blue")) {
-            while (currentBlueColor() < 0.85) { //blue tape
+        if (color.equalsIgnoreCase("blueleft")) {
+            while (currentBlueColor() < 0.52) { //blue tape
                 if (temp) {
                     goToPosition(0.35, -0.35, -0.35, 0.35);
 
@@ -797,11 +820,31 @@ public class MecanumDrive {
                 }
 
             }
-        } else if (color.equalsIgnoreCase("red")) {
-            goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
-            while (currentRedColor() < 0.35) { //red tape
+        } else if (color.equalsIgnoreCase("redright")) {
+            while (currentRedColor() < 0.26) { //red tape
                 if (temp) {
-                    goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    goToPosition(-0.35, 0.35, 0.35, -0.35);
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        } else if (color.equalsIgnoreCase("redleft")) {
+            while (currentBlueColor() < 0.26) { //blue tape
+                if (temp) {
+                    goToPosition(0.35, -0.35, -0.35, 0.35);
+
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        } else if (color.equalsIgnoreCase("blueright")) {
+            while (currentRedColor() < 0.52) { //red tape
+                if (temp) {
+                    goToPosition(-0.35, 0.35, 0.35, -0.35);
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -812,15 +855,7 @@ public class MecanumDrive {
         goToPosition(0,0,0,0);
     }
 
-    public void findTape() {
-        while (currentBlueColor() < 400 || currentRedColor() < 195) {
 
-            goToPosition(0.2, 0.4, 0.4, 0.2);
-            // strafe diagonal left
-            //goToPosition(0.4, 0, 0, 0.4);
-
-        }
-    }
     public double angleWrap(double radians){
         while(radians > Math.PI){
             radians -= 2 * Math.PI;

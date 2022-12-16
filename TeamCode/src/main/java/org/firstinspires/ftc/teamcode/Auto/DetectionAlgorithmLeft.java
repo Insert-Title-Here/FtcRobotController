@@ -26,7 +26,7 @@ public class DetectionAlgorithmLeft extends OpenCvPipeline {
     private double yelPercent, cyaPercent, magPercent;
 
     public static int x = 200; // 224
-    public static int y = 89; //95
+    public static int y = 103; //95
 
     // top left point of submat (original 320, 176)
     public static Point BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
@@ -75,18 +75,18 @@ public class DetectionAlgorithmLeft extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-//        BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
-//
-//        // width and height of submat
-//        BOX_WIDTH = 23;
-//        BOX_HEIGHT = -38;
-//
-//        Point box_top_left = new Point(
-//                BOX_TOPLEFT.x,
-//                BOX_TOPLEFT.y);
-//        Point box_bottom_right = new Point(
-//                BOX_TOPLEFT.x + BOX_WIDTH,
-//                BOX_TOPLEFT.y + BOX_HEIGHT);
+        BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
+
+        // width and height of submat
+        BOX_WIDTH = 23;
+        BOX_HEIGHT = -38;
+
+        Point box_top_left = new Point(
+                BOX_TOPLEFT.x,
+                BOX_TOPLEFT.y);
+        Point box_bottom_right = new Point(
+                BOX_TOPLEFT.x + BOX_WIDTH,
+                BOX_TOPLEFT.y + BOX_HEIGHT);
         Mat befChange = new Mat();
 
         input.copyTo(original);
