@@ -174,7 +174,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
 
         //linkageUp.set(true);
-        drive.simpleMoveToPosition(-1540, MecDrive.MovementType.STRAIGHT, 0.85);
+        drive.simpleMoveToPosition(-1500, MecDrive.MovementType.STRAIGHT, 0.85);
 
         sleep(100);
 
@@ -193,7 +193,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1230, 1, 1.8);
+            score.moveToPosition(1200, 1, 1.8);
             hold.set(true);
 
 
@@ -219,7 +219,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
         } else {
             pipeline.normalize(0.2, 159, 3);
             cycles = 5;
-            drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.5);
+            drive.simpleMoveToPosition(-63, MecDrive.MovementType.STRAIGHT, 0.5);
             score.setGrabberPosition(Constants.openV2);
             score.setLinkagePositionLogistic(0.245, 100);
         }
@@ -230,7 +230,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
 
             if(i == 0) {
 
-                double startDistanceTime = time.seconds();
+                /*double startDistanceTime = time.seconds();
                 while (distance.getDistance(DistanceUnit.CM) > 6) {
                     drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
 
@@ -250,6 +250,9 @@ public class V2AutoPerfectCopy extends LinearOpMode {
                 if (failed) {
                     break;
                 }
+*/
+
+                drive.simpleMoveToPosition(50, MecDrive.MovementType.STRAIGHT, 0.5);
 
 
 
@@ -316,7 +319,7 @@ public class V2AutoPerfectCopy extends LinearOpMode {
         if (parkPos == KevinGodPipelineV2.ParkPos.CENTER) {
             drive.simpleMoveToPosition(-730, MecDrive.MovementType.STRAIGHT, 1);
         } else if (parkPos == KevinGodPipelineV2.ParkPos.LEFT) {
-            drive.simpleMoveToPosition(-1500, MecDrive.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-1480, MecDrive.MovementType.STRAIGHT, 1);
         }
 
         score.setGrabberPosition(Constants.grabbing);
