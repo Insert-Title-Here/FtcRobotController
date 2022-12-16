@@ -502,20 +502,22 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
         double startPos = drive.avgPos();
         int startPolePosition = getXContour();
 
-        if(startPolePosition < xMax){
-            power *= -1;
-        }
+
 
         while((getXContour() > xMax || getXContour() < xMin)) {
-            /*if(getPolePosition() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            if(getXContour() > xMax) {
+                //drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+
+                drive.setPower(0, 0, power, -power);
+
             } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }*/
+                //drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+                drive.setPower(0, 0, -power, power);
 
-            drive.setPower(power, 0, power, 0);
+            }
 
-            if(time.seconds() - startTime > 1.5){
+//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
                 //normlizationBroke = true;
                 wrongWay = true;
                 break;
@@ -523,21 +525,23 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
         }
         drive.simpleBrake();
 
+        /*
         if(wrongWay) {
             while ((getXContour() > xMax || getXContour() < xMin)) {
-            /*if(getPolePosition() > xMax) {
+            if(getPolePosition() > xMax) {
                 drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
             } else {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }*/
+            }
 
-                drive.setPower(-power, 0, -power, 0);
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
 
 
             }
 
             drive.simpleBrake();
         }
+        */
 
         isNormalizing = false;
 
@@ -553,7 +557,6 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
     }
-
 
     public double p = 0.008;
     public int normalizeStrafe(double power, int target, int tolerance) {

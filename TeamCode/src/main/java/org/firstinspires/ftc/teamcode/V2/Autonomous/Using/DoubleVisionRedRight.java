@@ -180,6 +180,9 @@ public class DoubleVisionRedRight extends LinearOpMode {
 
         sleep(100);
 
+        pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
+        cameraServo.setPosition(Constants.coneV2);
+
         drive.tankRotatePID(Math.PI / 2, 1, false);
 
         drive.simpleMoveToPosition(600, MecDrive.MovementType.STRAIGHT, 0.6);
@@ -190,9 +193,18 @@ public class DoubleVisionRedRight extends LinearOpMode {
 
         drive.simpleMoveToPosition(-10, MecDrive.MovementType.ROTATE, 0.3);
 
+        pipeline.normalize(0.3, 159, 3);
+
+        pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
+        cameraServo.setPosition(Constants.coneV2);
+
+
         if(distance.getNormalizedColors().red > 0.65) {
 
-            pipeline.normalize(0.2, 159, 3);
+
+
+
+            pipeline.normalizeSpecial(0.25, 159, 3);
 
             hold.set(false);
             score.moveToPosition(1300, 1);
@@ -219,7 +231,7 @@ public class DoubleVisionRedRight extends LinearOpMode {
 
             preloadSuccess = true;
         } else {
-            pipeline.normalize(0.2, 159, 3);
+            pipeline.normalizeSpecial(0.25, 159, 3);
             cycles = 5;
             drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.5);
             score.setGrabberPosition(Constants.openV2);
@@ -275,7 +287,7 @@ public class DoubleVisionRedRight extends LinearOpMode {
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
-            pipeline.normalize(0.2, 159, 3);
+            pipeline.normalizeSpecial(0.25, 159, 3);
 
             hold.set(false);
             score.moveToPosition(1330, 1);
