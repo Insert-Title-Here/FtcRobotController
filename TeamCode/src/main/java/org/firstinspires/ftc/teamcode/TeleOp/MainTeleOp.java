@@ -269,8 +269,6 @@ public class MainTeleOp extends LinearOpMode {
             public void run(){
                 while(opModeIsActive()){
                     if(gamepad1.right_stick_button) {
-                        isTurning = true;
-                        drive.turning = true;
                     //while(opModeisActive(){
                         // Orientation angle = imu.getAngularOrientation();
                         /*
@@ -278,24 +276,26 @@ public class MainTeleOp extends LinearOpMode {
                         }
                          */
                         if(imu.getAngularOrientation().firstAngle < 0){
+                            isTurning = true;
                             drive.turn180(Math.PI);
+                            isTurning = false;
                         }else{
+                            isTurning = true;
                             drive.turn180(-Math.PI);
+                            isTurning = false;
                         }
-                        isTurning = false;
-                        drive.turning = false;
                     }
                     //turn scoring
                     if (gamepad1.left_bumper) {
-                        isTurning = true;
-                        drive.turning = true;
                         if(imu.getAngularOrientation().firstAngle < 0){
+                            isTurning = true;
                             drive.turn180(Math.PI);
+                            isTurning = false;
                         }else{
+                            isTurning = true;
                             drive.turn180(-Math.PI);
+                            isTurning = false;
                         }
-                        isTurning = false;
-                        drive.turning = false;
 
                     }
 

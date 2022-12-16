@@ -26,7 +26,6 @@ public class MecanumDrive {
 
     private double accumulatedError;
     private double error;
-    public static boolean turning;
 
 
     // creates/accesses file
@@ -128,14 +127,12 @@ public class MecanumDrive {
         double angle = direction + 3 * Math.PI / 4.0;
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
-        if(!turning) {
-            if (!isSwapped) {
-                setPower((power * sin - turnValue), (power * cos + turnValue),
-                        (power * cos - turnValue), (power * sin + turnValue));
-            } else {
-                setPower(-(power * sin - turnValue), -(power * cos + turnValue),
-                        -(power * cos - turnValue), -(power * sin + turnValue));
-            }
+        if (!isSwapped) {
+            setPower((power * sin - turnValue), (power * cos + turnValue),
+                    (power * cos - turnValue), (power * sin + turnValue));
+        } else {
+            setPower(-(power * sin - turnValue), -(power * cos + turnValue),
+                    -(power * cos - turnValue), -(power * sin + turnValue));
         }
     }
 
