@@ -23,11 +23,13 @@ import java.util.List;
 @Config
 public class KevinGodPipelineV2 extends OpenCvPipeline {
 
+    public static boolean returnInput = true;
+
     // Configuration variables for isolating pole color
-    public static int H1 = 0;
-    public static int S1 = 100; //was 100
-    public static int V1 = 80; //was 150
-    public static int H2 = 50;
+    public static int H1 = 10; //0
+    public static int S1 = 50; //was 100
+    public static int V1 = 160; //was 80
+    public static int H2 = 30; //50
     public static int S2 = 255;
     public static int V2 = 255;
 
@@ -97,7 +99,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
     // Define ints
     int cX, cY;
-    int maxLength = 0;
+    double maxLength = 0;
     int maxLengthIndex = 0;
     int longestContourX = 0;
     int longestContourY = 0;
@@ -319,7 +321,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             for(int i = 0; i < contours.size(); i++){
                 // Filter out small, irrelevant contours
-                if(contours.get(i).toArray().length > 20) {
+                if(Imgproc.contourArea(contours.get(i)) > 500) {
 
                     // Draw all contours to the screen
                     if(sleeveSense != Mode.POLE) {
@@ -355,8 +357,8 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
             // Find largest contour
             for(int i = 0; i < xList.size() && i < contourLengths.size() && i < yList.size(); i++) {
-                if(contourLengths.get(i) > maxLength) {
-                    maxLength = contourLengths.get(i);
+                if(Imgproc.contourArea(contours.get(i)) > maxLength) {
+                    maxLength = Imgproc.contourArea(contours.get(i));
                     maxLengthIndex = i;
                 }
             }
@@ -386,7 +388,11 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
 
 
         }
-        return temp;
+        if(returnInput) {
+            return input;
+        } else {
+            return temp;
+        }
     }
 
     // Get x coordinate of center of largest contour (pole)
