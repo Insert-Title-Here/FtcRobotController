@@ -133,11 +133,7 @@ public class MainTeleOp extends LinearOpMode {
                     }else if(gamepad1.right_trigger < 0.1){
                         triggerScoreToggle.set(true);
                     }
-                    //turn scoring(turn in other thread)
-                    if (gamepad1.left_bumper) {
-                        score.goToPosition(constant.getHeightHigh(), 0.95);
-                        score.setPower(constant.getSteadyPow());
-                    }
+
 
                     //resets the slidemotor encoder
                     if(gamepad1.options){
@@ -273,59 +269,38 @@ public class MainTeleOp extends LinearOpMode {
             public void run(){
                 while(opModeIsActive()){
                     if(gamepad1.right_stick_button) {
-                        //while(opModeisActive(){
+                        isTurning = true;
+                        drive.turning = true;
+                    //while(opModeisActive(){
                         // Orientation angle = imu.getAngularOrientation();
                         /*
                         synchronized Orientation getAngularOrientation();
                         }
                          */
                         if(imu.getAngularOrientation().firstAngle < 0){
-                            isTurning = true;
                             drive.turn180(Math.PI);
-                            isTurning = false;
                         }else{
-                            isTurning = true;
                             drive.turn180(-Math.PI);
-                            isTurning = false;
                         }
+                        isTurning = false;
+                        drive.turning = false;
                     }
                     //turn scoring
                     if (gamepad1.left_bumper) {
+                        isTurning = true;
+                        drive.turning = true;
                         if(imu.getAngularOrientation().firstAngle < 0){
-                            isTurning = true;
                             drive.turn180(Math.PI);
-                            isTurning = false;
                         }else{
-                            isTurning = true;
                             drive.turn180(-Math.PI);
-                            isTurning = false;
                         }
+                        isTurning = false;
+                        drive.turning = false;
 
                     }
-                    //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
-                    double gamepadX = gamepad1.left_stick_x;
-                    double gamepadY = gamepad1.left_stick_y;
-                    if(Math.abs(gamepadX) < Math.abs(gamepadY)){
-                        gamepadX = 0;
-                    }else if(Math.abs(gamepadX) > Math.abs(gamepadY)){
-                        gamepadY = 0;
-                    }else{
-                        gamepadX = 0;
-                        gamepadY = 0;
-                    }
-                    //robot movement(using controls/gamepads) with sprint mode
-                    //if(!isTurning) {
-                        if (gamepad1.left_stick_button) { // replace this with a button for sprint
-                            drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
-                        } else {
-                            if (score.getEncoderPosition() > 500) {
-                                drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
-                            } else {
-                                drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
-                            }
-                        }
-                    }
-                //}
+
+                }
+
             }
         };
         score.setClawPosition(constant.getClawOpenPos());
@@ -336,7 +311,34 @@ public class MainTeleOp extends LinearOpMode {
         liftThread.start();
         imuThread.start();
         while(opModeIsActive()){
-
+            //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
+            double gamepadX = gamepad1.left_stick_x;
+            double gamepadY = gamepad1.left_stick_y;
+            if(Math.abs(gamepadX) < Math.abs(gamepadY)){
+                gamepadX = 0;
+            }else if(Math.abs(gamepadX) > Math.abs(gamepadY)){
+                gamepadY = 0;
+            }else{
+                gamepadX = 0;
+                gamepadY = 0;
+            }
+            //robot movement(using controls/gamepads) with sprint mode
+            if(!isTurning) {
+                if (gamepad1.left_stick_button) { // replace this with a button for sprint
+                    drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+                } else {
+                    if (score.getEncoderPosition() > 500) {
+                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
+                    } else {
+                        drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                    }
+                }
+            }
+            //turn scoring(turn in other thread)
+            if (gamepad1.left_bumper) {
+                score.goToPosition(constant.getHeightHigh(), 0.95);
+                score.setPower(constant.getSteadyPow());
+            }
             //Sets the booleans for which pole to go to for lifts system
             if (gamepad1.a) {
                 //high cone
