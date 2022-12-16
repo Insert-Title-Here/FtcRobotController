@@ -180,17 +180,18 @@ public class ScoringSystem {
         boolean temp = true;
         drive.goToPosition(0.3, 0.3, 0.3, 0.3);
         while (temp) {
-            if (colorCone.getDistance(DistanceUnit.CM) < 5) {
+            if (colorCone.getDistance(DistanceUnit.CM) < 3.5) {
                 drive.goToPosition(0, 0, 0, 0);
                 // grab cone
                 setClawPosition(constant.getClawClosePos());
                 try {
-                    sleep(200);
+                    sleep(300);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 20, "move backwards");
                 // lift up
-                goToPosition(getEncoderPosition() + 300, 0.8);
+                goToPosition(constant.getHeightLow(), 0.8);
 
                 telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
                 telemetry.update();
@@ -219,10 +220,10 @@ public class ScoringSystem {
         return colorCone.getDistance(DistanceUnit.CM);
     }
 
-    int height1 = 234;
-    int height2 = 165;
-    int height3 = 114;
-    int height4 = 68;
+    int height1 = 220;
+    int height2 = 155;
+    int height3 = 105;
+    int height4 = 53;
     int height5 = 2;
     int currentHeight = 0;
     public void stackUp(){

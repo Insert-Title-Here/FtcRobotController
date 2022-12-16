@@ -35,7 +35,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     private double yelPercent, cyaPercent, magPercent;
 
     public static int x = 200; // 224
-    public static int y = 89; //95
+    public static int y = 103; //95
 
     // top left point of submat (original 320, 176)
     public static Point BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
@@ -101,12 +101,12 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     Telemetry telemetry;
 
     /* make stuff public static  */
-    public static int lower1 = 50;
-    public static int lower2 = 50;
-    public static int lower3 = 10;
-    public static int upper1 = 255;
-    public static int upper2 = 255;
-    public static int upper3 = 105; //value was 80 when servo was perpendicular to the ground
+    public static int lower1 = 50; //50
+    public static int lower2 = 50; //50
+    public static int lower3 = 40; //10
+    public static int upper1 = 180; //255
+    public static int upper2 = 200; //255
+    public static int upper3 = 108; //105         //value was 80 when servo was perpendicular to the ground
     public static double widthRemoveConstant = 3.1;
 
 
@@ -163,7 +163,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
             Core.inRange(yelMat, new Scalar(160), new Scalar(205), yelMat);
             // cyan 183
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-            Core.inRange(cyaMat, new Scalar(170), new Scalar(194), cyaMat);
+            Core.inRange(cyaMat, new Scalar(160), new Scalar(180), cyaMat);
             // magenta 186
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
             Core.inRange(magMat, new Scalar(161), new Scalar(195), magMat);
