@@ -743,13 +743,22 @@ public class ScoringSystemV2EpicLift {
     }
 
     public void setLinkagePositionLogistic(double target, int sleepTime, int resolution) {
+        ElapsedTime timer = new ElapsedTime();
         double step = 4.0 / resolution;
         double start = getLeftLinkage();
         double startX = -2.0;
+        double startLoopTime;
+        double loopTime;
         for(int i = 0; i < resolution; i++) {
+            startLoopTime = timer.milliseconds();
             setLinkagePosition(logistic(startX, start, target));
             startX += step;
-            sleep(sleepTime / resolution);
+            loopTime = timer.milliseconds() - startLoopTime;
+            if ((double)sleepTime / resolution > loopTime) {
+                sleep((long)(sleepTime / resolution - loopTime));
+            } else {
+                //break in here?
+            }
         }
         setLinkagePosition(target);
     }
