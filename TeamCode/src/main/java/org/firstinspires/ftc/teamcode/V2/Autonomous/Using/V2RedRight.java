@@ -88,7 +88,7 @@ public class V2RedRight extends LinearOpMode {
                         armDown.set(false);
                     } else if (finalMove.get()) {
 
-                        score.setLinkagePositionLogistic(Constants.linkageUpV2, 100);
+                        score.setLinkagePositionLogistic(Constants.linkageUpV2, 1000);
                         finalMove.set(false);
 
                     } else if (linkageUp.get()) {
@@ -193,13 +193,13 @@ public class V2RedRight extends LinearOpMode {
             pipeline.normalize(0.2, 159, 3);
 
             hold.set(false);
-            score.moveToPosition(1300, 1);
+            score.moveToPosition(1250, 1);
             hold.set(true);
 
 
             sleep(350);
 
-            score.setLinkagePositionLogistic(0.8, 100);
+            score.setLinkagePositionLogistic(0.8, 250, 100);
 
             sleep(100);
 
@@ -207,7 +207,7 @@ public class V2RedRight extends LinearOpMode {
 
             sleep(200);
 
-            score.setLinkagePositionLogistic(0.245, 100);
+            score.setLinkagePositionLogistic(0.245, 500, 100);
 
             score.setGrabberPosition(Constants.openV2);
 
@@ -221,7 +221,7 @@ public class V2RedRight extends LinearOpMode {
             cycles = 5;
             drive.simpleMoveToPosition(-50, MecDrive.MovementType.STRAIGHT, 0.5);
             score.setGrabberPosition(Constants.openV2);
-            score.setLinkagePositionLogistic(0.245, 100);
+            score.setLinkagePositionLogistic(0.245, 500, 100);
         }
 
         for (int i = 0; i < cycles; i++) {
@@ -269,7 +269,7 @@ public class V2RedRight extends LinearOpMode {
 
             sleep(100);
 
-            score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 50);
+            score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100);
 
             //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
 
@@ -289,7 +289,7 @@ public class V2RedRight extends LinearOpMode {
 
             sleep(600);
 
-            score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 50);
+            score.setLinkagePositionLogistic(0.245 - ((i + 1) * 0.03), 500, 100);
             score.setGrabberPosition(Constants.openV2);
 
 

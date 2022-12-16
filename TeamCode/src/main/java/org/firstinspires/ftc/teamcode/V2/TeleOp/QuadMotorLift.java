@@ -25,7 +25,7 @@ public class QuadMotorLift extends LinearOpMode {
 
     PassivePower passive;
 
-    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown;
+    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp;
 
     Thread liftThread, linkageThread;
 
@@ -51,6 +51,7 @@ public class QuadMotorLift extends LinearOpMode {
         manualFlag = true;
         linkageDown = false;
         linkageUp = false;
+        firstDpadUp = true;
 
         ElapsedTime time = new ElapsedTime();
 
@@ -391,7 +392,7 @@ public class QuadMotorLift extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 220);
+                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
 
                         //TODO: fix cone stack logic
                         //score.setLinkageConeStack(true);
@@ -467,7 +468,7 @@ public class QuadMotorLift extends LinearOpMode {
         drive.simpleBrake();
 
         //score.setLinkagePositionLogistic(0.25, 500);
-        score.setLinkagePositionLogistic(Constants.linkageDownV2, 500);
+        score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
         //score.setLinkagePositionLogistic(0.8, 500);
 
 

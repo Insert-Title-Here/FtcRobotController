@@ -757,7 +757,9 @@ public class ScoringSystemV2EpicLift {
             if ((double)sleepTime / resolution > loopTime) {
                 sleep((long)(sleepTime / resolution - loopTime));
             } else {
-                //break in here?
+                if (timer.milliseconds() > sleepTime) {
+                    break;
+                }
             }
         }
         setLinkagePosition(target);
