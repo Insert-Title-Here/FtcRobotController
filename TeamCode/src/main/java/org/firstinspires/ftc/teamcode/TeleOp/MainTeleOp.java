@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.Common.Times.startTime;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Auto.ContourMultiScoreLeft;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
@@ -16,6 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp //@Config
@@ -38,12 +42,14 @@ public class MainTeleOp extends LinearOpMode {
     AtomicBoolean triggerScoreToggle;
 
     private boolean uprighterToggle = true;
+    volatile boolean isTurning = false;
+    File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
+    public String loggingString;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
-    volatile boolean isTurning = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -385,7 +391,6 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
-            telemetry.addData("realDrivePow", drive.getPower());
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
             telemetry.addData("liftPow", score.getPower());
@@ -396,12 +401,14 @@ public class MainTeleOp extends LinearOpMode {
             //  telemetry.update();
             //telemetry.update();
             telemetry.update();
-
+            loggingString += "FlPower: " + drive.getPowerFl() +" FrPower: " + drive.getPowerFr() + " BlPower: " + drive.getPowerBl() + " BrPower: " + drive.getPowerBr() + "\n";
+            loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
 
 
         }
-        drive.writeLoggerToFile();
-        score.writeLoggerToFile();
+        //drive.writeLoggerToFile();
+        //score.writeLoggerToFile();
+        score.writeLoggerToFile(loggingFile, loggingString);
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
         score.setClawPosition(1);

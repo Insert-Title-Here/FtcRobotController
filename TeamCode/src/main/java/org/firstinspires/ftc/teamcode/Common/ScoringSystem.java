@@ -94,6 +94,14 @@ public class ScoringSystem {
             e.printStackTrace();
         }
     }
+    public void writeLoggerToFile(File file, String log){
+        try{
+            PrintStream toFile = new PrintStream(file);
+            toFile.println(log);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+    }
     public void setPower(double power){
         liftMotor.setPower(power);
     }
