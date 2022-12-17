@@ -261,19 +261,22 @@ public class MultiRedLeftMedium extends LinearOpMode {
 
             scoreConeMed(300, 300, 300, 300);
 
+            score.goToPosition(0, 0.8);
+
             // turn back straight
-            drive.turn45(Math.PI / 4.5);
+            drive.turn45(Math.PI / 4);
 
             score.setClawPosition(constants.getClawOpenPos());
 
 
             //go forward to blue cone tape adjacent mat
-            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(828, 700, 741, 826), "go forward to next mat");
+            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(1028, 1000, 1041, 1026), "go forward to next mat");
+            drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 200, "go forward to next mat");
 
             // strafe left a bit
             drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 200, "left" );
 
-
+            //823.75
 
             // +'s ---------------------------------------->
 
@@ -286,8 +289,9 @@ public class MultiRedLeftMedium extends LinearOpMode {
             score.setClawPosition(constants.getClawOpenPos());
             score.setCamPosition(constants.getStrafeLowCamPos());
             // turn to tape/cones
-            drive.turn90(Math.PI / 2);
+            drive.turn90(Math.PI / 2.2);
 
+            score.goToPosition(constants.getStackHeight()-sum, 0.8);
 
 
 

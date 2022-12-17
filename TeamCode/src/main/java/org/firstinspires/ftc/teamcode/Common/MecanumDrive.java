@@ -807,9 +807,12 @@ public class MecanumDrive {
     public void findTapeMulti(String color) {
         boolean temp = true;
         if (color.equalsIgnoreCase("blueleft")) {
+            goToPosition(0.3, 0.6, 0.6, 0.3, 150, "left" );
+
             while (currentBlueColor() < 0.52) { //blue tape
+
                 if (temp) {
-                    goToPosition(0.35, -0.35, -0.35, 0.35);
+                    goToPosition(0.3, -0.3, -0.3, 0.3);
 
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -818,9 +821,12 @@ public class MecanumDrive {
 
             }
         } else if (color.equalsIgnoreCase("redright")) {
+            goToPosition(0.6, 0.3, 0.3, 0.6, 150, "left" );
             while (currentRedColor() < 0.26) { //red tape
+
+
                 if (temp) {
-                    goToPosition(-0.35, 0.35, 0.35, -0.35);
+                    goToPosition(-0.3, 0.3, 0.3, -0.3);
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -828,9 +834,12 @@ public class MecanumDrive {
 
             }
         } else if (color.equalsIgnoreCase("redleft")) {
+            goToPosition(0.3, 0.6, 0.6, 0.3, 150, "left" );
+
+
             while (currentBlueColor() < 0.26) { //blue tape
                 if (temp) {
-                    goToPosition(0.35, -0.35, -0.35, 0.35);
+                    goToPosition(0.3, -0.3, -0.3, 0.3);
 
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -839,9 +848,12 @@ public class MecanumDrive {
 
             }
         } else if (color.equalsIgnoreCase("blueright")) {
+            goToPosition(0.6, 0.3, 0.3, 0.6, 150, "left" );
+
             while (currentRedColor() < 0.52) { //red tape
+
                 if (temp) {
-                    goToPosition(-0.35, 0.35, 0.35, -0.35);
+                    goToPosition(-0.3, 0.3, 0.3, -0.3);
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
