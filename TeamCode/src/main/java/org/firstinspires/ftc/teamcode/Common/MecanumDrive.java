@@ -769,9 +769,12 @@ public class MecanumDrive {
             goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
             while (currentBlueColor() < 0.52      ) { //blue tape
                 if (temp) {
-                  
-                    goToPosition(0.3, 0, 0, 0.3);
-
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(0.3, 0, 0, 0.3);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -782,7 +785,12 @@ public class MecanumDrive {
             goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
             while (currentRedColor() < 0.26) { //red tape
                 if (temp) {
-                    goToPosition(0, 0.3, 0.3, 0);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0, 0.3, 0.3, 0);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -793,8 +801,12 @@ public class MecanumDrive {
             goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
             while (currentBlueColor() < 0.52) { //blue tape
                 if (temp) {
-                    goToPosition(0, 0.3, 0.3, 0);
-
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0, 0.3, 0.3, 0);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -805,7 +817,12 @@ public class MecanumDrive {
             goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
             while (currentRedColor() < 0.26) { //red tape
                 if (temp) {
-                    goToPosition(0.3, 0, 0, 0.3);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(0.3, 0, 0, 0.3);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -825,7 +842,12 @@ public class MecanumDrive {
             while (currentBlueColor() < 0.52) { //blue tape
 
                 if (temp) {
-                    goToPosition(0.3, -0.3, -0.3, 0.3);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }
 
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -839,7 +861,12 @@ public class MecanumDrive {
 
 
                 if (temp) {
-                    goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -852,7 +879,12 @@ public class MecanumDrive {
 
             while (currentBlueColor() < 0.26) { //blue tape
                 if (temp) {
-                    goToPosition(0.3, -0.3, -0.3, 0.3);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }
 
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -866,7 +898,12 @@ public class MecanumDrive {
             while (currentRedColor() < 0.52) { //red tape
 
                 if (temp) {
-                    goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
