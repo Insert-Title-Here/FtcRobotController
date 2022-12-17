@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.Common.Times.startTime;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -116,6 +114,8 @@ public class MainTeleOp extends LinearOpMode {
                     }else{
                         if(score.getEncoderPosition() > 100){
                             score.setPower(constant.getSteadyPow());
+                        }else{
+                            score.setPower(0);
                         }
                     }
 
@@ -310,6 +310,7 @@ public class MainTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(constant.getClawOpenPos());
+        score.setCamPosition(constant.getStraightCamPos());
         score.setScoreBoolean(true, false, false);
         telemetry.addData("status", "initialized");
         telemetry.update();

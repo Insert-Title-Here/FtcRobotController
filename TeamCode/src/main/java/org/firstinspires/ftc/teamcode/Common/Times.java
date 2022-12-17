@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.Common;
 
-import java.util.Timer;
-
 public class Times {
     public long initializedTime;
-    public static long startingTime;
+    public static long startingTime = 0;
     public Times(){
         initializedTime = System.currentTimeMillis();
     }
