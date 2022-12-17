@@ -725,8 +725,17 @@ public class MecanumDrive {
     }
 
     // returns the power of a mecanum wheel
-    public double getPower(){
+    public double getPowerFl(){
         return fl.getPower();
+    }
+    public double getPowerFr(){
+        return fr.getPower();
+    }
+    public double getPowerBl(){
+        return bl.getPower();
+    }
+    public double getPowerBr(){
+        return br.getPower();
     }
 
     // logs string into file
