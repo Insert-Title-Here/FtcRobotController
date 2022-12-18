@@ -40,7 +40,7 @@ public class TestingContours extends LinearOpMode {
         constants = new Constants();
         cont = new AtomicBoolean();
         cont.set(false);
-        test = constants.getStrafeMedCamPos();
+        test = constants.getStrafeLowCamPos();
 
 
 

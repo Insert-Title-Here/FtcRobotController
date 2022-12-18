@@ -45,12 +45,12 @@ public class NormalizationTesting extends OpenCvPipeline {
     Telemetry telemetry;
 
     /* make stuff public static  */
-    public static int lower1 = 50; //50
-    public static int lower2 = 50; //50
-    public static int lower3 = 40; //10
-    public static int upper1 = 180; //255
-    public static int upper2 = 200; //255
-    public static int upper3 = 108; //105 //value was 80 when servo was perpendicular to the ground
+    public static int lower1 = 50; //50   50
+    public static int lower2 = 50; //50   50
+    public static int lower3 = 30; //10   40
+    public static int upper1 = 180; //255   180
+    public static int upper2 = 170; //255   200
+    public static int upper3 = 108; //105   108//value was 80 when servo was perpendicular to the ground
     //upper3 value 114 when @Krish's
     public static double widthRemoveConstant = 3.1;
 

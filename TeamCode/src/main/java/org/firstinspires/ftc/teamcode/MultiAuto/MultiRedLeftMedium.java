@@ -34,7 +34,7 @@ public class MultiRedLeftMedium extends LinearOpMode {
 
     // ftc dashboard values + properCX
     private double properCX = 187; //67
-    private double properCXLow = 160;
+    private double properCXLow = 172; //160
 
     public static int positive_negative = 1;
     public static int turnDenom = 4;
@@ -280,7 +280,7 @@ public class MultiRedLeftMedium extends LinearOpMode {
 
 
             //go forward to blue cone tape adjacent mat
-            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(1028, 1000, 1041, 1026), "go forward to next mat");
+            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(800, 800, 1001, 1006), "go forward to next mat");
 
 
             // strafe left a bit
@@ -534,8 +534,9 @@ public class MultiRedLeftMedium extends LinearOpMode {
         //3700 - 3800
         drive.goToPosition(0.18, 0.18, 0.18, 0.18);
         startTime();
-        while (detect1.getBoundArea() <= 7900.0 || detect1.getBoundArea() >= 9600 && !timeout.get()) {
-            if (detect1.getBoundArea() >= 7900.0 && detect1.getBoundArea() <= 9600 && detect1.getDistance() <= 6/*|| detect1.getcX() <= 18*/) {
+        // old: 7900      8700
+        while (detect1.getBoundArea() <= 8000.0 || detect1.getBoundArea() >= 9700 && !timeout.get()) {
+            if (detect1.getBoundArea() >= 8000.0 && detect1.getBoundArea() <= 9700 && detect1.getDistance() <= 6/*|| detect1.getcX() <= 18*/) {
                 drive.goToPosition(0, 0, 0, 0);
             }
 
@@ -568,8 +569,10 @@ public class MultiRedLeftMedium extends LinearOpMode {
         //3700 - 3800
         drive.goToPosition(0.18, 0.18, 0.18, 0.18);
         startTime();
-        while (detect1.getBoundArea() <= 9000.0 || detect1.getBoundArea() >= 10500 && !timeout.get()) {
-            if (detect1.getBoundArea() >= 9000.0 && detect1.getBoundArea() <= 10500 && detect1.getDistance() <= 4) {
+
+        // old lower range: 9000
+        while (detect1.getBoundArea() <= 8700 || detect1.getBoundArea() >= 10500 && !timeout.get()) {
+            if (detect1.getBoundArea() >= 8700 && detect1.getBoundArea() <= 10500 && detect1.getDistance() <= 4.3) {
                 drive.goToPosition(0, 0, 0, 0);
             }
 
