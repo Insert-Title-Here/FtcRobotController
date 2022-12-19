@@ -38,7 +38,8 @@ public class UprighterTeleOp extends LinearOpMode {
     OpenCvWebcam webcam;
     ContourMultiScoreLeft detect;
 
-    private boolean uprighterToggle = true;
+    private boolean uprighterToggle = false;
+    private volatile boolean uprighting = false;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -128,6 +129,8 @@ public class UprighterTeleOp extends LinearOpMode {
                             //if(!clawStackFlag.get()){
                                 score.setPower(constant.getSteadyPow());
                             //}
+                        }else{
+                            score.setPower(0);
                         }
                     }
                     //moves the slides all the way down
@@ -180,30 +183,7 @@ public class UprighterTeleOp extends LinearOpMode {
                         stackFlag.set(true);
                     }
 
-                    /*
-                    //lowers the height of the slides for the stack of 5 cones
-                    if(gamepad1.a && stackFlag.get()){
-                        clawStackFlag.set(true);
-                        stackFlag.set(false);
-                        if((stackHeight.get() - constant.getStackIntervalHeight()) > 0){
-                            stackHeight.set(stackHeight.get()-constant.getStackIntervalHeight());
-                            score.goToPosition(stackHeight.get(), 0.8);
-                        }
-                    //moves the slides to the stack of 5 cones height
-                    }else if(gamepad1.y && stackFlag.get()){
-                        clawStackFlag.set(true);
-                        stackFlag.set(false);
-                        if(stackHeight.get() < constant.getStackHeight()){
-                            score.goToPosition(stackHeight.get(), 0.8);
-                            stackHeight.set(stackHeight.get() + constant.getStackIntervalHeight());
-                        }else if(stackHeight.get() == constant.getStackHeight()){
-                            score.goToPosition(constant.getStackHeight(), 0.8);
-                        }
-                    }else if(!gamepad1.a){
-                        stackFlag.set(true);
-                    }
 
-                     */
 
 
                     //closes the claw(manually) and opens the claw(like a toggle)
@@ -220,7 +200,7 @@ public class UprighterTeleOp extends LinearOpMode {
                                         e.printStackTrace();
                                     }
                                     score.goToPosition(constant.getHeightBottom(),1);
-                                    //score.setUprighterPosition(0);
+                                    score.setUprighterPosition(0);
                                     clawMoveDownToggle.set(false);
                                 }else{
                                     score.goToPosition(score.getEncoderPosition() - 200, 0.5);
@@ -234,7 +214,7 @@ public class UprighterTeleOp extends LinearOpMode {
                                     e.printStackTrace();
                                 }
                                 score.goToPosition(constant.getHeightBottom(),0.8);
-                                //score.setUprighterPosition(0);
+                                score.setUprighterPosition(0);
                             }
 
                         }else{
@@ -259,15 +239,19 @@ public class UprighterTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+300, 1);
-                                    score.setPower(constant.getSteadyPow());
-                                    clawOpenCloseToggle.set(false);
-                                    /*
-                                    if(!uprighterToggle){
-                                        score.setUprighterPosition(1);
+                                    if(uprighting){
+                                        score.goToPosition(score.getEncoderPosition()+300, 1);
+                                        score.setPower(constant.getSteadyPow());
+                                        score.setUprighterPosition(0);
+                                        clawOpenCloseToggle.set(false);
+                                    }else if(!uprighting){
+                                        score.goToPosition(score.getEncoderPosition()+100, 1);
+                                        score.setPower(constant.getSteadyPow());
+                                        clawOpenCloseToggle.set(false);
                                     }
 
-                                     */
+
+
                                 }
                             }else{
                                 //claw code for stack only
@@ -309,6 +293,7 @@ public class UprighterTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(0);
+        score.setUprighterPosition(1);
 
         waitForStart();
         liftThread.start();
@@ -336,27 +321,26 @@ public class UprighterTeleOp extends LinearOpMode {
             }
             //Used for testing purposes-turns a certain number of radians
 
-            /*
+
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
                 uprighterToggle = false;
                 if (score.getUprighterPosition() == 0) {
                     constant.setHeightBottom(0);
+                    score.goToPosition(constant.getHeightBottom(), 0.6);
                     score.setUprighterPosition(0);
                 } else if (score.getUprighterPosition() == 1) {
                     constant.setHeightBottom(150);
+                    score.goToPosition(constant.getHeightBottom(), 0.6);
                     score.setUprighterPosition(1);
                 }
             }else if(!gamepad1.right_bumper){
                 uprighterToggle = true;
             }
 
-             */
 
 
-            if(gamepad1.dpad_left){
 
-            }
 
             //resets the drive motor encoders
             if (gamepad1.share) {

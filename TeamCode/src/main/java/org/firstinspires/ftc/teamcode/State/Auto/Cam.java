@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.State.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.League3.Auto.DetectionAlgorithm.ParkingPosition;
+import org.firstinspires.ftc.teamcode.State.Auto.DetectionAlgorithm.ParkingPosition;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
