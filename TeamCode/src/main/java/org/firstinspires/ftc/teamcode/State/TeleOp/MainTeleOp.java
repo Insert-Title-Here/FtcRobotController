@@ -29,7 +29,7 @@ public class MainTeleOp extends LinearOpMode {
     Constants constant;
     BNO055IMU imu;
     OpenCvWebcam webcam;
-    ContourMultiScoreLeft detect;
+    ContourMultiScoreLeft detect1;
 
     AtomicBoolean clawOpenCloseToggle;
     AtomicBoolean clawStackFlag;
@@ -38,7 +38,11 @@ public class MainTeleOp extends LinearOpMode {
     AtomicBoolean triggerScoreToggle;
 
     private boolean uprighterToggle = true;
+    private volatile boolean uprighting = false;
     volatile boolean isTurning = false;
+
+    //private double properCX = 187; //67
+    //private double properCXLow = 163; //160
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
@@ -58,7 +62,7 @@ public class MainTeleOp extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        //detect = new ContourMultiScore(telemetry);
+        //detect1 = new ContourMultiScoreLeft(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
@@ -73,10 +77,10 @@ public class MainTeleOp extends LinearOpMode {
         clawMoveDownToggle.set(false);
         clawOpenCloseToggle.set(true);
         clawStackFlag.set(false);
-
+        /*
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        webcam.setPipeline(detect);
+        webcam.setPipeline(detect1);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -89,6 +93,8 @@ public class MainTeleOp extends LinearOpMode {
             }
         });
 
+
+         */
         //ftc dashboard
 
         //FtcDashboard.getInstance().startCameraStream(webcam, 0);
@@ -175,7 +181,6 @@ public class MainTeleOp extends LinearOpMode {
                                         e.printStackTrace();
                                     }
                                     score.goToPosition(constant.getHeightBottom(),1);
-                                    //score.setUprighterPosition(0);
                                     clawMoveDownToggle.set(false);
                                 }else{
                                     score.goToPosition(score.getEncoderPosition() - 200, 0.5);
@@ -189,7 +194,6 @@ public class MainTeleOp extends LinearOpMode {
                                     e.printStackTrace();
                                 }
                                 score.goToPosition(constant.getHeightBottom(),0.8);
-                               // score.setUprighterPosition(0);
                             }
 
                         }else{
@@ -217,12 +221,16 @@ public class MainTeleOp extends LinearOpMode {
                                     score.goToPosition(score.getEncoderPosition()+100, 1);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
-                                    /*
-                                    if(!uprighterToggle){
-                                        score.setUprighterPosition(1);
+                                    if(uprighting){
+                                        score.goToPosition(score.getEncoderPosition()+300, 1);
+                                        score.setPower(constant.getSteadyPow());
+                                        score.setUprighterPosition(0);
+                                        clawOpenCloseToggle.set(false);
+                                    }else if(!uprighting){
+                                        score.goToPosition(score.getEncoderPosition()+100, 1);
+                                        score.setPower(constant.getSteadyPow());
+                                        clawOpenCloseToggle.set(false);
                                     }
-
-                                     */
 
 
                                 }
@@ -260,6 +268,20 @@ public class MainTeleOp extends LinearOpMode {
                             e.printStackTrace();
                         }
                     }
+                    /*
+                    if (detect1.getcX() > properCXLow - 5 && detect1.getcX() < properCXLow + 5 && score.getEncoderPosition() > 12) {
+                        if (detect1.getBoundArea() >= 8000.0 && detect1.getBoundArea() <= 9500 && detect1.getDistance() <= 4.3) {
+                            drive.goToPosition(0, 0, 0, 0);
+                            score.setClawPosition(constant.getClawOpenPos());
+                            score.goToPosition(constant.getHeightBottom(),0.5);
+                            clawMoveDownToggle.set(false);
+
+                        }
+                    }
+
+                     */
+
+
 
 
                 }
@@ -309,8 +331,11 @@ public class MainTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(constant.getClawOpenPos());
-        score.setCamPosition(constant.getStraightCamPos());
         score.setScoreBoolean(true, false, false);
+        score.setUprighterPosition(0);
+        score.goToPosition(constant.getHeightBottom(), 0.3);
+        score.setPower(constant.getSteadyPow());
+        score.setCamPosition(constant.getStrafeLowCamPos());
         telemetry.addData("status", "initialized");
         telemetry.update();
         waitForStart();
@@ -333,7 +358,7 @@ public class MainTeleOp extends LinearOpMode {
                 if (gamepad1.left_stick_button) { // replace this with a button for sprint
                     drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
                 } else {
-                    if (score.getEncoderPosition() > 500) {
+                    if (score.getEncoderPosition() > 500 || uprighting) {
                         drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
                     } else {
                         drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
@@ -364,20 +389,24 @@ public class MainTeleOp extends LinearOpMode {
 
 
 
-            /*
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
-                uprighterToggle = false;
                 if (score.getUprighterPosition() == 0) {
                     constant.setHeightBottom(0);
+                    score.goToPosition(constant.getHeightBottom(), 0.45);
+                    score.setUprighterPosition(1);
+                    uprighting = false;
                 } else if (score.getUprighterPosition() == 1) {
-                    constant.setHeightBottom(150);
+                    constant.setHeightBottom(40);
+                    score.goToPosition(constant.getHeightBottom(), 0.45);
+                    score.setUprighterPosition(0);
+                    uprighting = true;
                 }
+                uprighterToggle = false;
+
             }else if(!gamepad1.right_bumper){
                 uprighterToggle = true;
             }
-
-             */
 
 
             //resets the drive motor encoders

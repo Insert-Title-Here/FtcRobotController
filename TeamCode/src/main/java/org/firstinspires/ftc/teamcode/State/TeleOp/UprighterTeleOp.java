@@ -38,7 +38,7 @@ public class UprighterTeleOp extends LinearOpMode {
     OpenCvWebcam webcam;
     ContourMultiScoreLeft detect;
 
-    private boolean uprighterToggle = false;
+    private boolean uprighterToggle = true;
     private volatile boolean uprighting = false;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
@@ -125,7 +125,7 @@ public class UprighterTeleOp extends LinearOpMode {
                         */
                         score.setPower(-0.18);
                     }else{
-                        if(score.getEncoderPosition() > 100){
+                        if(score.getEncoderPosition() > 5){
                             //if(!clawStackFlag.get()){
                                 score.setPower(constant.getSteadyPow());
                             //}
@@ -200,7 +200,6 @@ public class UprighterTeleOp extends LinearOpMode {
                                         e.printStackTrace();
                                     }
                                     score.goToPosition(constant.getHeightBottom(),1);
-                                    score.setUprighterPosition(0);
                                     clawMoveDownToggle.set(false);
                                 }else{
                                     score.goToPosition(score.getEncoderPosition() - 200, 0.5);
@@ -214,7 +213,6 @@ public class UprighterTeleOp extends LinearOpMode {
                                     e.printStackTrace();
                                 }
                                 score.goToPosition(constant.getHeightBottom(),0.8);
-                                score.setUprighterPosition(0);
                             }
 
                         }else{
@@ -293,7 +291,9 @@ public class UprighterTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(0);
-        score.setUprighterPosition(1);
+        score.setUprighterPosition(0);
+        score.goToPosition(constant.getHeightBottom(), 0.3);
+        score.setPower(constant.getSteadyPow());
 
         waitForStart();
         liftThread.start();
@@ -324,16 +324,19 @@ public class UprighterTeleOp extends LinearOpMode {
 
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
-                uprighterToggle = false;
                 if (score.getUprighterPosition() == 0) {
                     constant.setHeightBottom(0);
-                    score.goToPosition(constant.getHeightBottom(), 0.6);
-                    score.setUprighterPosition(0);
-                } else if (score.getUprighterPosition() == 1) {
-                    constant.setHeightBottom(150);
-                    score.goToPosition(constant.getHeightBottom(), 0.6);
+                    score.goToPosition(constant.getHeightBottom(), 0.45);
                     score.setUprighterPosition(1);
+                    uprighting = true;
+                } else if (score.getUprighterPosition() == 1) {
+                    constant.setHeightBottom(40);
+                    score.goToPosition(constant.getHeightBottom(), 0.45);
+                    score.setUprighterPosition(0);
+                    uprighting = false;
                 }
+                uprighterToggle = false;
+
             }else if(!gamepad1.right_bumper){
                 uprighterToggle = true;
             }
@@ -359,6 +362,7 @@ public class UprighterTeleOp extends LinearOpMode {
             telemetry.addData("stack", stackHeight.get());
             telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
             telemetry.addData("imu", imu.getAngularOrientation().firstAngle);
+            telemetry.addData("asdf", "plz");
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());
             //  telemetry.update();
