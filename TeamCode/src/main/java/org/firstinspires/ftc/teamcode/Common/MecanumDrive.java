@@ -23,6 +23,7 @@ public class MecanumDrive {
     AtomicBoolean active;
     BNO055IMU imu;
     ColorRangeSensor colorTape;
+    boolean timeout;
 
     private double accumulatedError;
     private double error;
@@ -576,10 +577,10 @@ public class MecanumDrive {
             double currentRadians = imu.getAngularOrientation().firstAngle;
             if (radians < currentRadians) {
                 //turn right # of radians
-                setPower(0.15, -0.15, 0.15, -0.15);
+                setPower(0.25, -0.25, 0.25, -0.25);
             } else if (currentRadians < radians) {
                 //turn left # of radians
-                setPower(-0.15, 0.15, -0.15, 0.15);
+                setPower(-0.25, 0.25, -0.25, 0.25);
             } else {
                break;
             }
@@ -763,12 +764,17 @@ public class MecanumDrive {
     //checks if the color sensor identifies tape color
     public void findTape(String color) {
         boolean temp = true;
+        long time = System.currentTimeMillis();
         if (color.equalsIgnoreCase("blueleft")) {
             goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
-            while (currentBlueColor() < 0.52) { //blue tape
+            while (currentBlueColor() < 0.52      ) { //blue tape
                 if (temp) {
-                    goToPosition(0.3, 0, 0, 0.3);
-
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(0.3, 0, 0, 0.3);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -779,7 +785,12 @@ public class MecanumDrive {
             goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
             while (currentRedColor() < 0.26) { //red tape
                 if (temp) {
-                    goToPosition(0, 0.3, 0.3, 0);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0, 0.3, 0.3, 0);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -790,8 +801,12 @@ public class MecanumDrive {
             goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
             while (currentBlueColor() < 0.52) { //blue tape
                 if (temp) {
-                    goToPosition(0, 0.3, 0.3, 0);
-
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0, 0.3, 0.3, 0);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -802,7 +817,12 @@ public class MecanumDrive {
             goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
             while (currentRedColor() < 0.26) { //red tape
                 if (temp) {
-                    goToPosition(0.3, 0, 0, 0.3);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(0.3, 0, 0, 0.3);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -815,10 +835,19 @@ public class MecanumDrive {
     // special method for after the 1+1 auto (finding tape is different)
     public void findTapeMulti(String color) {
         boolean temp = true;
+        long time = System.currentTimeMillis();
         if (color.equalsIgnoreCase("blueleft")) {
+            goToPosition(0.3, 0.6, 0.6, 0.3, 300, "left" );
+
             while (currentBlueColor() < 0.52) { //blue tape
+
                 if (temp) {
-                    goToPosition(0.35, -0.35, -0.35, 0.35);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }
 
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -827,9 +856,17 @@ public class MecanumDrive {
 
             }
         } else if (color.equalsIgnoreCase("redright")) {
+            goToPosition(0.6, 0.3, 0.3, 0.6, 300, "left" );
             while (currentRedColor() < 0.26) { //red tape
+
+
                 if (temp) {
-                    goToPosition(-0.35, 0.35, 0.35, -0.35);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;
@@ -837,9 +874,17 @@ public class MecanumDrive {
 
             }
         } else if (color.equalsIgnoreCase("redleft")) {
-            while (currentBlueColor() < 0.26) { //blue tape
+            goToPosition(0.3, 0.6, 0.6, 0.3, 300, "left" );
+
+
+            while (currentRedColor() < 0.26) { //blue tape
                 if (temp) {
-                    goToPosition(0.35, -0.35, -0.35, 0.35);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }
 
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -848,9 +893,17 @@ public class MecanumDrive {
 
             }
         } else if (color.equalsIgnoreCase("blueright")) {
-            while (currentRedColor() < 0.52) { //red tape
+            goToPosition(0.6, 0.3, 0.3, 0.6, 300, "left" );
+
+            while (currentBlueColor() < 0.52) { //red tape
+
                 if (temp) {
-                    goToPosition(-0.35, 0.35, 0.35, -0.35);
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
                     temp = false;

@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.Common.Times.startTime;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Auto.ContourMultiScoreLeft;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
@@ -19,7 +16,6 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp //@Config
@@ -43,8 +39,7 @@ public class MainTeleOp extends LinearOpMode {
 
     private boolean uprighterToggle = true;
     volatile boolean isTurning = false;
-    File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
-    public String loggingString;
+
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
@@ -116,6 +111,8 @@ public class MainTeleOp extends LinearOpMode {
                     }else{
                         if(score.getEncoderPosition() > 100){
                             score.setPower(constant.getSteadyPow());
+                        }else{
+                            score.setPower(0);
                         }
                     }
 
@@ -285,11 +282,11 @@ public class MainTeleOp extends LinearOpMode {
                          */
                         if(imu.getAngularOrientation().firstAngle < 0){
                             isTurning = true;
-                            drive.turn180(Math.PI);
+                            drive.turn180(Math.PI/1.2);
                             isTurning = false;
                         }else{
                             isTurning = true;
-                            drive.turn180(-Math.PI);
+                            drive.turn180(-Math.PI/1.2);
                             isTurning = false;
                         }
                     }
@@ -297,11 +294,11 @@ public class MainTeleOp extends LinearOpMode {
                     if (gamepad1.left_bumper) {
                         if(imu.getAngularOrientation().firstAngle < 0){
                             isTurning = true;
-                            drive.turn180(Math.PI);
+                            drive.turn180(Math.PI/1.2);
                             isTurning = false;
                         }else{
                             isTurning = true;
-                            drive.turn180(-Math.PI);
+                            drive.turn180(-Math.PI/1.2);
                             isTurning = false;
                         }
 
@@ -312,6 +309,7 @@ public class MainTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(constant.getClawOpenPos());
+        score.setCamPosition(constant.getStraightCamPos());
         score.setScoreBoolean(true, false, false);
         telemetry.addData("status", "initialized");
         telemetry.update();
@@ -403,14 +401,14 @@ public class MainTeleOp extends LinearOpMode {
             //  telemetry.update();
             //telemetry.update();
             telemetry.update();
-            loggingString += "FlPower: " + drive.getPowerFl() +" FrPower: " + drive.getPowerFr() + " BlPower: " + drive.getPowerBl() + " BrPower: " + drive.getPowerBr() + "\n";
-            loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
+            //loggingString += "FlPower: " + drive.getPowerFl() +" FrPower: " + drive.getPowerFr() + " BlPower: " + drive.getPowerBl() + " BrPower: " + drive.getPowerBr() + "\n";
+           // loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
 
 
         }
         //drive.writeLoggerToFile();
         //score.writeLoggerToFile();
-        score.writeLoggerToFile(loggingFile, loggingString);
+        //score.writeLoggerToFile(loggingFile, loggingString);
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);
         score.setClawPosition(1);

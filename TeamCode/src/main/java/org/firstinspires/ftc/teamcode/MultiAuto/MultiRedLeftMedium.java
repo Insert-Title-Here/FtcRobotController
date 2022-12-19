@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.MultiAuto;
 
+import static org.firstinspires.ftc.teamcode.Common.Times.startTime;
+import static org.firstinspires.ftc.teamcode.Common.Times.timeDifference;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,15 +29,17 @@ public class MultiRedLeftMedium extends LinearOpMode {
     ScoringSystem score;
     Constants constants;
     OpenCvWebcam webcam;
-    AtomicBoolean liftTurn, liftCone;
+    AtomicBoolean liftTurn, liftCone, timeout;
+
 
     // ftc dashboard values + properCX
     private double properCX = 187; //67
-    private double properCXLow = 160;
+    private double properCXLow = 172; //160
 
     public static int positive_negative = 1;
     public static int turnDenom = 4;
     public static boolean toggle = false;
+
 
     private int sum = -13;
 
@@ -50,8 +55,10 @@ public class MultiRedLeftMedium extends LinearOpMode {
         constants = new Constants();
         liftTurn = new AtomicBoolean();
         liftCone = new AtomicBoolean();
+        timeout = new AtomicBoolean();
         liftCone.set(false);
         liftTurn.set(false);
+        timeout.set(false);
 
 
         // camera setup
@@ -78,7 +85,7 @@ public class MultiRedLeftMedium extends LinearOpMode {
             @Override
             public void run(){
                 while(opModeIsActive()){
-                    if((score.getEncoderPosition() > 30)){
+                    if((score.getEncoderPosition() > 50)){
                         score.setPower(constants.getSteadyPow());
                     }
                     if(liftTurn.get()){
@@ -89,7 +96,9 @@ public class MultiRedLeftMedium extends LinearOpMode {
                     if (liftCone.get()) {
                         drive.goToPosition(0.4,0.4, 0.4, 0.4, 15, "back a bit");
                     }
-
+                    if (timeDifference() > 4) {
+                        timeout.set(true);
+                    }
 //
                     telemetry.addData("imu", drive.currentAngle());
                     telemetry.update();
@@ -214,6 +223,7 @@ public class MultiRedLeftMedium extends LinearOpMode {
      */
         } else {
 
+
             //lift claw a little bit
             score.goToPosition(50, 0.8);
             sleep(100);
@@ -261,19 +271,22 @@ public class MultiRedLeftMedium extends LinearOpMode {
 
             scoreConeMed(300, 300, 300, 300);
 
+            score.goToPosition(0, 0.8);
+
             // turn back straight
-            drive.turn45(Math.PI / 4.5);
+            drive.turn45(Math.PI / 4);
 
             score.setClawPosition(constants.getClawOpenPos());
 
 
             //go forward to blue cone tape adjacent mat
-            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(828, 700, 741, 826), "go forward to next mat");
+            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(800, 800, 1001, 1006), "go forward to next mat");
+
 
             // strafe left a bit
             drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 200, "left" );
 
-
+            //823.75
 
             // +'s ---------------------------------------->
 
@@ -288,6 +301,7 @@ public class MultiRedLeftMedium extends LinearOpMode {
             // turn to tape/cones
             drive.turn90(Math.PI / 2);
 
+            score.goToPosition(constants.getStackHeight()-sum, 0.8);
 
 
 
@@ -519,14 +533,15 @@ public class MultiRedLeftMedium extends LinearOpMode {
 
         //3700 - 3800
         drive.goToPosition(0.18, 0.18, 0.18, 0.18);
-        sleep(100);
-        while (detect1.getBoundArea() <= 7900.0 || detect1.getBoundArea() >= 9600) {
-            if (detect1.getBoundArea() >= 7900.0 && detect1.getBoundArea() <= 9600 && detect1.getDistance() <= 6/*|| detect1.getcX() <= 18*/) {
+        startTime();
+        // old: 7900      8700
+        while (detect1.getBoundArea() <= 8000.0 || detect1.getBoundArea() >= 9700 && !timeout.get()) {
+            if (detect1.getBoundArea() >= 8000.0 && detect1.getBoundArea() <= 9700 && detect1.getDistance() <= 6/*|| detect1.getcX() <= 18*/) {
                 drive.goToPosition(0, 0, 0, 0);
             }
 
         }
-
+        timeout.set(false);
 
 
 
@@ -553,13 +568,16 @@ public class MultiRedLeftMedium extends LinearOpMode {
 
         //3700 - 3800
         drive.goToPosition(0.18, 0.18, 0.18, 0.18);
+        startTime();
 
-        while (detect1.getBoundArea() <= 9000.0 || detect1.getBoundArea() >= 10500) {
-            if (detect1.getBoundArea() >= 9000.0 && detect1.getBoundArea() <= 10500 && detect1.getDistance() <= 4) {
+        // old lower range: 9000
+        while (detect1.getBoundArea() <= 8700 || detect1.getBoundArea() >= 10500 && !timeout.get()) {
+            if (detect1.getBoundArea() >= 8700 && detect1.getBoundArea() <= 10500 && detect1.getDistance() <= 4.3) {
                 drive.goToPosition(0, 0, 0, 0);
             }
 
         }
+        timeout.set(false);
 
 
 

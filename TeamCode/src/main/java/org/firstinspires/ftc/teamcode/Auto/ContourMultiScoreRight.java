@@ -35,8 +35,8 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
-    private static int box_x = 111;
-    private static int box_y = 101;
+    private static int box_x = 232;
+    private static int box_y = 95;
 
     // top left point of submat (original 320, 176)
     private static Point BOX_TOPLEFT = new Point(box_x,box_y); // 175, 150
@@ -52,7 +52,7 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
     }
 
     // Running variable storing the parking position
-    private volatile DetectionAlgorithmRight.ParkingPosition position = DetectionAlgorithmRight.ParkingPosition.LEFT;
+    private volatile ContourMultiScoreRight.ParkingPosition position = ContourMultiScoreRight.ParkingPosition.LEFT;
 
     // submat to center cone
     Point box_top_left = new Point(
@@ -90,7 +90,7 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
     private Point[] mainContour;
     private ArrayList<Double> leftContour, rightContour;
     private Point[] loopSpecificPoints;
-    private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference = 0;
+    private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference, boundArea = 0;
     // for points on contour
     double numCurrent, num1Prev, num2Prev, num3Prev, num4Prev, num5Prev = 0;
     boolean toggle, toggle2;
@@ -103,12 +103,12 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
     Telemetry telemetry;
 
     /* make stuff public static  */
-    public static int lower1 = 50;
-    public static int lower2 = 50;
-    public static int lower3 = 10;
-    public static int upper1 = 255;
-    public static int upper2 = 255;
-    public static int upper3 = 105; //value was 80 when servo was perpendicular to the ground
+    public static int lower1 = 50; //50
+    public static int lower2 = 50; //50
+    public static int lower3 = 40; //10
+    public static int upper1 = 180; //255
+    public static int upper2 = 200; //255
+    public static int upper3 = 108; //105  //value was 80 when servo was perpendicular to the ground
     public static double widthRemoveConstant = 3.1;
 
 
@@ -162,10 +162,10 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
             // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
             // yellow 190
 //        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
-            Core.inRange(yelMat, new Scalar(160), new Scalar(205), yelMat);
+            Core.inRange(yelMat, new Scalar(140), new Scalar(190), yelMat);
             // cyan 183
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-            Core.inRange(cyaMat, new Scalar(170), new Scalar(194), cyaMat);
+            Core.inRange(cyaMat, new Scalar(158), new Scalar(180), cyaMat);
             // magenta 186
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
             Core.inRange(magMat, new Scalar(161), new Scalar(195), magMat);
@@ -190,24 +190,24 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
             if (yelPercent > cyaPercent) {
                 if (yelPercent > magPercent) {
                     // yellow greatest, position left
-                    position = DetectionAlgorithmRight.ParkingPosition.LEFT;
+                    position = ContourMultiScoreRight.ParkingPosition.LEFT;
                     //telemetry.addData("park position", position);
                     Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), YELLOW, 2);
                 } else {
                     // magenta greatest, position right
-                    position = DetectionAlgorithmRight.ParkingPosition.RIGHT;
+                    position = ContourMultiScoreRight.ParkingPosition.RIGHT;
                     //telemetry.addData("park position", position);
                     Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
                 }
             } else if(cyaPercent > magPercent) {
                 // cyan greatest, position center
-                position = DetectionAlgorithmRight.ParkingPosition.CENTER;
+                position = ContourMultiScoreRight.ParkingPosition.CENTER;
                 //telemetry.addData("park position", position);
                 Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), CYAN, 2);
             } else {
 
                 // magenta greatest, position right
-                position = DetectionAlgorithmRight.ParkingPosition.RIGHT;
+                position = ContourMultiScoreRight.ParkingPosition.RIGHT;
                 //telemetry.addData("park position", position);
                 Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
 
@@ -223,9 +223,7 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
 
             return original;
         } else {
-
-
-            // var inits / resets
+// var inits / resets
             knownWidth = 1.04; //inches
             contours = new ArrayList<>();
             // 43, 157, 166
@@ -241,7 +239,7 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
             generalMat = input.clone();
             //input.copyTo(generalMat);
 
-            if (input.empty()) {
+            if(input.empty()) {
                 return input;
             }
             // image tuning
@@ -249,7 +247,7 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
             Imgproc.erode(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
             Imgproc.dilate(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
             Imgproc.cvtColor(contourMat, contourMat, Imgproc.COLOR_RGB2YCrCb);
-            //        Core.extractChannel(contourMat, contourMat, 0);
+//        Core.extractChannel(contourMat, contourMat, 0);
             Core.inRange(contourMat, new Scalar(lower1, lower2, lower3), new Scalar(upper1, upper2, upper3), contourMat);
 
             //extracts yellow (for poles)
@@ -260,17 +258,17 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
 
             //contours
             Imgproc.findContours(contourMat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-            //        Imgproc.drawContours(generalMat, contours, -1, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
-            //                hierarchy, 2, new Point()*/);
+//        Imgproc.drawContours(generalMat, contours, -1, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
+//                hierarchy, 2, new Point()*/);
 
 
             // loop through contours to find max
             int indexOfMax = 0;
-            double largestArea = 0;
+            boundArea = 0;
             for (int i = 0; i < contours.size(); i++) {
                 double area = Imgproc.contourArea(contours.get(i));
-                if (area > largestArea) {
-                    largestArea = area;
+                if (area > boundArea) {
+                    boundArea = area;
                     indexOfMax = i;
                 }
             }
@@ -279,131 +277,133 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
             if (contours.size() != 0) {
                 //draws largest contour
                 Imgproc.drawContours(generalMat, contours, indexOfMax, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
-                hierarchy, 2, new Point()*/);
+            hierarchy, 2, new Point()*/);
 
                 // bounding box (approximate width)
                 Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
                 perWidth = boundRect.width;
-                Imgproc.rectangle(generalMat, boundRect, new Scalar(20, 20, 20), 1);
+                Imgproc.rectangle(generalMat, boundRect, new Scalar (20,20,20), 1);
 
-        /*
-                int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
-                perWidth =
-        */
+    /*
+            int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
+            perWidth =
+    */
 
                 //gets the moments of the contour in question ...idk how
                 M = Imgproc.moments(contours.get(indexOfMax));
                 // gets x and y of centroid
-                cX = (int) (M.get_m10() / M.get_m00());
+                cX = (int)(M.get_m10() / M.get_m00());
                 cY = (int) (M.get_m01() / M.get_m00());
 
-        /*
-                // another method of finding center of contour
-                Rect boundRect = Imgproc.boundingRect(contour);
-                double centerX = boundRect.x + (boundRect.width / 2)
-                double centerY = boundRect.y + (boundRect.height / 2)
-        */
+    /*
+            // another method of finding center of contour
+            Rect boundRect = Imgproc.boundingRect(contour);
+            double centerX = boundRect.x + (boundRect.width / 2)
+            double centerY = boundRect.y + (boundRect.height / 2)
+    */
                 // gets points of the main contour
                 mainContour = contours.get(indexOfMax).toArray();
-                //            //telemetry.addData("bottom line 1", mainContour[mainContour.length - 34].x +"  "+ mainContour[mainContour.length - 34].y);
-                //            //telemetry.addData("bottom line 2", mainContour[mainContour.length - 35].x +"  "+ mainContour[mainContour.length - 35].y);
-                //            //telemetry.update();
-                //            if (mainContour.length > 6) {
-                //                loopSpecificPoints = new Point[]{mainContour[(int) (mainContour.length / 10)], mainContour[(int) (mainContour.length / 9)], mainContour[(int) (mainContour.length / 8)], mainContour[(int) (mainContour.length / 6)], mainContour[(int) (mainContour.length / 4)]};
-                //                // loop to get indexes for more looping :) --> adds needed points to arrays
-                //                for (int i = mainContour.length - 1; i >= mainContour.length / 2; i--) {
-                //                    loggingString += (mainContour[i].toString() + "\n");
-                //                    for (int j = 0; j < loopSpecificPoints.length; j++) {
-                //                        if (mainContour[i].y == loopSpecificPoints[j].y) {
-                //                            difference += (Math.abs(mainContour[i].x - loopSpecificPoints[j].x));
-                //                            loggingString += ("coordinate - value: " + mainContour[i].x + ", " + mainContour[i].y+ ", pre coordinate value: " + loopSpecificPoints[j].x + ", " + loopSpecificPoints[i].y + " total: " + difference + "\n");
-                //                        }
-                //                    }
-                //
-                //
-                //                    /*
-                //                    if (i >= 5) {
-                //                        num5Prev = mainContour[i - 5].x;
-                //                        num4Prev = mainContour[i - 4].x;
-                //                        num3Prev = mainContour[i - 3].x;
-                //                        num2Prev = mainContour[i - 2].x;
-                //                        num1Prev = mainContour[i - 1].x;
-                //                        numCurrent = mainContour[i].x;
-                //
-                //
-                //                        if (num5Prev < num4Prev && num4Prev == num3Prev && num3Prev == num2Prev && num2Prev == num1Prev && num1Prev == numCurrent) {
-                //                            // left top (last element / index of arraylist)
-                //                            telemetry.addData("leftContour.add(mainContour[i - 4].x);", mainContour[i - 4].x);
-                //                            telemetry.update();
-                //                            leftContour.add(mainContour[i - 4].x);
-                //                            toggle = false;
-                //                        } else if (num5Prev == num4Prev && num4Prev == num3Prev && num3Prev == num2Prev && num2Prev == num1Prev && num1Prev != numCurrent) {
-                //                            // right top (first element / index of the right arraylist)
-                //                            telemetry.addData("rightContour.add(mainContour[i - 1].x);", mainContour[i - 1].x);
-                //                            telemetry.update();
-                //                            rightContour.add(mainContour[i - 1].x);
-                //                            toggle2 = true;
-                //                            toggle = false;
-                //                        }
-                //
-                //                        if (rightContour != null) {
-                //
-                //                            if (rightContour.size() > 3 && leftContour.size() > 3 && rightContour.size() == leftContour.size()) {
-                //                                telemetry.addData("break", mainContour[i - 1].x);
-                //                                telemetry.update();
-                //                                break;
-                //                            }
-                //                        }
-                //
-                //                        if (toggle2 && (rightContour.size() != leftContour.size())) {
-                //                            rightContour.add(mainContour[i].x);
-                //                            telemetry.addData("toggle2", mainContour[i - 1].x);
-                //                            telemetry.update();
-                //                        }
-                //                        if (toggle) {
-                //                            leftContour.add(mainContour[i - 5].x);
-                ////                            telemetry.addData("toggle", mainContour[i - 1].x);
-                //                            telemetry.update();
-                //                        }
-                //                    }
-                //                    */
-                //
-                //                }
-                //
-                //                /*
-                //                // compare the 2 lists (average distance)
-                //                for (int i = 0; i < rightContour.size(); i++) {
-                //                    leftOfContour += leftContour.get(i);
-                //                    rightOfContour += rightContour.get(i);
-                //
-                //                }
-                //                */
-                //                 //*/
-                //                //perWidth = Math.abs(leftOfContour - rightOfContour) / (rightContour.size());
-                //                perWidth = difference / loopSpecificPoints.length;
+//            //telemetry.addData("bottom line 1", mainContour[mainContour.length - 34].x +"  "+ mainContour[mainContour.length - 34].y);
+//            //telemetry.addData("bottom line 2", mainContour[mainContour.length - 35].x +"  "+ mainContour[mainContour.length - 35].y);
+//            //telemetry.update();
+//            if (mainContour.length > 6) {
+//                loopSpecificPoints = new Point[]{mainContour[(int) (mainContour.length / 10)], mainContour[(int) (mainContour.length / 9)], mainContour[(int) (mainContour.length / 8)], mainContour[(int) (mainContour.length / 6)], mainContour[(int) (mainContour.length / 4)]};
+//                // loop to get indexes for more looping :) --> adds needed points to arrays
+//                for (int i = mainContour.length - 1; i >= mainContour.length / 2; i--) {
+//                    loggingString += (mainContour[i].toString() + "\n");
+//                    for (int j = 0; j < loopSpecificPoints.length; j++) {
+//                        if (mainContour[i].y == loopSpecificPoints[j].y) {
+//                            difference += (Math.abs(mainContour[i].x - loopSpecificPoints[j].x));
+//                            loggingString += ("coordinate - value: " + mainContour[i].x + ", " + mainContour[i].y+ ", pre coordinate value: " + loopSpecificPoints[j].x + ", " + loopSpecificPoints[i].y + " total: " + difference + "\n");
+//                        }
+//                    }
+//
+//
+//                    /*
+//                    if (i >= 5) {
+//                        num5Prev = mainContour[i - 5].x;
+//                        num4Prev = mainContour[i - 4].x;
+//                        num3Prev = mainContour[i - 3].x;
+//                        num2Prev = mainContour[i - 2].x;
+//                        num1Prev = mainContour[i - 1].x;
+//                        numCurrent = mainContour[i].x;
+//
+//
+//                        if (num5Prev < num4Prev && num4Prev == num3Prev && num3Prev == num2Prev && num2Prev == num1Prev && num1Prev == numCurrent) {
+//                            // left top (last element / index of arraylist)
+//                            telemetry.addData("leftContour.add(mainContour[i - 4].x);", mainContour[i - 4].x);
+//                            telemetry.update();
+//                            leftContour.add(mainContour[i - 4].x);
+//                            toggle = false;
+//                        } else if (num5Prev == num4Prev && num4Prev == num3Prev && num3Prev == num2Prev && num2Prev == num1Prev && num1Prev != numCurrent) {
+//                            // right top (first element / index of the right arraylist)
+//                            telemetry.addData("rightContour.add(mainContour[i - 1].x);", mainContour[i - 1].x);
+//                            telemetry.update();
+//                            rightContour.add(mainContour[i - 1].x);
+//                            toggle2 = true;
+//                            toggle = false;
+//                        }
+//
+//                        if (rightContour != null) {
+//
+//                            if (rightContour.size() > 3 && leftContour.size() > 3 && rightContour.size() == leftContour.size()) {
+//                                telemetry.addData("break", mainContour[i - 1].x);
+//                                telemetry.update();
+//                                break;
+//                            }
+//                        }
+//
+//                        if (toggle2 && (rightContour.size() != leftContour.size())) {
+//                            rightContour.add(mainContour[i].x);
+//                            telemetry.addData("toggle2", mainContour[i - 1].x);
+//                            telemetry.update();
+//                        }
+//                        if (toggle) {
+//                            leftContour.add(mainContour[i - 5].x);
+////                            telemetry.addData("toggle", mainContour[i - 1].x);
+//                            telemetry.update();
+//                        }
+//                    }
+//                    */
+//
+//                }
+//
+//                /*
+//                // compare the 2 lists (average distance)
+//                for (int i = 0; i < rightContour.size(); i++) {
+//                    leftOfContour += leftContour.get(i);
+//                    rightOfContour += rightContour.get(i);
+//
+//                }
+//                */
+//                 //*/
+//                //perWidth = Math.abs(leftOfContour - rightOfContour) / (rightContour.size());
+//                perWidth = difference / loopSpecificPoints.length;
 
-        /*
-                    try {
-                        // loops through the x values for the contour
-                        for (int i = 0; i < mainContour.length / 2 - 30; i++) {
-                            leftOfContour += mainContour[i].x;
-                        }
-                        for (int i = mainContour.length - 1; i >= mainContour.length / 2; i--) {
-                            rightOfContour += mainContour[i].x;
-                        }
-                        //gets the average distance between each x point (that's why it's divided by one half of
-                        //the values it looped for; the difference means every 2 instead of the average of every 1)
-                        perWidth = Math.abs(leftOfContour - rightOfContour) / (mainContour.length / 2);
-                    } catch (Exception e){
-                        telemetry.addData("error", e);
+    /*
+                try {
+                    // loops through the x values for the contour
+                    for (int i = 0; i < mainContour.length / 2 - 30; i++) {
+                        leftOfContour += mainContour[i].x;
                     }
-        */
-                for (int i = mainContour.length - 1; i >= 0; i--) {
-                    loggingString += (mainContour[i].toString() + "\n");
-                    if (Math.abs(mainContour[4].x - mainContour[i].x) > 6 && mainContour[i].y > 3) {
-                        perWidth = Math.abs(mainContour[4].x - mainContour[i].x);
-                        loggingString += ("perWidth " + perWidth + "\n");
-                        break;
+                    for (int i = mainContour.length - 1; i >= mainContour.length / 2; i--) {
+                        rightOfContour += mainContour[i].x;
+                    }
+                    //gets the average distance between each x point (that's why it's divided by one half of
+                    //the values it looped for; the difference means every 2 instead of the average of every 1)
+                    perWidth = Math.abs(leftOfContour - rightOfContour) / (mainContour.length / 2);
+                } catch (Exception e){
+                    telemetry.addData("error", e);
+                }
+    */
+                if (mainContour.length > 8) {
+                    for (int i = mainContour.length - 1; i >= 0; i--) {
+                        loggingString += (mainContour[i].toString() + "\n");
+                        if (Math.abs(mainContour[4].x - mainContour[i].x) > 6 && mainContour[i].y > 3) {
+                            perWidth = Math.abs(mainContour[4].x - mainContour[i].x);
+                            loggingString += ("perWidth " + perWidth + "\n");
+                            break;
+                        }
                     }
                 }
 
@@ -472,6 +472,9 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
         return distance;
     }
 
+    public double getBoundArea() {
+        return boundArea;
+    }
     // logs string into file
     public void writeLoggerToFile(){
         try{
@@ -496,7 +499,7 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
     }
 
     // Returns an enum being the current position where the robot will park
-    public DetectionAlgorithmRight.ParkingPosition getParkPosition() {
+    public ContourMultiScoreRight.ParkingPosition getParkPosition() {
         return position;
     }
 }

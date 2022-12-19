@@ -26,7 +26,7 @@ public class DetectionAlgorithmRight extends OpenCvPipeline {
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
-    public static int x = 236; // 224
+    public static int x = 232; // 224
     public static int y = 95; //95
 
     // top left point of submat (original 320, 176)

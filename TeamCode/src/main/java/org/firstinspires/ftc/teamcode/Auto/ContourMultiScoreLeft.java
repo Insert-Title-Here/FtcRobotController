@@ -101,12 +101,12 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     Telemetry telemetry;
 
     /* make stuff public static  */
-    public static int lower1 = 50; //50
-    public static int lower2 = 50; //50
-    public static int lower3 = 40; //10
-    public static int upper1 = 180; //255
-    public static int upper2 = 200; //255
-    public static int upper3 = 108; //105         //value was 80 when servo was perpendicular to the ground
+    public static int lower1 = 50; //50   50
+    public static int lower2 = 50; //50   50
+    public static int lower3 = 30; //10   40
+    public static int upper1 = 180; //255   180
+    public static int upper2 = 170; //255   200
+    public static int upper3 = 108; //105   108         //value was 80 when servo was perpendicular to the ground
     public static double widthRemoveConstant = 3.1;
 
 
@@ -158,15 +158,15 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
              */
 
             // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
-            // yellow 190
+            // yellow 197  173
 //        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
             Core.inRange(yelMat, new Scalar(160), new Scalar(205), yelMat);
-            // cyan 183
+            // cyan 173  165
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-            Core.inRange(cyaMat, new Scalar(160), new Scalar(180), cyaMat);
-            // magenta 186
+            Core.inRange(cyaMat, new Scalar(169), new Scalar(179), cyaMat);
+            // magenta 188  184
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
-            Core.inRange(magMat, new Scalar(161), new Scalar(195), magMat);
+            Core.inRange(magMat, new Scalar(171), new Scalar(195), magMat);
 
 //        befChange.convertTo(befChange, CvType.CV_64FC3);
 //        byte buff[] = new byte[ (int) (befChange.total() * befChange.channels())];
