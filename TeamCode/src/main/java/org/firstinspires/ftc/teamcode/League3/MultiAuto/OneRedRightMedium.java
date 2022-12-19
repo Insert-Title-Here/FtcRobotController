@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.League3.MultiAuto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -15,7 +14,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous
+//@Autonomous
 public class OneRedRightMedium extends LinearOpMode {
     MecanumDrive drive;
     ScoringSystem score;

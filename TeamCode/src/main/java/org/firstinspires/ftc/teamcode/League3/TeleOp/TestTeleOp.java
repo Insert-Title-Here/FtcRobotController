@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.League3.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.League3.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.League3.Common.ScoringSystem;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@TeleOp
+//@TeleOp
 public class TestTeleOp extends LinearOpMode {
     //TODO: change names if you want to
     MecanumDrive drive;
