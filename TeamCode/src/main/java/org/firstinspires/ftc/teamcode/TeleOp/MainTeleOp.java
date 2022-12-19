@@ -119,6 +119,8 @@ public class MainTeleOp extends LinearOpMode {
                         }
                     }
 
+                    //TODO: NEW CODING IDEA SCORING!!!
+                    // Ideas is to  in tele, use camera to score when close enough to pole
 
                     // normal scoring
                     if(gamepad1.left_trigger > 0.1 && triggerScoreToggle.get()){
