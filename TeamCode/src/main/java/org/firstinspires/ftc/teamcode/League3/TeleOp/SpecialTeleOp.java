@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.League3.TeleOp;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.League3.Common.Constants;
 import org.firstinspires.ftc.teamcode.League3.Common.MecanumDrive;
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.League3.Common.Vector2D;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@TeleOp //@Config
+//@TeleOp //@Config
 //This teleop will have the color sensor code
 public class SpecialTeleOp extends LinearOpMode {
     //TODO: change names if you want to

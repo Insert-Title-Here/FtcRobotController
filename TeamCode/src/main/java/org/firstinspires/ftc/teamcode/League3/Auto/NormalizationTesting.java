@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.League3.Auto;
 
-import com.acmerobotics.dashboard.config.Config;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.opencv.core.Core;
@@ -20,7 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-@Config
+//@Config
 public class NormalizationTesting extends OpenCvPipeline {
 
     // defining vars

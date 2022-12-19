@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.League3.TeleOp;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.League3.Auto.ContourMultiScoreLeft;
@@ -18,7 +17,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@TeleOp //@Config
+//@TeleOp //@Config
 // This teleop does not contain the colorsensor code
 public class MainTeleOp extends LinearOpMode {
     //TODO: change names if you want to
