@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous;
 
-//import com.acmerobotics.dashboard.FtcDashboard;
-//import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+////import com.acmerobotics.dashboard.FtcDashboard;
+////import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -241,7 +241,7 @@ public class LeftRedHigh extends LinearOpMode {
             }
         });
 
-        //FtcDashboard.getInstance().startCameraStream(camera, 0);
+        ////FtcDashboard.getInstance().startCameraStream(camera, 0);
 
         cameraServo.setPosition(0.5);
 

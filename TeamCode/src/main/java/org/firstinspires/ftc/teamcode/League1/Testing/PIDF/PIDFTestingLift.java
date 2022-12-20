@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.PIDF;
 
+////import com.acmerobotics.dashboard.FtcDashboard;
+////import com.acmerobotics.dashboard.config.Config;
+////import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 //import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.config.Config;
 //import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 
 //@Disabled
 @Autonomous
-@Config
+//@Config
 public class PIDFTestingLift extends LinearOpMode {
 
     ScoringSystemV2EpicLift score;
@@ -56,7 +56,7 @@ public class PIDFTestingLift extends LinearOpMode {
 
         score.setLinkagePosition(Constants.linkageUpV2);
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
 

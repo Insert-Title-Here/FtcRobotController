@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.FtcDashboard;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -50,7 +50,7 @@ public class PoleCalibration extends LinearOpMode {
         cameraServo.setPosition(Constants.pole);
 
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
         pipeline.isReturningTemp = true;
 

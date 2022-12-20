@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-//import com.acmerobotics.dashboard.config.Config;
+////import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//@Config
+////@Config
 public class ContourPipeline extends OpenCvPipeline {
 
     public static int H1 = 23;

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.Vision;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.FtcDashboard;
+////import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -42,7 +42,7 @@ public class AutoVisionTest extends LinearOpMode {
         servo.setPosition(Constants.poleV2);
 
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -62,9 +62,9 @@ public class AutoVisionTest extends LinearOpMode {
 
         while(opModeInInit()){
 
-            double yPos = getYCapPosition();
-            setYCapPosition(yPos - map(gamepad1.right_stick_y, -1, 1, -0.0010, 0.0010));
-            telemetry.addData("Position", getYCapPosition());
+            //double yPos = getYCapPosition();
+            //setYCapPosition(yPos - map(gamepad1.right_stick_y, -1, 1, -0.0010, 0.0010));
+            //telemetry.addData("Position", getYCapPosition());
 
             telemetry.addData("XPos", pipeline.getXContour());
             telemetry.update();

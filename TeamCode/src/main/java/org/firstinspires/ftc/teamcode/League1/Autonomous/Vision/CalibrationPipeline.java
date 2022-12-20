@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-//import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.config.Config;
+////import com.acmerobotics.dashboard.config.Config;
+////import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config
+////@Config
 public class CalibrationPipeline extends OpenCvPipeline {
 
     // Configuration variables for isolating pole color

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.Demo;
 
-import com.acmerobotics.dashboard.config.Config;
+////import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config
+////@Config
 public class NormalizationDemoPipeline extends OpenCvPipeline {
 
     public boolean isNormalizing;

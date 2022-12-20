@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.V2.Autonomous.Using;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous(name="Red Right 2")
+@Autonomous(name="Red Right Weird Vision")
 public class DoubleVisionRedRight extends LinearOpMode {
     MecDrive drive;
     ScoringSystemV2EpicLift score;
@@ -144,7 +144,7 @@ public class DoubleVisionRedRight extends LinearOpMode {
             }
         });
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         cameraServo.setPosition(Constants.sleeveV2);
@@ -169,19 +169,14 @@ public class DoubleVisionRedRight extends LinearOpMode {
         feedForward.start();
 
 
-        pipeline.changeMode(KevinGodPipelineV2.Mode.RIGHTAUTOPOLE);
-        cameraServo.setPosition(Constants.poleV2);
+        pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
+        cameraServo.setPosition(Constants.coneV2);
 
 
         //linkageUp.set(true);
         drive.simpleMoveToPosition(-1610, MecDrive.MovementType.STRAIGHT, 0.8);
 
-        pipeline.normalizeStraight(0.3, 30, 3);
-
         sleep(100);
-
-        pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
-        cameraServo.setPosition(Constants.coneV2);
 
         drive.tankRotatePID(Math.PI / 2, 1, false);
 
@@ -195,8 +190,8 @@ public class DoubleVisionRedRight extends LinearOpMode {
 
         pipeline.normalize(0.3, 159, 3);
 
-        pipeline.changeMode(KevinGodPipelineV2.Mode.REDCONE);
-        cameraServo.setPosition(Constants.coneV2);
+        pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
+        cameraServo.setPosition(Constants.poleV2);
 
 
         if(distance.getNormalizedColors().red > 0.65) {

@@ -37,7 +37,7 @@ public class ScoringSystemV2EpicLift {
     public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Constants constants) {
 
 
-        //coneStack = 2;
+        coneStack = 1;
         height = ScoringMode.HIGH;
         extended = false;
         this.constants = constants;
@@ -87,7 +87,7 @@ public class ScoringSystemV2EpicLift {
     public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
         this.telemetry = telemetry;
 
-        coneStack = 2;
+        coneStack = 1;
         height = ScoringMode.HIGH;
         extended = false;
         this.constants = constants;
@@ -147,6 +147,11 @@ public class ScoringSystemV2EpicLift {
         if(coneStack + 1 < 6) {
             coneStack += 1;
         }
+    }
+
+    public void setConeStack(int height){
+        coneStack = height;
+
     }
 
     //TODO: tune this

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-import com.acmerobotics.dashboard.config.Config;
 //import com.acmerobotics.dashboard.config.Config;
+////import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,18 +20,44 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config
+//@Config
 public class KevinGodPipelineV2 extends OpenCvPipeline {
 
     public static boolean returnInput = true;
 
     // Configuration variables for isolating pole color
-    public static int H1 = 10; //0
-    public static int S1 = 50; //was 100
-    public static int V1 = 160; //was 80
-    public static int H2 = 30; //50
-    public static int S2 = 255;
-    public static int V2 = 255;
+    public static int H1FieldRightRed = 17; //lab: 0  gym: 10
+    public static int S1FieldRightRed = 20;//lab: 100 gym:50
+    public static int V1FieldRightRed = 185; //lab: 80 gym:160
+    public static int H2FieldRightRed = 30; //lab: 50 gym: 30
+    public static int S2FieldRightRed = 200;
+    public static int V2FieldRightRed = 255;
+
+    public static int H1FieldRightBlue = 17; //lab: 0  gym: 10
+    public static int S1FieldRightBlue = 20;//lab: 100 gym:50
+    public static int V1FieldRightBlue = 220; //lab: 80 gym:160
+    public static int H2FieldRightBlue = 30; //lab: 50 gym: 30
+    public static int S2FieldRightBlue = 150;
+    public static int V2FieldRightBlue = 255;
+
+    public static int H1FieldLeftRed = 17; //lab: 0  gym: 10
+    public static int S1FieldLeftRed = 30;//lab: 100 gym:50
+    public static int V1FieldLeftRed = 170; //lab: 80 gym:160
+    public static int H2FieldLeftRed = 30; //lab: 50 gym: 30
+    public static int S2FieldLeftRed = 200;
+    public static int V2FieldLeftRed = 255;
+
+    public static int H1FieldLeftBlue = 17; //lab: 0  gym: 10
+    public static int S1FieldLeftBlue = 30;//lab: 100 gym:50
+    public static int V1FieldLeftBlue = 170; //lab: 80 gym:160
+    public static int H2FieldLeftBlue = 45; //lab: 50 gym: 30
+    public static int S2FieldLeftBlue = 200;
+    public static int V2FieldLeftBlue = 255;
+
+
+
+
+
 
     //Blue cone color
     public static int H3 = 105;
@@ -52,10 +78,10 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     // Config variables for signal pipeline
     public static int YUpper = 200;
     public static int YLower = 100;
-    public static int CrUpper = 210;
+    public static int CrUpper = 220;
     public static int CrLower = 160;
     public static int CbUpper = 200;
-    public static int CbLower = 170;
+    public static int CbLower = 150;
 
     // Config variables for bounding box
     public static int topLeftXRightRed = 180 ;
@@ -69,7 +95,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     public static int boxHeightLeftRed = 40;
 
     public static int topLeftXRightBlue = 180;
-    public static int topLeftYRightBlue = 60;
+    public static int topLeftYRightBlue = 50;
     public static int boxWidthRightBlue = 20;
     public static int boxHeightRightBlue = 40;
 
@@ -159,9 +185,9 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
     public static int bottomRightYCone = 100;
 
     //RightAutoPole Submat
-    public static int topLeftXRight = 10;
-    public static int topLeftYRight = 10;
-    public static int widthRight = 40;
+    public static int topLeftXRight = 250;
+    public static int topLeftYRight = 50;
+    public static int widthRight = 70;
     public static int heightRight = 100;
 
 
@@ -314,7 +340,7 @@ public class KevinGodPipelineV2 extends OpenCvPipeline {
             // Make binary image of yellow pixels
 
             if(sleeveSense == Mode.POLE || sleeveSense == Mode.RIGHTAUTOPOLE) {
-                Core.inRange(temp, new Scalar(H1, S1, V1), new Scalar(H2, S2, V2), temp);
+                Core.inRange(temp, new Scalar(H1FieldLeftRed, S1FieldLeftRed, V1FieldLeftRed), new Scalar(H2FieldLeftRed, S2FieldLeftRed, V2FieldLeftRed), temp);
             }else if(sleeveSense == Mode.BLUECONE){
                 Core.inRange(temp, new Scalar(H3, S3, V3), new Scalar(H4, S4, V4), temp);
             }else if(sleeveSense == Mode.REDCONE){

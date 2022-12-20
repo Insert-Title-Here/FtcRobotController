@@ -160,7 +160,7 @@ public class QuadMotorLift extends LinearOpMode {
                         score.setExtended(false);
 
                         //Automated Grab
-                    }else if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
+                    }else if((distance.getNormalizedColors().red > 0.80 || distance.getNormalizedColors().blue > 0.80) && autoLinkageFlag){
 
 
                         score.setGrabberPosition(constants.grabbing);
@@ -214,7 +214,7 @@ public class QuadMotorLift extends LinearOpMode {
 
                         //Raise linkage by height of a cone (max height of 5)
                         if(gamepad1.left_bumper || gamepad1.dpad_up) {
-                            score.raiseConeStack();
+                            score.setConeStack(5);
                             score.setLinkageConeStack(false);
                             changeStackFlag = false;
 
@@ -392,10 +392,10 @@ public class QuadMotorLift extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
+                        //score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
 
                         //TODO: fix cone stack logic
-                        //score.setLinkageConeStack(true);
+                        score.setLinkageConeStack(true);
                         linkageDown = false;
                     }
                 }

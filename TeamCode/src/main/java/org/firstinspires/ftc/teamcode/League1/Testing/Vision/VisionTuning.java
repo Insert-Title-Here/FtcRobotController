@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.Vision;
 
-//import com.acmerobotics.dashboard.config.Config;
+////import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//@Config
+////@Config
 public class VisionTuning extends OpenCvPipeline {
 
     public static int channelToReturn = 2;

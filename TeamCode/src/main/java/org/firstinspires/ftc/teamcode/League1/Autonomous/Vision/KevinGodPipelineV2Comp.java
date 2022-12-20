@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.League1.Autonomous.Vision;
 
-////import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -14,23 +14,53 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
-import org.opencv.utils.Converters;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-////@Config
-public class KevinGodPipeline extends OpenCvPipeline {
+//@Config
+public class KevinGodPipelineV2Comp extends OpenCvPipeline {
+
+    public static boolean returnInput = true;
+
+    AutoSide autoside;
+    public boolean isField1 = true;
+
 
     // Configuration variables for isolating pole color
-    public static int H1 = 12;
-    public static int S1 = 20;
-    public static int V1 = 125;
-    public static int H2 = 29;
-    public static int S2 = 220;
-    public static int V2 = 255;
+    public static int H1Field2Red = 17; //lab: 0  gym: 10
+    public static int S1Field2Red = 20;//lab: 100 gym:50
+    public static int V1Field2Red = 185; //lab: 80 gym:160
+    public static int H2Field2Red = 30; //lab: 50 gym: 30
+    public static int S2Field2Red = 200;
+    public static int V2Field2Red = 255;
+
+    public static int H1Field2Blue = 17; //lab: 0  gym: 10
+    public static int S1Field2Blue = 20;//lab: 100 gym:50
+    public static int V1Field2Blue = 220; //lab: 80 gym:160
+    public static int H2Field2Blue = 30; //lab: 50 gym: 30
+    public static int S2Field2Blue = 150;
+    public static int V2Field2Blue = 255;
+
+    public static int H1Field1Red = 17; //lab: 0  gym: 10
+    public static int S1Field1Red = 30;//lab: 100 gym:50
+    public static int V1Field1Red = 170; //lab: 80 gym:160
+    public static int H2Field1Red = 30; //lab: 50 gym: 30
+    public static int S2Field1Red = 200;
+    public static int V2Field1Red = 255;
+
+    public static int H1Field1Blue = 17; //lab: 0  gym: 10
+    public static int S1Field1Blue = 30;//lab: 100 gym:50
+    public static int V1Field1Blue = 170; //lab: 80 gym:160
+    public static int H2Field1Blue = 45; //lab: 50 gym: 30
+    public static int S2Field1Blue = 200;
+    public static int V2Field1Blue = 255;
+
+
+
+
+
 
     //Blue cone color
     public static int H3 = 105;
@@ -41,24 +71,24 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int V4 = 255;
 
     //Red cone color
-    public static int H5 = 0;
-    public static int S5 = 130;
-    public static int V5 = 120;
-    public static int H6 = 185;
-    public static int S6 = 255;
+    public static int H5 = 170;
+    public static int S5 = 120;
+    public static int V5 = 150;
+    public static int H6 = 180;
+    public static int S6 = 240;
     public static int V6 = 255;
 
     // Config variables for signal pipeline
-    public static int YUpper = 180;
-    public static int YLower = 140;
-    public static int CrUpper = 205;
-    public static int CrLower = 175;
-    public static int CbUpper = 175;
-    public static int CbLower = 155;
+    public static int YUpper = 200;
+    public static int YLower = 100;
+    public static int CrUpper = 220;
+    public static int CrLower = 160;
+    public static int CbUpper = 200;
+    public static int CbLower = 150;
 
     // Config variables for bounding box
-    public static int topLeftXRightRed = 185;
-    public static int topLeftYRightRed = 30;
+    public static int topLeftXRightRed = 180 ;
+    public static int topLeftYRightRed = 50;
     public static int boxWidthRightRed = 20;
     public static int boxHeightRightRed = 40;
 
@@ -67,8 +97,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
     public static int boxWidthLeftRed = 20;
     public static int boxHeightLeftRed = 40;
 
-    public static int topLeftXRightBlue = 195;
-    public static int topLeftYRightBlue = 20;
+    public static int topLeftXRightBlue = 180;
+    public static int topLeftYRightBlue = 50;
     public static int boxWidthRightBlue = 20;
     public static int boxHeightRightBlue = 40;
 
@@ -98,7 +128,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
     // Define ints
     int cX, cY;
-    int maxLength = 0;
+    double maxLength = 0;
     int maxLengthIndex = 0;
     int longestContourX = 0;
     int longestContourY = 0;
@@ -125,13 +155,14 @@ public class KevinGodPipeline extends OpenCvPipeline {
         SLEEVE,
         POLE,
         REDCONE,
-        BLUECONE
+        BLUECONE,
+        RIGHTAUTOPOLE,
     }
 
     // The rectangle/submat used to evaluate the signal color
     static final Rect RIGHT_MIDDLE_RED = new Rect(
-            new Point(topLeftXRightRed, topLeftYRightRed),
-            new Point(topLeftXRightRed + boxWidthRightRed, topLeftYRightRed + boxHeightRightRed)
+            new Point(topLeftXRightBlue - 10, topLeftYRightBlue),
+            new Point(topLeftXRightBlue + boxWidthRightBlue - 10, topLeftYRightBlue + boxHeightRightBlue)
     );
 
     static final Rect LEFT_MIDDLE_RED = new Rect(
@@ -149,15 +180,29 @@ public class KevinGodPipeline extends OpenCvPipeline {
             new Point(topLeftXLeftBlue + boxWidthLeftBlue, topLeftYLeftBlue + boxHeightLeftBlue)
     );
 
+
+    //Cone submat
     public static int topLeftXCone = 75;
-    public static int topLeftYCone = 5;
-    public static int bottomLeftXCone = 265;
-    public static int bottomLeftYCone = 80;
+    public static int topLeftYCone = 25;
+    public static int bottomRightXCone = 265;
+    public static int bottomRightYCone = 100;
+
+    //RightAutoPole Submat
+    public static int topLeftXRight = 250;
+    public static int topLeftYRight = 50;
+    public static int widthRight = 70;
+    public static int heightRight = 100;
+
+
 
     static final Rect CONE_AREA = new Rect(
             new Point(topLeftXCone, topLeftYCone),
-            new Point(bottomLeftXCone, bottomLeftYCone)
+            new Point(bottomRightXCone, bottomRightYCone)
     );
+
+    static final Rect RIGHTAUTOPOLE = new Rect(topLeftXRight, topLeftYRight, widthRight, heightRight);
+
+
 
 
     // Sets default values for pipelineMode and position
@@ -165,7 +210,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
     Mode sleeveSense = Mode.SLEEVE;
     ParkPos position = ParkPos.CENTER;
 
-    public KevinGodPipeline(Telemetry telemetry){
+    public KevinGodPipelineV2Comp(Telemetry telemetry){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
@@ -173,7 +218,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
         this.telemetry = telemetry;
     }
 
-    public KevinGodPipeline(Telemetry telemetry, MecDrive drive){
+    public KevinGodPipelineV2Comp(Telemetry telemetry, MecDrive drive){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
@@ -183,7 +228,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
     }
 
 
-    public KevinGodPipeline(Telemetry telemetry, MecDrive drive, AutoSide autoSide){
+    public KevinGodPipelineV2Comp(Telemetry telemetry, MecDrive drive, AutoSide autoSide){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
@@ -199,6 +244,28 @@ public class KevinGodPipeline extends OpenCvPipeline {
         } else {
             MIDDLE = RIGHT_MIDDLE_BLUE;
         }
+    }
+
+
+    public KevinGodPipelineV2Comp(Telemetry telemetry, MecDrive drive, AutoSide autoSide, boolean isField1){
+        // Set up lists and telemetry
+        xList = new ArrayList<>();
+        yList = new ArrayList<>();
+        contourLengths = new ArrayList<>();
+        this.telemetry = telemetry;
+        this.drive = drive;
+        this.autoside = autoSide;
+        if(autoSide == AutoSide.RED_LEFT) {
+            MIDDLE = LEFT_MIDDLE_RED;
+        } else if(autoSide == AutoSide.RED_RIGHT) {
+            MIDDLE = RIGHT_MIDDLE_RED;
+        } else if(autoSide == AutoSide.BLUE_LEFT) {
+            MIDDLE = LEFT_MIDDLE_BLUE;
+        } else {
+            MIDDLE = RIGHT_MIDDLE_BLUE;
+        }
+
+        this.isField1 = isField1;
     }
 
     @Override
@@ -250,7 +317,7 @@ public class KevinGodPipeline extends OpenCvPipeline {
             if(countY > 100 && countCb < 90) {
                 telemetry.addData("Color", "Yellow - Left");
                 position = ParkPos.LEFT;
-            } else if(countCr > 200) {
+            } else if(countCr > 200 /*&& countCb > 200*/) {
                 telemetry.addData("Color", "Magenta - Right");
                 position = ParkPos.RIGHT;
             } else {
@@ -297,8 +364,24 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
             // Make binary image of yellow pixels
 
-            if(sleeveSense == Mode.POLE) {
-                Core.inRange(temp, new Scalar(H1, S1, V1), new Scalar(H2, S2, V2), temp);
+            if(sleeveSense == Mode.POLE || sleeveSense == Mode.RIGHTAUTOPOLE) {
+                if(isField1){
+                    if(autoside == AutoSide.RED_RIGHT){
+                        Core.inRange(temp, new Scalar(H1Field1Red, S1Field1Red, V1Field1Red), new Scalar(H2Field1Red, S2Field1Red, V2Field1Red), temp);
+                    }else{
+                        Core.inRange(temp, new Scalar(H1Field1Blue, S1Field1Blue, V1Field1Blue), new Scalar(H2Field1Blue, S2Field2Blue, V2Field1Blue), temp);
+
+                    }
+                }else{
+                    if(autoside == AutoSide.RED_RIGHT){
+                        Core.inRange(temp, new Scalar(H1Field2Red, S1Field2Red, V1Field2Red), new Scalar(H2Field2Red, S2Field2Red, V2Field2Red), temp);
+
+                    }else{
+                        Core.inRange(temp, new Scalar(H1Field2Blue, S1Field2Blue, V1Field2Blue), new Scalar(H2Field2Blue, S2Field2Blue, V2Field2Blue), temp);
+
+                    }
+                }
+
             }else if(sleeveSense == Mode.BLUECONE){
                 Core.inRange(temp, new Scalar(H3, S3, V3), new Scalar(H4, S4, V4), temp);
             }else if(sleeveSense == Mode.REDCONE){
@@ -311,20 +394,25 @@ public class KevinGodPipeline extends OpenCvPipeline {
             // Find all contours in binary image
             List<MatOfPoint> contours = new ArrayList<>();
 
-            if(sleeveSense != Mode.POLE) {
+            if(sleeveSense != Mode.POLE && sleeveSense != Mode.RIGHTAUTOPOLE) {
                 Imgproc.findContours(temp.submat(CONE_AREA), contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
                 Imgproc.rectangle(input, CONE_AREA, new Scalar(255, 92, 90), 2);
+            } else if(sleeveSense == Mode.RIGHTAUTOPOLE){
+                Imgproc.findContours(temp.submat(RIGHTAUTOPOLE), contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+                Imgproc.rectangle(input, RIGHTAUTOPOLE, new Scalar(255, 92, 90), 2);
             } else {
                 Imgproc.findContours(temp, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             }
 
             for(int i = 0; i < contours.size(); i++){
                 // Filter out small, irrelevant contours
-                if(contours.get(i).toArray().length > 20) {
+                if(Imgproc.contourArea(contours.get(i)) > 500) {
 
                     // Draw all contours to the screen
-                    if(sleeveSense != Mode.POLE) {
+                    if(sleeveSense != Mode.POLE && sleeveSense != Mode.RIGHTAUTOPOLE) {
                         Imgproc.drawContours(input.submat(CONE_AREA), contours, i, new Scalar(230, 191, 254));
+                    } else if(sleeveSense == Mode.RIGHTAUTOPOLE){
+                        Imgproc.drawContours(input.submat(RIGHTAUTOPOLE), contours, i, new Scalar(230, 191, 254));
                     } else {
                         Imgproc.drawContours(input, contours, i, new Scalar(230, 191, 254));
                     }
@@ -356,8 +444,8 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
             // Find largest contour
             for(int i = 0; i < xList.size() && i < contourLengths.size() && i < yList.size(); i++) {
-                if(contourLengths.get(i) > maxLength) {
-                    maxLength = contourLengths.get(i);
+                if(Imgproc.contourArea(contours.get(i)) > maxLength) {
+                    maxLength = Imgproc.contourArea(contours.get(i));
                     maxLengthIndex = i;
                 }
             }
@@ -387,7 +475,11 @@ public class KevinGodPipeline extends OpenCvPipeline {
 
 
         }
-        return input;
+        if(returnInput) {
+            return input;
+        } else {
+            return temp;
+        }
     }
 
     // Get x coordinate of center of largest contour (pole)
@@ -415,9 +507,140 @@ public class KevinGodPipeline extends OpenCvPipeline {
         double startPos = drive.avgPos();
         int startPolePosition = getXContour();
 
-        if(startPolePosition < xMax){
-            power *= -1;
+
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+            if(getXContour() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }
+
+//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
+                //normlizationBroke = true;
+                wrongWay = true;
+                break;
+            }
         }
+        drive.simpleBrake();
+
+        /*
+        if(wrongWay) {
+            while ((getXContour() > xMax || getXContour() < xMin)) {
+            if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }
+
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+
+
+            }
+
+            drive.simpleBrake();
+        }
+        */
+
+        isNormalizing = false;
+
+
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+
+        return (int)(startPos - drive.avgPos());
+
+
+
+    }
+
+    public int normalizeSpecial(double power, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        boolean wrongWay = false;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+
+
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+            if(getXContour() > xMax) {
+                //drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+
+                drive.setPower(0, 0, power, -power);
+
+            } else {
+                //drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+                drive.setPower(0, 0, -power, power);
+
+            }
+
+//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
+                //normlizationBroke = true;
+                wrongWay = true;
+                break;
+            }
+        }
+        drive.simpleBrake();
+
+        /*
+        if(wrongWay) {
+            while ((getXContour() > xMax || getXContour() < xMin)) {
+            if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }
+
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+
+
+            }
+
+            drive.simpleBrake();
+        }
+        */
+
+        isNormalizing = false;
+
+
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+
+        return (int)(startPos - drive.avgPos());
+
+
+
+    }
+
+    public double p = 0.008;
+    public int normalizeStrafe(double power, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+        int error =  target - startPolePosition;
+        boolean wrongWay = false;
+
+        /*if(startPolePosition < xMax){
+            power *= -1;
+        }*/
 
         while((getXContour() > xMax || getXContour() < xMin)) {
             /*if(getPolePosition() > xMax) {
@@ -426,7 +649,9 @@ public class KevinGodPipeline extends OpenCvPipeline {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
             }*/
 
-            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            power = 0.2;
+
+            drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
 
             if(time.seconds() - startTime > 1.5){
                 //normlizationBroke = true;
@@ -444,67 +669,12 @@ public class KevinGodPipeline extends OpenCvPipeline {
                 drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
             }*/
 
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-
-
-            }
-        }
-
-        isNormalizing = false;
-
-
-
-        if(getXContour() < startPolePosition){
-            return -(int)(startPos - drive.avgPos());
-
-        }
-
-        return (int)(startPos - drive.avgPos());
-
-
-
-    }
-
-
-    public int normalizeStrafe(double power, int target, int tolerance) {
-        ElapsedTime time = new ElapsedTime();
-        double startTime = time.seconds();
-        contourTarget = target;
-        isNormalizing = true;
-        int xMax = target + tolerance;
-        int xMin = target - tolerance;
-        double startPos = drive.avgPos();
-        int startPolePosition = getXContour();
-        int error =  target - startPolePosition;
-        boolean wrongWay = false;
-
-        power *= -1;
-
-
-
-        while((getXContour() > xMax || getXContour() < xMin) && time.seconds() - startTime < 1.5) {
-            if(getXContour() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
-            } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.STRAFE);
-            }
-
-            //drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
-        }
-        drive.simpleBrake();
-
-        if(wrongWay) {
-            while ((getXContour() > xMax || getXContour() < xMin)) {
-            /*if(getPolePosition() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
-            } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }*/
-
                 drive.setPowerAuto(-power, MecDrive.MovementType.STRAFE);
 
 
             }
+            drive.simpleBrake();
+
         }
 
         isNormalizing = false;
@@ -542,6 +712,69 @@ public class KevinGodPipeline extends OpenCvPipeline {
             }
         }
     }
+
+    public int normalizeStraight(double power, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        boolean wrongWay = false;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+
+
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+            if(getXContour() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.STRAIGHT);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.STRAIGHT);
+            }
+
+//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
+                //normlizationBroke = true;
+                wrongWay = true;
+                break;
+            }
+        }
+        drive.simpleBrake();
+
+        /*
+        if(wrongWay) {
+            while ((getXContour() > xMax || getXContour() < xMin)) {
+            if(getPolePosition() > xMax) {
+                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            } else {
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+            }
+
+                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+
+
+            }
+
+            drive.simpleBrake();
+        }
+        */
+
+        isNormalizing = false;
+
+
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+
+        return (int)(startPos - drive.avgPos());
+
+
+
+    }
+
 
 
 
