@@ -45,16 +45,15 @@ public class AprilTagAutoTest extends LinearOpMode {
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
+
+        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE);
+
         while (!isStarted() && !isStopRequested()) {
-            pipeline.getPosition();
+
         }
 
-        parkPos = pipeline.getPosition();
-
-        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE);
-        telemetry.update();
-        sleep(5000);
-
+        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.SLEEVE);
+        
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         while (opModeIsActive()) {
             sleep(20);

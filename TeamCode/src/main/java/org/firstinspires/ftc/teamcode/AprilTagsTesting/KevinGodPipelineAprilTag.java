@@ -263,6 +263,34 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
                 detectionsUpdate = detections;
             }
 
+            boolean aprilTagFound = true;
+            if (detections.size() != 0) {
+
+                for (AprilTagDetection tag : detections) {
+                    if (tag.id == LEFT_PARK_ID) {
+                        position = ParkPos.LEFT;
+                    } else if (tag.id == MIDDLE_PARK_ID) {
+                        position = ParkPos.CENTER;
+                    } else if (tag.id == RIGHT_PARK_ID) {
+                        position = ParkPos.RIGHT;
+                    } else {
+                        aprilTagFound = false;
+                    }
+                }
+
+            } else {
+                aprilTagFound = false;
+            }
+
+            telemetry.addData("Park", position);
+
+            if(aprilTagFound) {
+                telemetry.addData("Status", "Good - AprilTag in frame");
+            } else {
+                telemetry.addData("Status", "no AprilTag found!");
+            }
+            telemetry.update();
+
         } else{
 
             // Convert to HSV color space
@@ -399,34 +427,6 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
     // Get parking position determined by signal mode
     public ParkPos getPosition() {
-        boolean aprilTagFound = true;
-        if (detections.size() != 0) {
-
-            for (AprilTagDetection tag : detections) {
-                if (tag.id == LEFT_PARK_ID) {
-                    position = ParkPos.LEFT;
-                } else if (tag.id == MIDDLE_PARK_ID) {
-                    position = ParkPos.CENTER;
-                } else if (tag.id == RIGHT_PARK_ID) {
-                    position = ParkPos.RIGHT;
-                } else {
-                    aprilTagFound = false;
-                }
-            }
-
-        } else {
-            aprilTagFound = false;
-        }
-
-        telemetry.addData("Park", position);
-
-        if(aprilTagFound) {
-            telemetry.addData("Status", "Good - AprilTag in frame");
-        } else {
-            telemetry.addData("Status", "no AprilTag found!");
-        }
-        telemetry.update();
-
         return position;
     }
 
