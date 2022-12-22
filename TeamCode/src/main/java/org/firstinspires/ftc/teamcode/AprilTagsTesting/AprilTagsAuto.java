@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import java.util.ArrayList;
 
 @TeleOp
-public class AprilTagAuto extends LinearOpMode
+public class AprilTagsAuto extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagPipeline aprilTagDetectionPipeline;

@@ -124,7 +124,7 @@ public class QuadMotorLift extends LinearOpMode {
 
                             //Do nothing during movement phase
                             //Reset to zero and no passive power
-                            score.moveToPosition(0, 0.75);
+                            score.moveToPosition(0, 0.5);
                             passive = PassivePower.ZERO;
 
                             //Open Grabber and reset linkage

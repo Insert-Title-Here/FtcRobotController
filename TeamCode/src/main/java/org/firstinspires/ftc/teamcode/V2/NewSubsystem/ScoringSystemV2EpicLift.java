@@ -219,23 +219,23 @@ public class ScoringSystemV2EpicLift {
 
     public void setPower(double power) {
         rLift1.setPower(-power);
-        lLift1.setPower(power);
+        //lLift1.setPower(power);
 
         rLift2.setPower(-power);
-        lLift2.setPower(power);
+        //lLift2.setPower(power);
     }
 
     public void setPowerSingular(double power) {
         rLift1.setPower(-power);
-        lLift1.setPower(power);
+        //lLift1.setPower(power);
     }
 
     public void setPower(double rightPower, double leftPower){
         rLift1.setPower(-rightPower);
-        lLift1.setPower(leftPower);
+        //lLift1.setPower(leftPower);
 
         rLift2.setPower(-rightPower);
-        lLift2.setPower(leftPower);
+        //lLift2.setPower(leftPower);
     }
     public int getLeftEncoderPos() {
         return lLift1.getCurrentPosition();
@@ -252,14 +252,14 @@ public class ScoringSystemV2EpicLift {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            moveToPosition(1400, 1, 2.25);
+            moveToPosition(600, 0.85, 2.25);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(650, 1);
+            moveToPosition(400, 0.85);
 
 
         }else if(height == ScoringMode.LOW){
-            moveToPosition(150, 1);
+            moveToPosition(200, 0.85);
 
         }
 
@@ -286,17 +286,17 @@ public class ScoringSystemV2EpicLift {
     public void autoGoToPosition(ScoringMode height) {
         this.height = height;
         if (height == ScoringMode.HIGH || height == ScoringMode.ULTRA) {
-            moveToPosition(1400, 1);
+            moveToPosition(600, 1);
 
         } else if (height == ScoringMode.MEDIUM) {
 
             //TODO: Find tic value
-            moveToPosition(650, 1);
+            moveToPosition(400, 1);
 
 
         } else if (height == ScoringMode.LOW) {
             //TODO: Find tic value
-            moveToPosition(150, 1);
+            moveToPosition(200, 1);
 
         }
 
