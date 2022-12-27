@@ -37,8 +37,8 @@ public class MainTeleOp extends LinearOpMode {
     AtomicBoolean stackFlag;
     AtomicBoolean triggerScoreToggle;
 
-    private boolean uprighterToggle = true;
-    private volatile boolean uprighting = false;
+    //private boolean uprighterToggle = true;
+    //private volatile boolean uprighting = false;
     volatile boolean isTurning = false;
 
     //private double properCX = 187; //67
@@ -218,9 +218,10 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+100, 1);
+                                    score.goToPosition(score.getEncoderPosition()+250, 1);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
+                                    /*
                                     if(uprighting){
                                         score.goToPosition(score.getEncoderPosition()+300, 1);
                                         score.setPower(constant.getSteadyPow());
@@ -231,6 +232,8 @@ public class MainTeleOp extends LinearOpMode {
                                         score.setPower(constant.getSteadyPow());
                                         clawOpenCloseToggle.set(false);
                                     }
+
+                                     */
 
 
                                 }
@@ -358,7 +361,7 @@ public class MainTeleOp extends LinearOpMode {
                 if (gamepad1.left_stick_button) { // replace this with a button for sprint
                     drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
                 } else {
-                    if (score.getEncoderPosition() > 500 || uprighting) {
+                    if (score.getEncoderPosition() > 500 /*|| uprighting*/) {
                         drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
                     } else {
                         drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
@@ -388,7 +391,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
 
-
+            /*
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
                 if (score.getUprighterPosition() == 0) {
@@ -407,6 +410,8 @@ public class MainTeleOp extends LinearOpMode {
             }else if(!gamepad1.right_bumper){
                 uprighterToggle = true;
             }
+
+             */
 
 
             //resets the drive motor encoders
