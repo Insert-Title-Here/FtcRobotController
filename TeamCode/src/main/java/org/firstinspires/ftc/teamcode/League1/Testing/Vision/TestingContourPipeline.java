@@ -20,6 +20,7 @@ public class TestingContourPipeline extends OpenCvPipeline {
 
     Telemetry telemetry;
     Mat temp = new Mat();
+    Mat blurred = new Mat();
     private ArrayList<Integer> xList, yList;
     int cX, cY;
     Moments M;
@@ -38,6 +39,7 @@ public class TestingContourPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        Imgproc.medianBlur(input, blurred, 13);
 
         Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
 
@@ -51,10 +53,6 @@ public class TestingContourPipeline extends OpenCvPipeline {
         Imgproc.rectangle(input, MIDDLE, new Scalar(0, 0, 0), 3);
 
         //Imgproc.GaussianBlur(thing, thing, new Size(101, 101), 0);
-
-
-
-
 
         List<MatOfPoint> contours = new ArrayList<>();
 
@@ -116,7 +114,7 @@ public class TestingContourPipeline extends OpenCvPipeline {
 */
 
 
-        return input;
+        return blurred;
 
 
 

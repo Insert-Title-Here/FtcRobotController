@@ -46,14 +46,12 @@ public class AprilTagAutoTest extends LinearOpMode {
          * This REPLACES waitForStart!
          */
 
-        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE);
+        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE);
 
         while (!isStarted() && !isStopRequested()) {
 
         }
 
-        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.SLEEVE);
-        
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
         while (opModeIsActive()) {
             sleep(20);

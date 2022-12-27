@@ -22,19 +22,19 @@ public class TestingVisionAuto extends LinearOpMode {
 
     public static double servoHeight = 0.9;
 
+    boolean aFlag = true;
+
     OpenCvWebcam camera;
-    KevinGodPipeline pipeline;
+    CannyEdgeDetectionPipeline pipeline;
     Servo cameraServo;
-    MecDrive drive;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        drive = new MecDrive(hardwareMap, false, telemetry);
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         cameraServo = hardwareMap.get(Servo.class, "camera");
-        pipeline = new KevinGodPipeline(telemetry, drive, KevinGodPipeline.AutoSide.BLUE_RIGHT);
+        pipeline = new CannyEdgeDetectionPipeline(telemetry);
 
         camera.setPipeline(pipeline);
 
@@ -53,10 +53,18 @@ public class TestingVisionAuto extends LinearOpMode {
             }
         });
 
+        while (opModeInInit()) {
+            if (gamepad1.a && aFlag) {
+                aFlag = false;
+                pipeline.switchMat();
+            }
+            if (!gamepad1.a) {
+                aFlag = true;
+            }
+        }
+
         ////FtcDashboard.getInstance().startCameraStream(camera, 0);
 
-
-        pipeline.changeMode(KevinGodPipeline.Mode.SLEEVE);
 
         while(opModeInInit()){
             cameraServo.setPosition(servoHeight);
