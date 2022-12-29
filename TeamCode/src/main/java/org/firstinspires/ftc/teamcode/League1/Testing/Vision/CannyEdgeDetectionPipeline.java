@@ -43,8 +43,9 @@ public class CannyEdgeDetectionPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.medianBlur(input, input, 7);
-        Imgproc.Canny(input, temp, 120, 220);
+        //Imgproc.medianBlur(input, input, 3);
+        Imgproc.GaussianBlur(input, input, new Size(5, 5), 0);
+        Imgproc.Canny(input, temp, 80, 200);
 
         Imgproc.dilate(temp, temp, new Mat());
 
@@ -77,7 +78,7 @@ public class CannyEdgeDetectionPipeline extends OpenCvPipeline {
 
             double percentFilled = contourArea / (width * height);
 
-            if(contourArea > 50 && height > width * 3 /*&& percentFilled > 0.5*/&& contours.get(i).toArray().length < 8) {
+            if(contourArea > 50 && height > width * 3 /*&& percentFilled > 0.5 && contours.get(i).toArray().length < 8*/) {
 
                 Imgproc.drawContours(input, contours, i, new Scalar(0, 255, 0));
 

@@ -3,19 +3,13 @@ package org.firstinspires.ftc.teamcode.League1.Testing.Vision;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.AprilTagsTesting.AprilTagAutoTest;
 import org.firstinspires.ftc.teamcode.AprilTagsTesting.KevinGodPipelineAprilTag;
-import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline;
-import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.SignalPipeline;
-import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.V2.NewSubsystem.MecDriveV2;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -23,10 +17,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @Config
 @Autonomous
-public class TestingVisionAuto extends LinearOpMode {
+public class PoleNormalizationTest extends LinearOpMode {
 
 
-    public static double servoHeight = Constants.sleeveV2;
+    public static double servoHeight = 0.35;
 
     boolean aFlag = true;
 
@@ -78,10 +72,18 @@ public class TestingVisionAuto extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
-        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.SLEEVE);
+        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE);
+
 
         while(opModeInInit()){
+            if(gamepad1.a) {
+                pipeline.normalize(0.25, 160, 2);
+            }
             cameraServo.setPosition(servoHeight);
+
+            telemetry.addData("pole x pos", pipeline.getXContour());
+            telemetry.update();
+
         }
 
 

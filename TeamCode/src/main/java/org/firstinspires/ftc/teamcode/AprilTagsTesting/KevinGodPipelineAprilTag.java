@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.AprilTagsTesting;
 
-//import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Config
+@Config
 public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
     // AprilTag Setup Stuff
@@ -64,12 +64,12 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
     // Configuration variables for isolating pole color
-    public static int H1Field2Red = 17; //lab: 0  gym: 10
-    public static int S1Field2Red = 20;//lab: 100 gym:50
-    public static int V1Field2Red = 185; //lab: 80 gym:160
-    public static int H2Field2Red = 30; //lab: 50 gym: 30
-    public static int S2Field2Red = 200;
-    public static int V2Field2Red = 255;
+    public static int H1Field2Red = 100; //lab: 0  gym: 10
+    public static int S1Field2Red = 130;//lab: 100 gym:50
+    public static int V1Field2Red = 50; //lab: 80 gym:160
+    public static int H2Field2Red = 240; //lab: 50 gym: 30
+    public static int S2Field2Red = 160;
+    public static int V2Field2Red = 100;
 
     public static int H1Field2Blue = 17; //lab: 0  gym: 10
     public static int S1Field2Blue = 20;//lab: 100 gym:50
@@ -294,7 +294,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
         } else{
 
             // Convert to HSV color space
-            Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
+            Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2YCrCb);
 
             // Make binary image of yellow pixels
 
