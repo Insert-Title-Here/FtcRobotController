@@ -257,7 +257,7 @@ public class ScoringSystemV2EpicLift {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            moveToPosition(600, 1, 2.25);
+            moveToPosition(600, 1);
 
         }else if(height == ScoringMode.MEDIUM){
             moveToPosition(400, 1);
@@ -345,7 +345,9 @@ public class ScoringSystemV2EpicLift {
 
                 if (rLiftPos >= tics) {
                     rightPower = 0;
-                } else if (lLiftPos >= tics) {
+                }
+
+                if (lLiftPos >= tics) {
                     leftPower = 0;
                 }
 
@@ -364,7 +366,9 @@ public class ScoringSystemV2EpicLift {
 
                 if (rLiftPos <= tics) {
                     rightPower = 0;
-                } else if (lLiftPos <= tics) {
+                }
+
+                if (lLiftPos <= tics) {
                     leftPower = 0;
                 }
 
@@ -414,7 +418,8 @@ public class ScoringSystemV2EpicLift {
 
                 if (rLiftPos >= tics) {
                     rightPower = 0;
-                } else if (lLiftPos >= tics) {
+                }
+                if (lLiftPos >= tics) {
                     leftPower = 0;
                 }
 
@@ -433,7 +438,9 @@ public class ScoringSystemV2EpicLift {
 
                 if (rLiftPos <= tics) {
                     rightPower = 0;
-                } else if (lLiftPos <= tics) {
+                }
+
+                if (lLiftPos <= tics) {
                     leftPower = 0;
                 }
 
@@ -485,7 +492,8 @@ public class ScoringSystemV2EpicLift {
 
                 if (rLiftPos >= tics) {
                     rightPower = 0;
-                } else if (lLiftPos >= tics) {
+                }
+                if (lLiftPos >= tics) {
                     leftPower = 0;
                 }
 
@@ -508,7 +516,8 @@ public class ScoringSystemV2EpicLift {
 
                 if (rLiftPos <= tics) {
                     rightPower = 0;
-                } else if (lLiftPos <= tics) {
+                }
+                if (lLiftPos <= tics) {
                     leftPower = 0;
                 }
 
@@ -579,7 +588,8 @@ public class ScoringSystemV2EpicLift {
 
                 if (rLiftPos >= tics) {
                     rightPower = 0;
-                } else if (lLiftPos >= tics) {
+                }
+                if (lLiftPos >= tics) {
                     leftPower = 0;
                 }
 
@@ -649,7 +659,8 @@ public class ScoringSystemV2EpicLift {
 
                 if (rLiftPos <= tics) {
                     rightPower = 0;
-                } else if (lLiftPos <= tics) {
+                }
+                if (lLiftPos <= tics) {
                     leftPower = 0;
                 }
 
