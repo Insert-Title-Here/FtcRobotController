@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.V2.NewSubsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -11,11 +12,13 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 
 public class ScoringSystemV2EpicLift {
     public DcMotorEx lLift1, rLift1, lLift2, rLift2;
     public Servo grabber;
+    public DistanceSensor distance;
     ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
     private boolean grabbing, linkageUp, extended;
@@ -91,6 +94,8 @@ public class ScoringSystemV2EpicLift {
         height = ScoringMode.HIGH;
         extended = false;
         this.constants = constants;
+
+        distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
 
         rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift1 = hardwareMap.get(DcMotorEx.class, "LeftLift");
@@ -252,14 +257,14 @@ public class ScoringSystemV2EpicLift {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            moveToPosition(1400, 1, 2.25);
+            moveToPosition(600, 1, 2.25);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(650, 1);
+            moveToPosition(400, 1);
 
 
         }else if(height == ScoringMode.LOW){
-            moveToPosition(150, 1);
+            moveToPosition(200, 1);
 
         }
 
@@ -286,17 +291,17 @@ public class ScoringSystemV2EpicLift {
     public void autoGoToPosition(ScoringMode height) {
         this.height = height;
         if (height == ScoringMode.HIGH || height == ScoringMode.ULTRA) {
-            moveToPosition(1400, 1);
+            moveToPosition(600, 1);
 
         } else if (height == ScoringMode.MEDIUM) {
 
             //TODO: Find tic value
-            moveToPosition(650, 1);
+            moveToPosition(400, 1);
 
 
         } else if (height == ScoringMode.LOW) {
             //TODO: Find tic value
-            moveToPosition(150, 1);
+            moveToPosition(200, 1);
 
         }
 
@@ -438,6 +443,84 @@ public class ScoringSystemV2EpicLift {
 
                 setPower(rightPower, leftPower);
 
+
+            }
+        }
+
+        setPower(0);
+
+    }
+
+
+    public void moveToPosition(int tics, double power, double kickout, boolean distanceSensor){
+        boolean poleNotSeen = true;
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+
+        int rLiftPos = -1 * rLift1.getCurrentPosition();
+        int lLiftPos = lLift1.getCurrentPosition();
+
+
+        if(tics < ((rLiftPos + lLiftPos) / 2)){
+            power *= -1;
+        }
+
+        double rightPower = power;
+        double leftPower = power;
+
+
+
+
+
+        //Dont know if need the != condition
+        //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
+
+        //TODO: Check if logic for encoder positions works
+
+        if(power > 0) {
+            while ((time.seconds() - startTime) < kickout && (rLiftPos < tics || lLiftPos < tics) && poleNotSeen) {
+
+                //TODO: figure out if we need to negate either of them
+
+                if (rLiftPos >= tics) {
+                    rightPower = 0;
+                } else if (lLiftPos >= tics) {
+                    leftPower = 0;
+                }
+
+
+                rLiftPos = -1 * rLift1.getCurrentPosition();
+                lLiftPos = lLift1.getCurrentPosition();
+
+                setPower(rightPower, leftPower);
+
+                if(distance.getDistance(DistanceUnit.CM) < 30) {
+                    poleNotSeen = false;
+                }
+
+
+            }
+        }else{
+            while ((time.seconds() - startTime) < kickout && (rLiftPos > tics || lLiftPos > tics) && poleNotSeen) {
+
+                //TODO: figure out if we need to negate either of them
+
+                if (rLiftPos <= tics) {
+                    rightPower = 0;
+                } else if (lLiftPos <= tics) {
+                    leftPower = 0;
+                }
+
+
+                rLiftPos = -1 * rLift1.getCurrentPosition();
+                lLiftPos = lLift1.getCurrentPosition();
+
+                setPower(rightPower, leftPower);
+
+                if(distance.getDistance(DistanceUnit.CM) < 30) {
+                    poleNotSeen = false;
+                }
 
             }
         }
