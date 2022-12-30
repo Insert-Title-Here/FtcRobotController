@@ -26,6 +26,8 @@ public class QuadMotorLift extends LinearOpMode {
     PassivePower passive;
 
     volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp;
+    volatile boolean liftBrokenMode = false;
+    volatile boolean optionsFlag = true;
 
     Thread liftThread, linkageThread;
 
@@ -59,7 +61,7 @@ public class QuadMotorLift extends LinearOpMode {
         //Feed forward is going to be off
         passive = PassivePower.ZERO;
 
-        score = new ScoringSystemV2EpicLift(hardwareMap, constants);
+        score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         //systems = new EndgameSystems(hardwareMap);
@@ -86,12 +88,16 @@ public class QuadMotorLift extends LinearOpMode {
                     //Lift up to scoring position
                     if(gamepad1.left_trigger > 0.1){
                         //score.setPower(0.2);
-                        if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
+                        if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA && !liftBrokenMode) {
                             score.autoGoToPosition();
 
-                            score.setLinkagePosition(constants.linkageScoreV2 - 0.05);
+                            if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW) {
+                                score.setLinkagePosition(0.71);
+                            } else {
+                                score.setLinkagePosition(constants.linkageScoreV2 - 0.05);
+                            }
                             passive = PassivePower.EXTENDED;
-                        }else{
+                        }else if (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA){
                             score.setLinkagePosition(0.15);
                         }
 
@@ -140,6 +146,14 @@ public class QuadMotorLift extends LinearOpMode {
                                 e.printStackTrace();
                             }
 
+                        }
+
+                        if (liftBrokenMode) {
+                            try {
+                                sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         //TODO: fix this
@@ -307,6 +321,22 @@ public class QuadMotorLift extends LinearOpMode {
 
                     }
 
+                    if (gamepad1.ps && optionsFlag) {
+                        optionsFlag = false;
+                        liftBrokenMode = !liftBrokenMode;
+                    }
+                    if (!gamepad1.ps) {
+                        optionsFlag = true;
+                    }
+
+                    if (gamepad2.dpad_up) {
+                        score.setLinkagePosition(score.getLeftLinkage() + 0.001);
+                    }
+
+                    if (gamepad2.dpad_down) {
+                        score.setLinkagePosition(score.getLeftLinkage() - 0.001);
+                    }
+
 
                 }
 
@@ -382,7 +412,13 @@ public class QuadMotorLift extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
+                        if (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
+                            score.setLinkagePosition(0.25);
+                        } else if (liftBrokenMode) {
+                            score.setLinkagePosition(0.54);
+                        } else {
+                            score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
+                        }
                         linkageUp = false;
                     }else if(linkageDown) {
 
@@ -441,6 +477,7 @@ public class QuadMotorLift extends LinearOpMode {
 
 
             //Telemetry
+
             telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
@@ -453,13 +490,15 @@ public class QuadMotorLift extends LinearOpMode {
             telemetry.addData("manualFlag", manualFlag);
             telemetry.addData("shiftLinkageFlag", shiftLinkageFlag);
             telemetry.addData("extended", score.isExtended());
-            /*telemetry.addData("colorRed: ", color.getNormalizedColors().red);
-            telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);*/
+            //telemetry.addData("colorRed: ", color.getNormalizedColors().red);
+            //telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);
             telemetry.addData("rightServoTarget", score.getRightLinkage());
             telemetry.addData("leftServoTarget", score.getLeftLinkage());
             telemetry.addData("passive", passive);
             telemetry.addData("coneStack", score.getConeStack());
+            telemetry.addData("rip robot", liftBrokenMode);
             telemetry.update();
+
 
         }
 

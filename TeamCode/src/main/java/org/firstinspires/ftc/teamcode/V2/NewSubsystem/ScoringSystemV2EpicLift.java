@@ -13,7 +13,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 public class ScoringSystemV2EpicLift {
     public DcMotorEx lLift1, rLift1, lLift2, rLift2;
@@ -27,7 +32,8 @@ public class ScoringSystemV2EpicLift {
     Telemetry telemetry;
     PIDCoefficients pidf = new PIDCoefficients(0.0076, 0.0000275, 0.00025);
 
-
+    File file = AppUtil.getInstance().getSettingsFile("LoopTimes.txt");
+    String composite = "";
 
 
     public enum ScoringMode{
@@ -257,14 +263,14 @@ public class ScoringSystemV2EpicLift {
     //TODO: fix this
     public void autoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            moveToPosition(600, 1);
+            moveToPosition(960, 1);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(400, 1);
+            moveToPosition(550, 1);
 
 
         }else if(height == ScoringMode.LOW){
-            moveToPosition(200, 1);
+            moveToPosition(100, 1);
 
         }
 
@@ -273,14 +279,14 @@ public class ScoringSystemV2EpicLift {
 
     public void epicAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            newLiftPID(1350);
+            newLiftPID(960);
 
         }else if(height == ScoringMode.MEDIUM){
-            newLiftPID(750);
+            newLiftPID(550);
 
 
         }else if(height == ScoringMode.LOW){
-            newLiftPID(250);
+            newLiftPID(100);
 
         }
 
@@ -319,7 +325,7 @@ public class ScoringSystemV2EpicLift {
         double startTime = time.seconds();
 
         int rLiftPos = -1 * rLift1.getCurrentPosition();
-        int lLiftPos = lLift1.getCurrentPosition();
+        int lLiftPos = -1 * lLift1.getCurrentPosition();
 
 
         if(tics < ((rLiftPos + lLiftPos) / 2)){
@@ -343,6 +349,7 @@ public class ScoringSystemV2EpicLift {
 
                 //TODO: figure out if we need to negate either of them
 
+                /*
                 if (rLiftPos >= tics) {
                     rightPower = 0;
                 }
@@ -351,12 +358,12 @@ public class ScoringSystemV2EpicLift {
                     leftPower = 0;
                 }
 
+                 */
 
                 rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = lLift1.getCurrentPosition();
+                lLiftPos = -1 * lLift1.getCurrentPosition();
 
                 setPower(rightPower, leftPower);
-
 
             }
         }else{
@@ -364,6 +371,7 @@ public class ScoringSystemV2EpicLift {
 
                 //TODO: figure out if we need to negate either of them
 
+                /*
                 if (rLiftPos <= tics) {
                     rightPower = 0;
                 }
@@ -372,12 +380,13 @@ public class ScoringSystemV2EpicLift {
                     leftPower = 0;
                 }
 
+                 */
+
 
                 rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = lLift1.getCurrentPosition();
+                lLiftPos = -1 * lLift1.getCurrentPosition();
 
                 setPower(rightPower, leftPower);
-
 
             }
         }
@@ -460,13 +469,12 @@ public class ScoringSystemV2EpicLift {
 
 
     public void moveToPosition(int tics, double power, double kickout, boolean distanceSensor){
-        boolean poleNotSeen = true;
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
 
         int rLiftPos = -1 * rLift1.getCurrentPosition();
-        int lLiftPos = lLift1.getCurrentPosition();
+        int lLiftPos = -1 * lLift1.getCurrentPosition();
 
 
         if(tics < ((rLiftPos + lLiftPos) / 2)){
@@ -476,63 +484,74 @@ public class ScoringSystemV2EpicLift {
         double rightPower = power;
         double leftPower = power;
 
-
-
+        PrintStream ps = null;
+        try {
+            ps = new PrintStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
 
         //Dont know if need the != condition
         //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
 
         //TODO: Check if logic for encoder positions works
+        double counter = 0;
+        double prevmillis = 0;
+
 
         if(power > 0) {
-            while ((time.seconds() - startTime) < kickout && (rLiftPos < tics || lLiftPos < tics) && poleNotSeen) {
+            while ((time.seconds() - startTime) < 2.25 && (rLiftPos < tics || lLiftPos < tics) && distance.getDistance(DistanceUnit.CM) > 25) {
 
                 //TODO: figure out if we need to negate either of them
 
+                /*
                 if (rLiftPos >= tics) {
                     rightPower = 0;
                 }
+
                 if (lLiftPos >= tics) {
                     leftPower = 0;
                 }
 
+                 */
+                double millis = time.milliseconds();
+                composite += "(" + counter + " , " + millis + ")\n";
+                counter++;
+                prevmillis = millis;
 
                 rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = lLift1.getCurrentPosition();
+                lLiftPos = -1 * lLift1.getCurrentPosition();
 
                 setPower(rightPower, leftPower);
 
-                if(distance.getDistance(DistanceUnit.CM) < 30) {
-                    poleNotSeen = false;
-                }
-
-
             }
         }else{
-            while ((time.seconds() - startTime) < kickout && (rLiftPos > tics || lLiftPos > tics) && poleNotSeen) {
+            while ((time.seconds() - startTime) < 2.5 &&   (rLiftPos > tics || lLiftPos > tics) && distance.getDistance(DistanceUnit.CM) > 25) {
 
                 //TODO: figure out if we need to negate either of them
 
+                /*
                 if (rLiftPos <= tics) {
                     rightPower = 0;
                 }
+
                 if (lLiftPos <= tics) {
                     leftPower = 0;
                 }
 
+                 */
+
 
                 rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = lLift1.getCurrentPosition();
+                lLiftPos = -1 * lLift1.getCurrentPosition();
 
                 setPower(rightPower, leftPower);
 
-                if(distance.getDistance(DistanceUnit.CM) < 30) {
-                    poleNotSeen = false;
-                }
-
             }
         }
+        composite += "Delta Avg: " + (prevmillis) / counter;
+        ps.println(composite);
 
         setPower(0);
 
