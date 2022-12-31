@@ -346,7 +346,7 @@ public class SpecialTeleOp extends LinearOpMode {
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
-            telemetry.addData("liftPow", score.getPower());
+            telemetry.addData("liftPow", score.getLeftPower());
             telemetry.addData("stack", stackHeight.get());
             telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
             telemetry.addData("imu", imu.getAngularOrientation().firstAngle);

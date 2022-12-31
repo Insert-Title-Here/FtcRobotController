@@ -16,10 +16,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 public class ScoringSystem {
-    private DcMotor liftMotor;
+    private DcMotor liftMotorLeft;
+    private DcMotor liftMotorRight;
     private Servo claw;
     private Servo camTurn;
-    private Servo uprighter;
+    //private Servo uprighter;
     MecanumDrive drive;
     ColorRangeSensor colorCone;
     Telemetry telemetry;
@@ -33,28 +34,85 @@ public class ScoringSystem {
         constant = new Constants();
         claw = hardwareMap.get(Servo.class, "claw");
         camTurn = hardwareMap.get(Servo.class, "camTurn");
-        uprighter = hardwareMap.get(Servo.class, "uprighter");
-        liftMotor = hardwareMap.get(DcMotor.class, "motor");
+        //uprighter = hardwareMap.get(Servo.class, "uprighter");
+        liftMotorLeft = hardwareMap.get(DcMotor.class, "liftMotorLeft");
+        liftMotorRight = hardwareMap.get(DcMotor.class, "liftMotorRight");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "colorCone");
         drive = new MecanumDrive(hardwareMap, telemetry);
         this.telemetry = telemetry;
         // reset encoder's tics for liftMotor (leave commented unless you need to reset the encoder for
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         //Not actually without encoder (just doesn't use given PID)
-        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         // when the power is zero, it'll resist movement/change
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        liftMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        liftMotorRight.setDirection(DcMotor.Direction.REVERSE);
+        liftMotorLeft.setDirection(DcMotor.Direction.FORWARD);
+
+
+    }
+    /*
+    //goes to given tics
+    public void goToPosition(int tics, double power) {
+        int motorPositionLeft = liftMotorLeft.getCurrentPosition();
+        int motorPositionRight = liftMotorRight.getCurrentPosition();
+
+        if (motorPositionLeft > tics) {
+            power *= -1;
+        }
+        if (motorPositionRight > tics) {
+            power *= -1;
+        }
+        long time = System.currentTimeMillis();
+        long timeChange= 0;
+        double proportionPow;
+        double derivativePow;
+        while (Math.abs(Math.abs(tics)-motorPositionLeft) > 10 || Math.abs(Math.abs(tics)-motorPositionRight) > 10) {
+
+            //set power to zero if tics pretty high and power continually being used, stops lift
+            //system from breaking itself from trying to go past mechanical max
+            if((Math.abs(timeChange) > 2000)){
+                liftMotorLeft.setPower(0);
+                liftMotorRight.setPower(0);
+
+                //stops while loop
+                break;
+            }else{
+                if(Math.abs(tics) - motorPositionLeft < 0 || Math.abs(tics) - motorPositionRight < 0){
+                    liftMotorLeft.setPower(power);
+                    liftMotorRight.setPower(power);
+
+                }else{
+                    liftMotorLeft.setPower(0.8);
+                    liftMotorRight.setPower(0.8);
+
+                }
+                motorPositionLeft = liftMotorLeft.getCurrentPosition();
+                motorPositionRight = liftMotorRight.getCurrentPosition();
+            }
+            timeChange =  System.currentTimeMillis() - time;
+        }
+
+
+        liftMotorLeft.setPower(0);
+        liftMotorRight.setPower(0);
+
 
     }
 
+     */
     //goes to given tics
     public void goToPosition(int tics, double power) {
-        int motorPosition = liftMotor.getCurrentPosition();
+        int motorPosition = liftMotorLeft.getCurrentPosition();
         if (motorPosition > tics) {
             power *= -1;
         }
@@ -67,22 +125,28 @@ public class ScoringSystem {
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
             if((Math.abs(timeChange) > 2000)){
-                liftMotor.setPower(0);
+                liftMotorLeft.setPower(0);
+                liftMotorRight.setPower(0);
                 //stops while loop
                 break;
             }else{
                 if(Math.abs(tics) - motorPosition < 0){
-                    liftMotor.setPower(power);
+                    liftMotorLeft.setPower(power);
+                    liftMotorRight.setPower(power);
+
                 }else{
-                    liftMotor.setPower(0.8);
+                    liftMotorLeft.setPower(0.8);
+                    liftMotorRight.setPower(0.8);
                 }
-                motorPosition = liftMotor.getCurrentPosition();
+                motorPosition = liftMotorLeft.getCurrentPosition();
             }
             timeChange =  System.currentTimeMillis() - time;
         }
 
 
-        liftMotor.setPower(0);
+        liftMotorLeft.setPower(0);
+        liftMotorRight.setPower(0);
+
 
     }
 
@@ -103,11 +167,16 @@ public class ScoringSystem {
         }
     }
     public void setPower(double power){
-        liftMotor.setPower(power);
+        liftMotorLeft.setPower(power);
+        liftMotorRight.setPower(power);
     }
-    public double getPower(){
-        return liftMotor.getPower();
+    public double getRightPower(){
+        return liftMotorLeft.getPower();
     }
+    public double getLeftPower(){
+        return liftMotorLeft.getPower();
+    }
+
 
     public void setClawPosition(double position) {
         claw.setPosition(position);
@@ -117,11 +186,13 @@ public class ScoringSystem {
         camTurn.setPosition(position);
     }
 
-    public void setUprighterPosition(double position) { uprighter.setPosition(position);}
+    //public void setUprighterPosition(double position) { uprighter.setPosition(position);}
 
     public int getEncoderPosition() {
-        return liftMotor.getCurrentPosition();
+        return (liftMotorLeft.getCurrentPosition() + liftMotorRight.getCurrentPosition())/2;
     }
+
+
 
     public double getClawPosition() {
         return claw.getPosition();
@@ -129,14 +200,15 @@ public class ScoringSystem {
     public double getCamPosition() {
         return camTurn.getPosition();
     }
-    public double getUprighterPosition() { return uprighter.getPosition(); }
+    //public double getUprighterPosition() { return uprighter.getPosition(); }
 
     public void resetLiftEncoder(){
-         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public boolean isBusy(){
-        return liftMotor.isBusy();
+        return liftMotorLeft.isBusy() && liftMotorRight.isBusy();
     }
     //returns numerical value of how "blue it is" from the color sensor
     public int currentBlueColor() {
@@ -228,11 +300,11 @@ public class ScoringSystem {
         return colorCone.getDistance(DistanceUnit.CM);
     }
 
-    int height1 = 220;
-    int height2 = 155;
-    int height3 = 105;
-    int height4 = 53;
-    int height5 = 2;
+    int height1 = 229;
+    int height2 = 176;
+    int height3 = 139;
+    int height4 = 97;
+    int height5 = 47;
     int currentHeight = 0;
     public void stackUp(){
         if(currentHeight == 0){

@@ -77,7 +77,7 @@ public class TestingContours extends LinearOpMode {
                     }
 
 
-                    telemetry.addData("liftPow", score.getPower());
+                    telemetry.addData("liftPow", score.getLeftPower());
                     telemetry.addData("liftPos", score.getEncoderPosition());
                     telemetry.update();
                 }

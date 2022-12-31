@@ -240,7 +240,7 @@ public class UprighterTeleOp extends LinearOpMode {
                                     if(uprighting){
                                         score.goToPosition(score.getEncoderPosition()+300, 1);
                                         score.setPower(constant.getSteadyPow());
-                                        score.setUprighterPosition(0);
+                                        //score.setUprighterPosition(0);
                                         clawOpenCloseToggle.set(false);
                                     }else if(!uprighting){
                                         score.goToPosition(score.getEncoderPosition()+100, 1);
@@ -291,7 +291,7 @@ public class UprighterTeleOp extends LinearOpMode {
             }
         };
         score.setClawPosition(0);
-        score.setUprighterPosition(0);
+        //score.setUprighterPosition(0);
         score.goToPosition(constant.getHeightBottom(), 0.3);
         score.setPower(constant.getSteadyPow());
 
@@ -321,7 +321,7 @@ public class UprighterTeleOp extends LinearOpMode {
             }
             //Used for testing purposes-turns a certain number of radians
 
-
+            /*
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
                 if (score.getUprighterPosition() == 0) {
@@ -341,6 +341,8 @@ public class UprighterTeleOp extends LinearOpMode {
                 uprighterToggle = true;
             }
 
+             */
+
 
 
 
@@ -358,7 +360,7 @@ public class UprighterTeleOp extends LinearOpMode {
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
-            telemetry.addData("liftPow", score.getPower());
+            telemetry.addData("liftPow", score.getLeftPower());
             telemetry.addData("stack", stackHeight.get());
             telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
             telemetry.addData("imu", imu.getAngularOrientation().firstAngle);

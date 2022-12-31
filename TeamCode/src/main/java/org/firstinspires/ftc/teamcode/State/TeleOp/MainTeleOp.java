@@ -37,8 +37,8 @@ public class MainTeleOp extends LinearOpMode {
     AtomicBoolean stackFlag;
     AtomicBoolean triggerScoreToggle;
 
-    //private boolean uprighterToggle = true;
-    //private volatile boolean uprighting = false;
+    private boolean uprighterToggle = true;
+    private volatile boolean uprighting = false;
     volatile boolean isTurning = false;
 
     //private double properCX = 187; //67
@@ -110,7 +110,7 @@ public class MainTeleOp extends LinearOpMode {
                         if(score.getEncoderPosition() > constant.getHeightLimit()){
                             score.setPower(constant.getSteadyPow());
                         }else{
-                            score.setPower(0.6);
+                            score.setPower(1);
                         }
                     }else if(gamepad1.dpad_left) {
                         score.setPower(-0.25);
@@ -141,7 +141,7 @@ public class MainTeleOp extends LinearOpMode {
                             score.setPower(constant.getSteadyPow());
                         }
                         triggerScoreToggle.set(false);
-                    }else if(gamepad1.right_trigger < 0.1){
+                    }else if(gamepad1.left_trigger < 0.1){
                         triggerScoreToggle.set(true);
                     }
 
@@ -183,7 +183,7 @@ public class MainTeleOp extends LinearOpMode {
                                     score.goToPosition(constant.getHeightBottom(),1);
                                     clawMoveDownToggle.set(false);
                                 }else{
-                                    score.goToPosition(score.getEncoderPosition() - 200, 0.5);
+                                    score.goToPosition(score.getEncoderPosition() - 100, 0.5);
                                     clawMoveDownToggle.set(true);
                                 }
                             }else{
@@ -207,7 +207,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+200,1);
+                                    score.goToPosition(score.getEncoderPosition()+100,1);
                                     score.setPower(constant.getSteadyPow());
                                     clawStackFlag.set(false);
 
@@ -218,7 +218,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+250, 1);
+                                    score.goToPosition(score.getEncoderPosition()+120, 1);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
                                     /*
@@ -246,7 +246,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+300,1);
+                                    score.goToPosition(score.getEncoderPosition()+150,1);
                                     score.setPower(constant.getSteadyPow());
                                     clawStackFlag.set(false);
                                 }else{
@@ -333,17 +333,16 @@ public class MainTeleOp extends LinearOpMode {
 
             }
         };
-        score.setClawPosition(constant.getClawOpenPos());
+        score.setClawPosition(constant.getClawClosePos());
         score.setScoreBoolean(true, false, false);
-        score.setUprighterPosition(0);
-        score.goToPosition(constant.getHeightBottom(), 0.3);
-        score.setPower(constant.getSteadyPow());
         score.setCamPosition(constant.getStrafeLowCamPos());
         telemetry.addData("status", "initialized");
         telemetry.update();
         waitForStart();
         liftThread.start();
         imuThread.start();
+        score.goToPosition(constant.getHeightBottom(), 0.6);
+        score.setPower(constant.getSteadyPow());
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
@@ -391,18 +390,16 @@ public class MainTeleOp extends LinearOpMode {
             }
 
 
-            /*
+
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
-                if (score.getUprighterPosition() == 0) {
+                if (constant.getHeightBottom() == 0) {
+                    constant.setHeightBottom(47);
+                    score.goToPosition(constant.getHeightBottom(), 0.45);
+                    uprighting = false;
+                } else if (constant.getHeightBottom() == 47) {
                     constant.setHeightBottom(0);
                     score.goToPosition(constant.getHeightBottom(), 0.45);
-                    score.setUprighterPosition(1);
-                    uprighting = false;
-                } else if (score.getUprighterPosition() == 1) {
-                    constant.setHeightBottom(40);
-                    score.goToPosition(constant.getHeightBottom(), 0.45);
-                    score.setUprighterPosition(0);
                     uprighting = true;
                 }
                 uprighterToggle = false;
@@ -411,7 +408,7 @@ public class MainTeleOp extends LinearOpMode {
                 uprighterToggle = true;
             }
 
-             */
+
 
 
             //resets the drive motor encoders
@@ -427,7 +424,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("current angle", imu.getAngularOrientation().firstAngle);
             telemetry.addData("liftPos", score.getEncoderPosition());
             telemetry.addData("clawPos", score.getClawPosition());
-            telemetry.addData("liftPow", score.getPower());
+            telemetry.addData("LeftliftPow", score.getLeftPower());
+            telemetry.addData("RightliftPow", score.getRightPower());
             telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
             telemetry.addData("imu", imu.getAngularOrientation().firstAngle);
             //// telemetry.addData("blue", color.currentBlueColor());
