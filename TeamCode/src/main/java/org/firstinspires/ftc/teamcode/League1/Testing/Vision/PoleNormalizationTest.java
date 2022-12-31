@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AprilTagsTesting.KevinGodPipelineAprilTag;
+import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -20,7 +21,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class PoleNormalizationTest extends LinearOpMode {
 
 
-    public static double servoHeight = 0.35;
+    public static double servoHeight = Constants.poleV2;
 
     boolean aFlag = true;
 
@@ -77,7 +78,7 @@ public class PoleNormalizationTest extends LinearOpMode {
 
         while(opModeInInit()){
             if(gamepad1.a) {
-                pipeline.normalize(0.25, 160, 2);
+                pipeline.normalizeStrafe(0.4, 150, 2);
             }
             cameraServo.setPosition(servoHeight);
 

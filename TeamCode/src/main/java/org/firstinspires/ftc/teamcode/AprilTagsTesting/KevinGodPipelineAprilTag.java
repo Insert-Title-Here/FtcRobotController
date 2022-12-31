@@ -85,12 +85,12 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
     public static int S2Field1Red = 200;
     public static int V2Field1Red = 255;
 
-    public static int H1Field1Blue = 17; //lab: 0  gym: 10
-    public static int S1Field1Blue = 30;//lab: 100 gym:50
-    public static int V1Field1Blue = 170; //lab: 80 gym:160
-    public static int H2Field1Blue = 45; //lab: 50 gym: 30
-    public static int S2Field1Blue = 200;
-    public static int V2Field1Blue = 255;
+    public static int H1Field1Blue = 100; //lab: 0  gym: 10
+    public static int S1Field1Blue = 130;//lab: 100 gym:50
+    public static int V1Field1Blue = 50; //lab: 80 gym:160
+    public static int H2Field1Blue = 240; //lab: 50 gym: 30
+    public static int S2Field1Blue = 160;
+    public static int V2Field1Blue = 100;
 
 
 
@@ -98,11 +98,11 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
     //Blue cone color
-    public static int H3 = 105;
-    public static int S3 = 125;
-    public static int V3 = 90;
-    public static int H4 = 130;
-    public static int S4 = 255;
+    public static int H3 = 0;
+    public static int S3 = 90;
+    public static int V3 = 160;
+    public static int H4 = 200;
+    public static int S4 = 150;
     public static int V4 = 255;
 
     //Red cone color
@@ -303,7 +303,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
                     if(autoside == AutoSide.RED_RIGHT){
                         Core.inRange(temp, new Scalar(H1Field1Red, S1Field1Red, V1Field1Red), new Scalar(H2Field1Red, S2Field1Red, V2Field1Red), temp);
                     }else{
-                        Core.inRange(temp, new Scalar(H1Field1Blue, S1Field1Blue, V1Field1Blue), new Scalar(H2Field1Blue, S2Field2Blue, V2Field1Blue), temp);
+                        Core.inRange(temp, new Scalar(H1Field1Blue, S1Field1Blue, V1Field1Blue), new Scalar(H2Field1Blue, S2Field1Blue, V2Field1Blue), temp);
 
                     }
                 }else{
@@ -480,51 +480,29 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
         double startTime = time.seconds();
         contourTarget = target;
         isNormalizing = true;
+        boolean wrongWay = false;
         int xMax = target + tolerance;
         int xMin = target - tolerance;
         double startPos = drive.avgPos();
         int startPolePosition = getXContour();
-        int error =  target - startPolePosition;
-        boolean wrongWay = false;
 
-        /*if(startPolePosition < xMax){
-            power *= -1;
-        }*/
+
 
         while((getXContour() > xMax || getXContour() < xMin)) {
-            /*if(getPolePosition() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            if(getXContour() > xMax) {
+                drive.setPowerAuto(-power, MecDrive.MovementType.STRAFE);
             } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }*/
+                drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
+            }
 
-            power = 0.2;
-
-            drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
-
-            if(time.seconds() - startTime > 1.5){
+//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
                 //normlizationBroke = true;
                 wrongWay = true;
                 break;
             }
         }
         drive.simpleBrake();
-
-        if(wrongWay) {
-            while ((getXContour() > xMax || getXContour() < xMin)) {
-            /*if(getPolePosition() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
-            } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
-            }*/
-
-                drive.setPowerAuto(-power, MecDrive.MovementType.STRAFE);
-
-
-            }
-            drive.simpleBrake();
-
-        }
 
         isNormalizing = false;
 
@@ -536,6 +514,8 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
         }
 
         return (int)(startPos - drive.avgPos());
+
+
 
 
 

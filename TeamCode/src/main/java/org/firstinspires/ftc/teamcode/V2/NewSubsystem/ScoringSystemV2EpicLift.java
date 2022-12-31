@@ -468,7 +468,7 @@ public class ScoringSystemV2EpicLift {
     }
 
 
-    public void moveToPosition(int tics, double power, double kickout, boolean distanceSensor){
+    public int moveToPosition(int tics, double power, double kickout, boolean distanceSensor){
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
@@ -554,6 +554,8 @@ public class ScoringSystemV2EpicLift {
         ps.println(composite);
 
         setPower(0);
+
+        return Math.abs(rLift1.getCurrentPosition());
 
     }
 

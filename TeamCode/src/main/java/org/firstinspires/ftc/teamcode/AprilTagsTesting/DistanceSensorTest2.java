@@ -33,7 +33,7 @@ public class DistanceSensorTest2 extends LinearOpMode {
         sleep(5000);
 
         score.moveToPosition(800, 1);
-        score.moveToPosition(1100, 0.5, 2, true);
+        int position = score.moveToPosition(1100, 0.5, 2, true);
         score.setPower(0);
 
         sleep(1000);
@@ -42,6 +42,8 @@ public class DistanceSensorTest2 extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
+            telemetry.addData("actual position", score.getLeftEncoderPos());
+            telemetry.addData("end position", position);
             telemetry.update();
             if (distance.getDistance((DistanceUnit.CM)) < 30 && !hasSeenPole) {
                 score.setGrabberPosition(Constants.openV2);
