@@ -1,25 +1,29 @@
 package org.firstinspires.ftc.teamcode.State.Auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.State.Auto.DetectionAlgorithm.ParkingPosition;
+import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-//@Autonomous
+@Autonomous
 public class Cam extends LinearOpMode {
-    DetectionAlgorithm detect;
+    DetectionAlgorithmLeft detect;
     String position; //temp
     OpenCvWebcam webcam;
+    ScoringSystem score;
     int parkLocation;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new DetectionAlgorithm(telemetry);
+        detect = new DetectionAlgorithmLeft(telemetry);
+        score = new ScoringSystem(telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
@@ -43,16 +47,12 @@ public class Cam extends LinearOpMode {
 
         telemetry.update();
 
+        while (opModeInInit()) {
 
+        }
         waitForStart();
         webcam.stopStreaming();
 
-        if (detect.getPosition() == ParkingPosition.LEFT) {
-            // move to left
-        } else if (detect.getPosition() == ParkingPosition.CENTER) {
-            // move to center
-        } else {
-            // move to right
-        }
+
     }
 }
