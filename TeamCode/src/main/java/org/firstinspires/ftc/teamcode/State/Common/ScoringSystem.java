@@ -76,7 +76,7 @@ public class ScoringSystem {
         long timeChange= 0;
         double proportionPow;
         double derivativePow;
-        while (Math.abs(Math.abs(tics)-motorPositionLeft) > 10 || Math.abs(Math.abs(tics)-motorPositionRight) > 10) {
+        while (Math.abs(Math.abs(tics)-motorPositionLeft) > 10 && Math.abs(Math.abs(tics)-motorPositionRight) > 10) {
 
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
@@ -87,7 +87,7 @@ public class ScoringSystem {
                 //stops while loop
                 break;
             }else{
-                if(Math.abs(tics) - motorPositionLeft < 0 || Math.abs(tics) - motorPositionRight < 0){
+                if(Math.abs(tics) - motorPositionLeft < 0 && Math.abs(tics) - motorPositionRight < 0){
                     liftMotorLeft.setPower(power);
                     liftMotorRight.setPower(power);
 
@@ -110,6 +110,9 @@ public class ScoringSystem {
     }
 
      */
+
+
+
     //goes to given tics
     public void goToPosition(int tics, double power) {
         int motorPosition = liftMotorLeft.getCurrentPosition();
@@ -149,6 +152,7 @@ public class ScoringSystem {
 
 
     }
+
 
     public void writeLoggerToFile(){
         try{

@@ -38,7 +38,7 @@ public class MainTeleOp extends LinearOpMode {
     AtomicBoolean triggerScoreToggle;
 
     private boolean uprighterToggle = true;
-    private volatile boolean uprighting = false;
+    private volatile boolean steadyPower = true;
     volatile boolean isTurning = false;
 
     //private double properCX = 187; //67
@@ -110,12 +110,12 @@ public class MainTeleOp extends LinearOpMode {
                         if(score.getEncoderPosition() > constant.getHeightLimit()){
                             score.setPower(constant.getSteadyPow());
                         }else{
-                            score.setPower(1);
+                            score.setPower(0.7);
                         }
                     }else if(gamepad1.dpad_left) {
-                        score.setPower(-0.25);
+                        score.setPower(-0.24);
                     }else{
-                        if(score.getEncoderPosition() > 100){
+                        if(score.getEncoderPosition() > 20 && steadyPower){
                             score.setPower(constant.getSteadyPow());
                         }else{
                             score.setPower(0);
@@ -129,11 +129,11 @@ public class MainTeleOp extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1 && triggerScoreToggle.get()){
                         if(score.scoreHigh()){
                             //high cone Max limit is 1370
-                            score.goToPosition(constant.getHeightHigh(), 0.95);
+                            score.goToPosition(constant.getHeightHigh(), 1);
                             score.setPower(constant.getSteadyPow());
                         }else if(score.scoreMid()){
                             //medium cone
-                            score.goToPosition(constant.getHeightMed(), 0.95);
+                            score.goToPosition(constant.getHeightMed(), 1);
                             score.setPower(constant.getSteadyPow());
                         }else if(score.scoreLow()){
                             //low cone
@@ -183,7 +183,7 @@ public class MainTeleOp extends LinearOpMode {
                                     score.goToPosition(constant.getHeightBottom(),1);
                                     clawMoveDownToggle.set(false);
                                 }else{
-                                    score.goToPosition(score.getEncoderPosition() - 100, 0.5);
+                                    score.goToPosition(score.getEncoderPosition() - 100, 0.4);
                                     clawMoveDownToggle.set(true);
                                 }
                             }else{
@@ -193,7 +193,7 @@ public class MainTeleOp extends LinearOpMode {
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                score.goToPosition(constant.getHeightBottom(),0.8);
+                                score.goToPosition(constant.getHeightBottom(),0.5);
                             }
 
                         }else{
@@ -207,7 +207,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+100,1);
+                                    score.goToPosition(score.getEncoderPosition()+100,0.8);
                                     score.setPower(constant.getSteadyPow());
                                     clawStackFlag.set(false);
 
@@ -218,7 +218,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+120, 1);
+                                    score.goToPosition(score.getEncoderPosition()+120, 0.8);
                                     score.setPower(constant.getSteadyPow());
                                     clawOpenCloseToggle.set(false);
                                     /*
@@ -246,7 +246,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(score.getEncoderPosition()+150,1);
+                                    score.goToPosition(score.getEncoderPosition()+150,0.8);
                                     score.setPower(constant.getSteadyPow());
                                     clawStackFlag.set(false);
                                 }else{
@@ -341,7 +341,7 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
         liftThread.start();
         imuThread.start();
-        score.goToPosition(constant.getHeightBottom(), 0.6);
+        score.goToPosition(47, 0.6);
         score.setPower(constant.getSteadyPow());
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
@@ -369,8 +369,25 @@ public class MainTeleOp extends LinearOpMode {
             }
             //turn scoring(turn in other thread)
             if (gamepad1.left_bumper) {
-                score.goToPosition(constant.getHeightHigh(), 0.95);
-                score.setPower(constant.getSteadyPow());
+                if(score.scoreHigh()){
+                    //high cone Max limit is 1370
+                    steadyPower = false;
+                    score.goToPosition(constant.getHeightHigh(), 1);
+                    steadyPower = true;
+                    score.setPower(constant.getSteadyPow());
+                }else if(score.scoreMid()){
+                    //medium cone
+                    steadyPower = false;
+                    score.goToPosition(constant.getHeightMed(), 1);
+                    steadyPower = true;
+                    score.setPower(constant.getSteadyPow());
+                }else if(score.scoreLow()){
+                    //low cone
+                    steadyPower = false;
+                    score.goToPosition(constant.getHeightLow(), 0.8);
+                    steadyPower = true;
+                    score.setPower(constant.getSteadyPow());
+                }
             }
             //Sets the booleans for which pole to go to for lifts system
             if (gamepad1.a) {
@@ -390,7 +407,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
 
-
+            /*
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
                 if (constant.getHeightBottom() == 0) {
@@ -408,6 +425,16 @@ public class MainTeleOp extends LinearOpMode {
                 uprighterToggle = true;
             }
 
+             */
+            if (gamepad1.right_bumper && uprighterToggle) {
+                //cone uprighter
+                score.goToPosition(0, 0.45);
+                constant.setClawClosePos(0.7);
+                uprighterToggle = false;
+
+            }else if(!gamepad1.right_bumper) {
+                uprighterToggle = true;
+            }
 
 
 
