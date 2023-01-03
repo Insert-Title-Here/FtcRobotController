@@ -5,8 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.State.Auto.DetectionAlgorithm.ParkingPosition;
+import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -19,6 +21,7 @@ public class Cam extends LinearOpMode {
     String position; //temp
     OpenCvWebcam webcam;
     ScoringSystem score;
+    Constants constants = new Constants();
     int parkLocation;
     public static double pos = 0;
 
@@ -30,6 +33,8 @@ public class Cam extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
+        pos = constants.getStraightCamPos();
+
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
 
@@ -44,6 +49,8 @@ public class Cam extends LinearOpMode {
                 telemetry.update();
             }
         });
+
+
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         telemetry.addData("position", position);
