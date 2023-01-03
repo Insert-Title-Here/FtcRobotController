@@ -48,9 +48,8 @@ public class DriveInAutoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
 
-        drive = new MecDrive(hardwareMap, false, telemetry, color);
+        drive = new MecDrive(hardwareMap, false, telemetry);
         constants = new Constants();
         score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
         hold = new AtomicBoolean(false);
@@ -155,10 +154,10 @@ public class DriveInAutoTest extends LinearOpMode {
 
         waitForStart();
 
+        double startTime = time.seconds();
+
         pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE);
         cameraServo.setPosition(Constants.coneV2);
-
-        double startTime = time.seconds();
 
         parkPos = pipeline.getPosition();
 
@@ -172,10 +171,6 @@ public class DriveInAutoTest extends LinearOpMode {
 
         armThread.start();
         feedForward.start();
-
-
-        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE);
-        cameraServo.setPosition(Constants.poleV2);
 
 
         //linkageUp.set(true);
@@ -196,7 +191,45 @@ public class DriveInAutoTest extends LinearOpMode {
 
         sleep(600);
 
-        pipeline.normalize(0.3, 159, 2);
+        pipeline.normalize(0.2, 155, 2);
+
+        if(distance.getNormalizedColors().blue > 0.65) {
+
+            score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100);
+
+            hold.set(false);
+            score.moveToPosition(750, 1);
+            int liftPos = score.moveToPosition(1000, 0.4, 10, true);
+            score.moveToPosition(liftPos + 10, 1);
+            hold.set(true);
+
+
+            //sleep(350);
+
+            score.setLinkagePositionLogistic(0.8, 100);
+
+            sleep(200);
+
+            score.setGrabberPosition(Constants.score);
+
+            sleep(200);
+
+            score.setLinkagePositionLogistic(0.245, 100);
+
+            score.setGrabberPosition(Constants.openV2);
+
+            hold.set(false);
+            score.moveToPosition(0, 0.8);
+            hold.set(true);
+
+            preloadSuccess = true;
+        } else {
+            pipeline.normalize(0.2, 155, 3);
+            cycles = 5;
+            drive.simpleMoveToPosition(-63, MecDrive.MovementType.STRAIGHT, 0.5);
+            score.setGrabberPosition(Constants.openV2);
+            score.setLinkagePositionLogistic(0.245, 100);
+        }
 
 
 

@@ -501,7 +501,7 @@ public class ScoringSystemV2EpicLift {
 
 
         if(power > 0) {
-            while ((time.seconds() - startTime) < 2.25 && (rLiftPos < tics || lLiftPos < tics) && distance.getDistance(DistanceUnit.CM) > 25) {
+            while ((time.seconds() - startTime) < 2.25 && (rLiftPos < tics || lLiftPos < tics) && distance.getDistance(DistanceUnit.CM) > 15) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -527,7 +527,7 @@ public class ScoringSystemV2EpicLift {
 
             }
         }else{
-            while ((time.seconds() - startTime) < 2.5 &&   (rLiftPos > tics || lLiftPos > tics) && distance.getDistance(DistanceUnit.CM) > 25) {
+            while ((time.seconds() - startTime) < 2.5 &&   (rLiftPos > tics || lLiftPos > tics) && distance.getDistance(DistanceUnit.CM) > 15) {
 
                 //TODO: figure out if we need to negate either of them
 

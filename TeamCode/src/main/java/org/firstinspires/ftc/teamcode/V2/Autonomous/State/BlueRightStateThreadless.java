@@ -8,13 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.AprilTagsTesting.KevinGodPipelineAprilTag;
-import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipelineV2;
-import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipelineV2Comp;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -23,8 +19,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous(name="New Blue Right")
-public class BlueRightState extends LinearOpMode {
+@Autonomous(name="New Blue Right No Threads")
+public class BlueRightStateThreadless extends LinearOpMode {
     MecDrive drive;
     ScoringSystemV2EpicLift score;
     Constants constants;
@@ -70,58 +66,6 @@ public class BlueRightState extends LinearOpMode {
         distance.setGain(300);
 
         cycles = 5;
-
-
-        armThread = new Thread() {
-            @Override
-            public void run() {
-                //score.setLinkagePosition(0.7);
-                while (opModeIsActive()) {
-                    if (armUp.get()) {
-                        hold.set(false);
-                        score.moveToPosition(1350, 0.85);
-                        hold.set(true);
-
-                        armUp.set(false);
-                    } else if (armDown.get()) {
-                        hold.set(false);
-                        score.moveToPosition(0, 0.8);
-                        //score.setLinkagePositionLogistic(Constants.linkageDown, 250, 30);
-                        armDown.set(false);
-                    } else if (finalMove.get()) {
-
-                        score.setLinkagePositionLogistic(Constants.linkageUpV2, 100);
-                        finalMove.set(false);
-
-                    } else if (linkageUp.get()) {
-                        try {
-                            sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        score.setLinkagePosition(Constants.linkageUpV2);
-                        linkageUp.set(false);
-                    }
-
-
-                }
-
-                //Might need this
-                //hold.set(true);
-            }
-        };
-
-
-        feedForward = new Thread() {
-            @Override
-            public void run() {
-                while (opModeIsActive()) {
-                    if (hold.get()) {
-                        score.setPowerSingular(0.2);
-                    }
-                }
-            }
-        };
 
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -170,10 +114,6 @@ public class BlueRightState extends LinearOpMode {
         //pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
 
 
-        armThread.start();
-        feedForward.start();
-
-
         //linkageUp.set(true);
         drive.simpleMoveToPosition(-1700, MecDrive.MovementType.STRAIGHT, 0.55);
 
@@ -199,8 +139,7 @@ public class BlueRightState extends LinearOpMode {
             score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100);
 
             hold.set(false);
-            score.moveToPosition(800, 0.85);
-            score.moveToPosition(1000, 0.5, 10, true);
+            score.moveToPosition(850, 0.85);
             hold.set(true);
 
 
@@ -219,7 +158,7 @@ public class BlueRightState extends LinearOpMode {
             score.setGrabberPosition(Constants.openV2);
 
             hold.set(false);
-            score.moveToPosition(0, 0.8);
+            score.moveToPosition(0, 0.85);
             hold.set(true);
 
             preloadSuccess = true;
@@ -289,8 +228,7 @@ public class BlueRightState extends LinearOpMode {
 
             hold.set(false);
             if (true) {
-                score.moveToPosition(850, 0.85);
-                score.moveToPosition(1000, 0.5, 10, true);
+                score.moveToPosition(900, 0.85);
             } else {
                 score.moveToPosition(liftPos - 80, 0.85);
             }
@@ -313,7 +251,7 @@ public class BlueRightState extends LinearOpMode {
             //sleep(250);
 
             hold.set(false);
-            score.moveToPosition(0, 0.8);
+            score.moveToPosition(0, 0.85);
             hold.set(true);
 
             if (time.seconds() - startTime > 25) {
