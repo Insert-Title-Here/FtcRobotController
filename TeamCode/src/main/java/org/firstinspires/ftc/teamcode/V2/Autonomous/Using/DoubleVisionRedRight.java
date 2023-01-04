@@ -46,9 +46,9 @@ public class DoubleVisionRedRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
-        drive = new MecDrive(hardwareMap, false, telemetry, color);
+        drive = new MecDrive(hardwareMap, false, telemetry, true);
         constants = new Constants();
         score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
         hold = new AtomicBoolean(false);

@@ -29,7 +29,7 @@ public class ColorTest extends LinearOpMode {
         constants = new Constants();
         ScoringSystem score = new ScoringSystem(hardwareMap, constants, false);
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         color.setGain(300);
 

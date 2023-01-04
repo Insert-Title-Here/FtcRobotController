@@ -93,10 +93,10 @@ public class Robot extends Thread{
         //ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
         //chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
-        //grabberColor = hardwareMap.get(ColorRangeSensor.class, "Color");
+        //grabber//color = hardwareMap.get(ColorRangeSensor.class, "color");
         //grabberColor.setGain(COLOR_GAIN);
 
-        //driveColor = hardwareMap.get(ColorRangeSensor.class, "Color");
+        //drive//color = hardwareMap.get(ColorRangeSensor.class, "color");
         //driveColor.setGain(COLOR_GAIN);
 
 

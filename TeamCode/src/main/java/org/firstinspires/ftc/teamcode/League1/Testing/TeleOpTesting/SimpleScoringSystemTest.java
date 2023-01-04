@@ -48,7 +48,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
         robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, robot, false, telemetry);
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");

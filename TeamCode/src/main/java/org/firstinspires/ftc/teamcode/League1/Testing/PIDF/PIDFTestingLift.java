@@ -6,7 +6,9 @@ package org.firstinspires.ftc.teamcode.League1.Testing.PIDF;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.config.Config;
-//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,7 +23,7 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 
 //@Disabled
 @Autonomous
-//@Config
+@Config
 public class PIDFTestingLift extends LinearOpMode {
 
     ScoringSystemV2EpicLift score;
@@ -32,7 +34,7 @@ public class PIDFTestingLift extends LinearOpMode {
 
 
     public static int target = 300;
-    public static double p = 0.0076, i = 0, d = 0.00025;
+    public static double p = 0.0085, i = 0, d = 0.00023;
 
     int rightPreviousError = 0;
     int leftPreviousError = 0;
@@ -56,7 +58,7 @@ public class PIDFTestingLift extends LinearOpMode {
 
         score.setLinkagePosition(Constants.linkageUpV2);
 
-        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
 
@@ -105,7 +107,7 @@ public class PIDFTestingLift extends LinearOpMode {
             telemetry.addData("rightIntegral", rightIntegralSum);
             telemetry.addData("leftIntegral",leftIntegralSum);
             telemetry.addData("rightPos", -1 * score.getRightEncoderPos());
-            telemetry.addData("leftPos", score.getLeftEncoderPos());
+            telemetry.addData("leftPos", -1 * score.getLeftEncoderPos());
 
 
 
@@ -126,7 +128,7 @@ public class PIDFTestingLift extends LinearOpMode {
         //TODO: check if we need to negate any
 
         int rightPos = -1 * score.getRightEncoderPos();
-        int leftPos = score.getLeftEncoderPos();
+        int leftPos = -1 * score.getLeftEncoderPos();
 
         int rightError = tics - rightPos;
         int leftError = tics - leftPos;

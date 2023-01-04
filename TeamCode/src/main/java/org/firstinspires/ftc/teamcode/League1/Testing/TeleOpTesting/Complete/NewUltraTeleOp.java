@@ -65,7 +65,7 @@ public class NewUltraTeleOp extends LinearOpMode {
         score.setGrabberPosition(constants.open);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         color.setGain(300);
         distance.setGain(300);

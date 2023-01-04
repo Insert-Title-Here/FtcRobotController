@@ -37,8 +37,8 @@ public class PoleNormalizationTest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         cameraServo = hardwareMap.get(Servo.class, "camera");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
-        drive = new MecDrive(hardwareMap, false, telemetry, color);
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
+        drive = new MecDrive(hardwareMap, false, telemetry, true);
         pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.RED_RIGHT, false);
 
         camera.setPipeline(pipeline);

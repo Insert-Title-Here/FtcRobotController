@@ -67,7 +67,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
         score.setGrabberPosition(constants.open);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         //Color sensor gain values
         color.setGain(300);

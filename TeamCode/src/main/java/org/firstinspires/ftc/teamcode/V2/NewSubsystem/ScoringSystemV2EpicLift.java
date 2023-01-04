@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
@@ -30,9 +31,9 @@ public class ScoringSystemV2EpicLift {
     Constants constants;
     private int coneStack;
     Telemetry telemetry;
-    PIDCoefficients pidf = new PIDCoefficients(0.0076, 0.0000275, 0.00025);
+    PIDCoefficients pidf = new PIDCoefficients(0.0085, 0.0000275, 0.00023);
 
-    File file = AppUtil.getInstance().getSettingsFile("LoopTimes.txt");
+    File file = AppUtil.getInstance().getSettingsFile("AmpDraw.txt");
     String composite = "";
 
 
@@ -321,6 +322,13 @@ public class ScoringSystemV2EpicLift {
 
     public void moveToPosition(int tics, double power){
 
+        PrintStream ps = null;
+        try {
+            ps = new PrintStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
 
@@ -365,6 +373,15 @@ public class ScoringSystemV2EpicLift {
 
                 setPower(rightPower, leftPower);
 
+
+                composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
+                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "total: " + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + "\n";;
+                composite += "\n";
+
+
             }
         }else{
             while ((time.seconds() - startTime) < 2.5 &&   (rLiftPos > tics || lLiftPos > tics)) {
@@ -388,10 +405,21 @@ public class ScoringSystemV2EpicLift {
 
                 setPower(rightPower, leftPower);
 
+
+                composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
+                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "total: " + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + "\n";;
+                composite += "\n";
+
+
             }
         }
 
         setPower(0);
+
+        ps.println(composite);
 
     }
 
@@ -960,12 +988,19 @@ public class ScoringSystemV2EpicLift {
         double startTime = time.seconds();
         double actualStartTime = startTime;
 
+        PrintStream ps = null;
+        try {
+            ps = new PrintStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
 
 
         //TODO: check if we need to negate any
 
         int rightPos = -1 * getRightEncoderPos();
-        int leftPos = getLeftEncoderPos();
+        int leftPos = -1 * getLeftEncoderPos();
 
         int rightError = tics - rightPos;
         int leftError = tics - leftPos;
@@ -983,7 +1018,7 @@ public class ScoringSystemV2EpicLift {
             //TODO: check if we need to negate any
 
             rightPos = -1 * getRightEncoderPos();
-            leftPos = getLeftEncoderPos();
+            leftPos = -1 * getLeftEncoderPos();
 
 
             //telemetry.addData("rightPos", rightPos);
@@ -997,7 +1032,7 @@ public class ScoringSystemV2EpicLift {
             //telemetry.addData("rightError", rightError);
             //telemetry.addData("leftError", leftError);
 
-
+/*
             rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
             leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
 
@@ -1017,7 +1052,7 @@ public class ScoringSystemV2EpicLift {
                 leftIntegralSum = 20000;
             }else if(leftIntegralSum < -20000){
                 leftIntegralSum = -20000;
-            }
+            }*/
 
 
 
@@ -1027,8 +1062,8 @@ public class ScoringSystemV2EpicLift {
             //telemetry.addData("rightDerivative", rightDerivative);
             //telemetry.addData("leftDerivative", leftDerivative);
 
-            double rightPower = ((pidf.p * rightError) + (pidf.i * rightIntegralSum) + (pidf.d * rightDerivative));
-            double leftPower = ((pidf.p * leftError) + (pidf.i * leftIntegralSum) + (pidf.d * leftDerivative));
+            double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative));
+            double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative));
 
 
             //telemetry.addData("rightError", rightError);
@@ -1042,6 +1077,14 @@ public class ScoringSystemV2EpicLift {
             leftPreviousError = leftError;
 
 
+            composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
+            composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+            composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
+            composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+            composite += "total: " + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + "\n";;
+            composite += "\n";
+
+
             //telemetry.update();
 
 
@@ -1049,6 +1092,8 @@ public class ScoringSystemV2EpicLift {
 
         //setPower(0,0,0,0);
         setPower(0);
+
+        ps.println(composite);
     }
 
 
@@ -1102,6 +1147,19 @@ public class ScoringSystemV2EpicLift {
 
     public boolean isLinkageUp() {
         return linkageUp;
+    }
+
+    public void addToLoggingString(String add){
+        composite += (add + "\n");
+    }
+
+    public void writeLoggerToFile(){
+        try{
+            PrintStream toFile = new PrintStream(file);
+            toFile.print(composite);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
     }
 
 }

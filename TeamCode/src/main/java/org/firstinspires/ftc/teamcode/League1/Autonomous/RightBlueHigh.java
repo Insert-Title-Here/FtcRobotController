@@ -60,7 +60,7 @@ public class RightBlueHigh extends LinearOpMode {
         score.setGrabberPosition(constants.grabbing);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
         cameraServo = hardwareMap.get(Servo.class, "camera");
 
 

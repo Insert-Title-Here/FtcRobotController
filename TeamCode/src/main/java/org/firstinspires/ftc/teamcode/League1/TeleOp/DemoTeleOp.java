@@ -76,7 +76,7 @@ public class DemoTeleOp extends LinearOpMode {
         score.setGrabberPosition(constants.open);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
         cameraServo = hardwareMap.get(Servo.class, "camera");
 
         //Color sensor gain values

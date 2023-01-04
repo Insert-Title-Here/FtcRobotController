@@ -51,9 +51,9 @@ public class BlueLeftPIDHigh extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
-        drive = new MecDrive(hardwareMap, false, telemetry, color);
+        drive = new MecDrive(hardwareMap, false, telemetry, true);
         constants = new Constants();
         score = new ScoringSystem2(hardwareMap, constants);
         hold = new AtomicBoolean(false);

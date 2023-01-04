@@ -70,7 +70,7 @@ public class IControllerTeleOp extends LinearOpMode {
         score.setGrabberPosition(constants.open - 0.15);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         i = score.getI();
 

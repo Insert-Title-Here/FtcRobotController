@@ -62,7 +62,7 @@ public class CommandTestingTeleOp extends CommandOpMode {
         endgameSystem = new EndgameSystems(hardwareMap);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         //TODO: might need to decrease gain by some
         color.setGain(300);

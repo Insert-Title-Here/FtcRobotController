@@ -24,7 +24,7 @@ public class ColorNormalizationTesting extends LinearOpMode {
         constants = new Constants();
         drive = new MecDrive(hardwareMap, false, telemetry, hardwareMap.get(ColorRangeSensor.class, "color"));
         score = new ScoringSystem2(hardwareMap, constants, telemetry);
-        color = hardwareMap.get(ColorRangeSensor.class, "color");
+        //color = hardwareMap.get(ColorRangeSensor.class, "color");
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
         drive.coast();
