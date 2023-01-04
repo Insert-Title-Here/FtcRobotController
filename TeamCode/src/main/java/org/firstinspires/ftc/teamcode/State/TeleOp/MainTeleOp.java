@@ -333,7 +333,7 @@ public class MainTeleOp extends LinearOpMode {
 
             }
         };
-        score.setClawPosition(constant.getClawClosePos());
+        score.setClawPosition(constant.getClawOpenPos());
         score.setScoreBoolean(true, false, false);
         score.setCamPosition(constant.getStrafeLowCamPos());
         telemetry.addData("status", "initialized");
