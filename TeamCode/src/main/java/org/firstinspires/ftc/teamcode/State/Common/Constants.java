@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.State.Common;
 
-public class Constants {
+public class  Constants {
     //TODO: Edit values
     private int heightTrueLimit = 1378;
     private int heightLimit = 1358;
