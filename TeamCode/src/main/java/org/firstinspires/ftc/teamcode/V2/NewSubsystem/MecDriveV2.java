@@ -40,12 +40,12 @@ public class MecDriveV2 {
 
 
     //Original
-    PIDCoefficients pidf = new PIDCoefficients(0.003, 0.0001,0.0003);
-    private final int denom = 12;
+    PIDCoefficients pidf = new PIDCoefficients(0.006, 0,0.0003);
+    private final int denom = 4;
     //PIDCoefficients pidf = new PIDCoefficients(0.031, 0,0.00055);
 
-    PIDCoefficients rotate = new PIDCoefficients(0.8, 0, 0.01);
-    //PIDCoefficients rotate = new PIDCoefficients(0.975, 0, 0.02);
+    //PIDCoefficients rotate = new PIDCoefficients(0.8, 0, 0.01);
+    PIDCoefficients rotate = new PIDCoefficients(0.975, 0, 0.02);
 
     PIDCoefficients rotateFaster = new PIDCoefficients(1.09, 0, 0.002  );
     //PIDCoefficients rotateFaster = new PIDCoefficients(0.975, 0, 0.02);
@@ -964,6 +964,184 @@ public class MecDriveV2 {
         simpleBrake();
 
     }
+
+    public void goTOPIDPosWithRampUp(int tics, double power, MovementType movement, double limiter){
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+
+        boolean rampUp = true;
+
+
+
+        //TODO: check if we need to negate any
+        int flPos = -1 * getFLEncoder();
+        int frPos = getFREncoder();
+        int blPos = -1 * getBLEncoder();
+        int brPos = getBREncoder();
+
+        int flError = tics - flPos;
+        int frError = tics - frPos;
+        int blError = tics - blPos;
+        int brError = tics - brPos;
+
+        int flPreviousError = flError;
+        int frPreviousError = frError;
+        int blPreviousError = blError;
+        int brPreviousError = brError;
+
+
+
+        int flIntegralSum = 0;
+        int frIntegralSum = 0;
+        int blIntegralSum = 0;
+        int brIntegralSum = 0;
+
+
+        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5){
+
+            if(rampUp){
+
+                double start = calculateAvgStartPower(tics);
+                int targetRamp = tics / denom;
+
+
+                while(((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4 < targetRamp){
+
+                    double rampPower = ((denom-1) * pidf.p) * (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4);
+
+                    if(Math.abs(rampPower) > limiter){
+                        if(rampPower < 0){
+                            rampPower = -1 * limiter;
+                        }else{
+                            rampPower = limiter;
+                        }
+                    }
+
+                    setPower(rampPower, rampPower, rampPower, rampPower);
+
+
+
+                    try {
+                        Thread.currentThread().sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                rampUp = false;
+
+            }else {
+
+                telemetry.addData("target", tics);
+
+
+                //TODO: check if we need to negate any
+                flPos = -1 * getFLEncoder();
+                frPos = getFREncoder();
+                blPos = -1 * getBLEncoder();
+                brPos = getBREncoder();
+
+
+                telemetry.addData("flPos", flPos);
+                telemetry.addData("frPos", frPos);
+                telemetry.addData("blPos", blPos);
+                telemetry.addData("brPos", brPos);
+
+                flError = tics - flPos;
+                frError = tics - frPos;
+                blError = tics - blPos;
+                brError = tics - brPos;
+
+
+                double currentTime = time.seconds();
+
+                telemetry.addData("flError", flError);
+                telemetry.addData("frError", frError);
+                telemetry.addData("blError", blError);
+                telemetry.addData("brError", brError);
+
+
+
+                double flDerivative = (flError - flPreviousError) / (currentTime - startTime);
+                double frDerivative = (frError - frPreviousError) / (currentTime - startTime);
+                double blDerivative = (blError - blPreviousError) / (currentTime - startTime);
+                double brDerivative = (brError - brPreviousError) / (currentTime - startTime);
+
+
+                telemetry.addData("flDerivative", flDerivative);
+                telemetry.addData("frDerivative", frDerivative);
+                telemetry.addData("blDerivative", blDerivative);
+                telemetry.addData("brDerivative", brDerivative);
+
+                double flPower = ((pidf.p * flError) + (pidf.i * flIntegralSum) + (pidf.d * flDerivative));
+                double frPower = ((pidf.p * frError) + (pidf.i * frIntegralSum) + (pidf.d * frDerivative));
+                double blPower = ((pidf.p * blError) + (pidf.i * blIntegralSum) + (pidf.d * blDerivative));
+                double brPower = ((pidf.p * brError) + (pidf.i * brIntegralSum) + (pidf.d * brDerivative));
+
+                if(Math.abs(flPower) > limiter){
+                    if(flPower < 0){
+                        flPower = -1 * limiter;
+                    }else{
+                        flPower = limiter;
+                    }
+                }
+
+                if(Math.abs(frPower) > limiter){
+                    if(frPower < 0){
+                        frPower = -1 * limiter;
+                    }else{
+                        frPower = limiter;
+                    }
+                }
+
+                if(Math.abs(blPower) > limiter){
+                    if(blPower < 0){
+                        blPower = -1 * limiter;
+                    }else{
+                        blPower = limiter;
+                    }
+                }
+
+                if(Math.abs(brPower) > limiter){
+                    if(brPower < 0){
+                        brPower = -1 * limiter;
+                    }else{
+                        brPower = limiter;
+                    }
+                }
+
+
+                telemetry.addData("flPower", flPower);
+                telemetry.addData("frPower", frPower);
+                telemetry.addData("blPower", blPower);
+                telemetry.addData("brPower", brPower);
+
+                //TODO: Fix rotate and check Strafe
+                if (movement == MovementType.STRAIGHT) {
+                    setPower(flPower, frPower, blPower, brPower);
+                } else if (movement == MovementType.ROTATE) {
+                    setPower(flPower, -frPower, blPower, -brPower);
+                } else if (movement == MovementType.STRAFE) {
+                    setPower(flPower, -frPower, -blPower, brPower);
+                }
+
+
+                startTime = currentTime;
+                flPreviousError = flError;
+                frPreviousError = frError;
+                blPreviousError = blError;
+                brPreviousError = brError;
+
+                telemetry.update();
+            }
+
+
+        }
+
+        simpleBrake();
+
+    }
+
 
     public void goTOPIDPos(int tics, double power, MovementType movement){
         ElapsedTime time = new ElapsedTime();

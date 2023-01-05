@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.MecDriveV2;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -124,7 +125,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
     // Define telemetry variable
     Telemetry telemetry;
-    MecDrive drive;
+    MecDriveV2 drive;
 
     // Define lists
     private ArrayList<Integer> xList, yList, contourLengths;
@@ -210,7 +211,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
         nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
 
-    public KevinGodPipelineAprilTag(Telemetry telemetry, MecDrive drive, AutoSide autoSide, boolean isField1){
+    public KevinGodPipelineAprilTag(Telemetry telemetry, MecDriveV2 drive, AutoSide autoSide, boolean isField1){
         // Set up lists and telemetry
         xList = new ArrayList<>();
         yList = new ArrayList<>();
@@ -445,12 +446,12 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
         while((getXContour() > xMax || getXContour() < xMin)) {
             if(getXContour() > xMax) {
-                drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+                drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
             } else {
-                drive.setPowerAuto(-power, MecDrive.MovementType.ROTATE);
+                drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
             }
 
-//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+//            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
             if(time.seconds() - startTime > 2){
                 //normlizationBroke = true;
                 wrongWay = true;
@@ -490,12 +491,12 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
         while((getXContour() > xMax || getXContour() < xMin)) {
             if(getXContour() > xMax) {
-                drive.setPowerAuto(-power, MecDrive.MovementType.STRAFE);
+                drive.setPowerAuto(-power, MecDriveV2.MovementType.STRAFE);
             } else {
-                drive.setPowerAuto(power, MecDrive.MovementType.STRAFE);
+                drive.setPowerAuto(power, MecDriveV2.MovementType.STRAFE);
             }
 
-//            drive.setPowerAuto(power, MecDrive.MovementType.ROTATE);
+//            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
             if(time.seconds() - startTime > 2){
                 //normlizationBroke = true;
                 wrongWay = true;

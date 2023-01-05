@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipeline
 import org.firstinspires.ftc.teamcode.League1.Autonomous.Vision.KevinGodPipelineV2Comp;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.MecDriveV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous(name="New Blue Right")
 public class BlueRightState extends LinearOpMode {
-    MecDrive drive;
+    MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
     Constants constants;
     Thread armThread, feedForward, idController;
@@ -50,7 +51,7 @@ public class BlueRightState extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
-        drive = new MecDrive(hardwareMap, false, telemetry);
+        drive = new MecDriveV2(hardwareMap, false, telemetry);
         constants = new Constants();
         score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
         hold = new AtomicBoolean(false);
@@ -175,13 +176,13 @@ public class BlueRightState extends LinearOpMode {
 
 
         //linkageUp.set(true);
-        drive.simpleMoveToPosition(-1700, MecDrive.MovementType.STRAIGHT, 0.55);
+        drive.simpleMoveToPosition(-1700, MecDriveV2.MovementType.STRAIGHT, 0.55);
 
         sleep(100);
 
         drive.tankRotatePID(Math.PI / 2, 1, false);
 
-        drive.simpleMoveToPosition(710, MecDrive.MovementType.STRAIGHT, 0.4);
+        drive.simpleMoveToPosition(710, MecDriveV2.MovementType.STRAIGHT, 0.4);
 
         drive.tankRotatePID(3 * Math.PI / 8, 1, false);
 
@@ -226,7 +227,7 @@ public class BlueRightState extends LinearOpMode {
         } else {
             pipeline.normalize(0.2, 155, 3);
             cycles = 5;
-            drive.simpleMoveToPosition(-63, MecDrive.MovementType.STRAIGHT, 0.5);
+            drive.simpleMoveToPosition(-63, MecDriveV2.MovementType.STRAIGHT, 0.5);
             score.setGrabberPosition(Constants.openV2);
             score.setLinkagePositionLogistic(0.245, 100);
         }
@@ -239,7 +240,7 @@ public class BlueRightState extends LinearOpMode {
 
                 /*double startDistanceTime = time.seconds();
                 while (distance.getDistance(DistanceUnit.CM) > 6.5) {
-                    drive.setPowerAuto(0.2, MecDrive.MovementType.STRAIGHT);
+                    drive.setPowerAuto(0.2, MecDriveV2.MovementType.STRAIGHT);
 
                     telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
                     telemetry.update();
@@ -264,11 +265,11 @@ public class BlueRightState extends LinearOpMode {
                 drive.simpleBrake();
 */
 
-                drive.simpleMoveToPosition(75, MecDrive.MovementType.STRAIGHT, 0.5);
+                drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5);
 
             } else {
                 if(i < 3) {
-                    drive.simpleMoveToPosition(12, MecDrive.MovementType.STRAIGHT, 0.5);
+                    drive.simpleMoveToPosition(12, MecDriveV2.MovementType.STRAIGHT, 0.5);
                 }
             }
 
@@ -283,7 +284,7 @@ public class BlueRightState extends LinearOpMode {
 
             score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100);
 
-            //drive.simpleMoveToPosition(-distanceDriven, MecDrive.MovementType.STRAIGHT, 0.4);
+            //drive.simpleMoveToPosition(-distanceDriven, MecDriveV2.MovementType.STRAIGHT, 0.4);
 
             pipeline.normalize(0.2, 155, 3);
 
@@ -323,7 +324,7 @@ public class BlueRightState extends LinearOpMode {
         }
 
         if (!failed) {
-            drive.simpleMoveToPosition(-160, MecDrive.MovementType.ROTATE, 0.5);
+            drive.simpleMoveToPosition(-160, MecDriveV2.MovementType.ROTATE, 0.5);
         } else {
             drive.tankRotatePID(Math.PI / 2, 1, false);
         }
@@ -331,9 +332,9 @@ public class BlueRightState extends LinearOpMode {
         sleep(50);
 
         if (parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER) {
-            drive.simpleMoveToPosition(-700, MecDrive.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 1);
         } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
-            drive.simpleMoveToPosition(-1450, MecDrive.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-1450, MecDriveV2.MovementType.STRAIGHT, 1);
         }
 
         score.setGrabberPosition(Constants.grabbing);

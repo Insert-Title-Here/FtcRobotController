@@ -1097,6 +1097,138 @@ public class ScoringSystemV2EpicLift {
     }
 
 
+    public void newLiftPID(int tics, double limiter){
+
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+
+        PrintStream ps = null;
+        try {
+            ps = new PrintStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+
+        //TODO: check if we need to negate any
+
+        int rightPos = -1 * getRightEncoderPos();
+        int leftPos = -1 * getLeftEncoderPos();
+
+        int rightError = tics - rightPos;
+        int leftError = tics - leftPos;
+
+        int rightPreviousError = 0;
+        int leftPreviousError = 0;
+
+        int rightIntegralSum = 0;
+        int leftIntegralSum = 0;
+
+        while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < 1.2){
+            //telemetry.addData("target", tics);
+
+
+            //TODO: check if we need to negate any
+
+            rightPos = -1 * getRightEncoderPos();
+            leftPos = -1 * getLeftEncoderPos();
+
+
+            //telemetry.addData("rightPos", rightPos);
+            //telemetry.addData("leftPos", leftPos);
+
+            rightError = tics - rightPos;
+            leftError = tics - leftPos;
+
+            double currentTime = time.seconds();
+
+            //telemetry.addData("rightError", rightError);
+            //telemetry.addData("leftError", leftError);
+
+/*
+            rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
+            leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
+
+            //telemetry.addData("rightIntegralSum", rightIntegralSum);
+            //telemetry.addData("leftIntegralSum", leftIntegralSum);
+
+
+
+            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
+            if(rightIntegralSum > 20000){
+                rightIntegralSum = 20000;
+            }else if(rightIntegralSum < -20000){
+                rightIntegralSum = -20000;
+            }
+
+            if(leftIntegralSum > 20000){
+                leftIntegralSum = 20000;
+            }else if(leftIntegralSum < -20000){
+                leftIntegralSum = -20000;
+            }*/
+
+
+
+            double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
+            double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
+
+            //telemetry.addData("rightDerivative", rightDerivative);
+            //telemetry.addData("leftDerivative", leftDerivative);
+
+            double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative));
+            double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative));
+
+            if(Math.abs(rightPower) > limiter){
+                if(rightPower < 0){
+                    rightPower = -1 * limiter;
+                }else{
+                    rightPower = limiter;
+                }
+            }
+
+            if(Math.abs(leftPower) > limiter){
+                if(leftPower < 0){
+                    leftPower = -1 * limiter;
+                }else{
+                    leftPower = limiter;
+                }
+            }
+
+
+            //telemetry.addData("rightError", rightError);
+            //telemetry.addData("leftError", leftError);
+
+            setPower(rightPower, leftPower);
+
+
+            startTime = currentTime;
+            rightPreviousError = rightError;
+            leftPreviousError = leftError;
+
+
+            composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
+            composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+            composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
+            composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+            composite += "total: " + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + "\n";;
+            composite += "\n";
+
+
+            //telemetry.update();
+
+
+        }
+
+        //setPower(0,0,0,0);
+        setPower(0);
+
+        ps.println(composite);
+    }
+
+
 
 
 

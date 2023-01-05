@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AprilTagsTesting.KevinGodPipelineAprilTag;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.MecDriveV2;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -28,7 +29,7 @@ public class PoleNormalizationTest extends LinearOpMode {
     OpenCvWebcam camera;
     KevinGodPipelineAprilTag pipeline;
     Servo cameraServo;
-    MecDrive drive;
+    MecDriveV2 drive;
     ColorRangeSensor color;
 
     @Override
@@ -38,7 +39,7 @@ public class PoleNormalizationTest extends LinearOpMode {
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         cameraServo = hardwareMap.get(Servo.class, "camera");
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
-        drive = new MecDrive(hardwareMap, false, telemetry, true);
+        drive = new MecDriveV2(hardwareMap, false, telemetry, true);
         pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.RED_RIGHT, false);
 
         camera.setPipeline(pipeline);

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.League1.Testing.PIDF;
 
-////import com.acmerobotics.dashboard.FtcDashboard;
-////import com.acmerobotics.dashboard.config.Config;
-////import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,18 +20,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
+import org.firstinspires.ftc.teamcode.V2.NewSubsystem.MecDriveV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 
-@Disabled
+//@Disabled
 @Autonomous
-////@Config
+@Config
 public class PIDFTestingDrive extends LinearOpMode {
-    MecDrive drive;
+    MecDriveV2 drive;
     ScoringSystemV2 score;
     Constants constants;
 
     public static int target = 1000;
-    public static double p = 0, i = 0, d = 0;
+    public static double p = 0.006, i = 0, d = 0.0003;
 
     int flPreviousError = 0;
     int frPreviousError = 0;
@@ -57,12 +58,12 @@ public class PIDFTestingDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         constants = new Constants();
-        drive = new MecDrive(hardwareMap, true, telemetry, hardwareMap.get(ColorRangeSensor.class, "color"));
+        drive = new MecDriveV2(hardwareMap, true, telemetry,true);
         score = new ScoringSystemV2(hardwareMap, constants, telemetry);
 
         score.setLinkagePosition(Constants.linkageDownV2);
 
-        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
         waitForStart();
@@ -91,10 +92,10 @@ public class PIDFTestingDrive extends LinearOpMode {
             goTOPIDPos(target, 1, MecDrive.MovementType.STRAIGHT);
 
 
-            telemetry.addData("flPos", drive.getFLEncoder());
+            telemetry.addData("flPos", -1 * drive.getFLEncoder());
             telemetry.addData("frPos", drive.getFREncoder());
             telemetry.addData("blPos",  -1 * drive.getBLEncoder());
-            telemetry.addData("brPos", -1 * drive.getBREncoder());
+            telemetry.addData("brPos", drive.getBREncoder());
 
 
             //telemetry.addData("current", drive.getFirstAngle());
@@ -117,10 +118,10 @@ public class PIDFTestingDrive extends LinearOpMode {
 
 
         //TODO: check if we need to negate any
-        int flPos = drive.getFLEncoder(); //Negative for v1
+        int flPos = -1 * drive.getFLEncoder(); //Negative for v1
         int frPos = drive.getFREncoder();
         int blPos = -1 * drive.getBLEncoder();//Also negative for v1
-        int brPos =  -1 * drive.getBREncoder();
+        int brPos =  drive.getBREncoder();
 
 
         int flError = tics - flPos;
@@ -214,7 +215,7 @@ public class PIDFTestingDrive extends LinearOpMode {
         double derivative = (radError - previousError) / (currentTime - startTime);
 
 
-        drive.setPowerAuto(((p * radError) + (i * integralSum) + (d * derivative)), MecDrive.MovementType.ROTATE);
+        drive.setPowerAuto(((p * radError) + (i * integralSum) + (d * derivative)), MecDriveV2.MovementType.ROTATE);
 
 
         startTime = currentTime;
