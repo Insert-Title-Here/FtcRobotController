@@ -153,7 +153,7 @@ public class CommandBlueRightTest extends LinearOpMode {
         );
 
         //Should add 5 cycles
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < 4; i++){
             CommandScheduler.getInstance().schedule(
                     new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                     new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
@@ -203,6 +203,7 @@ public class CommandBlueRightTest extends LinearOpMode {
         score.setGrabberPosition(Constants.grabbing);
 
         sleep(500);
+
 
 
 
