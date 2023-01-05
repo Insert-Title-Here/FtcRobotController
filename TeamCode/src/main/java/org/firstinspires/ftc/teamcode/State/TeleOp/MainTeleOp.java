@@ -5,15 +5,11 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.State.Common.Vector2D;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -333,7 +329,7 @@ public class MainTeleOp extends LinearOpMode {
 
             }
         };
-        score.setClawPosition(constant.getClawClosePos());
+        score.setClawPosition(constant.getClawOpenPos());
         score.setScoreBoolean(true, false, false);
         score.setCamPosition(constant.getStrafeLowCamPos());
         telemetry.addData("status", "initialized");

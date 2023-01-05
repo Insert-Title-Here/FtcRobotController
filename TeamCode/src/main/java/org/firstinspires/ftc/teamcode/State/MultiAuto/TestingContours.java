@@ -99,10 +99,7 @@ public class TestingContours extends LinearOpMode {
         //close claw
         score.setClawPosition(constants.getClawClosePos());
 
-        while(opModeInInit()) {
-            score.setCamPosition(test);
 
-        }
         waitForStart();
         liftThread.start();
         webcam.stopStreaming();

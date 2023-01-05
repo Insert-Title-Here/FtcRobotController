@@ -15,7 +15,7 @@ public class  Constants {
     private double steadyPow = 0.18;
     private int stackIntervalHeight = 44;
     private int heightBottom = 60;
-    private double sleeveCamPos = 0.24;
+    private double sleeveCamPos = 0.23;
     private double straightCamPos = 0.32;
     private double strafeMedCamPos = 0.75;
     private double strafeLowCamPos = 0.51;

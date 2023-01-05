@@ -5,9 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.State.Auto.DetectionAlgorithm.ParkingPosition;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -33,7 +31,7 @@ public class Cam extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect);
-        pos = constants.getStraightCamPos();
+        pos = constants.getSleeveCamPos();
 
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
