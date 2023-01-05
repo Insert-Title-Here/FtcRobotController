@@ -5,7 +5,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -75,7 +74,7 @@ public class MecanumDrive {
 
         fl.setDirection(DcMotor.Direction.REVERSE);
         fr.setDirection(DcMotor.Direction.REVERSE);
-        bl.setDirection(DcMotor.Direction.FORWARD);
+        bl.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.FORWARD);
     }
     public void resetIMU(){
