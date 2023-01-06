@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 public class PIDFTestingDrive extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2 score;
-    Constants constants;
+    //Constants constants;
 
     public static int target = 1000;
     public static double p = 0.006, i = 0, d = 0.0003;
@@ -57,9 +57,9 @@ public class PIDFTestingDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        constants = new Constants();
+        //constants = newConstants();
         drive = new MecDriveV2(hardwareMap, true, telemetry,true);
-        score = new ScoringSystemV2(hardwareMap, constants, telemetry);
+        score = new ScoringSystemV2(hardwareMap, telemetry);
 
         score.setLinkagePosition(Constants.linkageDownV2);
 

@@ -15,15 +15,15 @@ public class DistanceSensorTest2 extends LinearOpMode {
 
     DistanceSensor distance;
     ScoringSystemV2EpicLift score;
-    Constants constants;
+    //Constants constants;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
 
-        constants = new Constants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
+        //constants = newConstants();
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
         score.setLinkagePosition(0.72);
 
         waitForStart();

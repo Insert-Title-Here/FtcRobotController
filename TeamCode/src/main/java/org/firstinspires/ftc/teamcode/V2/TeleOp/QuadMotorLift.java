@@ -16,12 +16,11 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 @TeleOp (name = "KevinGodModeV2EpicLift")
 public class QuadMotorLift extends LinearOpMode {
 
-    Constants constants = new Constants();
     ScoringSystemV2EpicLift score;
     MecDrive drive;
 
 
-    ColorRangeSensor distance, color;
+    ColorRangeSensor distance;
 
     PassivePower passive;
 
@@ -55,20 +54,19 @@ public class QuadMotorLift extends LinearOpMode {
         linkageUp = false;
         firstDpadUp = true;
 
-        ElapsedTime time = new ElapsedTime();
 
 
         //Feed forward is going to be off
         passive = PassivePower.ZERO;
 
-        score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         //systems = new EndgameSystems(hardwareMap);
 
 
-        //score.setLinkagePositionLogistic(constants.linkageDown, 500);
-        score.setGrabberPosition(constants.open - 0.15);
+        //score.setLinkagePositionLogistic(Constants.linkageDown, 500);
+        score.setGrabberPosition(Constants.open - 0.15);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
@@ -93,13 +91,13 @@ public class QuadMotorLift extends LinearOpMode {
                             if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW) {
                                 score.setLinkagePosition(0.71);
                             } else {
-                                score.setLinkagePosition(constants.linkageScoreV2 - 0.05);
+                                score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
                             }
                             passive = PassivePower.EXTENDED;
                         }else if (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA){
                             score.setLinkagePosition(0.15);
                         }
-
+                        
                     }else {
                         if(passive == PassivePower.EXTENDED){
                             score.setPowerSingular(0.23);
@@ -113,7 +111,7 @@ public class QuadMotorLift extends LinearOpMode {
                     if(gamepad1.right_trigger > 0.1){
 
                         if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
-                            score.setGrabberPosition(constants.score);
+                            score.setGrabberPosition(Constants.score);
 
                             try {
                                 sleep(600);
@@ -124,7 +122,7 @@ public class QuadMotorLift extends LinearOpMode {
 
                             linkageDown = true;
 
-                            score.setGrabberPosition(constants.open - 0.15);
+                            score.setGrabberPosition(Constants.open - 0.15);
 
 
                             //Do nothing during movement phase
@@ -134,11 +132,11 @@ public class QuadMotorLift extends LinearOpMode {
 
                             //Open Grabber and reset linkage
 
-                            //score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
+                            //score.setLinkagePositionLogistic(Constants.linkageDownV2, 300);
                             //score.setLinkagePositionLogistic(0.8, 500);
                         }else{
 
-                            score.setGrabberPosition(constants.open - 0.15);
+                            score.setGrabberPosition(Constants.open - 0.15);
                             try {
                                 sleep(700);
                             } catch (InterruptedException e) {
@@ -176,7 +174,7 @@ public class QuadMotorLift extends LinearOpMode {
                     }else if((distance.getNormalizedColors().red > 0.80 || distance.getNormalizedColors().blue > 0.80) && autoLinkageFlag){
 
 
-                        score.setGrabberPosition(constants.grabbing);
+                        score.setGrabberPosition(Constants.grabbing);
 
                         grabFlag = false;
 
@@ -202,7 +200,7 @@ public class QuadMotorLift extends LinearOpMode {
 
 
                     /*else if((distance.getDistance(DistanceUnit.CM) < 2) && grabFlag) {
-                        score.setGrabberPosition(constants.grabbing);
+                        score.setGrabberPosition(Constants.grabbing);
 
                         grabFlag = false;
                         try {
@@ -261,8 +259,8 @@ public class QuadMotorLift extends LinearOpMode {
 
                     //Manual open and close grabber
                     if(gamepad1.start && manualFlag){
-                        if(score.getGrabberPosition() != constants.open - 0.15) {
-                            score.setGrabberPosition(constants.open - 0.15);
+                        if(score.getGrabberPosition() != Constants.open - 0.15) {
+                            score.setGrabberPosition(Constants.open - 0.15);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -270,7 +268,7 @@ public class QuadMotorLift extends LinearOpMode {
                             }
                             grabFlag = true;
                         }else{
-                            score.setGrabberPosition(constants.grabbing);
+                            score.setGrabberPosition(Constants.grabbing);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -440,7 +438,7 @@ public class QuadMotorLift extends LinearOpMode {
 
         waitForStart();
 
-        //score.setLinkagePosition(constants.linkageUpV2);
+        //score.setLinkagePosition(Constants.linkageUpV2);
 
 
         //Starting Threads
@@ -466,12 +464,12 @@ public class QuadMotorLift extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             } else if(score.isExtended()){
                 //Slow down when slides are extended
-                drive.setPower(new Vector2D(leftStickX * constants.EXTENDED_LINEAR_MODIFIER, leftStickY * constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else{
-                drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
@@ -510,6 +508,6 @@ public class QuadMotorLift extends LinearOpMode {
 
 
 
-        score.setGrabberPosition(constants.open - 0.15);
+        score.setGrabberPosition(Constants.open - 0.15);
     }
 }

@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LeftBlueHigh extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
-    Constants constants;
     Thread armThread, feedForward, idController;
     PIDCoefficients pid = new PIDCoefficients(0, 0, 0);
     AtomicBoolean hold, armUp, armDown;
@@ -50,14 +49,13 @@ public class LeftBlueHigh extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecDrive(hardwareMap, false, telemetry);
-        constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         armDown = new AtomicBoolean(false);
 
         score.setLinkagePosition(Constants.linkageDown);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
@@ -259,7 +257,7 @@ public class LeftBlueHigh extends LinearOpMode {
         sleep(500);
         score.setGrabberPosition(0.7);
         sleep(500);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
         armDown.set(true);
 
@@ -345,7 +343,7 @@ public class LeftBlueHigh extends LinearOpMode {
             drive.simpleBrake();
 
 
-            score.setGrabberPosition(constants.grabbing);
+            score.setGrabberPosition(Constants.grabbing);
             sleep(600);
 
             score.moveToPosition(200, 1);
@@ -383,7 +381,7 @@ public class LeftBlueHigh extends LinearOpMode {
 
         }
 
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
         camera.closeCameraDevice();
 

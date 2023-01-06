@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class RedRightPIDHigh extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
-    Constants constants;
     Thread armThread, feedForward, idController;
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
     ElapsedTime time = new ElapsedTime();
@@ -56,8 +55,7 @@ public class RedRightPIDHigh extends LinearOpMode {
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         drive = new MecDrive(hardwareMap, false, telemetry, true);
-        constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
@@ -65,7 +63,7 @@ public class RedRightPIDHigh extends LinearOpMode {
         armDown = new AtomicBoolean(false);
 
         score.setLinkagePosition(Constants.linkageDown);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
 
         cameraServo = hardwareMap.get(Servo.class, "camera");
@@ -271,7 +269,7 @@ public class RedRightPIDHigh extends LinearOpMode {
         sleep(200);
         score.setGrabberPosition(0.3);
         sleep(350);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
         //sleep(500);
         armDown.set(true);
 
@@ -358,7 +356,7 @@ public class RedRightPIDHigh extends LinearOpMode {
             drive.simpleBrake();
 
 
-            score.setGrabberPosition(constants.grabbing);
+            score.setGrabberPosition(Constants.grabbing);
             sleep(300);
 
             score.moveToPosition(200, 1);

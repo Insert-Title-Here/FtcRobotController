@@ -18,10 +18,10 @@ import org.firstinspires.ftc.teamcode.League1.TeleOp.ScoringSystemCommand;
 public class ResetScoringGroup extends SequentialCommandGroup {
 
 
-    public ResetScoringGroup(ScoringSystemCommand score, Constants constants){
+    public ResetScoringGroup(ScoringSystemCommand score/*Constants constants*/){
         super(
 
-                new InstantCommand(() -> score.setGrabberPosition(constants.open)),
+                new InstantCommand(() -> score.setGrabberPosition(Constants.open)),
 
                 new WaitCommand(200),
 
@@ -29,7 +29,7 @@ public class ResetScoringGroup extends SequentialCommandGroup {
                         new InstantCommand(() -> score.moveToPosition(0, 0.5)),
 
                         //TODO: Test how this works
-                        new LinkageDown(score, constants)
+                        new LinkageDown(score)
                 )
 
 

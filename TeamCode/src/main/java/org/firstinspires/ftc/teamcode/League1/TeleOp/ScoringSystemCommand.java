@@ -20,7 +20,7 @@ public class ScoringSystemCommand extends SubsystemBase {
     ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
     private boolean grabbing, linkageUp, extended;
-    Constants constants;
+    //Constants constants;
     private int coneStack;
     Telemetry telemetry;
 
@@ -34,12 +34,11 @@ public class ScoringSystemCommand extends SubsystemBase {
         ULTRA
     }
 
-    public ScoringSystemCommand(HardwareMap hardwareMap, Constants constants) {
+    public ScoringSystemCommand(HardwareMap hardwareMap/*Constants constants*/) {
 
         coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
-        this.constants = constants;
         setGrabbing(false);
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
@@ -66,17 +65,16 @@ public class ScoringSystemCommand extends SubsystemBase {
 
         /*lLinkage.setPosition(Constants.linkageDown);
         rLinkage.setPosition(Constants.linkageDown);*/
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
     }
 
-    public ScoringSystemCommand(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
+    public ScoringSystemCommand(HardwareMap hardwareMap, /*//Constants constants,*/ Telemetry telemetry) {
         this.telemetry = telemetry;
 
         coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
-        this.constants = constants;
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
@@ -102,7 +100,7 @@ public class ScoringSystemCommand extends SubsystemBase {
 
         lLinkage.setPosition(Constants.linkageDown);
         rLinkage.setPosition(Constants.linkageDown);
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
     }
 
@@ -521,9 +519,9 @@ public class ScoringSystemCommand extends SubsystemBase {
 
     public void linkageAutomated(boolean up){
         if(up){
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
 
         }
     }
@@ -543,9 +541,9 @@ public class ScoringSystemCommand extends SubsystemBase {
 
     public void linkageUpAndDown(boolean up){
         if(up) {
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
         }
     }
 
@@ -585,9 +583,9 @@ public class ScoringSystemCommand extends SubsystemBase {
 
     public void grabberOpenAndClose(boolean close){
         if(close) {
-            setGrabberPosition(constants.grabbing);
+            setGrabberPosition(Constants.grabbing);
         }else{
-            setGrabberPosition(constants.open);
+            setGrabberPosition(Constants.open);
         }
     }
 

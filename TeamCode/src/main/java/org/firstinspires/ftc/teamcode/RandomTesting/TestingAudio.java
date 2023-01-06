@@ -21,7 +21,7 @@ import java.io.File;
 @TeleOp (name = "KevinGodModeV2")
 public class TestingAudio extends LinearOpMode {
 
-    Constants constants = new Constants();
+    ////Constants //constants = newConstants();
     ScoringSystemV2 score;
     MecDrive drive;
     //EndgameSystems systems;
@@ -63,14 +63,14 @@ public class TestingAudio extends LinearOpMode {
         //Feed forward is going to be off
         passive = PassivePower.ZERO;
 
-        score = new ScoringSystemV2(hardwareMap, constants);
+        score = new ScoringSystemV2(hardwareMap);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         //systems = new EndgameSystems(hardwareMap);
 
 
-        //score.setLinkagePositionLogistic(constants.linkageDown, 500);
-        score.setGrabberPosition(constants.open - 0.15);
+        //score.setLinkagePositionLogistic(Constants.linkageDown, 500);
+        score.setGrabberPosition(Constants.open - 0.15);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
@@ -99,7 +99,7 @@ public class TestingAudio extends LinearOpMode {
                         if(score.getScoringMode() != ScoringSystemV2.ScoringMode.ULTRA) {
                             score.autoGoToPosition();
 
-                            score.setLinkagePosition(constants.linkageScoreV2 - 0.03);
+                            score.setLinkagePosition(Constants.linkageScoreV2 - 0.03);
                             passive = PassivePower.EXTENDED;
                         }else{
                             score.setLinkagePosition(0.15);
@@ -118,7 +118,7 @@ public class TestingAudio extends LinearOpMode {
                     if(gamepad1.right_trigger > 0.1){
 
                         if(score.getScoringMode() != ScoringSystemV2.ScoringMode.ULTRA) {
-                            score.setGrabberPosition(constants.score);
+                            score.setGrabberPosition(Constants.score);
 
                         /*//Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
                         if(score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW && score.isExtended()) {
@@ -128,7 +128,7 @@ public class TestingAudio extends LinearOpMode {
 
                             }
                             //passive = PassivePower.ZERO;
-                            //score.moveToPosition(constants.lowOperation, 1);
+                            //score.moveToPosition(Constants.lowOperation, 1);
                             //passive = PassivePower.EXTENDED;
 
                         }
@@ -149,12 +149,12 @@ public class TestingAudio extends LinearOpMode {
                             passive = PassivePower.ZERO;
 
                             //Open Grabber and reset linkage
-                            score.setGrabberPosition(constants.open - 0.15);
-                            //score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
+                            score.setGrabberPosition(Constants.open - 0.15);
+                            //score.setLinkagePositionLogistic(Constants.linkageDownV2, 300);
                             //score.setLinkagePositionLogistic(0.8, 500);
                         }else{
 
-                            score.setGrabberPosition(constants.open - 0.15);
+                            score.setGrabberPosition(Constants.open - 0.15);
                             try {
                                 sleep(700);
                             } catch (InterruptedException e) {
@@ -176,7 +176,7 @@ public class TestingAudio extends LinearOpMode {
 
                         //Automated Grab
                     }else if((distance.getDistance(DistanceUnit.CM) < 2) && grabFlag) {
-                        score.setGrabberPosition(constants.grabbing);
+                        score.setGrabberPosition(Constants.grabbing);
 
                         grabFlag = false;
                         try {
@@ -202,7 +202,7 @@ public class TestingAudio extends LinearOpMode {
                             e.printStackTrace();
                         }
 
-                        score.setGrabberPosition(constants.grabbing);
+                        score.setGrabberPosition(Constants.grabbing);
 
                         if(score.getScoringMode() == ScoringSystemV2.ScoringMode.ULTRA){
                             try {
@@ -226,7 +226,7 @@ public class TestingAudio extends LinearOpMode {
                                 e.printStackTrace();
                             }
 
-                            score.setLinkagePosition(constants.linkageScoreV2 - 0.02);
+                            score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
                             passive = PassivePower.EXTENDED;
 
 
@@ -273,8 +273,8 @@ public class TestingAudio extends LinearOpMode {
 
                     //Manual open and close grabber
                     if(gamepad1.start && manualFlag){
-                        if(score.getGrabberPosition() != constants.open - 0.15) {
-                            score.setGrabberPosition(constants.open - 0.15);
+                        if(score.getGrabberPosition() != Constants.open - 0.15) {
+                            score.setGrabberPosition(Constants.open - 0.15);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -282,7 +282,7 @@ public class TestingAudio extends LinearOpMode {
                             }
                             grabFlag = true;
                         }else{
-                            score.setGrabberPosition(constants.grabbing);
+                            score.setGrabberPosition(Constants.grabbing);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -427,7 +427,7 @@ public class TestingAudio extends LinearOpMode {
 
         waitForStart();
 
-        //score.setLinkagePosition(constants.linkageUpV2);
+        //score.setLinkagePosition(Constants.linkageUpV2);
 
 
         //Starting Threads
@@ -457,12 +457,12 @@ public class TestingAudio extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), random3 * gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), random3 * gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             } else if(score.isExtended()){
                 //Slow down when slides are extended
-                drive.setPower(new Vector2D(leftStickX * constants.EXTENDED_LINEAR_MODIFIER, leftStickY * constants.EXTENDED_LINEAR_MODIFIER), random3 * gamepad1.right_stick_x * constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), random3 * gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else{
-                drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), random3 *gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), random3 *gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
@@ -502,6 +502,6 @@ public class TestingAudio extends LinearOpMode {
 
 
 
-        score.setGrabberPosition(constants.open - 0.15);
+        score.setGrabberPosition(Constants.open - 0.15);
     }
 }

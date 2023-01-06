@@ -14,16 +14,16 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 @Autonomous
 public class ColorNormalizationTesting extends LinearOpMode {
     MecDrive drive;
-    Constants constants;
+    //Constants constants;
     ScoringSystem2 score;
     ColorRangeSensor color, distance;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        constants = new Constants();
+        //constants = newConstants();
         drive = new MecDrive(hardwareMap, false, telemetry, hardwareMap.get(ColorRangeSensor.class, "color"));
-        score = new ScoringSystem2(hardwareMap, constants, telemetry);
+        score = new ScoringSystem2(hardwareMap, telemetry);
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
@@ -46,9 +46,9 @@ public class ColorNormalizationTesting extends LinearOpMode {
 
         while(opModeIsActive()){
             if(color.red() > 105 || color.blue() > 200){
-                score.setGrabberPosition(constants.grabbing);
+                score.setGrabberPosition(Constants.grabbing);
             }else{
-                score.setGrabberPosition(constants.open);
+                score.setGrabberPosition(Constants.open);
             }
 
             telemetry.addData("Nred", color.getNormalizedColors().red);

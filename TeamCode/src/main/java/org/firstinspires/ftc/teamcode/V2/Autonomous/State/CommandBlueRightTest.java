@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.V2.Autonomous.State;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -21,10 +23,11 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Autonomous
 public class CommandBlueRightTest extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
-    Constants constants;
+    //Constants constants;
     Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
@@ -48,8 +51,8 @@ public class CommandBlueRightTest extends LinearOpMode {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
         drive = new MecDriveV2(hardwareMap, false, telemetry, true);
-        constants = new Constants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
+        //constants = newConstants();
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
@@ -57,7 +60,7 @@ public class CommandBlueRightTest extends LinearOpMode {
         armDown = new AtomicBoolean(false);
 
         score.setLinkagePosition(Constants.linkageScoreV2 - 0.07);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
 
         cameraServo = hardwareMap.get(Servo.class, "camera");
@@ -91,7 +94,7 @@ public class CommandBlueRightTest extends LinearOpMode {
             }
         });
 
-        //FtcDashboard.getInstance().startCameraStream(camera, 0);
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         cameraServo.setPosition(Constants.sleeveV2);
@@ -99,6 +102,10 @@ public class CommandBlueRightTest extends LinearOpMode {
 
 
 
+
+
+
+        waitForStart();
 
         CommandScheduler.getInstance().schedule(
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
@@ -113,65 +120,65 @@ public class CommandBlueRightTest extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
-                new InstantCommand(() -> pipeline.normalize(0.2, 155, 2)),
+                new InstantCommand(() -> pipeline.normalize(0.2, 169, 2)),
 
                 //TODO: need to add preload logic (whether preload or not)
                 new ParallelCommandGroup(
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                        new InstantCommand(() -> score.newLiftPID(1000, 0.75))
+                        new InstantCommand(() -> score.newLiftPID(970, 0.75))
                 ),
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
                 new WaitCommand(200),
-                new InstantCommand(() -> score.setGrabberPosition(Constants.score)),
-                new WaitCommand(200),
+                new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
+                new WaitCommand(400),
+                new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
+                new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 - 0.1)),
+                new InstantCommand(() -> score.moveToPosition(0, 0.63)),
 
-                new ParallelCommandGroup(
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
-                        new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
-                        new InstantCommand(() -> score.moveToPosition(0, 0.63))
-                ),
+
 
                 new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new WaitCommand(100),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.2, 155, 3)),
-                new InstantCommand(() -> score.newLiftPID(1000, 0.75)),
-                new WaitCommand(50),
-                new InstantCommand(() -> score.setLinkagePosition(0.8)),
-                new WaitCommand(100),
-                new InstantCommand(() -> score.setGrabberPosition(Constants.open)),
-                new WaitCommand(500),
-                new ParallelCommandGroup(
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.242, 800, 100)),
-                        new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
-                        new InstantCommand(() -> score.moveToPosition(0, 0.63))
+                new InstantCommand(() -> pipeline.normalize(0.2, 169, 3)),
+                new InstantCommand(() -> score.newLiftPID(970, 0.75)),
 
-                )
+
+                new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
+                new WaitCommand(100),
+                new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
+                new WaitCommand(400),
+                new InstantCommand(() -> score.setLinkagePositionLogistic(0.242, 800, 100)),
+
+
+                new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.12)),
+                new InstantCommand(() -> score.moveToPosition(0, 0.63))
 
         );
 
         //Should add 5 cycles
         for(int i = 0; i < 4; i++){
+            int finalI = i;
             CommandScheduler.getInstance().schedule(
                     new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                     new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                     new WaitCommand(100),
                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                    new InstantCommand(() -> pipeline.normalize(0.2, 155, 3)),
+                    new InstantCommand(() -> pipeline.normalize(0.2, 169, 3)),
                     new InstantCommand(() -> score.newLiftPID(1000, 0.75)),
-                    new WaitCommand(50),
-                    new InstantCommand(() -> score.setLinkagePosition(0.8)),
-                    new WaitCommand(100),
-                    new InstantCommand(() -> score.setGrabberPosition(Constants.open)),
-                    new WaitCommand(500),
-                    new ParallelCommandGroup(
-                            new InstantCommand(() -> score.setLinkagePositionLogistic(0.242, 800, 100)),
-                            new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
-                            new InstantCommand(() -> score.moveToPosition(0, 0.63))
 
-                    )
+
+                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
+                    new WaitCommand(100),
+                    new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
+                    new WaitCommand(400),
+                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 1) * 0.03), 800, 100)),
+
+
+                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
+                    new InstantCommand(() -> score.moveToPosition(0, 0.63))
             );
         }
 
@@ -182,22 +189,20 @@ public class CommandBlueRightTest extends LinearOpMode {
         );
 
 
-        waitForStart();
-
         //TODO: need to add fail timer
         CommandScheduler.getInstance().run();
 
         while(CommandScheduler.getInstance().isScheduled(
-                new InstantCommand(() -> drive.simpleMoveToPosition(-160, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, true)),
                 new WaitCommand(50)
         )){
 
         }
 
         if (parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER) {
-            drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 0.5);
         } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
-            drive.simpleMoveToPosition(-1450, MecDriveV2.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-1450, MecDriveV2.MovementType.STRAIGHT, 0.5);
         }
 
         score.setGrabberPosition(Constants.grabbing);

@@ -21,7 +21,6 @@ public class ScoringSystem2{
     ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
     private boolean grabbing, linkageUp, extended;
-    Constants constants;
     private int coneStack;
     Telemetry telemetry;
     PIDCoefficients lift = new PIDCoefficients(0, 0, 0);
@@ -36,12 +35,11 @@ public class ScoringSystem2{
         ULTRA
     }
 
-    public ScoringSystem2(HardwareMap hardwareMap, Constants constants) {
+    public ScoringSystem2(HardwareMap hardwareMap) {
 
         coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
-        this.constants = constants;
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
@@ -67,17 +65,16 @@ public class ScoringSystem2{
 
         /*lLinkage.setPosition(Constants.linkageDown);
         rLinkage.setPosition(Constants.linkageDown);*/
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
     }
 
-    public ScoringSystem2(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
+    public ScoringSystem2(HardwareMap hardwareMap, /*//Constants constants,*/ Telemetry telemetry) {
         this.telemetry = telemetry;
 
         coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
-        this.constants = constants;
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
@@ -103,7 +100,7 @@ public class ScoringSystem2{
 
         lLinkage.setPosition(Constants.linkageDown);
         rLinkage.setPosition(Constants.linkageDown);
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
     }
 
@@ -135,7 +132,7 @@ public class ScoringSystem2{
             }else if(coneStack == 2){
                 setLinkagePositionLogistic(0.82, 500);
             }else if(coneStack == 1){
-                setLinkagePositionLogistic(constants.linkageDown, 300);
+                setLinkagePositionLogistic(Constants.linkageDown, 300);
             }
         }else {
             if (coneStack == 5) {
@@ -147,7 +144,7 @@ public class ScoringSystem2{
             } else if (coneStack == 2) {
                 setLinkagePosition(0.82);
             } else if (coneStack == 1) {
-                setLinkagePosition(constants.linkageDown);
+                setLinkagePosition(Constants.linkageDown);
             }
         }
     }
@@ -624,9 +621,9 @@ public class ScoringSystem2{
 
     public void linkageAutomated(boolean up){
         if(up){
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
 
         }
     }
@@ -646,9 +643,9 @@ public class ScoringSystem2{
 
     public void linkageUpAndDown(boolean up){
         if(up) {
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
         }
     }
 
@@ -688,9 +685,9 @@ public class ScoringSystem2{
 
     public void grabberOpenAndClose(boolean close){
         if(close) {
-            setGrabberPosition(constants.grabbing);
+            setGrabberPosition(Constants.grabbing);
         }else{
-            setGrabberPosition(constants.open);
+            setGrabberPosition(Constants.open);
         }
     }
 

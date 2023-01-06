@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @TeleOp (name = "Nothing")
 public class NewUltraTeleOp extends LinearOpMode {
 
-    Constants constants = new Constants();
+    ////Constants //constants = newConstants();
     ScoringSystem2 score;
     MecDrive drive;
     ColorRangeSensor distance, color;
@@ -55,14 +55,14 @@ public class NewUltraTeleOp extends LinearOpMode {
         //Initialization
         passive = PassivePower.ZERO;
 
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         systems = new EndgameSystems(hardwareMap);
 
 
-        score.setLinkagePosition(constants.linkageDown);
-        score.setGrabberPosition(constants.open);
+        score.setLinkagePosition(Constants.linkageDown);
+        score.setGrabberPosition(Constants.open);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
@@ -79,7 +79,7 @@ public class NewUltraTeleOp extends LinearOpMode {
 
                     if(gamepad1.left_trigger > 0.1){
                         score.autoGoToPosition();
-                        score.setLinkagePosition(constants.linkageScore);
+                        score.setLinkagePosition(Constants.linkageScore);
                         passive = PassivePower.EXTENDED;
 
                     }else {
@@ -94,7 +94,7 @@ public class NewUltraTeleOp extends LinearOpMode {
 
 
                     if(gamepad1.right_trigger > 0.1){
-                        score.setGrabberPosition(constants.open);
+                        score.setGrabberPosition(Constants.open);
 
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.LOW && score.isExtended()) {
                             try {
@@ -103,7 +103,7 @@ public class NewUltraTeleOp extends LinearOpMode {
 
                             }
                             passive = PassivePower.ZERO;
-                            score.moveToPosition(constants.lowOperation, 1);
+                            score.moveToPosition(Constants.lowOperation, 1);
                             passive = PassivePower.EXTENDED;
 
                         }
@@ -115,7 +115,7 @@ public class NewUltraTeleOp extends LinearOpMode {
                             e.printStackTrace();
                         }
 
-                        score.setLinkagePosition(constants.linkageUp);
+                        score.setLinkagePosition(Constants.linkageUp);
 
                         try {
                             sleep(300);
@@ -126,7 +126,7 @@ public class NewUltraTeleOp extends LinearOpMode {
                         passive = PassivePower.MOVEMENT;
                         score.moveToPosition(0, 0.5);
                         passive = PassivePower.ZERO;
-                        score.setLinkagePosition(constants.linkageDown);
+                        score.setLinkagePosition(Constants.linkageDown);
 
                         autoLinkageFlag = true;
                         grabFlag = true;
@@ -134,7 +134,7 @@ public class NewUltraTeleOp extends LinearOpMode {
 
                         //Automated Grab and Score
                     }else if((distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
-                        score.setGrabberPosition(constants.grabbing);
+                        score.setGrabberPosition(Constants.grabbing);
 
                         grabFlag = false;
                         try {
@@ -147,13 +147,13 @@ public class NewUltraTeleOp extends LinearOpMode {
 
                     //TODO: fix this logic
                     if((distance.getNormalizedColors().red > 0.85 || distance.getNormalizedColors().blue > 0.85) && autoLinkageFlag){
-                        score.setLinkagePosition(constants.linkageUp);
+                        score.setLinkagePosition(Constants.linkageUp);
                         autoLinkageFlag = false;
                         //telemetry.addData("Is this trippin", "yes");
 
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.ULTRA){
                             score.autoGoToPosition();
-                            score.setLinkagePosition(constants.linkageScore);
+                            score.setLinkagePosition(Constants.linkageScore);
                             passive = PassivePower.EXTENDED;
 
 
@@ -195,7 +195,7 @@ public class NewUltraTeleOp extends LinearOpMode {
 
                     //Reset linkage position
                     if(gamepad1.left_stick_button){
-                        score.setLinkagePosition(constants.linkageDown);
+                        score.setLinkagePosition(Constants.linkageDown);
 
                     }
 
@@ -203,8 +203,8 @@ public class NewUltraTeleOp extends LinearOpMode {
 
                     //Manual open and close grabber
                     if(gamepad1.start && manualFlag){
-                        if(score.getGrabberPosition() != constants.open) {
-                            score.setGrabberPosition(constants.open);
+                        if(score.getGrabberPosition() != Constants.open) {
+                            score.setGrabberPosition(Constants.open);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -212,7 +212,7 @@ public class NewUltraTeleOp extends LinearOpMode {
                             }
                             grabFlag = true;
                         }else{
-                            score.setGrabberPosition(constants.grabbing);
+                            score.setGrabberPosition(Constants.grabbing);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -336,12 +336,12 @@ public class NewUltraTeleOp extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             } else if(score.isExtended()){
                 //Slow down when slides are extended
-                drive.setPower(new Vector2D(leftStickX * constants.EXTENDED_LINEAR_MODIFIER, leftStickY * constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else{
-                drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
@@ -371,7 +371,7 @@ public class NewUltraTeleOp extends LinearOpMode {
         drive.setPower(0, 0, 0, 0);
         score.setLinkagePosition(0.25);
         sleep(500);
-        score.setLinkagePosition(constants.linkageDown);
-        score.setGrabberPosition(constants.open);
+        score.setLinkagePosition(Constants.linkageDown);
+        score.setGrabberPosition(Constants.open);
     }
 }

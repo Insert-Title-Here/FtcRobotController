@@ -13,8 +13,8 @@ public class LinkageCommand extends CommandBase {
     ScoringSystem score;
 
 
-    public LinkageCommand(ScoringSystem score, Constants constants, HardwareMap hardwareMap, Robot robot, boolean up){
-        score = new ScoringSystem(hardwareMap, robot, constants, false);
+    public LinkageCommand(ScoringSystem score, /*//Constants constants,*/ HardwareMap hardwareMap, Robot robot, boolean up){
+        score = new ScoringSystem(hardwareMap, robot,  false);
         this.up = up;
 
 

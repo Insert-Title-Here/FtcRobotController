@@ -24,14 +24,14 @@ public class LogisticServoTest extends LinearOpMode {
 
     Servo servo;
     ScoringSystem2 score;
-    Constants constants;
+    //Constants constants;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        constants = new Constants();
+        //constants = newConstants();
 
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap);
 
         score.setLinkagePosition(0.95);
         telemetry.addData("Servo pos", score.getLeftLinkage());

@@ -47,8 +47,8 @@ public class MecDriveV2 {
     //PIDCoefficients rotate = new PIDCoefficients(0.8, 0, 0.01);
     PIDCoefficients rotate = new PIDCoefficients(0.975, 0, 0.02);
 
-    PIDCoefficients rotateFaster = new PIDCoefficients(1.09, 0, 0.002  );
-    //PIDCoefficients rotateFaster = new PIDCoefficients(0.975, 0, 0.02);
+    //PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0, 0.02  );
+    PIDCoefficients rotateFaster = new PIDCoefficients(0.7, 0, 0.02);
 
 
 

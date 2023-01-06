@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @TeleOp (name = "KevinGodMode")
 public class KevinGodMode2 extends LinearOpMode {
 
-    Constants constants = new Constants();
+    ////Constants //constants = newConstants();
     ScoringSystem2 score;
     MecDrive drive;
     EndgameSystems systems;
@@ -64,14 +64,14 @@ public class KevinGodMode2 extends LinearOpMode {
         //Feed forward is going to be off
         passive = PassivePower.ZERO;
 
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         systems = new EndgameSystems(hardwareMap);
 
 
-        //score.setLinkagePositionLogistic(constants.linkageDown, 500);
-        score.setGrabberPosition(constants.open - 0.11);
+        //score.setLinkagePositionLogistic(Constants.linkageDown, 500);
+        score.setGrabberPosition(Constants.open - 0.11);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
@@ -91,7 +91,7 @@ public class KevinGodMode2 extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         score.autoGoToPosition();
                         score.setPower(0.2);
-                        score.setLinkagePosition(constants.linkageScore);
+                        score.setLinkagePosition(Constants.linkageScore);
                         passive = PassivePower.EXTENDED;
 
                     }else {
@@ -105,7 +105,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
                     //Scoring feature
                     if(gamepad1.right_trigger > 0.1){
-                        score.setGrabberPosition(constants.score);
+                        score.setGrabberPosition(Constants.score);
 
                         //Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.LOW && score.isExtended()) {
@@ -115,7 +115,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
                             }
                             passive = PassivePower.ZERO;
-                            score.moveToPosition(constants.lowOperation, 1);
+                            score.moveToPosition(Constants.lowOperation, 1);
                             passive = PassivePower.EXTENDED;
 
                         }
@@ -128,7 +128,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
 
 
-                        //score.setLinkagePosition(constants.linkageUp);
+                        //score.setLinkagePosition(Constants.linkageUp);
                         score.lowerConeStack();
                         linkageDown = true;
 
@@ -143,8 +143,8 @@ public class KevinGodMode2 extends LinearOpMode {
                         passive = PassivePower.ZERO;
 
                         //Open Grabber and reset linkage
-                        score.setGrabberPosition(constants.open - 0.11);
-                        //score.setLinkagePositionLogistic(constants.linkageDown, 300);
+                        score.setGrabberPosition(Constants.open - 0.11);
+                        //score.setLinkagePositionLogistic(Constants.linkageDown, 300);
 
 
 
@@ -157,7 +157,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
                         //Automated Grab
                     }else if((distance.getDistance(DistanceUnit.CM) < 3.5) && grabFlag) {
-                        score.setGrabberPosition(constants.grabbing);
+                        score.setGrabberPosition(Constants.grabbing);
 
                         grabFlag = false;
                         try {
@@ -184,7 +184,7 @@ public class KevinGodMode2 extends LinearOpMode {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            score.setLinkagePosition(constants.linkageScore);
+                            score.setLinkagePosition(Constants.linkageScore);
                             passive = PassivePower.EXTENDED;
 
 
@@ -222,7 +222,7 @@ public class KevinGodMode2 extends LinearOpMode {
 
                     //Reset linkage position
                     if(gamepad1.left_stick_button){
-                        score.setLinkagePositionLogistic(constants.linkageUp, 500);
+                        score.setLinkagePositionLogistic(Constants.linkageUp, 500);
 
                     }
 
@@ -230,8 +230,8 @@ public class KevinGodMode2 extends LinearOpMode {
 
                     //Manual open and close grabber
                     if(gamepad1.start && manualFlag){
-                        if(score.getGrabberPosition() != constants.open - 0.11) {
-                            score.setGrabberPosition(constants.open - 0.11);
+                        if(score.getGrabberPosition() != Constants.open - 0.11) {
+                            score.setGrabberPosition(Constants.open - 0.11);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -239,7 +239,7 @@ public class KevinGodMode2 extends LinearOpMode {
                             }
                             grabFlag = true;
                         }else{
-                            score.setGrabberPosition(constants.grabbing);
+                            score.setGrabberPosition(Constants.grabbing);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -364,7 +364,7 @@ public class KevinGodMode2 extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
+                        score.setLinkagePositionLogistic(Constants.linkageUp, 0, 50);
                         linkageUp = false;
                     }else if(linkageDown) {
 
@@ -380,7 +380,7 @@ public class KevinGodMode2 extends LinearOpMode {
         //TODO: might need to change this
 
         waitForStart();
-        score.setLinkagePosition(constants.linkageUp);
+        score.setLinkagePosition(Constants.linkageUp);
 
 
         //Starting Threads
@@ -406,12 +406,12 @@ public class KevinGodMode2 extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             } else if(score.isExtended()){
                 //Slow down when slides are extended
-                drive.setPower(new Vector2D(leftStickX * constants.EXTENDED_LINEAR_MODIFIER, leftStickY * constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else{
-                drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
@@ -442,7 +442,7 @@ public class KevinGodMode2 extends LinearOpMode {
         //Stop
         drive.setPower(0, 0, 0, 0);
         score.setLinkagePositionLogistic(0.25, 500);
-        score.setLinkagePositionLogistic(constants.linkageDown, 500);
-        score.setGrabberPosition(constants.open - 0.11);
+        score.setLinkagePositionLogistic(Constants.linkageDown, 500);
+        score.setGrabberPosition(Constants.open - 0.11);
     }
 }

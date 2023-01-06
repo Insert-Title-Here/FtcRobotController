@@ -21,16 +21,16 @@ public class TestingCommandRedCircuitAuto extends CommandOpMode {
     Robot robot;
     MecDrive drive;
     ScoringSystem score;
-    Constants constants;
+    //Constants constants;
 
 
     @Override
     public void initialize() {
 
-        constants = new Constants();
+        //constants = newConstants();
         robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, robot, false, telemetry);
-        score = new ScoringSystem(hardwareMap, robot, constants, false);
+        score = new ScoringSystem(hardwareMap, robot,  false);
         robot.start();
 
 
@@ -42,7 +42,7 @@ public class TestingCommandRedCircuitAuto extends CommandOpMode {
                         new InstantCommand(() -> drive.newMoveToPosition(new Point(0, -1000), 0.5)),
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> drive.rotate(Math.PI/4, 0.2)),
-                                new LiftCommand(score, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.HIGH, 0.5)
+                                new LiftCommand(score, hardwareMap, robot, ScoringSystem.ExtensionHeight.HIGH, 0.5)
                         ),
 
                         new WaitCommand(1000), //score
@@ -50,7 +50,7 @@ public class TestingCommandRedCircuitAuto extends CommandOpMode {
 
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> drive.rotate(Math.PI/2, 0.2)),
-                                new LiftCommand(score, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.ZERO, 0.5)
+                                new LiftCommand(score, hardwareMap, robot, ScoringSystem.ExtensionHeight.ZERO, 0.5)
                         ),
 
                         new InstantCommand(() -> drive.newMoveToPosition(new Point(-1000, 0),0.5)),

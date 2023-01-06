@@ -32,7 +32,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
 
-    Constants constants = new Constants();
+    ////Constants //constants = newConstants();
     ScoringSystem2 score;
     MecDrive drive;
     //Robot robot;
@@ -67,7 +67,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         passive = PassivePower.ZERO;
         goDown = new AtomicBoolean(false);
 
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         systems = new EndgameSystems(hardwareMap);
@@ -120,7 +120,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
 
                     //
                     if(goDown.get()) {
-                        score.setGrabberPosition(constants.open);
+                        score.setGrabberPosition(Constants.open);
 
                         try {
                             sleep(300);
@@ -233,7 +233,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
             }
 
             if(gamepad1.x){
-                score.setGrabberPosition(constants.open);
+                score.setGrabberPosition(Constants.open);
                 grabFlag = true;
             }
 
@@ -251,7 +251,7 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
                 goDown.set(true);
 
             }else if((distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
-                score.setGrabberPosition(constants.grabbing);
+                score.setGrabberPosition(Constants.grabbing);
 
                 grabFlag = false;
                 sleep(200);
@@ -302,6 +302,6 @@ public class FirstTestingTeleOpThatKindaWorksButIDontKnowIfItReallyWorksSoHopefu
         score.setLinkagePosition(0.9);
         sleep(500);
         score.setLinkagePosition(0.95);
-        score.setGrabberPosition(constants.open);
+        score.setGrabberPosition(Constants.open);
     }
 }

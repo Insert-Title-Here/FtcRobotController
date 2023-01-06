@@ -15,8 +15,8 @@ public class LiftCommand extends CommandBase {
 
 
 
-    public LiftCommand(ScoringSystem score, Constants constants, HardwareMap hardwareMap, Robot robot, ScoringSystem.ExtensionHeight height, double power){
-        score = new ScoringSystem(hardwareMap, robot, constants, false);
+    public LiftCommand(ScoringSystem score, /*//Constants constants,*/ HardwareMap hardwareMap, Robot robot, ScoringSystem.ExtensionHeight height, double power){
+        score = new ScoringSystem(hardwareMap, robot,  false);
         this.position = position;
         this.power = power;
 

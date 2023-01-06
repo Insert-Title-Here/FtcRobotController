@@ -27,7 +27,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Release the Left Bumper to return to manual driving mode.
  *
  * Use DESIRED_DISTANCE to set how close you want the robot to get to the target.
- * Speed and Turn sensitivity can be adjusted using the SPEED_GAIN and TURN_GAIN constants.
+ * Speed and Turn sensitivity can be adjusted using the SPEED_GAIN and TURN_GAIN Constants.
  *
  * For more Vuforia details, or to adapt this OpMode for a phone camera, view the
  *  ConceptVuforiaFieldNavigation and ConceptVuforiaFieldNavigationWebcam samples.

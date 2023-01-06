@@ -17,20 +17,20 @@ import org.firstinspires.ftc.teamcode.League1.TeleOp.ScoringSystemCommand;
 public class GrabAndScore extends SequentialCommandGroup {
 
 
-    public GrabAndScore(ScoringSystemCommand score, Constants constants){
+    public GrabAndScore(ScoringSystemCommand score/*Constants constants*/){
         super(
 
-                new InstantCommand(() -> score.setGrabberPosition(constants.grabbing)),
+                new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
 
                 new WaitCommand(200),
 
 
-                new LinkageScore(score, constants),
+                new LinkageScore(score),
 
 
 
 
-                new InstantCommand(() -> score.setLinkagePositionLogistic(constants.score, 200))
+                new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.score, 200))
 
 
                 //TODO: Test how this works

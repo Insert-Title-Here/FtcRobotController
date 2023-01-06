@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TryingToFixBrokenAuto extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
-    Constants constants;
+    //Constants constants;
     Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
@@ -49,8 +49,8 @@ public class TryingToFixBrokenAuto extends LinearOpMode {
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         drive = new MecDrive(hardwareMap, false, telemetry, true);
-        constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants);
+        //constants = newConstants();
+        score = new ScoringSystem2(hardwareMap);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
@@ -58,7 +58,7 @@ public class TryingToFixBrokenAuto extends LinearOpMode {
         armDown = new AtomicBoolean(false);
 
         score.setLinkagePosition(Constants.linkageDown);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
 
         cameraServo = hardwareMap.get(Servo.class, "camera");
@@ -275,7 +275,7 @@ public class TryingToFixBrokenAuto extends LinearOpMode {
 
             cameraServo.setPosition(Constants.cone);
             sleep(350);
-            score.setGrabberPosition(constants.grabbing);
+            score.setGrabberPosition(Constants.grabbing);
             //sleep(500);
             armDown.set(true);
             pipeline.changeMode(KevinGodPipeline.Mode.BLUECONE);
@@ -303,7 +303,7 @@ public class TryingToFixBrokenAuto extends LinearOpMode {
             for (int i = 0; i < 3; i++) {
 
 
-                score.setLinkagePosition(constants.linkageUp);
+                score.setLinkagePosition(Constants.linkageUp);
 
 
             /*if(i == 0){
@@ -356,7 +356,7 @@ public class TryingToFixBrokenAuto extends LinearOpMode {
                 drive.simpleBrake();
 
 
-                score.setGrabberPosition(constants.grabbing);
+                score.setGrabberPosition(Constants.grabbing);
                 sleep(400);
 
                 score.moveToPosition(220, 1);
@@ -441,7 +441,7 @@ public class TryingToFixBrokenAuto extends LinearOpMode {
 
             }
 
-            score.setGrabberPosition(constants.grabbing);
+            score.setGrabberPosition(Constants.grabbing);
 
             camera.closeCameraDevice();
 

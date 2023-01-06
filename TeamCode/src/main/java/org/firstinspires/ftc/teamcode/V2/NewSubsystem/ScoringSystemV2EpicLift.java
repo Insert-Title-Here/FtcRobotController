@@ -28,7 +28,6 @@ public class ScoringSystemV2EpicLift {
     ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
     private boolean grabbing, linkageUp, extended;
-    Constants constants;
     private int coneStack;
     Telemetry telemetry;
     PIDCoefficients pidf = new PIDCoefficients(0.0085, 0.0000275, 0.00023);
@@ -44,13 +43,12 @@ public class ScoringSystemV2EpicLift {
         ULTRA
     }
 
-    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Constants constants) {
+    public ScoringSystemV2EpicLift(HardwareMap hardwareMap /*Constants constants*/) {
 
 
         coneStack = 1;
         height = ScoringMode.HIGH;
         extended = false;
-        this.constants = constants;
 
         rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift1 = hardwareMap.get(DcMotorEx.class, "LeftLift");
@@ -90,17 +88,16 @@ public class ScoringSystemV2EpicLift {
 
 
         setLinkagePosition(Constants.linkageDownV2);
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
     }
 
-    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
+    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         coneStack = 1;
         height = ScoringMode.HIGH;
         extended = false;
-        this.constants = constants;
 
         distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
 
@@ -141,7 +138,7 @@ public class ScoringSystemV2EpicLift {
 
         setLinkagePosition(Constants.linkageDownV2);
         //setLinkagePosition(0.8);
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
     }
 
@@ -923,9 +920,9 @@ public class ScoringSystemV2EpicLift {
 
     public void linkageAutomated(boolean up){
         if(up){
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
 
         }
     }
@@ -945,9 +942,9 @@ public class ScoringSystemV2EpicLift {
 
     public void linkageUpAndDown(boolean up){
         if(up) {
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
         }
     }
 
@@ -1244,9 +1241,9 @@ public class ScoringSystemV2EpicLift {
 
     public void grabberOpenAndClose(boolean close){
         if(close) {
-            setGrabberPosition(constants.grabbing);
+            setGrabberPosition(Constants.grabbing);
         }else{
-            setGrabberPosition(constants.open);
+            setGrabberPosition(Constants.open);
         }
     }
 

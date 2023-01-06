@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.League1.TeleOp.ScoringSystemCommand;
 public class LinkageDown extends SequentialCommandGroup {
 
 
-    public LinkageDown(ScoringSystemCommand score, Constants constants){
+    public LinkageDown(ScoringSystemCommand score /*Constants constants*/){
 
         super(
-                new InstantCommand(() -> score.setLinkagePositionLogistic(constants.linkageDown, 300))
+                new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageDown, 300))
 
         );
     }

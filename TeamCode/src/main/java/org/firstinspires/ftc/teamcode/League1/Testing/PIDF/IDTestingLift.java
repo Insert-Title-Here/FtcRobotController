@@ -17,7 +17,7 @@ public class IDTestingLift extends LinearOpMode {
     Thread idController;
     AtomicBoolean hold;
     ScoringSystem2 score;
-    Constants constants;
+    //Constants constants;
     PIDCoefficients pid = new PIDCoefficients(0, 0.000025, 0.0008);
     int[] intSums;
 
@@ -26,8 +26,8 @@ public class IDTestingLift extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         hold = new AtomicBoolean(false);
-        constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants, telemetry);
+        //constants = newConstants();
+        score = new ScoringSystem2(hardwareMap, telemetry);
 
 
         idController = new Thread(){

@@ -26,7 +26,7 @@ public class ArmTester extends OpModeWrapper {
     //DcMotor rMotor, lMotor;
     MecDrive drive;
     ScoringSystemV2EpicLift score;
-    Constants constants;
+    //Constants constants;
 
     public ExpansionHubMotor rMotor1, lMotor1, rMotor2, lMotor2;
 
@@ -65,13 +65,13 @@ public class ArmTester extends OpModeWrapper {
         //Feed forward is going to be off
         passive = PassivePower.ZERO;
 
-        //constants = new Constants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, constants);
+        ////constants = newConstants();
+        score = new ScoringSystemV2EpicLift(hardwareMap);
 
-        constants = new Constants();
+        //constants = newConstants();
         drive = new MecDrive(hardwareMap, false, telemetry);
 
-        score.setGrabberPosition(constants.open - 0.07);
+        score.setGrabberPosition(Constants.open - 0.07);
 
 
         armThread = new Thread(){
@@ -86,7 +86,7 @@ public class ArmTester extends OpModeWrapper {
                         passive = PassivePower.MOVEMENT;
                         score.autoGoToPosition();
                         //score.setPower(0.2);
-                        score.setLinkagePosition(constants.linkageScoreV2 - 0.02);
+                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.02);
                         passive = PassivePower.EXTENDED;
 
                     }else {
@@ -102,7 +102,7 @@ public class ArmTester extends OpModeWrapper {
 
                     //Scoring feature
                     if(gamepad1.right_trigger > 0.1){
-                        score.setGrabberPosition(constants.score);
+                        score.setGrabberPosition(Constants.score);
 
                         /*//Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
                         if(score.getScoringMode() == ScoringSystemV2.ScoringMode.LOW && score.isExtended()) {
@@ -112,7 +112,7 @@ public class ArmTester extends OpModeWrapper {
 
                             }
                             //passive = PassivePower.ZERO;
-                            //score.moveToPosition(constants.lowOperation, 1);
+                            //score.moveToPosition(Constants.lowOperation, 1);
                             //passive = PassivePower.EXTENDED;
 
                         }
@@ -136,8 +136,8 @@ public class ArmTester extends OpModeWrapper {
                         score.moveToPosition(0, 0.75);
 
                         //Open Grabber and reset linkage
-                        score.setGrabberPosition(constants.open - 0.07);
-                        //score.setLinkagePositionLogistic(constants.linkageDownV2, 300);
+                        score.setGrabberPosition(Constants.open - 0.07);
+                        //score.setLinkagePositionLogistic(Constants.linkageDownV2, 300);
                         //score.setLinkagePositionLogistic(0.8, 500);
 
                         //TODO: fix this
@@ -165,8 +165,8 @@ public class ArmTester extends OpModeWrapper {
 
                     //Manual open and close grabber
                     if(gamepad1.start && manualFlag){
-                        if(score.getGrabberPosition() != constants.open - 0.07) {
-                            score.setGrabberPosition(constants.open - 0.07);
+                        if(score.getGrabberPosition() != Constants.open - 0.07) {
+                            score.setGrabberPosition(Constants.open - 0.07);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -174,7 +174,7 @@ public class ArmTester extends OpModeWrapper {
                             }
                             grabFlag = true;
                         }else{
-                            score.setGrabberPosition(constants.grabbing);
+                            score.setGrabberPosition(Constants.grabbing);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {

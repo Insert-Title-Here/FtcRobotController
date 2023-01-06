@@ -12,8 +12,8 @@ public class GrabCommand extends CommandBase {
     private boolean close;
 
 
-    public GrabCommand(ScoringSystem score, Constants constants, HardwareMap hardwareMap, Robot robot, boolean close){
-        score = new ScoringSystem(hardwareMap, robot, constants, false);
+    public GrabCommand(ScoringSystem score, /*//Constants constants,*/ HardwareMap hardwareMap, Robot robot, boolean close){
+        score = new ScoringSystem(hardwareMap, robot, false);
         this.close = close;
 
 

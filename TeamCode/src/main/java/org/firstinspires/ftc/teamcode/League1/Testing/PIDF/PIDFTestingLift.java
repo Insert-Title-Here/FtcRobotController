@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 public class PIDFTestingLift extends LinearOpMode {
 
     ScoringSystemV2EpicLift score;
-    Constants constants;
+    //Constants constants;
 
     public static boolean pid = true;
 
@@ -53,8 +53,8 @@ public class PIDFTestingLift extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        constants = new Constants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
+        //constants = newConstants();
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
 
         score.setLinkagePosition(Constants.linkageUpV2);
 

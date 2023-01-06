@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 @TeleOp (name = "KevinIsActuallyInsaneAndWeAreGoingToTotallyBreakTheRobot")
 public class KevinSuperSaiyanMode extends LinearOpMode {
 
-    Constants constants = new Constants();
+    ////Constants //constants = newConstants();
     ScoringSystem2 score;
     MecDrive drive;
     EndgameSystems systems;
@@ -57,14 +57,14 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
         //Feed forward is going to be off
         passive = PassivePower.ZERO;
 
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         systems = new EndgameSystems(hardwareMap);
 
 
-        //score.setLinkagePositionLogistic(constants.linkageDown, 500);
-        score.setGrabberPosition(constants.open);
+        //score.setLinkagePositionLogistic(Constants.linkageDown, 500);
+        score.setGrabberPosition(Constants.open);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
@@ -84,7 +84,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         score.autoGoToPosition();
                         score.setPower(0.2);
-                        score.setLinkagePosition(constants.linkageScore);
+                        score.setLinkagePosition(Constants.linkageScore);
                         passive = PassivePower.EXTENDED;
 
                     }else {
@@ -98,7 +98,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
 
                     //Scoring feature
                     if(gamepad1.right_trigger > 0.1){
-                        score.setGrabberPosition(constants.score);
+                        score.setGrabberPosition(Constants.score);
 
                         //Low height logic (need to lift slides up a bit before bringing linkage back for clearance)
                         if(score.getScoringMode() == ScoringSystem2.ScoringMode.LOW && score.isExtended()) {
@@ -108,7 +108,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
 
                             }
                             passive = PassivePower.ZERO;
-                            score.moveToPosition(constants.lowOperation, 1);
+                            score.moveToPosition(Constants.lowOperation, 1);
                             passive = PassivePower.EXTENDED;
 
                         }
@@ -121,7 +121,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
 
 
 
-                        score.setLinkagePosition(constants.linkageUp);
+                        score.setLinkagePosition(Constants.linkageUp);
 
 
                         try {
@@ -140,9 +140,9 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
                         passive = PassivePower.ZERO;
 
                         //Open Grabber and reset linkage
-                        score.setGrabberPosition(constants.open);
-                        //score.setLinkagePositionLogistic(constants.linkageDown, 300);
-                        //score.setLinkagePosition(constants.linkageDown);
+                        score.setGrabberPosition(Constants.open);
+                        //score.setLinkagePositionLogistic(Constants.linkageDown, 300);
+                        //score.setLinkagePosition(Constants.linkageDown);
 
                         score.lowerConeStack();
                         score.setLinkageConeStack(true);
@@ -157,7 +157,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
 
                         //Automated Grab
                     }else if((distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
-                        score.setGrabberPosition(constants.grabbing);
+                        score.setGrabberPosition(Constants.grabbing);
 
                         grabFlag = false;
                         try {
@@ -184,7 +184,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            score.setLinkagePosition(constants.linkageScore);
+                            score.setLinkagePosition(Constants.linkageScore);
                             passive = PassivePower.EXTENDED;
 
 
@@ -222,7 +222,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
 
                     //Reset linkage position
                     if(gamepad1.left_stick_button){
-                        score.setLinkagePositionLogistic(constants.linkageUp, 500);
+                        score.setLinkagePositionLogistic(Constants.linkageUp, 500);
 
                     }
 
@@ -230,8 +230,8 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
 
                     //Manual open and close grabber
                     if(gamepad1.start && manualFlag){
-                        if(score.getGrabberPosition() != constants.open) {
-                            score.setGrabberPosition(constants.open);
+                        if(score.getGrabberPosition() != Constants.open) {
+                            score.setGrabberPosition(Constants.open);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -239,7 +239,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
                             }
                             grabFlag = true;
                         }else{
-                            score.setGrabberPosition(constants.grabbing);
+                            score.setGrabberPosition(Constants.grabbing);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -354,13 +354,13 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
             public void run() {
                 while(opModeIsActive()) {
                     if(linkageUp) {
-                        //score.setLinkagePositionLogistic(constants.linkageUp, 0, 50);
+                        //score.setLinkagePositionLogistic(Constants.linkageUp, 0, 50);
                         try {
                             Thread.sleep(100);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setLinkagePosition(constants.linkageUp);
+                        score.setLinkagePosition(Constants.linkageUp);
                         linkageUp = false;
                     }
                 }
@@ -370,7 +370,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
         //TODO: might need to change this
 
         waitForStart();
-        score.setLinkagePosition(constants.linkageUp);
+        score.setLinkagePosition(Constants.linkageUp);
 
 
         //Starting Threads
@@ -396,12 +396,12 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             } else if(score.isExtended()){
                 //Slow down when slides are extended
-                drive.setPower(new Vector2D(leftStickX * constants.EXTENDED_LINEAR_MODIFIER, leftStickY * constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else{
-                drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
@@ -432,7 +432,7 @@ public class KevinSuperSaiyanMode extends LinearOpMode {
         //Stop
         drive.setPower(0, 0, 0, 0);
         score.setLinkagePositionLogistic(0.25, 500);
-        score.setLinkagePositionLogistic(constants.linkageDown, 500);
-        score.setGrabberPosition(constants.open);
+        score.setLinkagePositionLogistic(Constants.linkageDown, 500);
+        score.setGrabberPosition(Constants.open);
     }
 }

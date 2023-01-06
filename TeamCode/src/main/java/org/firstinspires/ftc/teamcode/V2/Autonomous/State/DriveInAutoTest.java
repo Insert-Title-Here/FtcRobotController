@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DriveInAutoTest extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
-    Constants constants;
+    //Constants constants;
     Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
@@ -50,8 +50,8 @@ public class DriveInAutoTest extends LinearOpMode {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
         drive = new MecDriveV2(hardwareMap, false, telemetry);
-        constants = new Constants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, constants, telemetry);
+        //constants = newConstants();
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
@@ -59,7 +59,7 @@ public class DriveInAutoTest extends LinearOpMode {
         armDown = new AtomicBoolean(false);
 
         score.setLinkagePosition(Constants.linkageScoreV2 - 0.07);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
 
         cameraServo = hardwareMap.get(Servo.class, "camera");

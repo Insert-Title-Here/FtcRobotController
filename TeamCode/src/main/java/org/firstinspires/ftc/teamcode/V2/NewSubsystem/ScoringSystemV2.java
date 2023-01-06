@@ -19,7 +19,7 @@ public class ScoringSystemV2 {
     ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
     private boolean grabbing, linkageUp, extended;
-    Constants constants;
+    //Constants constants;
     private int coneStack;
     Telemetry telemetry;
     PIDCoefficients lift = new PIDCoefficients(0, 0, 0);
@@ -34,12 +34,11 @@ public class ScoringSystemV2 {
         ULTRA
     }
 
-    public ScoringSystemV2(HardwareMap hardwareMap, Constants constants) {
+    public ScoringSystemV2(HardwareMap hardwareMap/*Constants constants*/) {
 
         //coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
-        this.constants = constants;
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
@@ -64,17 +63,16 @@ public class ScoringSystemV2 {
 
 
         setLinkagePosition(Constants.linkageDownV2);
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
     }
 
-    public ScoringSystemV2(HardwareMap hardwareMap, Constants constants, Telemetry telemetry) {
+    public ScoringSystemV2(HardwareMap hardwareMap, /*//Constants constants,*/ Telemetry telemetry) {
         this.telemetry = telemetry;
 
         coneStack = 2;
         height = ScoringMode.HIGH;
         extended = false;
-        this.constants = constants;
 
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
@@ -100,7 +98,7 @@ public class ScoringSystemV2 {
 
         setLinkagePosition(Constants.linkageDownV2);
         //setLinkagePosition(0.8);
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
     }
 
@@ -694,9 +692,9 @@ public class ScoringSystemV2 {
 
     public void linkageAutomated(boolean up){
         if(up){
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
 
         }
     }
@@ -716,9 +714,9 @@ public class ScoringSystemV2 {
 
     public void linkageUpAndDown(boolean up){
         if(up) {
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
         }
     }
 
@@ -758,9 +756,9 @@ public class ScoringSystemV2 {
 
     public void grabberOpenAndClose(boolean close){
         if(close) {
-            setGrabberPosition(constants.grabbing);
+            setGrabberPosition(Constants.grabbing);
         }else{
-            setGrabberPosition(constants.open);
+            setGrabberPosition(Constants.open);
         }
     }
 

@@ -29,7 +29,6 @@ public class BlueLeftPIDHigh extends LinearOpMode {
 
     MecDrive drive;
     ScoringSystem2 score;
-    Constants constants;
     Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
@@ -54,8 +53,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         drive = new MecDrive(hardwareMap, false, telemetry, true);
-        constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants);
+        score = new ScoringSystem2(hardwareMap);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
@@ -63,7 +61,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
         armDown = new AtomicBoolean(false);
 
         score.setLinkagePosition(Constants.linkageDown);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
 
         failed = false;
@@ -269,9 +267,9 @@ public class BlueLeftPIDHigh extends LinearOpMode {
 
         }
         sleep(200);
-        score.setGrabberPosition(constants.score + 0.02);
+        score.setGrabberPosition(Constants.score + 0.02);
         sleep(350);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
         //sleep(500);
         armDown.set(true);
 
@@ -352,7 +350,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
             drive.simpleBrake();
 
 
-            score.setGrabberPosition(constants.grabbing);
+            score.setGrabberPosition(Constants.grabbing);
             sleep(300);
 
             score.moveToPosition(200, 1);
@@ -386,7 +384,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
             }
             ;
             sleep(200);
-            score.setGrabberPosition(constants.score + 0.02);
+            score.setGrabberPosition(Constants.score + 0.02);
             sleep(350);
 
             armDown.set(true);
@@ -406,7 +404,7 @@ public class BlueLeftPIDHigh extends LinearOpMode {
 
         }
 
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
         camera.closeCameraDevice();
 

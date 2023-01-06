@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.R;
 @Disabled
 @TeleOp
 public class ColorTest extends LinearOpMode {
-    Constants constants;
+    //Constants constants;
     ColorRangeSensor distance, color;
 
     Servo servo;
@@ -26,8 +26,8 @@ public class ColorTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        constants = new Constants();
-        ScoringSystem score = new ScoringSystem(hardwareMap, constants, false);
+        //constants = newConstants();
+        ScoringSystem score = new ScoringSystem(hardwareMap, false);
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
@@ -35,7 +35,7 @@ public class ColorTest extends LinearOpMode {
 
         //servo = hardwareMap.get(Servo.class, "Grabber");
 
-        score.setGrabberPosition(constants.open);
+        score.setGrabberPosition(Constants.open);
 
         waitForStart();
 
@@ -52,14 +52,14 @@ public class ColorTest extends LinearOpMode {
             telemetry.update();
 
             if(gamepad1.right_trigger > 0.1){
-                score.setGrabberPosition(constants.open);
+                score.setGrabberPosition(Constants.open);
             }else if(distance.getDistance(DistanceUnit.CM) < 6.3){
                 //Closed
                 score.setGrabberPosition(0);
                 sleep(200);
                 score.setLinkagePosition(0.7);
             }else{
-                score.setGrabberPosition(constants.open);
+                score.setGrabberPosition(Constants.open);
             }
 
         }

@@ -33,7 +33,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
 
     ScoringSystem2 score;
-    Constants constants;
+    //Constants constants;
     Robot robot;
     MecDrive drive;
     ColorRangeSensor distance, color;
@@ -43,8 +43,8 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants);
+        //constants = newConstants();
+        score = new ScoringSystem2(hardwareMap);
         robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, robot, false, telemetry);
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -134,10 +134,10 @@ public class SimpleScoringSystemTest extends LinearOpMode {
 
 
             if(gamepad1.dpad_right){
-                score.setGrabberPosition(constants.open);
+                score.setGrabberPosition(Constants.open);
                 grabFlag = true;
             }else if((gamepad1.dpad_left ||  distance.getDistance(DistanceUnit.CM) < 6.5) && grabFlag) {
-                score.setGrabberPosition(constants.grabbing);
+                score.setGrabberPosition(Constants.grabbing);
                 grabFlag = false;
 
 
@@ -170,7 +170,7 @@ public class SimpleScoringSystemTest extends LinearOpMode {
         sleep(500);
         score.setLinkagePosition(0.05);
         score.moveToPosition(0, 0.5);
-        score.setGrabberPosition(constants.open);
+        score.setGrabberPosition(Constants.open);
 
     }
 

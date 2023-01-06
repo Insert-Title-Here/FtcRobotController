@@ -22,7 +22,7 @@ public class FeedForwardCommand extends CommandBase {
 
 
 
-    public FeedForwardCommand(ScoringSystemCommand score, Constants constants, HardwareMap hardwareMap, GamepadEx gamepad){
+    public FeedForwardCommand(ScoringSystemCommand score, /*//Constants constants,*/ HardwareMap hardwareMap, GamepadEx gamepad){
         this.score = score;
         this.gamepad = gamepad;
 

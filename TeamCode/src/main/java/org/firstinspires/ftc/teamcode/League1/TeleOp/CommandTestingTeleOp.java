@@ -39,7 +39,6 @@ public class CommandTestingTeleOp extends CommandOpMode {
     private MecDrive drive;
     private ScoringSystemCommand lift;
     private EndgameSystems endgameSystem;
-    private Constants constants;
     private ColorRangeSensor distance, color;
 
 
@@ -56,9 +55,9 @@ public class CommandTestingTeleOp extends CommandOpMode {
         beaconMechDriver = new GamepadEx(gamepad2);
 
         //Initializing objects
-        constants = new Constants();
+        //constants = newConstants();
         drive = new MecDrive(hardwareMap, false, telemetry);
-        lift = new ScoringSystemCommand(hardwareMap, constants);
+        lift = new ScoringSystemCommand(hardwareMap);
         endgameSystem = new EndgameSystems(hardwareMap);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
@@ -83,16 +82,16 @@ public class CommandTestingTeleOp extends CommandOpMode {
         //driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ResetScoringGroup(lift, constants, hardwareMap, robot));
 
         //Testing value for up linkage
-        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new ResetScoringGroup(lift, constants));
-        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new GrabAndScore(lift, constants));
+        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new ResetScoringGroup(lift));
+        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new GrabAndScore(lift));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystemCommand.ScoringMode.LOW)));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystemCommand.ScoringMode.MEDIUM)));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystemCommand.ScoringMode.HIGH)));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(() -> lift.changeMode(ScoringSystemCommand.ScoringMode.ULTRA)));
 
 
-        lift.setLinkagePosition(constants.linkageDown);
-        lift.setGrabberPosition(constants.open);
+        lift.setLinkagePosition(Constants.linkageDown);
+        lift.setGrabberPosition(Constants.open);
 
 
     }
@@ -129,9 +128,9 @@ public class CommandTestingTeleOp extends CommandOpMode {
 
         //Could try out a ramp up sprint
         if (driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.1) {
-            drive.setPower(new Vector2D(leftStickX * constants.SPRINT_LINEAR_MODIFIER, leftStickY * constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.SPRINT_ROTATIONAL_MODIFIER, false);
+            drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
         } else {
-            drive.setPower(new Vector2D(leftStickX * constants.NORMAL_LINEAR_MODIFIER, leftStickY * constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * constants.NORMAL_ROTATIONAL_MODIFIER, false);
+            drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
         }
 
 
@@ -147,13 +146,13 @@ public class CommandTestingTeleOp extends CommandOpMode {
         //Trying out taking out distance
         if(distance.getDistance(DistanceUnit.CM) < 6.5/*distance.getNormalizedColors().red > 0.7 && distance.getNormalizedColors().blue > 0.7
                 */&& !lift.isGrabbing()){
-            group.addCommands(new GrabAndScore(lift, constants));
+            group.addCommands(new GrabAndScore(lift));
             lift.setGrabbing(true);
 
         }
 
         if(lift.isExtended()){
-            group.addCommands(new FeedForwardCommand(lift, constants, hardwareMap, driver));
+            group.addCommands(new FeedForwardCommand(lift, hardwareMap, driver));
         }
 
 

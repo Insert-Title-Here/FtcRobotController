@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SegmentedDuplicateAuto extends LinearOpMode {
     MecDrive drive;
     ScoringSystem2 score;
-    Constants constants;
+    //Constants constants;
     Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
@@ -48,8 +48,8 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
 
         drive = new MecDrive(hardwareMap, false, telemetry, true);
-        constants = new Constants();
-        score = new ScoringSystem2(hardwareMap, constants);
+        //constants = newConstants();
+        score = new ScoringSystem2(hardwareMap);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);
@@ -57,7 +57,7 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
         armDown = new AtomicBoolean(false);
 
         score.setLinkagePosition(Constants.linkageDown);
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
 
         cameraServo = hardwareMap.get(Servo.class, "camera");
@@ -268,7 +268,7 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
         for (int i = 0; i < 4; i++) {
 
 
-            score.setLinkagePosition(constants.linkageUp);
+            score.setLinkagePosition(Constants.linkageUp);
 
             pipeline.normalizeStrafe(0.3, 165, 5);
 
@@ -303,7 +303,7 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
             drive.simpleBrake();
 
 
-            score.setGrabberPosition(constants.grabbing);
+            score.setGrabberPosition(Constants.grabbing);
             sleep(400);
 
 
@@ -389,7 +389,7 @@ public class SegmentedDuplicateAuto extends LinearOpMode {
 
         }
 
-        score.setGrabberPosition(constants.grabbing);
+        score.setGrabberPosition(Constants.grabbing);
 
         camera.closeCameraDevice();
 

@@ -31,16 +31,15 @@ public class ScoringSystem extends SubsystemBase {
     Thread passiveLift;
     AtomicBoolean passiveOn;
 
-    Constants constants;
+    //Constants constants;
     boolean fullyExtended = false;
     boolean isArmOnChub = false;
     boolean pidEnabled;
 
 
 
-    public ScoringSystem(HardwareMap hardwareMap, Robot robot, Constants constants, boolean pid){
+    public ScoringSystem(HardwareMap hardwareMap, Robot robot, /*//Constants constants,*/ boolean pid){
         this.robot = robot;
-        this.constants = constants;
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
 
@@ -84,8 +83,7 @@ public class ScoringSystem extends SubsystemBase {
 
     }
 
-    public ScoringSystem(HardwareMap hardwareMap, Constants constants, boolean pid){
-        this.constants = constants;
+    public ScoringSystem(HardwareMap hardwareMap, /*//Constants constants,*/ boolean pid){
         //rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         //lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
 
@@ -115,7 +113,7 @@ public class ScoringSystem extends SubsystemBase {
 
         lLinkage.setPosition(0.03);
         rLinkage.setPosition(0.03);
-        grabber.setPosition(constants.open);
+        grabber.setPosition(Constants.open);
 
 
     }
@@ -354,18 +352,18 @@ public class ScoringSystem extends SubsystemBase {
 
     public void linkageAutomated(boolean up){
         if(up){
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
 
         }
     }
 
     public void linkageUpAndDown(boolean up){
         if(up) {
-            setLinkagePosition(constants.linkageUp);
+            setLinkagePosition(Constants.linkageUp);
         }else{
-            setLinkagePosition(constants.linkageDown);
+            setLinkagePosition(Constants.linkageDown);
         }
     }
 
@@ -405,9 +403,9 @@ public class ScoringSystem extends SubsystemBase {
 
     public void grabberOpenAndClose(boolean close){
         if(close) {
-            setGrabberPosition(constants.grabbing);
+            setGrabberPosition(Constants.grabbing);
         }else{
-            setGrabberPosition(constants.open);
+            setGrabberPosition(Constants.open);
         }
     }
 }

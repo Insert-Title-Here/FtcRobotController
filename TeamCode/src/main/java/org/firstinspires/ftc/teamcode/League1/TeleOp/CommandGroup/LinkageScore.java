@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.League1.TeleOp.ScoringSystemCommand;
 public class LinkageScore extends SequentialCommandGroup {
 
 
-    public LinkageScore(ScoringSystemCommand score, Constants constants){
+    public LinkageScore(ScoringSystemCommand score /*Constants constants*/){
         super(
-                new InstantCommand(() -> score.setLinkagePositionLogistic(constants.linkageUp, 200)),
+                new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUp, 200)),
                 new WaitCommand(200),
 
                 new InstantCommand(() -> score.autoGoToPosition())
