@@ -4,17 +4,17 @@ public class  Constants {
     //TODO: Edit values
     private int heightTrueLimit = 1378;
     private int heightLimit = 1358;
-    private int heightHigh = 1220;
-    private int heightMed = 900;
-    private int heightLow = 570;
+    private int heightHigh = 1200;
+    private int heightMed = 880;
+    private int heightLow = 550;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.25;
-    private double clawClosePos = 0.65; // was 0.38 for old design
+    private double clawClosePos = 0.38; // was 0.38 for old design
     private double clawHighThreshold = 0.8;
-    private int stackHeight = 210;
+    private int stackHeight = 188;
     private double steadyPow = 0.18;
-    private int stackIntervalHeight = 44;
-    private int heightBottom = 60;
+    private int stackIntervalHeight = 40;
+    private int heightBottom = 0;
     private double sleeveCamPos = 0.23;
     private double straightCamPos = 0.32;
     private double strafeMedCamPos = 0.75;

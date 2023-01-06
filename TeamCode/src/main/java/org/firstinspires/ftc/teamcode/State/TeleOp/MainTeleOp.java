@@ -1,20 +1,26 @@
 package org.firstinspires.ftc.teamcode.State.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.State.Common.Vector2D;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@TeleOp //@Config
+@TeleOp @Config
 // This teleop does not contain the colorsensor code
 public class MainTeleOp extends LinearOpMode {
     //TODO: change names if you want to
@@ -74,7 +80,7 @@ public class MainTeleOp extends LinearOpMode {
         clawMoveDownToggle.set(false);
         clawOpenCloseToggle.set(true);
         clawStackFlag.set(false);
-        /*
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.setPipeline(detect1);
@@ -91,10 +97,10 @@ public class MainTeleOp extends LinearOpMode {
         });
 
 
-         */
+
         //ftc dashboard
 
-        //FtcDashboard.getInstance().startCameraStream(webcam, 0);
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         //Thread for the slides
         liftThread = new Thread(){
@@ -113,10 +119,12 @@ public class MainTeleOp extends LinearOpMode {
                         } else if (gamepad1.dpad_left) {
                             score.setPower(-0.24);
                         } else {
-                            if (score.getEncoderPosition() > 20 && steadyPower) {
-                                score.setPower(constant.getSteadyPow());
-                            } else {
-                                score.setPower(0);
+                            if(steadyPower) {
+                                if (score.getEncoderPosition() > 20) {
+                                    score.setPower(constant.getSteadyPow());
+                                } else {
+                                    score.setPower(0);
+                                }
                             }
                         }
 
@@ -337,7 +345,7 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
         liftThread.start();
         imuThread.start();
-        score.goToPosition(47, 0.6);
+        score.goToPosition(constant.getHeightBottom(), 0.6);
         score.setPower(constant.getSteadyPow());
         while(opModeIsActive()){
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
@@ -428,6 +436,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
              */
+            /*
             if (gamepad1.right_bumper && uprighterToggle) {
                 //cone uprighter
                 score.goToPosition(0, 0.45);
@@ -436,6 +445,11 @@ public class MainTeleOp extends LinearOpMode {
 
             }else if(!gamepad1.right_bumper) {
                 uprighterToggle = true;
+            }
+
+             */
+            if(gamepad1.right_bumper){
+                score.goToPosition(900,0);
             }
 
 
@@ -468,7 +482,7 @@ public class MainTeleOp extends LinearOpMode {
 
         }
         //drive.writeLoggerToFile();
-        //score.writeLoggerToFile();
+        score.writeLoggerToFile();
         //score.writeLoggerToFile(loggingFile, loggingString);
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);

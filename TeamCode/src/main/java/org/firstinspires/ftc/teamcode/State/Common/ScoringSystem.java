@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.State.Common;
 
 import static java.lang.Thread.sleep;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-
+@Config
 public class ScoringSystem {
     private DcMotor liftMotorLeft;
     private DcMotor liftMotorRight;
@@ -28,7 +29,8 @@ public class ScoringSystem {
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
 
     public String loggingString;
-
+    public static double proportion = 0.0;
+    public static double derivative = 0.0;
     public ScoringSystem(HardwareMap hardwareMap, Telemetry telemetry) {
         /* the below is init*/
         constant = new Constants();
@@ -61,58 +63,6 @@ public class ScoringSystem {
 
     }
     /*
-    //goes to given tics
-    public void goToPosition(int tics, double power) {
-        int motorPositionLeft = liftMotorLeft.getCurrentPosition();
-        int motorPositionRight = liftMotorRight.getCurrentPosition();
-
-        if (motorPositionLeft > tics) {
-            power *= -1;
-        }
-        if (motorPositionRight > tics) {
-            power *= -1;
-        }
-        long time = System.currentTimeMillis();
-        long timeChange= 0;
-        double proportionPow;
-        double derivativePow;
-        while (Math.abs(Math.abs(tics)-motorPositionLeft) > 10 && Math.abs(Math.abs(tics)-motorPositionRight) > 10) {
-
-            //set power to zero if tics pretty high and power continually being used, stops lift
-            //system from breaking itself from trying to go past mechanical max
-            if((Math.abs(timeChange) > 2000)){
-                liftMotorLeft.setPower(0);
-                liftMotorRight.setPower(0);
-
-                //stops while loop
-                break;
-            }else{
-                if(Math.abs(tics) - motorPositionLeft < 0 && Math.abs(tics) - motorPositionRight < 0){
-                    liftMotorLeft.setPower(power);
-                    liftMotorRight.setPower(power);
-
-                }else{
-                    liftMotorLeft.setPower(0.8);
-                    liftMotorRight.setPower(0.8);
-
-                }
-                motorPositionLeft = liftMotorLeft.getCurrentPosition();
-                motorPositionRight = liftMotorRight.getCurrentPosition();
-            }
-            timeChange =  System.currentTimeMillis() - time;
-        }
-
-
-        liftMotorLeft.setPower(0);
-        liftMotorRight.setPower(0);
-
-
-    }
-
-     */
-
-
-
     //goes to given tics
     public void goToPosition(int tics, double power) {
         int motorPosition = liftMotorLeft.getCurrentPosition();
@@ -152,6 +102,67 @@ public class ScoringSystem {
 
 
     }
+
+     */
+    public void goToPosition(int tics, double power) {
+        int motorPosition = liftMotorLeft.getCurrentPosition();
+        if (motorPosition > tics) {
+            power *= -1;
+        }
+        long time = System.currentTimeMillis();
+        long timeChange= 0;
+
+        double priorError = tics;
+        double currentError = tics;
+
+        while (Math.abs(Math.abs(tics)-motorPosition) > 10) {
+            priorError = currentError;
+
+            //set power to zero if tics pretty high and power continually being used, stops lift
+            //system from breaking itself from trying to go past mechanical max
+            if((Math.abs(timeChange) > 1500)){
+                liftMotorLeft.setPower(0);
+                liftMotorRight.setPower(0);
+                //stops while loop
+                break;
+            }else{
+                if(Math.abs(tics) - motorPosition < 0){
+                    liftMotorLeft.setPower(PIDLiftPower(priorError, currentError, timeChange));
+                    liftMotorRight.setPower(PIDLiftPower(priorError, currentError, timeChange));
+
+                }else{
+                    liftMotorLeft.setPower(0.8);
+                    liftMotorRight.setPower(0.8);
+                }
+                motorPosition = liftMotorLeft.getCurrentPosition();
+                currentError = tics - motorPosition;
+            }
+            timeChange =  System.currentTimeMillis() - time;
+        }
+
+
+        liftMotorLeft.setPower(0);
+        liftMotorRight.setPower(0);
+
+
+    }
+    public double PIDLiftPower(double priorError, double currentError, double timeChange) {
+
+
+        double proportionCoefficient = 0.08;//0.5
+        double derivativeCoefficient = 0.0;//0.2
+        //proportionCoefficient = proportion;
+        //derivativeCoefficient = derivative;
+        loggingString += "PriorAngleError: " + priorError + "   ";
+        loggingString += "CurrentAngleError: " + currentError + "   ";
+        loggingString += "DrivePower: " +  currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
+        loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
+        loggingString += "proportionPower: " + currentError * proportionCoefficient + "   ";
+
+        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
+
+    }
+
 
 
     public void writeLoggerToFile(){
@@ -304,11 +315,11 @@ public class ScoringSystem {
         return colorCone.getDistance(DistanceUnit.CM);
     }
 
-    int height1 = 229;
-    int height2 = 176;
-    int height3 = 139;
-    int height4 = 97;
-    int height5 = 47;
+    int height1 = 188;
+    int height2 = 145;
+    int height3 = 99;
+    int height4 = 64;
+    int height5 = 5;
     int currentHeight = 0;
     public void stackUp(){
         if(currentHeight == 0){
@@ -346,6 +357,59 @@ public class ScoringSystem {
 
 
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/* Currently Does Not Work
+    //goes to given tics
+    public void goToPosition(int tics, double power) {
+        int motorPositionLeft = liftMotorLeft.getCurrentPosition();
+        int motorPositionRight = liftMotorRight.getCurrentPosition();
+
+        if (motorPositionLeft > tics) {
+            power *= -1;
+        }
+        if (motorPositionRight > tics) {
+            power *= -1;
+        }
+        long time = System.currentTimeMillis();
+        long timeChange= 0;
+        double proportionPow;
+        double derivativePow;
+        while (Math.abs(Math.abs(tics)-motorPositionLeft) > 10 && Math.abs(Math.abs(tics)-motorPositionRight) > 10) {
+
+            //set power to zero if tics pretty high and power continually being used, stops lift
+            //system from breaking itself from trying to go past mechanical max
+            if((Math.abs(timeChange) > 2000)){
+                liftMotorLeft.setPower(0);
+                liftMotorRight.setPower(0);
+
+                //stops while loop
+                break;
+            }else{
+                if(Math.abs(tics) - motorPositionLeft < 0 && Math.abs(tics) - motorPositionRight < 0){
+                    liftMotorLeft.setPower(power);
+                    liftMotorRight.setPower(power);
+
+                }else{
+                    liftMotorLeft.setPower(0.8);
+                    liftMotorRight.setPower(0.8);
+
+                }
+                motorPositionLeft = liftMotorLeft.getCurrentPosition();
+                motorPositionRight = liftMotorRight.getCurrentPosition();
+            }
+            timeChange =  System.currentTimeMillis() - time;
+        }
+
+
+        liftMotorLeft.setPower(0);
+        liftMotorRight.setPower(0);
+
+
+    }
+
+     */
 
 
 
