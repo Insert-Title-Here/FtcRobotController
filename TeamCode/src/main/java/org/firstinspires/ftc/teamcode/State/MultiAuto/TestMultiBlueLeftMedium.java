@@ -34,7 +34,7 @@ public class TestMultiBlueLeftMedium extends LinearOpMode {
 
     public static int positive_negative = 1;
     public static int turnDenom = 4;
-    public static boolean toggle = false;
+    public static boolean toggle = true;
 
     private int sum = -13;
 
@@ -97,6 +97,7 @@ public class TestMultiBlueLeftMedium extends LinearOpMode {
 
             }
         };
+        properCX = detect1.getBoundWidth();
 
         // code to turn servo of cam
         //score.setCamPosition(constants.getSleeveCamPos());

@@ -88,7 +88,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     private Point[] mainContour;
     private ArrayList<Double> leftContour, rightContour;
     private Point[] loopSpecificPoints;
-    private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference, boundArea = 0;
+    private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference, boundRectWidth, boundArea = 0;
     // for points on contour
     double numCurrent, num1Prev, num2Prev, num3Prev, num4Prev, num5Prev = 0;
     boolean toggle, toggle2;
@@ -279,7 +279,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
 
                 // bounding box (approximate width)
                 Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
-                perWidth = boundRect.width;
+                boundRectWidth = boundRect.width;
                 Imgproc.rectangle(generalMat, boundRect, new Scalar (20,20,20), 1);
 
     /*
@@ -467,10 +467,11 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     }
 
 
+
     public double getDistance() {
         return distance;
     }
-
+    public double getBoundWidth() {return boundRectWidth;}
     public double getBoundArea() {
         return boundArea;
     }
