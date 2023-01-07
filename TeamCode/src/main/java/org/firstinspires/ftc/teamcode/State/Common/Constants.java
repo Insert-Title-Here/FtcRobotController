@@ -5,8 +5,8 @@ public class  Constants {
     private int heightTrueLimit = 1378;
     private int heightLimit = 1358;
     private int heightHigh = 1200;
-    private int heightMed = 880;
-    private int heightLow = 550;
+    private int heightMed = 865;
+    private int heightLow = 540;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.25;
     private double clawClosePos = 0.38; // was 0.38 for old design

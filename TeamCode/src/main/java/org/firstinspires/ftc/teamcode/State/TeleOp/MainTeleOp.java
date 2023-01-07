@@ -135,15 +135,15 @@ public class MainTeleOp extends LinearOpMode {
                         if (gamepad1.left_trigger > 0.1 && triggerScoreToggle.get()) {
                             if (score.scoreHigh()) {
                                 //high cone Max limit is 1370
-                                score.goToPosition(constant.getHeightHigh(), 1);
+                                score.goToPositionPID(constant.getHeightHigh(), 1);
                                 score.setPower(constant.getSteadyPow());
                             } else if (score.scoreMid()) {
                                 //medium cone
-                                score.goToPosition(constant.getHeightMed(), 1);
+                                score.goToPositionPID(constant.getHeightMed(), 1);
                                 score.setPower(constant.getSteadyPow());
                             } else if (score.scoreLow()) {
                                 //low cone
-                                score.goToPosition(constant.getHeightLow(), 0.8);
+                                score.goToPositionPID(constant.getHeightLow(), 0.8);
                                 score.setPower(constant.getSteadyPow());
                             }
                             triggerScoreToggle.set(false);
@@ -185,7 +185,7 @@ public class MainTeleOp extends LinearOpMode {
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
-                                        score.goToPosition(constant.getHeightBottom(), 1);
+                                        score.goToPosition(constant.getHeightBottom(), 0.8);
                                         clawMoveDownToggle.set(false);
                                     } else {
                                         score.goToPosition(score.getEncoderPosition() - 100, 0.4);
@@ -281,7 +281,7 @@ public class MainTeleOp extends LinearOpMode {
                         if (detect1.getBoundArea() >= 8000.0 && detect1.getBoundArea() <= 9500 && detect1.getDistance() <= 4.3) {
                             drive.goToPosition(0, 0, 0, 0);
                             score.setClawPosition(constant.getClawOpenPos());
-                            score.goToPosition(constant.getHeightBottom(),0.5);
+                            score.goToPositionBottom(constant.getHeightBottom(),0.5);
                             clawMoveDownToggle.set(false);
 
                         }
@@ -377,7 +377,7 @@ public class MainTeleOp extends LinearOpMode {
                     //high cone Max limit is 1370
                     steadyPower = false;
                     isTurnLifting = true;
-                    score.goToPosition(constant.getHeightHigh(), 1);
+                    score.goToPositionPID(constant.getHeightHigh(), 1);
                     steadyPower = true;
                     isTurnLifting = false;
                     score.setPower(constant.getSteadyPow());
@@ -385,7 +385,7 @@ public class MainTeleOp extends LinearOpMode {
                     //medium cone
                     steadyPower = false;
                     isTurnLifting = true;
-                    score.goToPosition(constant.getHeightMed(), 1);
+                    score.goToPositionPID(constant.getHeightMed(), 1);
                     steadyPower = true;
                     isTurnLifting = false;
                     score.setPower(constant.getSteadyPow());
@@ -393,7 +393,7 @@ public class MainTeleOp extends LinearOpMode {
                     //low cone
                     steadyPower = false;
                     isTurnLifting = true;
-                    score.goToPosition(constant.getHeightLow(), 0.8);
+                    score.goToPositionPID(constant.getHeightLow(), 0.8);
                     steadyPower = true;
                     isTurnLifting = false;
                     score.setPower(constant.getSteadyPow());
@@ -422,11 +422,11 @@ public class MainTeleOp extends LinearOpMode {
                 //cone uprighter
                 if (constant.getHeightBottom() == 0) {
                     constant.setHeightBottom(47);
-                    score.goToPosition(constant.getHeightBottom(), 0.45);
+                    score.goToBottom(constant.getHeightBottom(), 0.45);
                     uprighting = false;
                 } else if (constant.getHeightBottom() == 47) {
                     constant.setHeightBottom(0);
-                    score.goToPosition(constant.getHeightBottom(), 0.45);
+                    score.goToBottom(constant.getHeightBottom(), 0.45);
                     uprighting = true;
                 }
                 uprighterToggle = false;
@@ -448,9 +448,6 @@ public class MainTeleOp extends LinearOpMode {
             }
 
              */
-            if(gamepad1.right_bumper){
-                score.goToPosition(900,0);
-            }
 
 
 

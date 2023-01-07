@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-@Config
+
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
@@ -559,6 +559,7 @@ public class MecanumDrive {
 
 
             accumulateError(timeDifference, currentAngleError);
+            priorAngleError = currentAngleError;
             currentAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
 
 
@@ -645,9 +646,9 @@ public class MecanumDrive {
         loggingString += "CurrentAngle: " + imu.getAngularOrientation().firstAngle + "\n";
          */
 
-        double proportionCoefficient = 0.5;//0.5
+        double proportionCoefficient = 0.47;//0.46
         double integralCoefficient = 0;
-        double derivativeCoefficient = 0.2;//0.2
+        double derivativeCoefficient = 0.18;//0.2
 
         error = currentError;
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;

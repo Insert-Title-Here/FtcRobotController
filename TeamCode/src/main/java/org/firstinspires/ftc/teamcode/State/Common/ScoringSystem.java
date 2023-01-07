@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-@Config
+
 public class ScoringSystem {
     private DcMotor liftMotorLeft;
     private DcMotor liftMotorRight;
@@ -29,8 +29,8 @@ public class ScoringSystem {
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
 
     public String loggingString;
-    public static double proportion = 0.0;
-    public static double derivative = 0.0;
+    //public static double proportion = 0.0;
+    //public static double derivative = 0.0;
     public ScoringSystem(HardwareMap hardwareMap, Telemetry telemetry) {
         /* the below is init*/
         constant = new Constants();
@@ -62,7 +62,7 @@ public class ScoringSystem {
 
 
     }
-    /*
+
     //goes to given tics
     public void goToPosition(int tics, double power) {
         int motorPosition = liftMotorLeft.getCurrentPosition();
@@ -103,8 +103,8 @@ public class ScoringSystem {
 
     }
 
-     */
-    public void goToPosition(int tics, double power) {
+
+    public void goToPositionPID(int tics, double power) {
         int motorPosition = liftMotorLeft.getCurrentPosition();
         if (motorPosition > tics) {
             power *= -1;
@@ -116,7 +116,6 @@ public class ScoringSystem {
         double currentError = tics;
 
         while (Math.abs(Math.abs(tics)-motorPosition) > 10) {
-            priorError = currentError;
 
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
@@ -126,15 +125,10 @@ public class ScoringSystem {
                 //stops while loop
                 break;
             }else{
-                if(Math.abs(tics) - motorPosition < 0){
-                    liftMotorLeft.setPower(PIDLiftPower(priorError, currentError, timeChange));
-                    liftMotorRight.setPower(PIDLiftPower(priorError, currentError, timeChange));
-
-                }else{
-                    liftMotorLeft.setPower(0.8);
-                    liftMotorRight.setPower(0.8);
-                }
+                liftMotorLeft.setPower(PIDLiftPower(priorError, currentError, timeChange, tics));
+                liftMotorRight.setPower(PIDLiftPower(priorError, currentError, timeChange, tics));
                 motorPosition = liftMotorLeft.getCurrentPosition();
+                priorError = currentError;
                 currentError = tics - motorPosition;
             }
             timeChange =  System.currentTimeMillis() - time;
@@ -146,20 +140,26 @@ public class ScoringSystem {
 
 
     }
-    public double PIDLiftPower(double priorError, double currentError, double timeChange) {
-
-
-        double proportionCoefficient = 0.08;//0.5
-        double derivativeCoefficient = 0.0;//0.2
-        //proportionCoefficient = proportion;
+    public double PIDLiftPower(double priorError, double currentError, double timeChange, int tics) {
+        double proportionCoefficient;
+        if(liftMotorLeft.getCurrentPosition() > tics){
+            proportionCoefficient = 0.006;
+        }else{
+            proportionCoefficient = 0.0119;
+        }
+        //0.0119
+        //double derivativeCoefficient = 0.0;//0.2
+       // proportionCoefficient = proportion;
         //derivativeCoefficient = derivative;
+        /*
         loggingString += "PriorAngleError: " + priorError + "   ";
         loggingString += "CurrentAngleError: " + currentError + "   ";
         loggingString += "DrivePower: " +  currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
         loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
         loggingString += "proportionPower: " + currentError * proportionCoefficient + "   ";
+         */
 
-        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
+        return currentError * proportionCoefficient /*+ ((currentError-priorError)/timeChange) * derivative*/;
 
     }
 
@@ -235,7 +235,7 @@ public class ScoringSystem {
     }
     // Uses color sensor to grab cone
     public boolean grabCone() throws InterruptedException {
-        if (colorCone.getDistance(DistanceUnit.CM) < 3) {
+        if (colorCone.getDistance(DistanceUnit.CM) < 2) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
             sleep(500);
@@ -251,7 +251,7 @@ public class ScoringSystem {
     //uses color sensor to grab cone(this one is used when trying to grab from the stack of 5 cones
     // tele version
     public boolean grabCone(boolean stack) throws InterruptedException {
-        if (colorCone.getDistance(DistanceUnit.CM) < 5) {
+        if (colorCone.getDistance(DistanceUnit.CM) < 2) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
             sleep(500);
