@@ -105,6 +105,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
             }
         };
 
+        properCX = detect1.getBoundWidth();
         // code to turn servo of cam
         //score.setCamPosition(constants.getSleeveCamPos());
         //detect1.park = true;
