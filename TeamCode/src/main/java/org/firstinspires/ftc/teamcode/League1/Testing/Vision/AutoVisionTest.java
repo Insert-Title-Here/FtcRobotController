@@ -39,7 +39,7 @@ public class AutoVisionTest extends LinearOpMode {
 
         camera.setPipeline(pipeline);
 
-        servo.setPosition(Constants.poleV2);
+        servo.setPosition(Constants.coneV2);
 
 
         //FtcDashboard.getInstance().startCameraStream(camera, 0);
@@ -58,7 +58,7 @@ public class AutoVisionTest extends LinearOpMode {
 
             }
         });
-        pipeline.changeMode(KevinGodPipelineV2.Mode.POLE);
+        pipeline.changeMode(KevinGodPipelineV2.Mode.BLUECONE);
 
         while(opModeInInit()){
 

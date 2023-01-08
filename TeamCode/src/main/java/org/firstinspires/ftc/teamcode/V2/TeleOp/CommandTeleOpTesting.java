@@ -93,6 +93,9 @@ public class CommandTeleOpTesting extends CommandOpMode {
             
         }
 
+        super.run();
+
+
 
 
         //Lift to Height

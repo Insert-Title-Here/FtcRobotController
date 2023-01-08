@@ -48,7 +48,7 @@ public class MecDriveV2 {
     PIDCoefficients rotate = new PIDCoefficients(0.975, 0, 0.02);
 
     //PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0, 0.02  );
-    PIDCoefficients rotateFaster = new PIDCoefficients(0.7, 0, 0.02);
+    PIDCoefficients rotateFaster = new PIDCoefficients(1.12, 0, 0.01);
 
 
 
@@ -256,17 +256,19 @@ public class MecDriveV2 {
 
 
     public void rotate(double angle, double power){
-        if(angle < 0){
+
+        angle = Utils.wrapAngle(angle);
+
+        if(angle > imu.getAngularOrientation().firstAngle){
             power *= -1;
         }
 
-        angle = Utils.wrapAngle(angle);
         if(pidEnabled){
             setPIDRotateVelocity(angle, power);
 
         }else {
 
-            while (Math.abs(robot.getDirection()) < Math.abs(angle)) {
+            while (Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) < Math.abs(angle)) {
 
 
                 setPower(-power, power, -power, power);
@@ -274,7 +276,7 @@ public class MecDriveV2 {
             }
         }
 
-        brake();
+        simpleBrake();
 
     }
 

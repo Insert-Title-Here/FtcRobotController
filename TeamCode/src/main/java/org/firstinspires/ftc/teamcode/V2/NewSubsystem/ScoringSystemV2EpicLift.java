@@ -349,6 +349,8 @@ public class ScoringSystemV2EpicLift {
 
         //TODO: Check if logic for encoder positions works
 
+        int counter = 0;
+
         if(power > 0) {
             while ((time.seconds() - startTime) < 2.25 && (rLiftPos < tics || lLiftPos < tics)) {
 
@@ -371,12 +373,14 @@ public class ScoringSystemV2EpicLift {
                 setPower(rightPower, leftPower);
 
 
-                composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
+                /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
                 composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
                 composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "total: " + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + "\n";;
+                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
+                composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
                 composite += "\n";
+
+                counter++;
 
 
             }
@@ -403,12 +407,15 @@ public class ScoringSystemV2EpicLift {
                 setPower(rightPower, leftPower);
 
 
-                composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
+               /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
                 composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
                 composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "total: " + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + "\n";;
+                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
+                composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
                 composite += "\n";
+
+                counter++;
+
 
 
             }
@@ -1008,6 +1015,8 @@ public class ScoringSystemV2EpicLift {
         int rightIntegralSum = 0;
         int leftIntegralSum = 0;
 
+        int counter = 0;
+
         while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < 1.5){
             //telemetry.addData("target", tics);
 
@@ -1074,14 +1083,15 @@ public class ScoringSystemV2EpicLift {
             leftPreviousError = leftError;
 
 
-            composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
-            composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-            composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-            composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-            composite += "total: " + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + "\n";;
+           /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
+                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
+            composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
             composite += "\n";
 
 
+            counter++;
             //telemetry.update();
 
 
@@ -1123,6 +1133,8 @@ public class ScoringSystemV2EpicLift {
 
         int rightIntegralSum = 0;
         int leftIntegralSum = 0;
+
+        int counter = 0;
 
         while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < 1.2){
             //telemetry.addData("target", tics);
@@ -1206,12 +1218,14 @@ public class ScoringSystemV2EpicLift {
             leftPreviousError = leftError;
 
 
-            composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
-            composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-            composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-            composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-            composite += "total: " + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + "\n";;
+            /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
+                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
+                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
+            composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
             composite += "\n";
+
+            counter++;
 
 
             //telemetry.update();

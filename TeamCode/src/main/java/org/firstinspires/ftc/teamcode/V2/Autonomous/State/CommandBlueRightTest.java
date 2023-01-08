@@ -28,20 +28,18 @@ public class CommandBlueRightTest extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
     //Constants constants;
-    Thread armThread, feedForward, idController;
     ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
     int cycles;
     int liftPos = 900;
 
-    ColorRangeSensor distance, color;
+    ColorRangeSensor distance;
     Servo cameraServo;
 
     OpenCvWebcam camera;
     KevinGodPipelineAprilTag pipeline;
     KevinGodPipelineAprilTag.ParkPos parkPos;
 
-    int normalizeDistance;
     boolean failed;
     boolean preloadSuccess = false;
 
@@ -114,18 +112,18 @@ public class CommandBlueRightTest extends LinearOpMode {
                 new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2200, 1, MecDriveV2.MovementType.STRAIGHT, 0.85)),
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
-                new InstantCommand(() -> drive.simpleMoveToPosition(675, MecDriveV2.MovementType.STRAIGHT, 0.4)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(700, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> drive.tankRotatePID(3 * Math.PI / 8, 1, false)),
                 new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
-                new InstantCommand(() -> pipeline.normalize(0.2, 169, 2)),
+                new InstantCommand(() -> pipeline.normalize(0.15, 169, 2)),
 
                 //TODO: need to add preload logic (whether preload or not)
                 new ParallelCommandGroup(
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                        new InstantCommand(() -> score.newLiftPID(970, 0.75))
+                        new InstantCommand(() -> score.newLiftPID(970, 1))
                 ),
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -133,7 +131,10 @@ public class CommandBlueRightTest extends LinearOpMode {
                 new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
                 new WaitCommand(400),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
-                new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 - 0.1)),
+                new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1)),
+
+                new WaitCommand(200),
+
                 new InstantCommand(() -> score.moveToPosition(0, 0.63)),
 
 
@@ -142,8 +143,8 @@ public class CommandBlueRightTest extends LinearOpMode {
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new WaitCommand(100),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.2, 169, 3)),
-                new InstantCommand(() -> score.newLiftPID(970, 0.75)),
+                new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
+                new InstantCommand(() -> score.newLiftPID(960, 1)),
 
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -153,7 +154,7 @@ public class CommandBlueRightTest extends LinearOpMode {
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.242, 800, 100)),
 
 
-                new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.12)),
+                new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 - 0.1)),
                 new InstantCommand(() -> score.moveToPosition(0, 0.63))
 
         );
@@ -166,8 +167,8 @@ public class CommandBlueRightTest extends LinearOpMode {
                     new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                     new WaitCommand(100),
                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                    new InstantCommand(() -> pipeline.normalize(0.2, 169, 3)),
-                    new InstantCommand(() -> score.newLiftPID(1000, 0.75)),
+                    new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
+                    new InstantCommand(() -> score.newLiftPID(1000, 1)),
 
 
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -184,7 +185,7 @@ public class CommandBlueRightTest extends LinearOpMode {
 
 
         CommandScheduler.getInstance().schedule(
-                new InstantCommand(() -> drive.simpleMoveToPosition(-160, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(-80, MecDriveV2.MovementType.ROTATE, 0.5)),
                 new WaitCommand(50)
         );
 
@@ -193,22 +194,25 @@ public class CommandBlueRightTest extends LinearOpMode {
         CommandScheduler.getInstance().run();
 
         while(CommandScheduler.getInstance().isScheduled(
-                new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, true)),
-                new WaitCommand(50)
+                new InstantCommand(() -> drive.simpleMoveToPosition(-80, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> sleep(50))
         )){
 
         }
 
         if (parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER) {
-            drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 0.5);
+            drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 1);
         } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
-            drive.simpleMoveToPosition(-1450, MecDriveV2.MovementType.STRAIGHT, 0.5);
+            drive.simpleMoveToPosition(-1450, MecDriveV2.MovementType.STRAIGHT, 1);
         }
 
         score.setGrabberPosition(Constants.grabbing);
 
-        sleep(500);
+        sleep(200);
 
+        drive.tankRotatePID(0, 1, false);
+        drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, 0.4);
+        sleep(50);
 
 
 
