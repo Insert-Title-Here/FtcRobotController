@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 
 
-@TeleOp (name = "TryingToMakeTheIController")
+@TeleOp (name = "This Thing")
 public class IControllerTeleOp extends LinearOpMode {
 
     ////Constants //constants = newConstants();
