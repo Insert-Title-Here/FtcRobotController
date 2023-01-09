@@ -5,11 +5,11 @@ public class  Constants {
     private int heightTrueLimit = 1378;
     private int heightLimit = 1358;
     private int heightHigh = 1200;
-    private int heightMed = 865;
-    private int heightLow = 540;
+    private int heightMed = 855;
+    private int heightLow = 510;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.25;
-    private double clawClosePos = 0.38; // was 0.38 for old design
+    private double clawClosePos = 0.34; // was 0.38 for old design
     private double clawHighThreshold = 0.8;
     private int stackHeight = 188;
     private double steadyPow = 0.18;
@@ -18,7 +18,7 @@ public class  Constants {
     private double sleeveCamPos = 0.23;
     private double straightCamPos = 0.32;
     private double strafeMedCamPos = 0.75;
-    private double strafeLowCamPos = 0.51;
+    private double strafeLowCamPos = 0.21;
     //TODO: add comments
     public double getClawOpenPos(){
         return clawOpenPos;

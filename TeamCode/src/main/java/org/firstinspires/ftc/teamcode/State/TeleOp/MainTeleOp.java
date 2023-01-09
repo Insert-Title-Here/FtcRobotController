@@ -185,7 +185,7 @@ public class MainTeleOp extends LinearOpMode {
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
-                                        score.goToPosition(constant.getHeightBottom(), 0.8);
+                                        score.goToPosition(constant.getHeightBottom(), 0.7);
                                         clawMoveDownToggle.set(false);
                                     } else {
                                         score.goToPosition(score.getEncoderPosition() - 100, 0.4);
@@ -198,7 +198,7 @@ public class MainTeleOp extends LinearOpMode {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    score.goToPosition(constant.getHeightBottom(), 0.5);
+                                    score.goToPosition(constant.getHeightBottom(), 0.4);
                                 }
 
                             } else {
@@ -365,7 +365,7 @@ public class MainTeleOp extends LinearOpMode {
                     drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
                 } else {
                     if (score.getEncoderPosition() > 500 /*|| uprighting*/) {
-                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.25, false);
+                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.35, false);
                     } else {
                         drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                     }

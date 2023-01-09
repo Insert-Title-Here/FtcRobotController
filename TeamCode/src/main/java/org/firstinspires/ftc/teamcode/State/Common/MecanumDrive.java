@@ -548,15 +548,8 @@ public class MecanumDrive {
         // Relative turning
         while (Math.abs((imu.getAngularOrientation().firstAngle - initialAngle)) < Math.abs(radians)) {
             double drivePower = 0;
-            if(currentAngleError == priorAngleError){
-                //values stay the same
-            }else{
-                priorAngleError = angleWrap(radians - (imu.getAngularOrientation().firstAngle - initialAngle));
-            }
-
             drivePower = PIDTurnPower180(priorAngleError, currentAngleError, timeDifference);
             setPower(-drivePower, drivePower, -drivePower, drivePower);
-
 
             accumulateError(timeDifference, currentAngleError);
             priorAngleError = currentAngleError;
@@ -578,10 +571,10 @@ public class MecanumDrive {
             double currentRadians = imu.getAngularOrientation().firstAngle;
             if (radians < currentRadians) {
                 //turn right # of radians
-                setPower(0.25, -0.25, 0.25, -0.25);
+                setPower(0.23, -0.23, 0.23, -0.23);
             } else if (currentRadians < radians) {
                 //turn left # of radians
-                setPower(-0.25, 0.25, -0.25, 0.25);
+                setPower(-0.23, 0.23, -0.23, 0.23);
             } else {
                break;
             }
@@ -768,7 +761,7 @@ public class MecanumDrive {
         long time = System.currentTimeMillis();
         if (color.equalsIgnoreCase("blueleft")) {
             goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
-            while (currentBlueColor() < 0.52      ) { //blue tape
+            while (currentBlueColor() < 0.52) { //blue tape
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
