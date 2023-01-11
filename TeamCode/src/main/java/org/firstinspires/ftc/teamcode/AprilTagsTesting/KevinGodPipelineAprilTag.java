@@ -107,12 +107,12 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
     public static int V4 = 255;
 
     //Red cone color
-    public static int H5 = 170;
-    public static int S5 = 120;
-    public static int V5 = 150;
-    public static int H6 = 180;
-    public static int S6 = 240;
-    public static int V6 = 255;
+    public static int H5 = 0;
+    public static int S5 = 160;
+    public static int V5 = 50;
+    public static int H6 = 230;
+    public static int S6 = 235;
+    public static int V6 = 150;
 
     public int contourTarget = 0;
     public boolean isNormalizing = false;
@@ -341,7 +341,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
             for(int i = 0; i < contours.size(); i++){
                 // Filter out small, irrelevant contours
-                if(Imgproc.contourArea(contours.get(i)) > 500) {
+                if(Imgproc.contourArea(contours.get(i)) > 300) {
 
                     // Draw all contours to the screen
                     if(sleeveSense != Mode.POLE && sleeveSense != Mode.RIGHTAUTOPOLE) {

@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class TestingVisionAuto extends LinearOpMode {
 
 
-    public static double servoHeight = Constants.sleeveV2;
+    public static double servoHeight = Constants.coneV2;
 
     boolean aFlag = true;
 
@@ -78,7 +78,7 @@ public class TestingVisionAuto extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
-        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.SLEEVE);
+        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.REDCONE);
 
         while(opModeInInit()){
             cameraServo.setPosition(servoHeight);
