@@ -106,13 +106,13 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
+                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2270, 1, MecDriveV2.MovementType.STRAIGHT, 0.85)),
+                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2270, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID( (5 * Math.PI) / 8, 1, false)),
                 //new InstantCommand(() -> drive.simpleMoveToPosition(-780, MecDriveV2.MovementType.ROTATE, 1)),
-                new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 169, 2)),
+                new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 156, 2)),
                 new ParallelCommandGroup(
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
                         new InstantCommand(() -> score.newLiftPID(940, 0.85)),
@@ -120,7 +120,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
                         new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
                 ),
 
-                new InstantCommand(() -> drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAIGHT, 0.4)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAIGHT, 0.4)),
                 new WaitCommand(200),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
                 new WaitCommand(400),
@@ -133,17 +133,19 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
 
                 new InstantCommand(() -> score.moveToPosition(0, 0.63)),
-                //new InstantCommand(() -> drive.tankRotatePID(Math.PI/2, 1, true)),
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI / 2, 1, false, 0.9)),
+
+                //new InstantCommand(() -> drive.tankRotatePID(Math.PI/2, 1, false, 0.9)),
                 //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
-                new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
+                //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.25)),
                 new InstantCommand(() -> sleep(100)),
-                new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
+                new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.242, 100)),
 
                 new ParallelCommandGroup(
-                        new InstantCommand(() -> drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAIGHT, 1)),
+                        new InstantCommand(() -> drive.simpleMoveToPosition(560, MecDriveV2.MovementType.STRAIGHT, 1)),
                         new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                        new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2))
+                        new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
                 ),
 
                 new DriveInSafe(drive, distance, true, 0.25),
@@ -153,16 +155,17 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
         );
 
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 3; i++){
             int finalI = i;
-            if(i != 3) {
+            if(i != 2) {
                 CommandScheduler.getInstance().schedule(
 
 
-                        new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1340, 1, MecDriveV2.MovementType.STRAIGHT, 0.75)),
+                        new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1360, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
+                        //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
                         new InstantCommand(() -> drive.tankRotatePID( (5.5 * Math.PI) / 8, 1, false)),
                         //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
-                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 169, 2)),
+                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 156, 2)),
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
                                 new InstantCommand(() -> score.newLiftPID(940, 0.85)),
@@ -183,17 +186,19 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
 
                         new InstantCommand(() -> score.moveToPosition(0, 0.63)),
-                        //new InstantCommand(() -> drive.tankRotatePID((4 * Math.PI) / 8, 1, true)),
+                        new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI / 2, 1, false, 0.9)),
+
+                        //new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false, 0.9)),
                         //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
-                        new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
+                        //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
                         new InstantCommand(() -> sleep(100)),
-                        new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
+                        new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
                         new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 1) * 0.025), 100)),
 
                         new ParallelCommandGroup(
-                                new InstantCommand(() -> drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAIGHT, 1)),
+                                new InstantCommand(() -> drive.simpleMoveToPosition(560, MecDriveV2.MovementType.STRAIGHT, 1)),
                                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2))
+                                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
                         ),
 
                         new DriveInSafe(drive, distance, true, 0.25),
@@ -208,10 +213,11 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
                 CommandScheduler.getInstance().schedule(
 
 
-                        new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1300, 1, MecDriveV2.MovementType.STRAIGHT, 0.85)),
+                        new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1360, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
+                        //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
                         new InstantCommand(() -> drive.tankRotatePID( (5.5 * Math.PI) / 8, 1, false)),
                         //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
-                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 169, 2)),
+                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 156, 2)),
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
                                 new InstantCommand(() -> score.newLiftPID(940, 0.85)),
@@ -232,9 +238,11 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
 
                         new InstantCommand(() -> score.moveToPosition(0, 0.63)),
-                        //new InstantCommand(() -> drive.tankRotatePID((4 * Math.PI) / 8, 1, true)),
+                        new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI / 2, 1, false, 0.9)),
+
+                        //new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false, 0.9)),
                         //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
-                        new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
+                        //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
 
                         new InstantCommand(() -> sleep(100))
                 );

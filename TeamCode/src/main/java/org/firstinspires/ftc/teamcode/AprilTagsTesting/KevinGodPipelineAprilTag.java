@@ -422,7 +422,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
         return longestContourX;
     }
 
-    public int getPoleYPos(){
+    public int getYContour(){
         return longestContourY;
     }
 
@@ -475,7 +475,6 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
     }
 
-    public double p = 0.008;
     public int normalizeStrafe(double power, int target, int tolerance) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
@@ -521,6 +520,55 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
     }
+
+
+    public int normalizeStraight(double power, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        int yMax = target + tolerance;
+        int yMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getYContour();
+
+
+
+        while((getXContour() > yMax || getXContour() < yMin)) {
+            if(getXContour() > yMax) {
+                drive.setPowerAuto(-power, MecDriveV2.MovementType.STRAIGHT);
+            } else {
+                drive.setPowerAuto(power, MecDriveV2.MovementType.STRAIGHT);
+            }
+
+//            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
+                //normlizationBroke = true;
+                break;
+            }
+        }
+        drive.simpleBrake();
+
+        isNormalizing = false;
+
+
+
+        if(getYContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+
+        return (int)(startPos - drive.avgPos());
+
+
+
+
+
+    }
+
+
+
+
     public boolean getNormalizationBroke(){
         return normlizationBroke;
     }

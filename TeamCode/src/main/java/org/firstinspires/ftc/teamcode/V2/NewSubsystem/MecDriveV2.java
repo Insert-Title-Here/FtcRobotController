@@ -41,7 +41,7 @@ public class MecDriveV2 {
 
     //Original
     PIDCoefficients pidf = new PIDCoefficients(0.006, 0,0.0003);
-    private final int denom = 4;
+    private final int denom = 6;
     //PIDCoefficients pidf = new PIDCoefficients(0.031, 0,0.00055);
 
     //PIDCoefficients rotate = new PIDCoefficients(0.8, 0, 0.01);
@@ -364,8 +364,6 @@ public class MecDriveV2 {
         simpleBrake();
 
 
-
-
     }
 
     public void tankRotatePID(double radians, double power, boolean slidesUp, double kickout){
@@ -429,6 +427,88 @@ public class MecDriveV2 {
             previousError = radError;
             telemetry.update();
 
+        }
+
+        simpleBrake();
+
+
+
+
+    }
+
+
+    public void tankRotatePIDSpecial(double radians, double power, boolean slidesUp, double kickout){
+
+        /*if(radians > imu.getAngularOrientation().firstAngle){
+            power *= -1;
+        }*/
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+
+        radians = wrapAngle(radians);
+        double radError = wrapAngle(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians);
+        double previousError = radError;
+        double integralSum = 0;
+
+
+        while(Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < kickout){
+
+            telemetry.addData("target", radians);
+
+            double newPower = 0;
+
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+
+            double currentTime = time.seconds();
+
+            radError = wrapAngle(currentAngle - radians);
+            telemetry.addData("current", currentAngle);
+
+            telemetry.addData("Error", radError);
+
+            integralSum += (radError + previousError)/(currentTime - startTime);
+            telemetry.addData("Integral", integralSum);
+
+            //TODO:See if we need an integral limit
+            if(integralSum > 10000){
+                integralSum = 10000;
+            }else if(integralSum < -10000){
+                integralSum = -10000;
+            }
+
+            double derivative = (radError - previousError)/(currentTime - startTime);
+            telemetry.addData("Derivative", derivative);
+
+
+            //TODO: see if we should multiply by power at the end
+
+
+            if(!slidesUp) {
+                newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative));
+            }else{
+                newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative));
+            }
+            setPowerAuto(newPower, MecDriveV2.MovementType.ROTATE);
+
+            telemetry.addData("Power", newPower);
+
+            startTime = currentTime;
+            previousError = radError;
+            telemetry.update();
+
+        }
+
+        power = 0.25;
+
+        if(radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle){
+            power *= -1;
+        }
+
+
+        while(Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007){
+            setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
         }
 
         simpleBrake();
@@ -886,12 +966,12 @@ public class MecDriveV2 {
             if(rampUp){
 
                 double start = calculateAvgStartPower(tics);
-                int targetRamp = tics / denom;
+                int finalRampTics = tics / denom;
 
 
-                while(((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4 < targetRamp){
+                while(((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4 < finalRampTics){
 
-                    double rampPower = ((denom-1) * pidf.p) * (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4);
+                    double rampPower = (start * (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4)) / finalRampTics;
 
                     setPower(rampPower, rampPower, rampPower, rampPower);
 
