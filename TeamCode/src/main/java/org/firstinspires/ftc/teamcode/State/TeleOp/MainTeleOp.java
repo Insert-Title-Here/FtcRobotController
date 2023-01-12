@@ -43,13 +43,14 @@ public class MainTeleOp extends LinearOpMode {
     private volatile boolean steadyPower = true;
     volatile boolean isTurning = false;
     volatile boolean isTurnLifting = false;
+    volatile boolean scoring = false;
 
     //private double properCX = 187; //67
     //private double properCXLow = 163; //160
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.45;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
 
@@ -135,15 +136,21 @@ public class MainTeleOp extends LinearOpMode {
                         if (gamepad1.left_trigger > 0.1 && triggerScoreToggle.get()) {
                             if (score.scoreHigh()) {
                                 //high cone Max limit is 1370
+                                steadyPower = false;
                                 score.goToPositionPID(constant.getHeightHigh(), 1);
+                                steadyPower = true;
                                 score.setPower(constant.getSteadyPow());
                             } else if (score.scoreMid()) {
                                 //medium cone
+                                steadyPower = false;
                                 score.goToPositionPID(constant.getHeightMed(), 1);
+                                steadyPower = true;
                                 score.setPower(constant.getSteadyPow());
                             } else if (score.scoreLow()) {
                                 //low cone
+                                steadyPower = false;
                                 score.goToPositionPID(constant.getHeightLow(), 0.8);
+                                steadyPower = true;
                                 score.setPower(constant.getSteadyPow());
                             }
                             triggerScoreToggle.set(false);
@@ -364,8 +371,12 @@ public class MainTeleOp extends LinearOpMode {
                 if (gamepad1.left_stick_button) { // replace this with a button for sprint
                     drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
                 } else {
-                    if (score.getEncoderPosition() > 500 /*|| uprighting*/) {
-                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.35, false);
+                    if (score.getEncoderPosition() > 480) {
+                        if(scoring){
+                            drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+                        }else{
+                            drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.3, false);
+                        }
                     } else {
                         drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                     }
@@ -448,6 +459,11 @@ public class MainTeleOp extends LinearOpMode {
             }
 
              */
+            if(gamepad1.right_bumper){
+                scoring = true;
+            }else if(!gamepad1.right_bumper){
+                scoring = false;
+            }
 
 
 

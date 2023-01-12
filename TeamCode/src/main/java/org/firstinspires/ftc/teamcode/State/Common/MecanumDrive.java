@@ -557,7 +557,7 @@ public class MecanumDrive {
 
 
             timeDifference = time.milliseconds() - priorTime;
-            if(time.milliseconds() - priorTime > 900) break;
+            if(time.milliseconds() - priorTime > 700) break;
         }
         //resetIMU();
         error = 0;
