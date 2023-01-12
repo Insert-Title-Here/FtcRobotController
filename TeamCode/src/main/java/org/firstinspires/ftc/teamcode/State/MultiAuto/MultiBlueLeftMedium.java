@@ -37,6 +37,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     public static int turnDenom = 4;
     public static boolean toggle = false;
     volatile boolean earlyPark = false;
+    volatile boolean lifting = false;
     long time;
     long onTimeout;
 
@@ -82,7 +83,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
             @Override
             public void run(){
                 while(opModeIsActive()){
-                    if((score.getEncoderPosition() > 30)){
+                    if((score.getEncoderPosition() > 30) && !lifting){
                         score.setPower(constants.getSteadyPow());
                     }
                     if(liftTurn.get()){
@@ -231,8 +232,11 @@ public class MultiBlueLeftMedium extends LinearOpMode {
             // turn to left 45 degrees to medium pole
             drive.turn45(-Math.PI / 4);
             // go to pole a bit
-            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 90, "go forward some to pole");
-            score.goToPosition(constants.getHeightMed(), 0.85);
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 83, "go forward some to pole");
+            // move arm medium
+            lifting = true;
+            score.goToPositionPID(constants.getHeightMed()+10, 0.85);
+            lifting = false;
             sleep(50);
 
             boolean right = true;
@@ -280,7 +284,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
 
             //go forward to blue cone tape adjacent mat
-            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(628, 600, 741, 726), "go forward to next mat");
+            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(628, 700, 741, 726), "go forward to next mat");
 
             // strafe left a bit
             drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 200, "left" );
@@ -424,7 +428,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
             sleep(50);
 
-            if(earlyPark) {
+            //if(earlyPark) {
                 // 3rd +' CONE --------------------------------------------------------->
                 sum = constants.getStackIntervalHeight() * 3 - 10;
 
@@ -490,7 +494,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
                 sleep(50);
 
-            }
+            //}
             // PARK ------------------------------------------------------>
 
             //moves robot to correct parking position
@@ -523,9 +527,13 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     }
 
     public void scoreConeMed(int fl, int fr, int bl, int br) {
-
+        /*
         // move arm medium
-        score.goToPositionPID(constants.getHeightMed(), 0.85);
+        lifting = true;
+        score.goToPositionPID(constants.getHeightMed()+10, 0.85);
+        lifting = false;
+        */
+
         //begin thread for maintaining height of slides
 
         onTimeout = System.currentTimeMillis();
