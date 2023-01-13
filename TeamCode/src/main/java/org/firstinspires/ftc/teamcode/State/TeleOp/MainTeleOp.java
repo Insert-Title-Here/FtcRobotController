@@ -305,7 +305,7 @@ public class MainTeleOp extends LinearOpMode {
 
 
         //thread for imu and sensors(if needed)
-        /*
+
         imuThread = new Thread(){
             @Override
             public void run(){
@@ -347,7 +347,7 @@ public class MainTeleOp extends LinearOpMode {
             }
         };
 
-         */
+
         score.setClawPosition(constant.getClawOpenPos());
         score.setScoreBoolean(true, false, false);
         score.setCamPosition(constant.getStrafeLowCamPos());
@@ -355,7 +355,7 @@ public class MainTeleOp extends LinearOpMode {
         telemetry.update();
         waitForStart();
         liftThread.start();
-        //imuThread.start();
+        imuThread.start();
         score.goToPosition(constant.getHeightBottom(), 0.6);
         score.setPower(constant.getSteadyPow());
         while(opModeIsActive()){
@@ -382,9 +382,12 @@ public class MainTeleOp extends LinearOpMode {
                     }
                 }
             }
-
+            if(gamepad1.right_bumper){
+                drive.absTurnPID(Math.PI / 2);
+            }
+            /*
             //turn scoring(turn in other thread)
-            if (gamepad1.right_stick_button) {
+            if (gamepad1.left_bumper) {
                 if(score.scoreHigh()){
                     //high cone Max limit is 1370
                     steadyPower = false;
@@ -412,6 +415,8 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
 
+
+             */
 
             //Sets the booleans for which pole to go to for lifts system
             if (gamepad1.a) {

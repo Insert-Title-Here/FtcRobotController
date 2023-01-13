@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-@Config
+
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
@@ -579,8 +579,64 @@ public class MecanumDrive {
             }
         }
     }
+    /*
+public void absTurnPID(double radians) {
+    double startAngle = imu.getAngularOrientation().firstAngle;
+    String shortestPath = "left";
+    if(startAngle < 0){
+        if((Math.abs(Math.PI - radians) + Math.abs(Math.PI - startAngle) > Math.abs(0 - radians) + Math.abs(0 - startAngle))){
+            shortestPath = "left";
+        }else{
+            shortestPath = "right";
+        }
+    }else if(startAngle > 0){
+        if(Math.abs(radians - startAngle) < Math.PI){
+            shortestPath = "left";
+        }else{
+            shortestPath = "right";
+        }
+    }
+
+    double priorError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
+    double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
+
+    double priorTime = System.currentTimeMillis();
+    double timeDifference = 0;
+    // Absolute turning
+    while (Math.abs(imu.getAngularOrientation().firstAngle-radians) > 0.08) {
+        double currentRadians = imu.getAngularOrientation().firstAngle;
+
+        double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference);
+
+        if (radians < currentRadians-0.004) {
+            if(startAngle > 0){
+                setPower(-drivePower, drivePower, -drivePower, drivePower);
+            }else{
+                //turn right # of radians
+                setPower(drivePower, -drivePower, drivePower, -drivePower);
+            }
+
+        } else if (currentRadians+0.004 < radians) {
+            if(startAngle < 0){
+                //setPower(drivePower, -drivePower, drivePower, -drivePower);
+            }else {
+                //turn left # of radians
+                setPower(-drivePower, drivePower, -drivePower, drivePower);
+            }
+        } else {
+            break;
+        }
+
+
+        priorError = currentError;
+        currentError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
+        timeDifference = System.currentTimeMillis() - priorTime;
+        if(timeDifference > 700)break;
+    }
+}
+
+ */
     public void absTurnPID(double radians) {
-        double rad = radians;
 
         double priorError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
         double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
@@ -593,17 +649,27 @@ public class MecanumDrive {
 
             double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference);
             if (radians < currentRadians-0.004) {
-                //turn right # of radians
-                setPower(drivePower, -drivePower, drivePower, -drivePower);
+                //if(startAngle > 0){
+                    //setPower(-drivePower, drivePower, -drivePower, drivePower);
+                //}else{
+                    //turn right # of radians
+                    setPower(-drivePower, drivePower, -drivePower, drivePower);
+                //}
+
             } else if (currentRadians+0.004 < radians) {
-                //turn left # of radians
-                setPower(-drivePower, drivePower, -drivePower, drivePower);
+               // if(startAngle < 0){
+                    //setPower(drivePower, -drivePower, drivePower, -drivePower);
+                //}else {
+                    //turn left # of radians
+                    setPower(-drivePower, drivePower, -drivePower, drivePower);
+                //}
             } else {
                 break;
             }
             priorError = currentError;
             currentError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
             timeDifference = System.currentTimeMillis() - priorTime;
+            if(timeDifference > 700)break;
         }
     }
     /*
@@ -674,8 +740,8 @@ public class MecanumDrive {
 
     }
     public double PIDAbsTurnPower(double priorError, double currentError, double timeChange){
-        double proportionCoefficient = 0.47;//0.46
-        double derivativeCoefficient = 0.18;//0.2
+        double proportionCoefficient = 0.55;//0.555
+        double derivativeCoefficient = 0;//0.9
 
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
 
