@@ -28,8 +28,10 @@ public class ScoringSystemV2EpicLift {
     ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
     private boolean grabbing, linkageUp, extended;
-    private int coneStack;
+    private int coneStack, rightPreviousError, leftPreviousError, liftTarget;
+    private double startTime, currentTime;
     Telemetry telemetry;
+    ElapsedTime time;
     PIDCoefficients pidf = new PIDCoefficients(0.0085, 0.0000275, 0.00023);
 
     File file = AppUtil.getInstance().getSettingsFile("AmpDraw.txt");
@@ -94,6 +96,60 @@ public class ScoringSystemV2EpicLift {
 
     public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
+
+        coneStack = 1;
+        height = ScoringMode.HIGH;
+        extended = false;
+
+        distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
+
+        rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
+        lLift1 = hardwareMap.get(DcMotorEx.class, "LeftLift");
+
+        rLift2 = hardwareMap.get(DcMotorEx.class, "RightLift2");
+        lLift2 = hardwareMap.get(DcMotorEx.class, "LeftLift2");
+
+        rLift1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lLift1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        rLift2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        lLift2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        rLift1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lLift1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        rLift2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lLift2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        rLift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        lLift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+
+        rLift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        lLift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
+        rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
+
+        lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+
+        grabber = hardwareMap.get(Servo.class, "Grabber");
+
+
+        setLinkagePosition(Constants.linkageDownV2);
+        //setLinkagePosition(0.8);
+        grabber.setPosition(Constants.open);
+
+    }
+
+
+    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime time) {
+        this.telemetry = telemetry;
+        this.time = time;
+        startTime = time.seconds();
+        liftTarget = 0;
 
         coneStack = 1;
         height = ScoringMode.HIGH;
@@ -264,11 +320,27 @@ public class ScoringSystemV2EpicLift {
             moveToPosition(960, 1);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(450, 1);
+            moveToPosition(400, 1);
 
 
         }else if(height == ScoringMode.LOW){
-            moveToPosition(100, 1);
+            moveToPosition(53, 1);
+
+        }
+
+        extended = true;
+    }
+
+    public void commandAutoGoToPosition(){
+        if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
+            setLiftTarget(960);
+
+        }else if(height == ScoringMode.MEDIUM){
+            setLiftTarget(450);
+
+
+        }else if(height == ScoringMode.LOW){
+            setLiftTarget(100);
 
         }
 
@@ -277,14 +349,14 @@ public class ScoringSystemV2EpicLift {
 
     public void epicAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            newLiftPID(960);
+            newLiftPID(1000);
 
         }else if(height == ScoringMode.MEDIUM){
             newLiftPID(550);
 
 
         }else if(height == ScoringMode.LOW){
-            newLiftPID(100);
+            newLiftPID(150);
 
         }
 
@@ -1237,6 +1309,68 @@ public class ScoringSystemV2EpicLift {
         setPower(0);
 
         ps.println(composite);
+    }
+
+
+    public void newLiftPIDUpdate(double  limiter){
+        currentTime = time.seconds();
+
+        int rightPos = -1 * getRightEncoderPos();
+        int leftPos = -1 * getLeftEncoderPos();
+
+
+        //telemetry.addData("rightPos", rightPos);
+        //telemetry.addData("leftPos", leftPos);
+
+        int rightError = liftTarget - rightPos;
+        int leftError = liftTarget - leftPos;
+
+
+        double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
+        double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
+
+        //telemetry.addData("rightDerivative", rightDerivative);
+        //telemetry.addData("leftDerivative", leftDerivative);
+
+        double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative));
+        double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative));
+
+        if(Math.abs(rightPower) > limiter){
+            if(rightPower < 0){
+                rightPower = -1 * limiter;
+            }else{
+                rightPower = limiter;
+            }
+        }
+
+        if(Math.abs(leftPower) > limiter){
+            if(leftPower < 0){
+                leftPower = -1 * limiter;
+            }else{
+                leftPower = limiter;
+            }
+        }
+
+
+
+        setPower(rightPower, leftPower);
+
+
+        startTime = currentTime;
+        rightPreviousError = rightError;
+        leftPreviousError = leftError;
+
+
+
+
+
+
+    }
+
+
+
+    public void setLiftTarget(int target){
+        liftTarget = target;
     }
 
 

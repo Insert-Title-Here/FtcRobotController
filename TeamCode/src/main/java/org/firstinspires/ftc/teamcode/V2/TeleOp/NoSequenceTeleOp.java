@@ -3,18 +3,16 @@ package org.firstinspires.ftc.teamcode.V2.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 
 
-@TeleOp (name = "KevinGodModeV2EpicLift")
-public class QuadMotorLift extends LinearOpMode {
+@TeleOp (name = "KevinGodModeV2EpicLiftNoSequence")
+public class NoSequenceTeleOp extends LinearOpMode {
 
     ScoringSystemV2EpicLift score;
     MecDrive drive;
@@ -24,7 +22,7 @@ public class QuadMotorLift extends LinearOpMode {
 
     PassivePower passive;
 
-    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp, scoringPattern;
+    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp;
     volatile boolean liftBrokenMode = false;
     volatile boolean optionsFlag = true;
 
@@ -53,7 +51,6 @@ public class QuadMotorLift extends LinearOpMode {
         linkageDown = false;
         linkageUp = false;
         firstDpadUp = true;
-        scoringPattern = false;
 
 
 
@@ -87,7 +84,7 @@ public class QuadMotorLift extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         //score.setPower(0.2);
                         if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA && !liftBrokenMode) {
-                            score.autoGoToPosition();
+                            score.epicAutoGoToPosition();
 
                             if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW) {
                                 score.setLinkagePosition(0.72);
@@ -157,15 +154,7 @@ public class QuadMotorLift extends LinearOpMode {
                         //TODO: fix this
                         score.lowerConeStack();
 
-                        if(scoringPattern){
-                            if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW){
-                                score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.MEDIUM);
-                            }else if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.MEDIUM){
-                                score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.HIGH);
-                            }else if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.HIGH){
-                                scoringPattern = false;
-                            }
-                        }
+
 
 
                         //Resetting flags
@@ -297,7 +286,6 @@ public class QuadMotorLift extends LinearOpMode {
                     //Changing scoring modes (toggle)
                     if(gamepad1.y){
                         score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.LOW);
-                        scoringPattern = true;
 
                     }else if(gamepad1.x){
                         score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.MEDIUM);
