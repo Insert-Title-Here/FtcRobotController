@@ -170,7 +170,7 @@ public class TestingContours extends LinearOpMode {
     }
 
     public void useColorSensor() {
-        drive.findTape("blue");
+        drive.findTape("blue", true);
         score.goToPosition(174, 0.7);
         score.grabConeAuto();
 
