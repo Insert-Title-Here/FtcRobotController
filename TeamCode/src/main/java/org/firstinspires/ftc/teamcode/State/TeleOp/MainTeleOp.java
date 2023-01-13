@@ -305,17 +305,19 @@ public class MainTeleOp extends LinearOpMode {
 
 
         //thread for imu and sensors(if needed)
+        /*
         imuThread = new Thread(){
             @Override
             public void run(){
                 while(opModeIsActive()){
+
                     if(gamepad1.right_stick_button) {
                     //while(opModeisActive(){
                         // Orientation angle = imu.getAngularOrientation();
-                        /*
-                        synchronized Orientation getAngularOrientation();
-                        }
-                         */
+
+                        //synchronized Orientation getAngularOrientation();
+                       // }
+
                         if(imu.getAngularOrientation().firstAngle < 0){
                             isTurning = true;
                             drive.turn180(Math.PI/1.1);
@@ -344,6 +346,8 @@ public class MainTeleOp extends LinearOpMode {
 
             }
         };
+
+         */
         score.setClawPosition(constant.getClawOpenPos());
         score.setScoreBoolean(true, false, false);
         score.setCamPosition(constant.getStrafeLowCamPos());
@@ -351,7 +355,7 @@ public class MainTeleOp extends LinearOpMode {
         telemetry.update();
         waitForStart();
         liftThread.start();
-        imuThread.start();
+        //imuThread.start();
         score.goToPosition(constant.getHeightBottom(), 0.6);
         score.setPower(constant.getSteadyPow());
         while(opModeIsActive()){
@@ -372,18 +376,15 @@ public class MainTeleOp extends LinearOpMode {
                     drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
                 } else {
                     if (score.getEncoderPosition() > 480) {
-                        if(scoring){
-                            drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
-                        }else{
-                            drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.3, false);
-                        }
+                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.28, false);
                     } else {
                         drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                     }
                 }
             }
+
             //turn scoring(turn in other thread)
-            if (gamepad1.left_bumper) {
+            if (gamepad1.right_stick_button) {
                 if(score.scoreHigh()){
                     //high cone Max limit is 1370
                     steadyPower = false;
@@ -410,6 +411,8 @@ public class MainTeleOp extends LinearOpMode {
                     score.setPower(constant.getSteadyPow());
                 }
             }
+
+
             //Sets the booleans for which pole to go to for lifts system
             if (gamepad1.a) {
                 //high cone
