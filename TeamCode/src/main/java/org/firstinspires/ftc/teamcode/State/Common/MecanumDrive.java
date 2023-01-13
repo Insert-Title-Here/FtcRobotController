@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-@Config
+
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
@@ -831,7 +831,6 @@ public class MecanumDrive {
             if (strafe) {
                 goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
             }
-            goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
             while (currentBlueColor() < 0.52) { //blue tape
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
@@ -867,6 +866,78 @@ public class MecanumDrive {
         }
         goToPosition(0,0,0,0);
     }
+
+    //checks if the color sensor identifies tape color
+    public void findTapeMIDAUTO(String color) {
+        boolean temp = true;
+        long time = System.currentTimeMillis();
+        if (color.equalsIgnoreCase("blueleft")) {
+            while (currentBlueColor() < 0.52) { //blue tape
+                if (temp) {
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(0, 0.3, 0.3, 0);
+                    }
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        } else if (color.equalsIgnoreCase("redright")) {
+            while (currentRedColor() < 0.26) { //red tape
+                if (temp) {
+                    //If time takes too long, strafe right or left back to the tape
+
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0.3, 0, 0, 0.3);
+                    }
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        } else if (color.equalsIgnoreCase("blueright")) {
+            while (currentBlueColor() < 0.52) { //blue tape
+                if (temp) {
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                    }else{
+                        goToPosition(0.3, 0, 0, 0.3);
+                    }
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        } else if (color.equalsIgnoreCase("redleft")) {
+
+            while (currentRedColor() < 0.26) { //red tape
+                if (temp) {
+                    //If time takes too long, strafe right or left back to the tape
+                    if((System.currentTimeMillis() - time)/1000 > 2.8){
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                    }else{
+                        goToPosition(0, 0.3, 0.3, 0);
+                    }
+                    // strafe diagonal left
+                    //goToPosition(0.4, 0, 0, 0.4);
+                    temp = false;
+                }
+
+            }
+        }
+        goToPosition(0,0,0,0);
+    }
+
+
     // special method for after the 1+1 auto (finding tape is different)
     public void findTapeMulti(String color) {
         boolean temp = true;

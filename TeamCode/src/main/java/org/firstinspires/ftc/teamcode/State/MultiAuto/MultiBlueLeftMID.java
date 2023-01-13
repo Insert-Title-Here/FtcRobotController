@@ -223,7 +223,60 @@ public class MultiBlueLeftMID extends LinearOpMode {
 
      */
         } else if (toggle == 1) {
-            drive.findTape("redleft", false);
+            drive.findTapeMIDAUTO("blueleft");
+            //makes sure actually turned 90 degrees
+            if(Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.15){
+                drive.turn(Math.PI/2);
+            }
+
+
+
+            score.grabConeAuto();
+
+
+            sleep(50);
+            drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 1540, "go backwards");
+
+            drive.turn90(Math.PI / 1.8);
+
+
+            boolean right = true;
+            boolean left = true;
+
+            // camera position correction
+            while (detect1.getcX() < properCXLow - 5 || detect1.getcX() > properCXLow + 5) {
+                telemetry.addData("success", "sucess");
+                telemetry.update();
+                if (detect1.getcX() < properCXLow - 5 && right) {
+                    // strafe to the right
+                    //                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
+                    drive.goToPosition(-0.25, 0.25, 0.25, -0.25);
+
+                    telemetry.addData("success 1", "sucess");
+                    telemetry.update();
+                    right = false;
+                }
+                if (detect1.getcX() > properCXLow + 5 && left) {
+                    // strafe to the left (change fr and bl)
+                    drive.goToPosition(0.25, -0.25, -0.25, 0.25);
+
+                    //                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+
+                    telemetry.addData("success 2", "sucess");
+                    telemetry.update();
+                    left = false;
+                }
+                //            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
+                //                drive.goToPosition(0, 0, 0, 0);
+                //            }
+            }
+
+            drive.goToPosition(0, 0, 0, 0);
+
+            scoreConeLow(150, 150, 100, 100);
+
+            // ------------------------------------------------------------------
+            
         } else if (toggle == 2) {
 
         } else {
@@ -301,7 +354,7 @@ public class MultiBlueLeftMID extends LinearOpMode {
 
 
 
-
+            // ------------------------------------------------------------------------------------------------------
 
             // find tape, get cone (uses opposite color cuz preload is on high)
             drive.findTape("redleft", false);
@@ -320,7 +373,7 @@ public class MultiBlueLeftMID extends LinearOpMode {
 
             drive.turn90(Math.PI / 1.8);
 
-            sleep(10000000); // -------------------------------------------------->>>>>>>
+
             right = true;
             left = true;
 
