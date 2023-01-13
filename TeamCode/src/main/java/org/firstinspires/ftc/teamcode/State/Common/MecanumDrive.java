@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+@Config
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
@@ -562,7 +562,6 @@ public class MecanumDrive {
         error = 0;
     }
 
-    // TODO: Needs Testing and more work
     public void turn(double radians) {
         double rad = radians;
         // Absolute turning
@@ -577,6 +576,33 @@ public class MecanumDrive {
             } else {
                break;
             }
+        }
+    }
+    public void absTurnPID(double radians) {
+        double rad = radians;
+
+        double priorError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
+        double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
+
+        double priorTime = System.currentTimeMillis();
+        double timeDifference = 0;
+        // Absolute turning
+        while (Math.abs(imu.getAngularOrientation().firstAngle-radians) > 0.08) {
+            double currentRadians = imu.getAngularOrientation().firstAngle;
+
+            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference);
+            if (radians < currentRadians-0.004) {
+                //turn right # of radians
+                setPower(drivePower, -drivePower, drivePower, -drivePower);
+            } else if (currentRadians+0.004 < radians) {
+                //turn left # of radians
+                setPower(-drivePower, drivePower, -drivePower, drivePower);
+            } else {
+                break;
+            }
+            priorError = currentError;
+            currentError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
+            timeDifference = System.currentTimeMillis() - priorTime;
         }
     }
     /*
@@ -644,6 +670,13 @@ public class MecanumDrive {
 
         error = currentError;
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
+
+    }
+    public double PIDAbsTurnPower(double priorError, double currentError, double timeChange){
+        double proportionCoefficient = 0.47;//0.46
+        double derivativeCoefficient = 0.18;//0.2
+
+        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
 
     }
 
