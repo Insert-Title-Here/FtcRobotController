@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.State.Common;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -855,11 +854,13 @@ public void absTurnPID(double radians) {
 
 
     //checks if the color sensor identifies tape color
-    public void findTape(String color) {
+    public void findTape(String color, boolean strafe) {
         boolean temp = true;
         long time = System.currentTimeMillis();
         if (color.equalsIgnoreCase("blueleft")) {
-            goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
+            if (strafe) {
+                goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left");
+            }
             while (currentBlueColor() < 0.52) { //blue tape
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
@@ -875,7 +876,9 @@ public void absTurnPID(double radians) {
 
             }
         } else if (color.equalsIgnoreCase("redright")) {
-            goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
+            if (strafe) {
+                goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
+            }
             while (currentRedColor() < 0.26) { //red tape
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
@@ -891,6 +894,9 @@ public void absTurnPID(double radians) {
 
             }
         } else if (color.equalsIgnoreCase("blueright")) {
+            if (strafe) {
+                goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
+            }
             goToPosition(0.4, 0.2, 0.2, 0.4, 300, "right" );
             while (currentBlueColor() < 0.52) { //blue tape
                 if (temp) {
@@ -907,12 +913,14 @@ public void absTurnPID(double radians) {
 
             }
         } else if (color.equalsIgnoreCase("redleft")) {
-            goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
+            if (strafe) {
+                goToPosition(0.2, 0.4, 0.4, 0.2, 300, "left" );
+            }
             while (currentRedColor() < 0.26) { //red tape
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
-                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
                     }else{
                         goToPosition(0.3, 0, 0, 0.3);
                     }

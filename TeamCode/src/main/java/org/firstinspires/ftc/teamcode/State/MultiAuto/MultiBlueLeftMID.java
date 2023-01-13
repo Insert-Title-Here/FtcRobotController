@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
 @Config
-public class MultiBlueLeftMedium extends LinearOpMode {
+public class MultiBlueLeftMID extends LinearOpMode {
     // instantiating
     Thread liftThread;
     MecanumDrive drive;
@@ -30,12 +30,12 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     AtomicBoolean liftTurn, liftCone;
 
     // ftc dashboard values + properCX
-    private double properCX = 160; //67
+    private double properCX = 163; //67
     private double properCXLow = 180; //160  163
 
     public static int positive_negative = 1;
     public static int turnDenom = 4;
-    public static boolean toggle = false;
+    public static int toggle = 1;
     volatile boolean earlyPark = false;
     volatile boolean lifting = false;
     long time;
@@ -135,7 +135,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
 
 
-        if (toggle) {
+        if (toggle == 0) {
             //lift claw a little bit
             score.goToPosition(50, 0.8);
             sleep(100);
@@ -222,20 +222,24 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
 
      */
+        } else if (toggle == 1) {
+            drive.findTape("redleft", false);
+        } else if (toggle == 2) {
+
         } else {
 
             //lift claw a little bit
             score.goToPosition(50, 0.8);
             sleep(100);
             // go forward next to pole
-            drive.goToPosition(0.8, 0.8, 0.8, 0.8, 1060, "go forward next to pole");
-            // turn to left 45 degrees to medium pole
+            drive.goToPosition(0.8, 0.8, 0.8, 0.8, 2150, "go forward next to pole");
+            // turn to right 45 degrees to high pole
             drive.turn45(-Math.PI / 4);
             // go to pole a bit
-            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 83, "go forward some to pole");
-            // move arm medium
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 53, "go forward some to pole");
+            // move arm high
             lifting = true;
-            score.goToPositionPID(constants.getHeightMed()+10, 0.85);
+            score.goToPositionPID(constants.getHeightHigh()+10, 0.85);
             lifting = false;
             sleep(50);
 
@@ -277,18 +281,12 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
             scoreConeMed(0, 0, 0, 0);
 
-            // turn back straight
-            drive.turn45(Math.PI / 4);
+            // turn to left
+            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
 
             score.setClawPosition(constants.getClawOpenPos());
-
-
-            //go forward to blue cone tape adjacent mat
-            drive.goToPosition(0.6, 0.6, 0.6, 0.6, drive.avgPosition(628, 700, 741, 726), "go forward to next mat");
-
-            // strafe left a bit
-            drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 200, "left" );
-
+            //go forward a bit
+            drive.goToPosition(0.6, 0.6, 0.6, 0.6, 300, "forward" );
 
 
             // +'s ---------------------------------------->
@@ -299,16 +297,14 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
 
 
-            score.setClawPosition(constants.getClawOpenPos());
             score.setCamPosition(constants.getStrafeLowCamPos());
-            // turn to tape/cones
-            drive.turn90(Math.PI / 2);
 
 
 
 
-            // find tape, get cone
-            drive.findTape("blueleft");
+
+            // find tape, get cone (uses opposite color cuz preload is on high)
+            drive.findTape("redleft", false);
             //makes sure actually turned 90 degrees
             if(Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.15){
                 drive.turn(Math.PI/2);
@@ -320,11 +316,11 @@ public class MultiBlueLeftMedium extends LinearOpMode {
 
 
             sleep(50);
-            drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 500, "go backwards");
+            drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 1540, "go backwards");
 
-            drive.turn90(Math.PI / 2);
+            drive.turn90(Math.PI / 1.8);
 
-
+            sleep(10000000); // -------------------------------------------------->>>>>>>
             right = true;
             left = true;
 
@@ -609,7 +605,7 @@ public class MultiBlueLeftMedium extends LinearOpMode {
     }
 
     public void useColorSensor() {
-        drive.findTape("blueleft");
+        drive.findTape("blueleft", true);
         //makes sure actually turned 90 degrees
         if(Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.15){
             drive.turn(Math.PI/2);

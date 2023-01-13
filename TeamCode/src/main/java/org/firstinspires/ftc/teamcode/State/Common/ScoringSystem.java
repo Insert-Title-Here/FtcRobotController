@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.State.Common;
 
 import static java.lang.Thread.sleep;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -280,7 +279,7 @@ public class ScoringSystem {
                 // grab cone
                 setClawPosition(constant.getClawClosePos());
                 try {
-                    sleep(300);
+                    sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
