@@ -24,7 +24,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Autonomous
-public class CommandRedRightTest extends LinearOpMode {
+public class CommandBlueLeftTest extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
     //Constants constants;
@@ -73,7 +73,6 @@ public class CommandRedRightTest extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        //TODO: fix tuning for red right side and pass in correct auto side
         pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_RIGHT, true);
 
         camera.setPipeline(pipeline);
@@ -107,14 +106,14 @@ public class CommandRedRightTest extends LinearOpMode {
         waitForStart();
 
         CommandScheduler.getInstance().schedule(
-                new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.REDCONE)),
+                new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2250, 1, MecDriveV2.MovementType.STRAIGHT, 0.85)),
+                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2230, 1, MecDriveV2.MovementType.STRAIGHT, 0.85)),
                 new WaitCommand(100),
-                new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
+                new InstantCommand(() -> drive.tankRotatePID(-Math.PI / 2, 1, false)),
                 new InstantCommand(() -> drive.simpleMoveToPosition(685, MecDriveV2.MovementType.STRAIGHT, 0.5)),
-                new InstantCommand(() -> drive.tankRotatePID(3 * Math.PI / 8, 1, false)),
+                new InstantCommand(() -> drive.tankRotatePID(-3 * Math.PI / 8, 1, false)),
                 new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
@@ -164,9 +163,7 @@ public class CommandRedRightTest extends LinearOpMode {
         for(int i = 0; i < 4; i++){
             int finalI = i;
             CommandScheduler.getInstance().schedule(
-
-
-                    new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5))  ,
+                    new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                     new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                     new WaitCommand(100),
                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
@@ -188,7 +185,7 @@ public class CommandRedRightTest extends LinearOpMode {
 
 
         CommandScheduler.getInstance().schedule(
-                new InstantCommand(() -> drive.simpleMoveToPosition(-80, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(80, MecDriveV2.MovementType.ROTATE, 0.5)),
                 new WaitCommand(50)
         );
 
@@ -197,7 +194,7 @@ public class CommandRedRightTest extends LinearOpMode {
         CommandScheduler.getInstance().run();
 
         while(CommandScheduler.getInstance().isScheduled(
-                new InstantCommand(() -> drive.simpleMoveToPosition(-80, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(80, MecDriveV2.MovementType.ROTATE, 0.5)),
                 new InstantCommand(() -> sleep(50))
         )){
 
@@ -205,7 +202,7 @@ public class CommandRedRightTest extends LinearOpMode {
 
         if (parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER) {
             drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 1);
-        } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
+        } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
             drive.simpleMoveToPosition(-1450, MecDriveV2.MovementType.STRAIGHT, 1);
         }
 

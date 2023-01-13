@@ -24,7 +24,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous (name = "Safe Auto")
+@Autonomous(name = "Safe Auto")
 public class CommandBlueRightSafeTest extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
@@ -97,158 +97,156 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
         cameraServo.setPosition(Constants.sleeveV2);
 
 
-
-
-
-
-
         waitForStart();
 
         CommandScheduler.getInstance().schedule(
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2270, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
+                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2250, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
                 new WaitCommand(100),
-                new InstantCommand(() -> drive.tankRotatePID( (5 * Math.PI) / 8, 1, false)),
+                new InstantCommand(() -> drive.tankRotatePID((5.3 * Math.PI) / 8, 1, false)),
                 //new InstantCommand(() -> drive.simpleMoveToPosition(-780, MecDriveV2.MovementType.ROTATE, 1)),
-                new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 156, 2)),
+                new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
                 new ParallelCommandGroup(
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                        new InstantCommand(() -> score.newLiftPID(940, 0.85)),
+                        new InstantCommand(() -> score.newLiftPID(940, 1)),
                         new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                         new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
                 ),
 
                 new InstantCommand(() -> drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAIGHT, 0.4)),
-                new WaitCommand(200),
+                new WaitCommand(100),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
-                new WaitCommand(400),
+                new WaitCommand(250),
 
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto - 0.1, 300, 100)),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
 
-                new WaitCommand(300),
+                new WaitCommand(200),
 
 
-                new InstantCommand(() -> score.moveToPosition(0, 0.63)),
+                new InstantCommand(() -> score.moveToPosition(0, 0.75)),
                 new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI / 2, 1, false, 0.9)),
 
                 //new InstantCommand(() -> drive.tankRotatePID(Math.PI/2, 1, false, 0.9)),
                 //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
                 //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.25)),
-                new InstantCommand(() -> sleep(100)),
-                new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
+                new InstantCommand(() -> sleep(5)),
+                new InstantCommand(() -> pipeline.normalizeStrafe(0.35, 151, 2)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.242, 100)),
 
                 new ParallelCommandGroup(
-                        new InstantCommand(() -> drive.simpleMoveToPosition(560, MecDriveV2.MovementType.STRAIGHT, 1)),
+                        new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
                         new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                         new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
                 ),
 
-                new DriveInSafe(drive, distance, true, 0.25),
+                new DriveInSafe(drive, distance, true, 0.35),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                new WaitCommand(300),
+                new WaitCommand(75),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
 
         );
 
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             int finalI = i;
-            if(i != 2) {
+            if (i != 2) {
                 CommandScheduler.getInstance().schedule(
 
 
                         new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1360, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
                         //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
-                        new InstantCommand(() -> drive.tankRotatePID( (5.5 * Math.PI) / 8, 1, false)),
+                        new InstantCommand(() -> drive.tankRotatePID((5.4 * Math.PI) / 8, 1, false)),
                         //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
-                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 156, 2)),
+                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
-                                new InstantCommand(() -> score.newLiftPID(940, 0.85)),
+                                new InstantCommand(() -> score.newLiftPID(940, 1)),
                                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
                         ),
 
                         //new InstantCommand(() -> drive.simpleMoveToPosition(-40, MecDriveV2.MovementType.STRAIGHT, 0.4)),
-                        new WaitCommand(200),
+                        new WaitCommand(100),
                         new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
-                        new InstantCommand(() -> sleep(400)),
+                        new WaitCommand(250),
 
 
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto - 0.1, 300, 100)),
                         new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
 
-                        new WaitCommand(300),
+                        new WaitCommand(200),
 
 
-                        new InstantCommand(() -> score.moveToPosition(0, 0.63)),
+                        new InstantCommand(() -> score.moveToPosition(0, 0.75)),
                         new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI / 2, 1, false, 0.9)),
 
                         //new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false, 0.9)),
                         //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
                         //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
-                        new InstantCommand(() -> sleep(100)),
+                        new InstantCommand(() -> sleep(5)),
                         new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
                         new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 1) * 0.025), 100)),
 
                         new ParallelCommandGroup(
-                                new InstantCommand(() -> drive.simpleMoveToPosition(560, MecDriveV2.MovementType.STRAIGHT, 1)),
+                                new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
                                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
                         ),
 
-                        new DriveInSafe(drive, distance, true, 0.25),
+                        new DriveInSafe(drive, distance, true, 0.35),
                         new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                        new InstantCommand(() -> sleep(400)),
+                        new InstantCommand(() -> sleep(75)),
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
 
 
                 );
-            }else{
-
-                CommandScheduler.getInstance().schedule(
+            } else {
 
 
-                        new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1360, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
-                        //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
-                        new InstantCommand(() -> drive.tankRotatePID( (5.5 * Math.PI) / 8, 1, false)),
-                        //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
-                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.2, 156, 2)),
-                        new ParallelCommandGroup(
-                                new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
-                                new InstantCommand(() -> score.newLiftPID(940, 0.85)),
-                                new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
-                                new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
-                        ),
 
-                        //new InstantCommand(() -> drive.simpleMoveToPosition(-40, MecDriveV2.MovementType.STRAIGHT, 0.4)),
-                        new WaitCommand(200),
-                        new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
-                        new WaitCommand(400),
+                    CommandScheduler.getInstance().schedule(
 
 
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto - 0.1, 300, 100)),
-                        new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
+                            new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1360, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
+                            //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
+                            new InstantCommand(() -> drive.tankRotatePID((5.4 * Math.PI) / 8, 1, false)),
+                            //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
+                            new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
+                            new ParallelCommandGroup(
+                                    new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
+                                    new InstantCommand(() -> score.newLiftPID(940, 1)),
+                                    new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
+                                    new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
+                            ),
 
-                        new WaitCommand(300),
+                            //new InstantCommand(() -> drive.simpleMoveToPosition(-40, MecDriveV2.MovementType.STRAIGHT, 0.4)),
+                            new WaitCommand(100),
+                            new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
+                            new WaitCommand(250),
 
 
-                        new InstantCommand(() -> score.moveToPosition(0, 0.63)),
-                        new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI / 2, 1, false, 0.9)),
+                            new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto - 0.1, 300, 100)),
+                            new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
 
-                        //new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false, 0.9)),
-                        //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
-                        //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
-
-                        new InstantCommand(() -> sleep(100))
-                );
+                            new WaitCommand(200),
 
 
-            }
+                            new InstantCommand(() -> score.moveToPosition(0, 0.75)),
+                            new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI / 2, 1, false, 0.9)),
+
+                            //new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false, 0.9)),
+                            //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
+                            //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
+
+                            new InstantCommand(() -> sleep(5))
+                    );
+
+
+                }
+
 
 
         }
@@ -257,19 +255,15 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
 
         if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
-            drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-450, MecDriveV2.MovementType.STRAIGHT, 1);
+
+
+
         } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
-            drive.simpleMoveToPosition(700, MecDriveV2.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(850, MecDriveV2.MovementType.STRAIGHT, 1);
         }
 
-
-
-
-
-
-
-
-
+        sleep(50);
 
 
     }

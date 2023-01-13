@@ -490,6 +490,12 @@ public class MecDriveV2 {
             }else{
                 newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative));
             }
+
+
+            if(Math.abs(newPower) < 0.15){
+                break;
+            }
+
             setPowerAuto(newPower, MecDriveV2.MovementType.ROTATE);
 
             telemetry.addData("Power", newPower);
@@ -500,7 +506,7 @@ public class MecDriveV2 {
 
         }
 
-        power = 0.25;
+        power = 0.27;
 
         if(radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle){
             power *= -1;
