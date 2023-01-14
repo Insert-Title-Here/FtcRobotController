@@ -23,7 +23,7 @@ public class DistanceSensorTest2 extends LinearOpMode {
         distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
 
         //constants = newConstants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, false);
         score.setLinkagePosition(0.72);
 
         waitForStart();

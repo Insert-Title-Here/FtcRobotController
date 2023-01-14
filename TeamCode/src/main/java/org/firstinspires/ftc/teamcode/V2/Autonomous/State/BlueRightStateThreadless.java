@@ -48,7 +48,7 @@ public class BlueRightStateThreadless extends LinearOpMode {
 
         drive = new MecDriveV2(hardwareMap, false, telemetry);
         //constants = newConstants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, false);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);

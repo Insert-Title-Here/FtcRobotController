@@ -54,7 +54,7 @@ public class PIDFTestingLift extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //constants = newConstants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, false);
 
         score.setLinkagePosition(Constants.linkageUpV2);
 

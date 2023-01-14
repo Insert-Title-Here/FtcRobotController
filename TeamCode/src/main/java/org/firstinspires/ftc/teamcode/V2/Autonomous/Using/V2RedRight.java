@@ -51,7 +51,7 @@ public class V2RedRight extends LinearOpMode {
 
         drive = new MecDrive(hardwareMap, false, telemetry, true);
         //constants = newConstants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, false);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);

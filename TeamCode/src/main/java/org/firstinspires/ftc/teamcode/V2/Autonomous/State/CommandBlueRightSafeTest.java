@@ -49,7 +49,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
         drive = new MecDriveV2(hardwareMap, false, telemetry, true);
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, false);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);

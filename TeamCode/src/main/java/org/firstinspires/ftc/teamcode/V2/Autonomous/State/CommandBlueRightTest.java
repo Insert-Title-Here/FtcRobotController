@@ -50,7 +50,7 @@ public class CommandBlueRightTest extends LinearOpMode {
 
         drive = new MecDriveV2(hardwareMap, false, telemetry, true);
         //constants = newConstants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, false);
         hold = new AtomicBoolean(false);
         armUp = new AtomicBoolean(false);
         finalMove = new AtomicBoolean(false);

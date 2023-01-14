@@ -74,7 +74,7 @@ public class CommandTeleOpTesting extends LinearOpMode {
 
         //Feed forward is going to be off
 
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, time = new ElapsedTime());
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, time = new ElapsedTime(), true);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, false, telemetry);
         //systems = new EndgameSystems(hardwareMap);

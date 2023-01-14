@@ -60,7 +60,7 @@ public class QuadMotorLift extends LinearOpMode {
         //Feed forward is going to be off
         passive = PassivePower.ZERO;
 
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, true);
         //robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap,false, telemetry);
         //systems = new EndgameSystems(hardwareMap);
