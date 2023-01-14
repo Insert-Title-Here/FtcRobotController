@@ -94,7 +94,7 @@ public class ScoringSystemV2EpicLift {
 
     }
 
-    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Telemetry telemetry) {
+    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Telemetry telemetry, boolean up) {
         this.telemetry = telemetry;
 
         coneStack = 1;
@@ -137,8 +137,11 @@ public class ScoringSystemV2EpicLift {
 
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
-
-        setLinkagePosition(Constants.linkageDownV2);
+        if(up){
+            setLinkagePosition(Constants.linkageUpV2);
+        }else {
+            setLinkagePosition(Constants.linkageDownV2);
+        }
         //setLinkagePosition(0.8);
         grabber.setPosition(Constants.open);
 
