@@ -134,7 +134,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
                 //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
                 //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.25)),
                 new InstantCommand(() -> sleep(5)),
-                new InstantCommand(() -> pipeline.normalizeStrafe(0.35, 151, 2)),
+                new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.242, 100)),
 
                 new ParallelCommandGroup(
@@ -145,7 +145,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
                 new DriveInSafe(drive, distance, true, 0.35),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                new WaitCommand(75),
+                new WaitCommand(125),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
 
         );
@@ -163,7 +163,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
                         new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
-                                new InstantCommand(() -> score.newLiftPID(940, 1)),
+                                new InstantCommand(() -> score.newLiftPID(930, 0.85)),
                                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
                         ),
@@ -188,7 +188,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
                         //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
                         new InstantCommand(() -> sleep(5)),
                         new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 1) * 0.025), 100)),
+                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 2) * 0.025), 100)),
 
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
@@ -198,7 +198,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
                         new DriveInSafe(drive, distance, true, 0.35),
                         new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                        new InstantCommand(() -> sleep(75)),
+                        new InstantCommand(() -> sleep(125)),
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
 
 
@@ -217,7 +217,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
                             new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
                             new ParallelCommandGroup(
                                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
-                                    new InstantCommand(() -> score.newLiftPID(940, 1)),
+                                    new InstantCommand(() -> score.newLiftPID(930, 0.85)),
                                     new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                                     new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
                             ),
@@ -255,12 +255,14 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
 
 
         if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
-            drive.simpleMoveToPosition(-450, MecDriveV2.MovementType.STRAIGHT, 1);
+            drive.simpleMoveToPosition(-440, MecDriveV2.MovementType.STRAIGHT, 1);
 
 
 
         } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
             drive.simpleMoveToPosition(850, MecDriveV2.MovementType.STRAIGHT, 1);
+        } else {
+            drive.simpleMoveToPosition(150, MecDriveV2.MovementType.STRAIGHT, 1);
         }
 
         sleep(50);

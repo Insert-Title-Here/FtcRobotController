@@ -123,7 +123,7 @@ public class CommandBlueRightTest extends LinearOpMode {
                 //TODO: need to add preload logic (whether preload or not)
                 new ParallelCommandGroup(
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                        new InstantCommand(() -> score.newLiftPID(940, 1))
+                        new InstantCommand(() -> score.newLiftPID(970, 1))
                 ),
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -144,7 +144,7 @@ public class CommandBlueRightTest extends LinearOpMode {
                 new WaitCommand(100),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
                 new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                new InstantCommand(() -> score.newLiftPID(960, 1)),
+                new InstantCommand(() -> score.newLiftPID(1012, 1)),
 
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
