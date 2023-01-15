@@ -378,7 +378,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
             maxLength = 0;
 
             // Find largest contour
-            for(int i = 0; i < xList.size() && i < contourLengths.size() && i < yList.size(); i++) {
+            for(int i = 0; i < xList.size() && i < contourLengths.size() && i < yList.size() && i < contours.size(); i++) {
                 if(Imgproc.contourArea(contours.get(i)) > maxLength) {
                     maxLength = Imgproc.contourArea(contours.get(i));
                     maxLengthIndex = i;
