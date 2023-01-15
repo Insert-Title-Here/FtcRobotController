@@ -258,7 +258,7 @@ public class ScoringSystem {
             if(stack){
                 goToPosition(getEncoderPosition() + 330, 1);
             }else{
-                goToPosition(getEncoderPosition() + 100, 1);
+                goToPosition(constant.getHeightLow(), 1);
             }
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
             telemetry.update();

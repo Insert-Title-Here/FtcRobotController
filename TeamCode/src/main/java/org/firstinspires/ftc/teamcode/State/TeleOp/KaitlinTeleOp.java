@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp
 // This teleop does not contain the colorsensor code
-public class MainTeleOp extends LinearOpMode {
+public class KaitlinTeleOp extends LinearOpMode {
     //TODO: change names if you want to
     MecanumDrive drive;
     ScoringSystem score;
@@ -302,52 +302,6 @@ public class MainTeleOp extends LinearOpMode {
             }
         };
 
-
-
-        //thread for imu and sensors(if needed)
-
-        imuThread = new Thread(){
-            @Override
-            public void run(){
-                while(opModeIsActive()){
-
-                    if(gamepad1.right_stick_button) {
-                        //while(opModeisActive(){
-                        // Orientation angle = imu.getAngularOrientation();
-
-                        //synchronized Orientation getAngularOrientation();
-                        // }
-
-                        if(imu.getAngularOrientation().firstAngle < 0){
-                            isTurning = true;
-                            drive.turn180(Math.PI/1.1);
-                            isTurning = false;
-                        }else{
-                            isTurning = true;
-                            drive.turn180(-Math.PI/1.1);
-                            isTurning = false;
-                        }
-                    }
-                    //turn scoring
-                    if (gamepad1.left_bumper) {
-                        if(imu.getAngularOrientation().firstAngle < 0){
-                            isTurning = true;
-                            drive.turn180(Math.PI/1.1);
-                            isTurning = false;
-                        }else{
-                            isTurning = true;
-                            drive.turn180(-Math.PI/1.1);
-                            isTurning = false;
-                        }
-
-                    }
-
-                }
-
-            }
-        };
-
-
         score.setClawPosition(constant.getClawOpenPos());
         score.setScoreBoolean(true, false, false);
         score.setCamPosition(constant.getStrafeLowCamPos());
@@ -355,7 +309,6 @@ public class MainTeleOp extends LinearOpMode {
         telemetry.update();
         waitForStart();
         liftThread.start();
-        imuThread.start();
         score.goToPosition(constant.getHeightBottom(), 0.6);
         score.setPower(constant.getSteadyPow());
         while(opModeIsActive()){

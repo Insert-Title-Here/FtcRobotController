@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp
 // This teleop does not contain the colorsensor code
-public class MainTeleOp extends LinearOpMode {
+public class EthanTeleOp extends LinearOpMode {
     //TODO: change names if you want to
     MecanumDrive drive;
     ScoringSystem score;
