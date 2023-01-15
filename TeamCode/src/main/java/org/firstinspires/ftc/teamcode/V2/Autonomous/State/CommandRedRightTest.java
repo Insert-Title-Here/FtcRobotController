@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AprilTagsTesting.KevinGodPipelineAprilTag;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
+import org.firstinspires.ftc.teamcode.V2.Autonomous.State.CustomCommands.DriveInSafe;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.MecDriveV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -73,7 +74,6 @@ public class CommandRedRightTest extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        //TODO: fix tuning for red right side and pass in correct auto side
         pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_RIGHT, true);
 
         camera.setPipeline(pipeline);
@@ -110,10 +110,10 @@ public class CommandRedRightTest extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.REDCONE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2250, 1, MecDriveV2.MovementType.STRAIGHT, 0.85)),
+                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2200, 1, MecDriveV2.MovementType.STRAIGHT, 0.85)),
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
-                new InstantCommand(() -> drive.simpleMoveToPosition(685, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(700, MecDriveV2.MovementType.STRAIGHT, 0.4)),
                 new InstantCommand(() -> drive.tankRotatePID(3 * Math.PI / 8, 1, false)),
                 new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
@@ -124,7 +124,7 @@ public class CommandRedRightTest extends LinearOpMode {
                 //TODO: need to add preload logic (whether preload or not)
                 new ParallelCommandGroup(
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                        new InstantCommand(() -> score.newLiftPID(970, 1))
+                        new InstantCommand(() -> score.newLiftPID(960, 1))
                 ),
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -138,14 +138,12 @@ public class CommandRedRightTest extends LinearOpMode {
 
                 new InstantCommand(() -> score.moveToPosition(0, 0.63)),
 
-
-
-                new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                //new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                new WaitCommand(100),
+                new WaitCommand(200),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                new InstantCommand(() -> score.newLiftPID(1025, 1)),
+                new InstantCommand(() -> pipeline.normalize(0.25, 169, 3)),
+                new InstantCommand(() -> score.newLiftPID(1002, 1)),
 
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -162,23 +160,27 @@ public class CommandRedRightTest extends LinearOpMode {
 
         //Should add 5 cycles
         for(int i = 0; i < 4; i++){
-            int finalI = i;
+            int finalI;
+            if (i != 3) {
+                finalI = i;
+            } else {
+                finalI = 2;
+            }
+
             CommandScheduler.getInstance().schedule(
-
-
-                    new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5))  ,
+                    new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                     new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                    new WaitCommand(100),
+                    new WaitCommand(200),
                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                    new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                    new InstantCommand(() -> score.newLiftPID(1025, 1)),
+                    new InstantCommand(() -> pipeline.normalize(0.25, 169, 3)),
+                    new InstantCommand(() -> score.newLiftPID(1002, 1)),
 
 
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
                     new WaitCommand(100),
                     new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
                     new WaitCommand(400),
-                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 1) * 0.03), 800, 100)),
+                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 2) * 0.03), 800, 100)),
 
 
                     new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
