@@ -285,7 +285,7 @@ public class ScoringSystem {
                 }
                 drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 20, "move backwards");
                 // lift up
-                goToPosition(constant.getHeightLow(), 0.8);
+                goToPositionPID(constant.getHeightLow(), 0.7);
 
                 telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
                 telemetry.update();

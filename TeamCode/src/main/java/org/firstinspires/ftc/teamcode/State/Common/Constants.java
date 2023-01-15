@@ -13,7 +13,7 @@ public class  Constants {
     private double clawHighThreshold = 0.8;
     private int stackHeight = 188;
     private double steadyPow = 0.18;
-    private int stackIntervalHeight = 40;
+    private int stackIntervalHeight = 50;
     private int heightBottom = 0;
     private double sleeveCamPos = 0.23;
     private double straightCamPos = 0.32;
