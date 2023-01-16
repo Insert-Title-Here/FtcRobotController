@@ -46,6 +46,7 @@ public class TestTeleOp extends LinearOpMode {
             }
             telemetry.addData("blue", drive.currentBlueColor());
             telemetry.addData("red", drive.currentRedColor());
+            telemetry.addData("grabberColorSensor", score.getDistance());
             telemetry.update();
 
         }
