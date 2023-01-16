@@ -637,6 +637,7 @@ public void absTurnPID(double radians) {
 
  */
     public void absTurnPID(double radians) {
+        double startAngle = imu.getAngularOrientation().firstAngle;
 
         double priorError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
         double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
@@ -647,7 +648,7 @@ public void absTurnPID(double radians) {
         while (Math.abs(imu.getAngularOrientation().firstAngle-radians) > 0.08) {
             double currentRadians = imu.getAngularOrientation().firstAngle;
 
-            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference);
+            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference, startAngle, radians);
             if (radians < currentRadians-0.004) {
                 //if(startAngle > 0){
                     //setPower(-drivePower, drivePower, -drivePower, drivePower);
@@ -740,10 +741,14 @@ public void absTurnPID(double radians) {
 
     }
     public static double proportion = 0;
-    public double PIDAbsTurnPower(double priorError, double currentError, double timeChange){
+    public double PIDAbsTurnPower(double priorError, double currentError, double timeChange, double startAngle, double targetAngle){
         double proportionCoefficient = 0.55;//0.555
         double derivativeCoefficient = 0;//0.9
-
+        if(Math.abs(startAngle - targetAngle) < Math.PI / 3){
+            proportionCoefficient = 0.58;
+        }else if(Math.abs(startAngle - targetAngle) < Math.PI / 2){
+            proportionCoefficient = 0.56;
+        }
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
 
     }

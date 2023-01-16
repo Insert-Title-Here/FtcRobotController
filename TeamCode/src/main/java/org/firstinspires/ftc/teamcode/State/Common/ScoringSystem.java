@@ -234,7 +234,7 @@ public class ScoringSystem {
     }
     // Uses color sensor to grab cone
     public boolean grabCone() throws InterruptedException {
-        if (colorCone.getDistance(DistanceUnit.CM) < 2) {
+        if (colorCone.getDistance(DistanceUnit.CM) < 2.5) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
             sleep(500);
@@ -250,7 +250,7 @@ public class ScoringSystem {
     //uses color sensor to grab cone(this one is used when trying to grab from the stack of 5 cones
     // tele version
     public boolean grabCone(boolean stack) throws InterruptedException {
-        if (colorCone.getDistance(DistanceUnit.CM) < 2) {
+        if (colorCone.getDistance(DistanceUnit.CM) < 2.5) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
             sleep(500);
