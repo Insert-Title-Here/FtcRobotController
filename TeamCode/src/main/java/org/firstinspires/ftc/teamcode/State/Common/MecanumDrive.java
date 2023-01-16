@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.State.Common;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -14,7 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+@Config
 public class MecanumDrive {
     DcMotor fl, fr, bl, br;
     Telemetry telemetry;
@@ -738,6 +739,7 @@ public void absTurnPID(double radians) {
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
 
     }
+    public static double proportion = 0;
     public double PIDAbsTurnPower(double priorError, double currentError, double timeChange){
         double proportionCoefficient = 0.55;//0.555
         double derivativeCoefficient = 0;//0.9

@@ -20,7 +20,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@TeleOp
+@TeleOp @Config
 // This teleop does not contain the colorsensor code
 public class MainTeleOp extends LinearOpMode {
     //TODO: change names if you want to
@@ -50,7 +50,7 @@ public class MainTeleOp extends LinearOpMode {
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.3;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
 

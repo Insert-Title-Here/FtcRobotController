@@ -50,7 +50,7 @@ public class KaitlinTeleOp extends LinearOpMode {
 
 
     private final double NORMAL_LINEAR_MODIFIER = 0.7;
-    private final double NORMAL_ROTATIONAL_MODIFIER = 0.4;
+    private final double NORMAL_ROTATIONAL_MODIFIER = 0.3;
     private final double SPRINT_LINEAR_MODIFIER = 1;
     private final double SPRINT_ROTATIONAL_MODIFIER = 0.75;
 
