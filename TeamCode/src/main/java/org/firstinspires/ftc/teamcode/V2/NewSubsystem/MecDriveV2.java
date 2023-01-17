@@ -688,6 +688,10 @@ public class MecDriveV2 {
                 + Math.abs(bl.getCurrentPosition()) /*+ Math.abs(br.getCurrentPosition()))*/) / 4;
     }
 
+    public double actualAvgPos(){
+        return (Math.abs(-fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(-bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
+    }
+
 
 
 
@@ -2064,6 +2068,17 @@ public class MecDriveV2 {
         fr.setPower(frPow) ;
         bl.setPower(-blPow);
         br.setPower(brPow);
+    }
+
+    public void setVelocity(double flPow, double frPow, double blPow, double brPow) {
+        fl.setVelocity(-flPow);
+        fr.setVelocity(frPow); ;
+        bl.setVelocity(-blPow);
+        br.setVelocity(brPow);
+    }
+
+    public double getAvgVel() {
+       return (-fl.getVelocity() + fr.getVelocity() - bl.getVelocity() + br.getVelocity()) / 4;
     }
 
 

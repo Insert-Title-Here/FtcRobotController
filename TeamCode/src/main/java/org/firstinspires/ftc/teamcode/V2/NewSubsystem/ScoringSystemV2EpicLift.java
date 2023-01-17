@@ -34,7 +34,7 @@ public class ScoringSystemV2EpicLift {
     ElapsedTime time;
     PIDCoefficients pidf = new PIDCoefficients(0.0085, 0.0000275, 0.00023);
 
-    File file = AppUtil.getInstance().getSettingsFile("AmpDraw.txt");
+    File file = AppUtil.getInstance().getSettingsFile("motion.txt");
     String composite = "";
 
 

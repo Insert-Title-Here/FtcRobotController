@@ -32,6 +32,7 @@ public class PIDFTestingDrive extends LinearOpMode {
     //Constants constants;
 
     public static int target = 1000;
+    public static double velocity = 10;
     public static double p = 0.006, i = 0, d = 0.0003;
 
     int flPreviousError = 0;
@@ -89,7 +90,9 @@ public class PIDFTestingDrive extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            goTOPIDPos(target, 1, MecDrive.MovementType.STRAIGHT);
+            drive.setVelocity(velocity,velocity,velocity,velocity);
+
+            /*goTOPIDPos(target, 1, MecDrive.MovementType.STRAIGHT);
 
 
             telemetry.addData("flPos", -1 * drive.getFLEncoder());
@@ -101,7 +104,7 @@ public class PIDFTestingDrive extends LinearOpMode {
             //telemetry.addData("current", drive.getFirstAngle());
             telemetry.addData("target", target);
 
-            telemetry.update();
+            telemetry.update();*/
 
         }
 

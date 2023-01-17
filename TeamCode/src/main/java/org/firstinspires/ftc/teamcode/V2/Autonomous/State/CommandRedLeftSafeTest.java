@@ -107,7 +107,7 @@ public class CommandRedLeftSafeTest extends LinearOpMode {
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID((-5 * Math.PI) / 8, 1, false)),
                 //new InstantCommand(() -> drive.simpleMoveToPosition(-780, MecDriveV2.MovementType.ROTATE, 1)),
-                new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
+                new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 170, 2)),
                 new ParallelCommandGroup(
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
                         new InstantCommand(() -> score.newLiftPID(940, 1)),
@@ -160,7 +160,7 @@ public class CommandRedLeftSafeTest extends LinearOpMode {
                         //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
                         new InstantCommand(() -> drive.tankRotatePID((-5 * Math.PI) / 8, 1, false)),
                         //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
-                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
+                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 170, 2)),
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
                                 new InstantCommand(() -> score.newLiftPID(930, 0.85)),
@@ -214,7 +214,7 @@ public class CommandRedLeftSafeTest extends LinearOpMode {
                             //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
                             new InstantCommand(() -> drive.tankRotatePID((-5 * Math.PI) / 8, 1, false)),
                             //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
-                            new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
+                            new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 170, 2)),
                             new ParallelCommandGroup(
                                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
                                     new InstantCommand(() -> score.newLiftPID(930, 0.85)),

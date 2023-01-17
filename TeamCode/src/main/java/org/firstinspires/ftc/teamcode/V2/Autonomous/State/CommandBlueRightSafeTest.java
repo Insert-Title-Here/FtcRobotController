@@ -188,7 +188,7 @@ public class CommandBlueRightSafeTest extends LinearOpMode {
                         //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
                         new InstantCommand(() -> sleep(5)),
                         new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 2) * 0.025), 100)),
+                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 1) * 0.025), 100)),
 
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
