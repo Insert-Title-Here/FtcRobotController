@@ -467,11 +467,8 @@ public class MainTeleOp extends LinearOpMode {
 
              */
             if(gamepad1.right_bumper){
-                scoring = true;
-            }else if(!gamepad1.right_bumper){
-                scoring = false;
+                drive.absTurnPID(Math.PI / 2);
             }
-
 
 
             //resets the drive motor encoders
