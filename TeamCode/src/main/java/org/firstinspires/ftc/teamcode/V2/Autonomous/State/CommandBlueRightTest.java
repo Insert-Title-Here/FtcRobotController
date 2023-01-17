@@ -212,7 +212,6 @@ public class CommandBlueRightTest extends LinearOpMode {
         );
 
 
-        //TODO: need to add fail timer
         CommandScheduler.getInstance().run();
 
         while(CommandScheduler.getInstance().isScheduled(

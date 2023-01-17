@@ -105,6 +105,9 @@ public class CommandBlueLeftTest extends LinearOpMode {
 
         waitForStart();
 
+        double startTime = time.seconds();
+
+
         CommandScheduler.getInstance().schedule(
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2)),
@@ -118,27 +121,42 @@ public class CommandBlueLeftTest extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
-                new InstantCommand(() -> pipeline.normalize(0.15, 169, 2)),
+                new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
+        );
 
-                //TODO: need to add preload logic (whether preload or not)
-                new ParallelCommandGroup(
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                        new InstantCommand(() -> score.newLiftPID(970, 1))
-                ),
+        if(distance.getNormalizedColors().blue > 0.6) {
 
-                new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
-                new WaitCommand(200),
-                new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
-                new WaitCommand(400),
-                new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
-                new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1)),
+            CommandScheduler.getInstance().schedule(
 
-                new WaitCommand(200),
+                    //TODO: need to add preload logic (whether preload or not)
+                    new ParallelCommandGroup(
+                            new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
+                            new InstantCommand(() -> score.newLiftPID(970, 1))
+                    ),
 
-                new InstantCommand(() -> score.moveToPosition(0, 0.63)),
+                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
+                    new WaitCommand(200),
+                    new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
+                    new WaitCommand(400),
+                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
+                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1)),
+
+                    new WaitCommand(200),
+
+                    new InstantCommand(() -> score.moveToPosition(0, 0.63))
 
 
 
+            );
+        }else{
+            CommandScheduler.getInstance().schedule(
+                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
+                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1))
+            );
+        }
+
+
+        CommandScheduler.getInstance().schedule(
                 new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new WaitCommand(100),
@@ -156,7 +174,6 @@ public class CommandBlueLeftTest extends LinearOpMode {
 
                 new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 - 0.1)),
                 new InstantCommand(() -> score.moveToPosition(0, 0.63))
-
         );
 
         //Should add 5 cycles
@@ -181,6 +198,16 @@ public class CommandBlueLeftTest extends LinearOpMode {
                     new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
                     new InstantCommand(() -> score.moveToPosition(0, 0.63))
             );
+
+            //TODO: added this
+            // Check for cone and cycle again if one is present
+            if (i == 3 && distance.getNormalizedColors().red > 0.6) {
+                i = 2;
+            }
+
+            if (time.seconds() - startTime > 25) {
+                i = 5;
+            }
         }
 
 
