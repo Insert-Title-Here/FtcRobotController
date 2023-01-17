@@ -383,7 +383,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
             if(gamepad1.right_bumper){
-                drive.absTurnPID(Math.PI / 2);
+                drive.absTurnPID(Math.PI /2);
             }
             /*
             //turn scoring(turn in other thread)
@@ -466,11 +466,6 @@ public class MainTeleOp extends LinearOpMode {
             }
 
              */
-            if(gamepad1.right_bumper){
-                scoring = true;
-            }else if(!gamepad1.right_bumper){
-                scoring = false;
-            }
 
 
 

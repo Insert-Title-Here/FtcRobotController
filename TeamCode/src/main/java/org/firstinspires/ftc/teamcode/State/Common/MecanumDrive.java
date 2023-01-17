@@ -67,10 +67,10 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         fl.setDirection(DcMotor.Direction.REVERSE);
         fr.setDirection(DcMotor.Direction.REVERSE);
@@ -642,13 +642,16 @@ public void absTurnPID(double radians) {
         double priorError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
         double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
 
+        double angleTravel = Math.abs(startAngle - radians);
+        double proportionPow = 1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718);
+
         double priorTime = System.currentTimeMillis();
         double timeDifference = 0;
         // Absolute turning
         while (Math.abs(imu.getAngularOrientation().firstAngle-radians) > 0.08) {
             double currentRadians = imu.getAngularOrientation().firstAngle;
 
-            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference, startAngle, radians);
+            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference, proportionPow);
             if (radians < currentRadians-0.004) {
                 //if(startAngle > 0){
                     //setPower(-drivePower, drivePower, -drivePower, drivePower);
@@ -741,14 +744,21 @@ public void absTurnPID(double radians) {
 
     }
     public static double proportion = 0;
-    public double PIDAbsTurnPower(double priorError, double currentError, double timeChange, double startAngle, double targetAngle){
-        double proportionCoefficient = 0.55;//0.555
+    public double PIDAbsTurnPower(double priorError, double currentError, double timeChange, double proportionPow){
+        double proportionCoefficient = proportionPow;//0.
         double derivativeCoefficient = 0;//0.9
+        /*
         if(Math.abs(startAngle - targetAngle) < Math.PI / 3){
-            proportionCoefficient = 0.58;
+            proportionCoefficient = 0.39;
         }else if(Math.abs(startAngle - targetAngle) < Math.PI / 2){
-            proportionCoefficient = 0.56;
+            proportionCoefficient = 0.47;
         }
+
+         */
+        //90 = 0.47
+        // 135 = 0.39
+        // 45 = 0.68
+        // y = 0.22339x - 0.01
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
 
     }
