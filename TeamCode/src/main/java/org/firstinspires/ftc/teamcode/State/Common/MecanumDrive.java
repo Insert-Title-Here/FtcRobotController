@@ -745,20 +745,11 @@ public void absTurnPID(double radians) {
     }
     public static double proportion = 0;
     public double PIDAbsTurnPower(double priorError, double currentError, double timeChange, double proportionPow){
-        double proportionCoefficient = proportionPow;//0.
+        double proportionCoefficient = proportionPow;//0.47
         double derivativeCoefficient = 0;//0.9
-        /*
-        if(Math.abs(startAngle - targetAngle) < Math.PI / 3){
-            proportionCoefficient = 0.39;
-        }else if(Math.abs(startAngle - targetAngle) < Math.PI / 2){
-            proportionCoefficient = 0.47;
-        }
-
-         */
         //90 = 0.47
         // 135 = 0.39
         // 45 = 0.68
-        // y = 0.22339x - 0.01
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
 
     }

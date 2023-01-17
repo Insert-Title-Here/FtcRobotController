@@ -142,11 +142,11 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             score.goToPosition(50, 0.8);
             sleep(100);
             // go forward next to pole
-            drive.goToPosition(0.8, 0.8, 0.8, 0.8, 1060, "go forward next to pole");
+            drive.goToPosition(0.8, 0.8, 0.8, 0.8, 758, "go forward next to pole");
             // turn to left 45 degrees to medium pole
             drive.turn45(-Math.PI / 4);
             // go to pole a bit
-            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 90, "go forward some to pole");
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 64, "go forward some to pole");
             sleep(50);
 
             //moves robot to correct parking position
@@ -245,7 +245,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             sleep(50);
-            drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 1580, "go backwards");
+            drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 1130, "go backwards");
 
             drive.absTurnPID(Math.PI / 2);
 
@@ -263,7 +263,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                 if (detect1.getcX() < properCX - 5 && right) {
                     // strafe to the right
                     //                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
-                    drive.goToPosition(-0.25, 0.25, 0.25, -0.25);
+                    drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
                     telemetry.addData("success 1", "sucess");
                     telemetry.update();
@@ -271,7 +271,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                 }
                 if (detect1.getcX() > properCX + 5 && left) {
                     // strafe to the left (change fr and bl)
-                    drive.goToPosition(0.25, -0.25, -0.25, 0.25);
+                    drive.goToPosition(0.2, -0.2, -0.2, 0.2);
 
                     //                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
 
@@ -290,9 +290,9 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
             drive.absTurnPID(0);
 
-            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 1140, "go forwards");
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 815, "go forwards");
 
-            drive.goToPosition(0.8, 0, 0, 0.8, 75, "to the right a bit");
+            drive.goToPosition(0.8, 0, 0, 0.8, 54, "to the right a bit");
 
 
             drive.findTapeMIDAUTO("blueleft");
@@ -315,7 +315,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             sleep(50);
-            drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 1580, "go backwards");
+            drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 1130, "go backwards");
 
             drive.absTurnPID(Math.PI / 2);
 
@@ -333,7 +333,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                 if (detect1.getcX() < properCX - 5 && right) {
                     // strafe to the right
                     //                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
-                    drive.goToPosition(-0.25, 0.25, 0.25, -0.25);
+                    drive.goToPosition(-0.2, 0.2, 0.2, -0.2);
 
                     telemetry.addData("success 1", "sucess");
                     telemetry.update();
@@ -341,7 +341,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                 }
                 if (detect1.getcX() > properCX + 5 && left) {
                     // strafe to the left (change fr and bl)
-                    drive.goToPosition(0.25, -0.25, -0.25, 0.25);
+                    drive.goToPosition(0.2, -0.2, -0.2, 0.2);
 
                     //                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
 
@@ -360,7 +360,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
             drive.absTurnPID(0);
         } else if (toggle == 2) {
-            drive.goToPosition(0, 0.3, 0.3, 0, 200, "1");
+            drive.goToPosition(0, 0.3, 0.3, 0, 143, "1");
 
         } else {
 
@@ -368,11 +368,11 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             score.goToPosition(50, 0.8);
             sleep(100);
             // go forward next to pole
-            drive.goToPosition(0.8, 0.8, 0.8, 0.8, 2150, "go forward next to pole");
+            drive.goToPosition(0.8, 0.8, 0.8, 0.8, 1437, "go forward next to pole");
             // turn to right 45 degrees to high pole
             drive.turn45(-Math.PI / 4);
             // go to pole a bit
-            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 90, "go forward some to pole");
+            drive.goToPosition(0.4, 0.4, 0.4, 0.4, 64, "go forward some to pole");
             // move arm high
             lifting = true;
             score.goToPositionPID(constants.getHeightHigh()+5, 0.85);
@@ -415,7 +415,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             drive.goToPosition(0, 0, 0, 0);
 
             sum = 0;
-            scoreConeMed(300, 0, 0, 0);
+            scoreConeMed(215, 0, 0, 0);
 
             // turn to left
 //            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
@@ -423,9 +423,9 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
             score.setClawPosition(constants.getClawOpenPos());
             //go forward a bit
-            drive.goToPosition(0.6, 0.6, 0.6, 0.6, 300, "forward" );
+            drive.goToPosition(0.6, 0.6, 0.6, 0.6, 215, "forward" );
 
-            drive.goToPosition(0.6, -0.3, -0.3, 0.6, 150, "to the right a bit");
+            drive.goToPosition(0.6, -0.3, -0.3, 0.6, 107, "to the right a bit");
 
 
             // +'s ---------------------------------------->
@@ -452,7 +452,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             sleep(50);
-            drive.goToPosition(-0.8, -0.85, -0.8, -0.85, 1380, "go backwards");
+            drive.goToPosition(-0.8, -0.85, -0.8, -0.85, 987, "go backwards");
 
             drive.absTurnPID(0);
 
@@ -491,15 +491,15 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                 //            }
             }
 
-            drive.goToPosition(0.5, 0.5, 0.5, 0.5, 50, "forward a bit");
+            drive.goToPosition(0.5, 0.5, 0.5, 0.5, 36, "forward a bit");
 
-            scoreConeMed(100, 150, 100, 100);
+            scoreConeMed(72, 150, 100, 100);
 
             drive.absTurnPID(Math.PI / 2);
 
-            drive.goToPosition(0.6, 0.6, 0.6, 0.6, 1040, "go forwards");
+            drive.goToPosition(0.6, 0.6, 0.6, 0.6, 744, "go forwards");
 
-            drive.goToPosition(0.6, -0.2, -0.2, 0.6, 100, "to the right a bit");
+            drive.goToPosition(0.6, -0.2, -0.2, 0.6, 72, "to the right a bit");
 
 
             drive.findTapeMIDAUTO("blueleft");
@@ -524,7 +524,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             sleep(50);
-            drive.goToPosition(-0.8, -0.85, -0.8, -0.85, 1380, "go backwards");
+            drive.goToPosition(-0.8, -0.85, -0.8, -0.85, 987, "go backwards");
 
             drive.absTurnPID(0);
 
@@ -563,15 +563,15 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                 //            }
             }
 
-            drive.goToPosition(0.5, 0.5, 0.5, 0.5, 100, "forward a bit");
+            drive.goToPosition(0.5, 0.5, 0.5, 0.5, 72, "forward a bit");
 
-            scoreConeMed(100, 150, 100, 100);
+            scoreConeMed(72, 150, 100, 100);
 
             drive.absTurnPID(Math.PI / 2);
 
-            drive.goToPosition(0.6, 0.6, 0.6, 0.6, 1040, "go forwards");
+            drive.goToPosition(0.6, 0.6, 0.6, 0.6, 744, "go forwards");
 
-            drive.goToPosition(0.6, -0.2, -0.2, 0.6, 200, "to the right a bit");
+            drive.goToPosition(0.6, -0.2, -0.2, 0.6, 143, "to the right a bit");
 
 
             drive.findTapeMIDAUTO("blueleft");
@@ -591,7 +591,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             sleep(50);
-            drive.goToPosition(-0.8, -0.85, -0.8, -0.85, 1380, "go backwards");
+            drive.goToPosition(-0.8, -0.85, -0.8, -0.85, 987, "go backwards");
 
             drive.absTurnPID(0);
 
@@ -630,9 +630,9 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                 //            }
             }
 
-            drive.goToPosition(0.5, 0.5, 0.5, 0.5, 100, "forward a bit");
+            drive.goToPosition(0.5, 0.5, 0.5, 0.5, 72, "forward a bit");
 
-            scoreConeMed(100, 150, 100, 100);
+            scoreConeMed(71, 150, 100, 100);
 
             drive.absTurnPID(Math.PI / 2);
 
@@ -643,20 +643,20 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             //moves robot to correct parking position
                 if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.LEFT) {
                     // go forward
-                    drive.goToPosition(0.6, 0.6, 0.6, 0.6, 1240, "go forwards");
+                    drive.goToPosition(0.6, 0.6, 0.6, 0.6, 887, "go forwards");
                     // strafe left
-                    drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 700, "strafe left");
+                    drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
 
                 } else if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.CENTER) {
                     // go forward
-                    drive.goToPosition(0.6, 0.6, 0.6, 0.6, 300, "go forwards");
+                    drive.goToPosition(0.6, 0.6, 0.6, 0.6, 215, "go forwards");
                     // strafe left
-                    drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 700, "strafe left");
+                    drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
                 } else {
                     // go backwards
-                    drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 300, "go backwards");
+                    drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 215, "go backwards");
                     // strafe left
-                    drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 700, "strafe left");
+                    drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
 
 
                 }
