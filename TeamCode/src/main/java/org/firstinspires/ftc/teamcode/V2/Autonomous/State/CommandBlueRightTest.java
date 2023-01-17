@@ -174,6 +174,7 @@ public class CommandBlueRightTest extends LinearOpMode {
 
         //Should add 5 cycles
         for(int i = 0; i < 4; i++){
+            telemetry.addData("stuff", i);
             int finalI = i;
             CommandScheduler.getInstance().schedule(
                     new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5)),
@@ -203,6 +204,8 @@ public class CommandBlueRightTest extends LinearOpMode {
             if (time.seconds() - startTime > 25) {
                 i = 5;
             }
+
+            telemetry.update();
         }
 
 
