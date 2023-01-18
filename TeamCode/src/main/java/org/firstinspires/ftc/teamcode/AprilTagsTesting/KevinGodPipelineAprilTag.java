@@ -475,6 +475,52 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
     }
 
+
+    public int normalize(int velocity, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        boolean wrongWay = false;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+
+
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+            if(getXContour() > xMax) {
+                drive.setVelocity(velocity, -velocity, velocity, -velocity);
+            } else {
+                drive.setVelocity(-velocity, velocity, -velocity, velocity);
+            }
+
+//            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
+                //normlizationBroke = true;
+                wrongWay = true;
+                break;
+            }
+        }
+        drive.simpleBrake();
+
+        isNormalizing = false;
+
+
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+
+        return (int)(startPos - drive.avgPos());
+
+
+
+    }
+
+
     public int normalizeStrafe(double power, int target, int tolerance) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();

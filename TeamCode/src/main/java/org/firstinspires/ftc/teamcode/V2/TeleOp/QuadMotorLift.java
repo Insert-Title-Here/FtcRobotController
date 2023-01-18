@@ -19,12 +19,14 @@ public class QuadMotorLift extends LinearOpMode {
     ScoringSystemV2EpicLift score;
     MecDrive drive;
 
+    double linkageToggleSpeed = 0.001;
+
 
     ColorRangeSensor distance;
 
     PassivePower passive;
 
-    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp, scoringPattern;
+    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp, scoringPattern, changeToggle;
     volatile boolean liftBrokenMode = false;
     volatile boolean optionsFlag = true;
 
@@ -54,6 +56,7 @@ public class QuadMotorLift extends LinearOpMode {
         linkageUp = false;
         firstDpadUp = true;
         scoringPattern = false;
+        changeToggle = true;
 
 
 
@@ -157,7 +160,7 @@ public class QuadMotorLift extends LinearOpMode {
                         //TODO: fix this
                         score.lowerConeStack();
 
-                        if(scoringPattern){
+                        if(scoringPattern ){
                             if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW){
                                 score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.MEDIUM);
                             }else if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.MEDIUM){
@@ -297,7 +300,10 @@ public class QuadMotorLift extends LinearOpMode {
                     //Changing scoring modes (toggle)
                     if(gamepad1.y){
                         score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.LOW);
-                        scoringPattern = true;
+
+                        if(!liftBrokenMode) {
+                            scoringPattern = true;
+                        }
 
                     }else if(gamepad1.x){
                         score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.MEDIUM);
@@ -339,11 +345,23 @@ public class QuadMotorLift extends LinearOpMode {
                     }
 
                     if (gamepad2.dpad_up) {
-                        score.setLinkagePosition(score.getLeftLinkage() + 0.001);
+                        score.setLinkagePosition(score.getLeftLinkage() + linkageToggleSpeed);
                     }
 
                     if (gamepad2.dpad_down) {
-                        score.setLinkagePosition(score.getLeftLinkage() - 0.001);
+                        score.setLinkagePosition(score.getLeftLinkage() - linkageToggleSpeed);
+                    }
+
+                    if(gamepad2.left_bumper && changeToggle){
+                        if(linkageToggleSpeed == 0.001){
+                            linkageToggleSpeed = 0.0012;
+                        }else{
+                            linkageToggleSpeed = 0.001;
+                        }
+                    }
+
+                    if(!gamepad2.left_bumper){
+                        changeToggle = true;
                     }
 
 

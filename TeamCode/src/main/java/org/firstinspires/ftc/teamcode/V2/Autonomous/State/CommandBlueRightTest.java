@@ -120,7 +120,9 @@ public class CommandBlueRightTest extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
-                new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
+                //new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
+                new InstantCommand(() -> pipeline.normalize(100, 169, 3))
+
         );
 
         if (distance.getNormalizedColors().blue > 0.6) {
@@ -154,9 +156,10 @@ public class CommandBlueRightTest extends LinearOpMode {
 
                 new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                new WaitCommand(100),
+                new InstantCommand(() -> sleep(250)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
+                new InstantCommand(() -> pipeline.normalize(100, 169, 3)),
+                //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                 new InstantCommand(() -> score.newLiftPID(1012, 1)),
 
 
@@ -181,7 +184,9 @@ public class CommandBlueRightTest extends LinearOpMode {
                     new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                     new WaitCommand(100),
                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                    new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
+                    new InstantCommand(() -> pipeline.normalize(100, 169, 3)),
+
+                    //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                     new InstantCommand(() -> score.newLiftPID(1012, 1)),
 
 
@@ -197,11 +202,11 @@ public class CommandBlueRightTest extends LinearOpMode {
             );
 
             // Check for cone and cycle again if one is present
-            if (i == 3 && distance.getNormalizedColors().blue > 0.6) {
+            if (i == 3 && distance.getNormalizedColors().blue > 0.4) {
                 i = 2;
             }
 
-            if (time.seconds() - startTime > 25) {
+            if (time.seconds() - startTime > 20) {
                 i = 5;
             }
 
