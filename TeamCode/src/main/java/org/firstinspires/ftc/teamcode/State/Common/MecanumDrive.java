@@ -66,17 +66,17 @@ public class MecanumDrive {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        if(drift) {
+//        if(drift) {
             fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }else{
-            fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
+//        }else{
+//            fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        }
 
         fl.setDirection(DcMotor.Direction.REVERSE);
         fr.setDirection(DcMotor.Direction.REVERSE);
@@ -649,7 +649,7 @@ public void absTurnPID(double radians) {
         double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
 
         double angleTravel = Math.abs(startAngle - radians);
-        double proportionPow = 1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718);
+        double proportionPow = (1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718))-0.04;
 
         double priorTime = System.currentTimeMillis();
         double timeDifference = 0;
