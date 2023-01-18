@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.State.Common.Vector2D;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@TeleOp //@Config
+ //@Config
 //This teleop will have the color sensor code
 public class SpecialTeleOp extends LinearOpMode {
     //TODO: change names if you want to
@@ -52,7 +52,7 @@ public class SpecialTeleOp extends LinearOpMode {
         imu.initialize(parameters);
 
         // detect = new ContourMultiScore(telemetry);
-        drive = new MecanumDrive(hardwareMap, telemetry);
+        drive = new MecanumDrive(hardwareMap, telemetry, true);
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();

@@ -67,7 +67,7 @@ public class MainTeleOp extends LinearOpMode {
         imu.initialize(parameters);
 
         //detect1 = new ContourMultiScoreLeft(telemetry);
-        drive = new MecanumDrive(hardwareMap, telemetry);
+        drive = new MecanumDrive(hardwareMap, telemetry, true);
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();
@@ -478,7 +478,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             //TODO: add telemtry for gamepad a and y positions when you press them
-            telemetry.addData("flPos", drive.getFLPosition());
+            telemetry.addData("fl Pos", drive.getFLPosition());
             telemetry.addData("frPos", drive.getFRPosition());
             telemetry.addData("blPos", drive.getBLPosition());
             telemetry.addData("brPos", drive.getBRPosition());

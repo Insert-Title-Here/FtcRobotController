@@ -21,7 +21,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@TeleOp @Config
 // This teleop does not contain the colorsensor code
 public class SecondTeleOp extends LinearOpMode {
     //TODO: change names if you want to
@@ -60,7 +59,7 @@ public class SecondTeleOp extends LinearOpMode {
         imu.initialize(parameters);
 
         //detect = new ContourMultiScore(telemetry);
-        drive = new MecanumDrive(hardwareMap, telemetry);
+        drive = new MecanumDrive(hardwareMap, telemetry, true);
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();

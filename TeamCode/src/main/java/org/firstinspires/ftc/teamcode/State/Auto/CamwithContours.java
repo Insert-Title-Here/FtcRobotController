@@ -31,7 +31,7 @@ public class CamwithContours extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         detect = new ContourMultiScoreLeft(telemetry);
-        drive = new MecanumDrive(hardwareMap, telemetry);
+        drive = new MecanumDrive(hardwareMap, telemetry, false);
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();
         cont = new AtomicBoolean();

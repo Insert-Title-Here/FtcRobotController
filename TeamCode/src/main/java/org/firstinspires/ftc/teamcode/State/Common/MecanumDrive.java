@@ -34,7 +34,7 @@ public class MecanumDrive {
     public String loggingString;
 
     //constructor
-    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
+    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry, boolean drift) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -66,11 +66,17 @@ public class MecanumDrive {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        if(drift) {
+            fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }else{
+            fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         fl.setDirection(DcMotor.Direction.REVERSE);
         fr.setDirection(DcMotor.Direction.REVERSE);

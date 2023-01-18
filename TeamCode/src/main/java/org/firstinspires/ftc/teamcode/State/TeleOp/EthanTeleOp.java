@@ -67,7 +67,7 @@ public class EthanTeleOp extends LinearOpMode {
         imu.initialize(parameters);
 
         //detect1 = new ContourMultiScoreLeft(telemetry);
-        drive = new MecanumDrive(hardwareMap, telemetry);
+        drive = new MecanumDrive(hardwareMap, telemetry, true);
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();

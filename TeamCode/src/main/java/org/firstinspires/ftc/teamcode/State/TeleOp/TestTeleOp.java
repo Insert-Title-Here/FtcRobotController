@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@TeleOp
+
 public class TestTeleOp extends LinearOpMode {
     //TODO: change names if you want to
     MecanumDrive drive;
@@ -21,7 +21,7 @@ public class TestTeleOp extends LinearOpMode {
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
     @Override
     public void runOpMode() throws InterruptedException {
-        drive = new MecanumDrive(hardwareMap, telemetry);
+        drive = new MecanumDrive(hardwareMap, telemetry, true);
         score = new ScoringSystem(hardwareMap, telemetry);
         discontinue = new AtomicBoolean();
         discontinue.set(false);

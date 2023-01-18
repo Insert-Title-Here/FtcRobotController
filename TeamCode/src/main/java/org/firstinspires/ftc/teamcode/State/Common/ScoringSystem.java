@@ -39,7 +39,7 @@ public class ScoringSystem {
         liftMotorLeft = hardwareMap.get(DcMotor.class, "liftMotorLeft");
         liftMotorRight = hardwareMap.get(DcMotor.class, "liftMotorRight");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "colorCone");
-        drive = new MecanumDrive(hardwareMap, telemetry);
+        drive = new MecanumDrive(hardwareMap, telemetry, false);
         this.telemetry = telemetry;
         // reset encoder's tics for liftMotor (leave commented unless you need to reset the encoder for
         liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
