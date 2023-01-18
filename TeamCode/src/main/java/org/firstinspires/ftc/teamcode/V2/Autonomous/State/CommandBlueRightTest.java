@@ -147,8 +147,10 @@ public class CommandBlueRightTest extends LinearOpMode {
 
         } else {
             CommandScheduler.getInstance().schedule(
+                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1)),
+                    new InstantCommand(() -> score.newLiftPID(300, 0.5)),
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
-                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1))
+                    new InstantCommand(() -> score.newLiftPID(0, 0.5))
             );
         }
 
@@ -206,7 +208,7 @@ public class CommandBlueRightTest extends LinearOpMode {
                 i = 2;
             }
 
-            if (time.seconds() - startTime > 20) {
+            if (time.seconds() - startTime > 25) {
                 i = 5;
             }
 
