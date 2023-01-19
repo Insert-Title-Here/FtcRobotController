@@ -695,7 +695,7 @@ public void absTurnPID(double radians) {
         while (Math.abs(imu.getAngularOrientation().firstAngle-radians) > 0.08) {
             double currentRadians = imu.getAngularOrientation().firstAngle;
 
-            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference, proportionPow);
+            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference, proportionPow, 0);
             if (radians < currentRadians-0.004) {
                 //if(startAngle > 0){
                     //setPower(-drivePower, drivePower, -drivePower, drivePower);
@@ -710,6 +710,46 @@ public void absTurnPID(double radians) {
                 //}else {
                     //turn left # of radians
                     setPower(-drivePower, drivePower, -drivePower, drivePower);
+                //}
+            } else {
+                break;
+            }
+            priorError = currentError;
+            currentError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
+            timeDifference = System.currentTimeMillis() - priorTime;
+            if(timeDifference > 700)break;
+        }
+    }
+    public void absTurnDriftPID(double radians) {
+        double startAngle = imu.getAngularOrientation().firstAngle;
+
+        double priorError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
+        double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
+
+        double angleTravel = Math.abs(startAngle - radians);
+        double proportionPow = (1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718))-0.04;/*equation to calculate proportion*/
+
+        double priorTime = System.currentTimeMillis();
+        double timeDifference = 0;
+        // Absolute turning
+        while (Math.abs(imu.getAngularOrientation().firstAngle-radians) > 0.08) {
+            double currentRadians = imu.getAngularOrientation().firstAngle;
+
+            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference, proportionPow, 350);
+            if (radians < currentRadians-0.004) {
+                //if(startAngle > 0){
+                //setPower(-drivePower, drivePower, -drivePower, drivePower);
+                //}else{
+                //turn right # of radians
+                setPower(-drivePower, drivePower, -drivePower, drivePower);
+                //}
+
+            } else if (currentRadians+0.004 < radians) {
+                // if(startAngle < 0){
+                //setPower(drivePower, -drivePower, drivePower, -drivePower);
+                //}else {
+                //turn left # of radians
+                setPower(-drivePower, drivePower, -drivePower, drivePower);
                 //}
             } else {
                 break;
@@ -788,10 +828,10 @@ public void absTurnPID(double radians) {
 
     }
     //public static double proportion = 0;
-    //public static double derivative = 0;
-    public double PIDAbsTurnPower(double priorError, double currentError, double timeChange, double proportionPow){
-        double proportionCoefficient = proportionPow;//0.47
-        double derivativeCoefficient = 300;//0.9
+   // public static double derivative = 0;
+    public double PIDAbsTurnPower(double priorError, double currentError, double timeChange, double proportion, double derivative){
+        double proportionCoefficient = proportion;//0.47
+        double derivativeCoefficient = derivative;//0.350
         //double totalPower = currentError * proportion + ((currentError-priorError)/timeChange) * derivative;
         //90 = 0.47
         // 135 = 0.39
