@@ -186,6 +186,7 @@ public class MainTeleOp extends LinearOpMode {
                                 //if liftpos is low height ish or higher
                                 if (score.getEncoderPosition() > constant.getHeightLow() - 80) {
                                     if (clawMoveDownToggle.get()) {
+                                        clawMoveDownToggle.set(false);
                                         score.setClawPosition(constant.getClawOpenPos());
                                         try {
                                             Thread.sleep(800);
@@ -193,10 +194,9 @@ public class MainTeleOp extends LinearOpMode {
                                             e.printStackTrace();
                                         }
                                         score.goToPosition(constant.getHeightBottom(), 0.7);
-                                        clawMoveDownToggle.set(false);
                                     } else {
-                                        score.goToPosition(score.getEncoderPosition() - 100, 0.4);
                                         clawMoveDownToggle.set(true);
+                                        score.goToPosition(score.getEncoderPosition() - 100, 0.4);
                                     }
                                 } else {
                                     score.setClawPosition(0);
@@ -500,7 +500,7 @@ public class MainTeleOp extends LinearOpMode {
 
         }
         //drive.writeLoggerToFile();
-        score.writeLoggerToFile();
+        drive.writeLoggerToFile();
         //score.writeLoggerToFile(loggingFile, loggingString);
         drive.setPower(0, 0, 0, 0);
         score.setPower(0);

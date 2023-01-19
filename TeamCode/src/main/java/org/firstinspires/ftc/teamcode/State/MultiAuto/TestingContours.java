@@ -35,7 +35,7 @@ public class TestingContours extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         park = new NormalizationTesting(telemetry);
-        drive = new MecanumDrive(hardwareMap, telemetry, false);
+        drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();
         cont = new AtomicBoolean();

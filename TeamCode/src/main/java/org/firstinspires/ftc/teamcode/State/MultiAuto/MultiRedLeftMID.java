@@ -48,7 +48,7 @@ public class MultiRedLeftMID extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // value initializing
         detect1 = new ContourMultiScoreLeft(telemetry);
-        drive = new MecanumDrive(hardwareMap, telemetry, false);
+        drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();
         liftTurn = new AtomicBoolean();

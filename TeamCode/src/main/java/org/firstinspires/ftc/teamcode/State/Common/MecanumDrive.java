@@ -34,7 +34,7 @@ public class MecanumDrive {
     public String loggingString;
 
     //constructor
-    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry, boolean drift) {
+    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -66,17 +66,54 @@ public class MecanumDrive {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        if(drift) {
-            fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        }else{
-//            fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        }
+
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        fl.setDirection(DcMotor.Direction.REVERSE);
+        fr.setDirection(DcMotor.Direction.REVERSE);
+        bl.setDirection(DcMotor.Direction.REVERSE);
+        br.setDirection(DcMotor.Direction.FORWARD);
+    }
+    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry, boolean notused) {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        this.telemetry = telemetry;
+        active = new AtomicBoolean();
+        colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
+        accumulatedError = 0;
+
+        colorTape.setGain(100);
+        //initiallises drive motors
+        fl = hardwareMap.get(DcMotor.class, "fl");
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        br = hardwareMap.get(DcMotor.class, "br");
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         fl.setDirection(DcMotor.Direction.REVERSE);
         fr.setDirection(DcMotor.Direction.REVERSE);
@@ -643,13 +680,14 @@ public void absTurnPID(double radians) {
 
  */
     public void absTurnPID(double radians) {
+        loggingString += "\n\n\n\n";
         double startAngle = imu.getAngularOrientation().firstAngle;
 
         double priorError = angleWrap(radians - imu.getAngularOrientation().firstAngle);
         double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
 
         double angleTravel = Math.abs(startAngle - radians);
-        double proportionPow = (1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718))-0.04;
+        double proportionPow = (1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718))-0.04;/*equation to calculate proportion*/
 
         double priorTime = System.currentTimeMillis();
         double timeDifference = 0;
@@ -749,13 +787,24 @@ public void absTurnPID(double radians) {
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient + getAccumulatedError() * integralCoefficient;
 
     }
-    public static double proportion = 0;
+    //public static double proportion = 0;
+    //public static double derivative = 0;
     public double PIDAbsTurnPower(double priorError, double currentError, double timeChange, double proportionPow){
         double proportionCoefficient = proportionPow;//0.47
-        double derivativeCoefficient = 0;//0.9
+        double derivativeCoefficient = 300;//0.9
+        //double totalPower = currentError * proportion + ((currentError-priorError)/timeChange) * derivative;
         //90 = 0.47
         // 135 = 0.39
         // 45 = 0.68
+        /*
+        loggingString += "PriorError: " + priorError + "   ";
+        loggingString += "CurrentError: " + currentError + "   ";
+        loggingString += "proportionPower: " + currentError * proportion + "   ";
+        loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivative + "   ";
+        loggingString += "DrivePower: " + totalPower + "\n";
+        loggingString += "------------------------------------------------------------------------------------------------" + "\n";
+
+         */
         return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
 
     }
