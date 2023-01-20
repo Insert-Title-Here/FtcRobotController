@@ -77,7 +77,7 @@ public class QuadMotorLift extends LinearOpMode {
 
         //Color sensor gain values
         //color.setGain(300);
-        distance.setGain(180);
+        distance.setGain(250);
 
 
         //Lift Thread
@@ -90,6 +90,7 @@ public class QuadMotorLift extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         //score.setPower(0.2);
                         if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA && !liftBrokenMode) {
+
                             score.autoGoToPosition();
 
                             if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW) {
@@ -272,7 +273,7 @@ public class QuadMotorLift extends LinearOpMode {
 
 
                     //Manual open and close grabber
-                    if(gamepad1.start && manualFlag){
+                    if(gamepad1.right_stick_button && manualFlag){
                         if(score.getGrabberPosition() != Constants.open - 0.15) {
                             score.setGrabberPosition(Constants.open - 0.15);
                             try {
@@ -291,7 +292,9 @@ public class QuadMotorLift extends LinearOpMode {
                             grabFlag = false;
                         }
                         manualFlag = false;
-                    }else if(!gamepad1.start){
+                    }
+
+                    if(!gamepad1.right_stick_button){
                         manualFlag = true;
                     }
 

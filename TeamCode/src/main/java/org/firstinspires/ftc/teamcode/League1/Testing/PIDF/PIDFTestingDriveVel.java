@@ -3,37 +3,25 @@ package org.firstinspires.ftc.teamcode.League1.Testing.PIDF;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorRangeSensor;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
-import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.MecDriveV2;
 import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2;
 
 //@Disabled
 @Autonomous
 @Config
-public class PIDFTestingDrive extends LinearOpMode {
+public class PIDFTestingDriveVel extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2 score;
     //Constants constants;
 
-    public static int target = 1000;
-    public static double velocity = 10;
-    public static double p = 0.006, i = 0, d = 0.0003;
+    public static double target = 1000;
+    public static double p = 0, i = 0, d = 0;
 
     int flPreviousError = 0;
     int frPreviousError = 0;
@@ -86,25 +74,26 @@ public class PIDFTestingDrive extends LinearOpMode {
 
 
         //IMU Rotate
-        //drive.tankRotatePID(Math.PI, 0.85);
 
         while (opModeIsActive()) {
 
-            drive.setVelocity(velocity,velocity,velocity,velocity);
-
-            /*goTOPIDPos(target, 1, MecDrive.MovementType.STRAIGHT);
 
 
-            telemetry.addData("flPos", -1 * drive.getFLEncoder());
+            //goTOPIDPos(target, 1, MecDrive.MovementType.STRAIGHT);
+            tankRotatePID(target);
+
+
+
+            /*telemetry.addData("flPos", -1 * drive.getFLEncoder());
             telemetry.addData("frPos", drive.getFREncoder());
             telemetry.addData("blPos",  -1 * drive.getBLEncoder());
             telemetry.addData("brPos", drive.getBREncoder());
+*/
 
-
-            //telemetry.addData("current", drive.getFirstAngle());
+            telemetry.addData("current", drive.getFirstAngle());
             telemetry.addData("target", target);
 
-            telemetry.update();*/
+            telemetry.update();
 
         }
 
@@ -177,14 +166,14 @@ public class PIDFTestingDrive extends LinearOpMode {
         double brDerivative = (brError - brPreviousError) / (currentTime - startTime);
 
 
-        double flPower = ((p * flError) + (i * flIntegralSum) + (d * flDerivative));
-        double frPower = ((p * frError) + (i * frIntegralSum) + (d * frDerivative));
-        double blPower = ((p * blError) + (i * blIntegralSum) + (d * blDerivative));
-        double brPower = ((p * brError) + (i * brIntegralSum) + (d * brDerivative));
+        double flVel = ((p * flError) + (i * flIntegralSum) + (d * flDerivative));
+        double frVel = ((p * frError) + (i * frIntegralSum) + (d * frDerivative));
+        double blVel = ((p * blError) + (i * blIntegralSum) + (d * blDerivative));
+        double brVel = ((p * brError) + (i * brIntegralSum) + (d * brDerivative));
 
 
         //TODO: Fix rotate and check Strafe
-        drive.setPower(flPower, frPower, blPower, brPower);
+        drive.setVelocity(flVel, frVel, blVel, brVel);
 
 
         startTime = currentTime;
@@ -197,61 +186,7 @@ public class PIDFTestingDrive extends LinearOpMode {
     }
 
 
-    public void goTOPIDPosVel(int tics) {
-
-
-        //TODO: check if we need to negate any
-
-        currentTime = time.seconds();
-
-
-        //TODO: check if we need to negate any
-        int flPos = -1 * drive.getFLEncoder(); //Negative for v1
-        int frPos = drive.getFREncoder();
-        int blPos = -1 * drive.getBLEncoder();//Also negative for v1
-        int brPos =  drive.getBREncoder();
-
-
-        int flError = tics - flPos;
-        int frError = tics - frPos;
-        int blError = tics - blPos;
-        int brError = tics - brPos;
-
-        telemetry.addData("flError", flError);
-        telemetry.addData("frError", frError);
-        telemetry.addData("blError", blError);
-        telemetry.addData("brError", brError);
-        telemetry.update();
-
-
-
-        double flDerivative = (flError - flPreviousError) / (currentTime - startTime);
-        double frDerivative = (frError - frPreviousError) / (currentTime - startTime);
-        double blDerivative = (blError - blPreviousError) / (currentTime - startTime);
-        double brDerivative = (brError - brPreviousError) / (currentTime - startTime);
-
-
-        double flPower = ((p * flError) + (i * flIntegralSum) + (d * flDerivative));
-        double frPower = ((p * frError) + (i * frIntegralSum) + (d * frDerivative));
-        double blPower = ((p * blError) + (i * blIntegralSum) + (d * blDerivative));
-        double brPower = ((p * brError) + (i * brIntegralSum) + (d * brDerivative));
-
-
-        //TODO: Fix rotate and check Strafe
-        drive.setPower(flPower, frPower, blPower, brPower);
-
-
-        startTime = currentTime;
-        flPreviousError = flError;
-        frPreviousError = frError;
-        blPreviousError = blError;
-        brPreviousError = brError;
-
-
-    }
-
-
-    public void tankRotatePID(double radians, double power, boolean slidesUp) {
+    public void tankRotatePID(double radians) {
 
         radians = drive.wrapAngle(radians);
 
@@ -260,19 +195,15 @@ public class PIDFTestingDrive extends LinearOpMode {
         double radError = drive.wrapAngle(drive.getFirstAngle() - radians);
 
 
-        integralSum += (radError + previousError) / (currentTime - startTime);
 
-        //TODO:See if we need an integral limit
-        if (integralSum > 10000) {
-            integralSum = 10000;
-        } else if (integralSum < -10000) {
-            integralSum = -10000;
-        }
+
 
         double derivative = (radError - previousError) / (currentTime - startTime);
 
+        double velocity = (p * radError) + (i * integralSum) + (d * derivative);
 
-        drive.setPowerAuto(((p * radError) + (i * integralSum) + (d * derivative)), MecDriveV2.MovementType.ROTATE);
+
+        drive.setVelocity(velocity, -velocity, velocity, -velocity);
 
 
         startTime = currentTime;

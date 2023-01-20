@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.V2.NewSubsystem;
 
 ////import com.acmerobotics.dashboard.config.Config;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -40,7 +41,10 @@ public class MecDriveV2 {
 
 
     //Original
-    PIDCoefficients pidf = new PIDCoefficients(0.006, 0,0.0003);
+    PIDCoefficients pidf = new PIDCoefficients(0.006, 0, 0.0003);
+    int pStraightVel = 4;
+    int pRotateVel = 1700;
+
     private final int denom = 6;
     //PIDCoefficients pidf = new PIDCoefficients(0.031, 0,0.00055);
 
@@ -49,7 +53,6 @@ public class MecDriveV2 {
 
     //PIDCoefficients rotateFaster = new PIDCoefficients(0.85, 0, 0.02  );
     PIDCoefficients rotateFaster = new PIDCoefficients(1.12, 0, 0.01);
-
 
 
     //Slow start
@@ -68,14 +71,10 @@ public class MecDriveV2 {
     //PIDCoefficients rotateFaster = new PIDCoefficients(0.92, 0.00021, 0.22);
 
 
-
-
-
-
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
     String loggingString;
 
-    public enum MovementType{
+    public enum MovementType {
         STRAIGHT,
         STRAFE,
         ROTATE,
@@ -85,7 +84,7 @@ public class MecDriveV2 {
         LDIAGONALLESS
     }
 
-    public enum DiagonalPath{
+    public enum DiagonalPath {
         REDRIGHT,
         REDLEFT,
         BLUERIGHT,
@@ -96,7 +95,7 @@ public class MecDriveV2 {
     localizer -> Arm/actuator -> drive
      */
 
-    public MecDriveV2(HardwareMap hardwareMap, Robot robot , boolean pidEnabled, Telemetry telemetry){
+    public MecDriveV2(HardwareMap hardwareMap, Robot robot, boolean pidEnabled, Telemetry telemetry) {
         fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
         fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
@@ -118,15 +117,10 @@ public class MecDriveV2 {
         robot.setShouldUpdate(true);
 
 
-
-
-
-
-
         CorrectMotors();
     }
 
-    public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry){
+    public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry) {
         fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
         fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
@@ -147,15 +141,10 @@ public class MecDriveV2 {
         //robot.setShouldUpdate(true);
 
 
-
-
-
-
-
         CorrectMotors();
     }
 
-    public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, boolean usingImu){
+    public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, boolean usingImu) {
         fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
         fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
@@ -177,22 +166,21 @@ public class MecDriveV2 {
 
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
 
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
 
-
         CorrectMotors();
     }
 
-    public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, ColorRangeSensor color){
+    public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, ColorRangeSensor color) {
         fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
         fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
@@ -214,11 +202,11 @@ public class MecDriveV2 {
 
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
 
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -231,42 +219,39 @@ public class MecDriveV2 {
         baseRed = 0.4;
 
 
-
-
         CorrectMotors();
     }
 
 
-
-    public int getFLEncoder(){
+    public int getFLEncoder() {
         return fl.getCurrentPosition();
     }
 
-    public int getFREncoder(){
+    public int getFREncoder() {
         return fr.getCurrentPosition();
     }
 
-    public int getBLEncoder(){
+    public int getBLEncoder() {
         return bl.getCurrentPosition();
     }
 
-    public int getBREncoder(){
+    public int getBREncoder() {
         return br.getCurrentPosition();
     }
 
 
-    public void rotate(double angle, double power){
+    public void rotate(double angle, double power) {
 
         angle = Utils.wrapAngle(angle);
 
-        if(angle > imu.getAngularOrientation().firstAngle){
+        if (angle > imu.getAngularOrientation().firstAngle) {
             power *= -1;
         }
 
-        if(pidEnabled){
+        if (pidEnabled) {
             setPIDRotateVelocity(angle, power);
 
-        }else {
+        } else {
 
             while (Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) < Math.abs(angle)) {
 
@@ -281,16 +266,16 @@ public class MecDriveV2 {
     }
 
 
-    public void tankRotate(double radians, double power){
+    public void tankRotate(double radians, double power) {
 
         radians = wrapAngle(radians);
 
-        if(radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle){
+        if (radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) {
             power *= -1;
         }
 
 
-        while(Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007){
+        while (Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007) {
             setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
         }
 
@@ -298,7 +283,7 @@ public class MecDriveV2 {
     }
 
 
-    public void tankRotatePID(double radians, double power, boolean slidesUp){
+    public void tankRotatePID(double radians, double power, boolean slidesUp) {
 
         /*if(radians > imu.getAngularOrientation().firstAngle){
             power *= -1;
@@ -314,7 +299,7 @@ public class MecDriveV2 {
         double integralSum = 0;
 
 
-        while(Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < 1){
+        while (Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < 1) {
 
             telemetry.addData("target", radians);
 
@@ -329,26 +314,26 @@ public class MecDriveV2 {
 
             telemetry.addData("Error", radError);
 
-            integralSum += (radError + previousError)/(currentTime - startTime);
+            integralSum += (radError + previousError) / (currentTime - startTime);
             telemetry.addData("Integral", integralSum);
 
             //TODO:See if we need an integral limit
-            if(integralSum > 10000){
+            if (integralSum > 10000) {
                 integralSum = 10000;
-            }else if(integralSum < -10000){
+            } else if (integralSum < -10000) {
                 integralSum = -10000;
             }
 
-            double derivative = (radError - previousError)/(currentTime - startTime);
+            double derivative = (radError - previousError) / (currentTime - startTime);
             telemetry.addData("Derivative", derivative);
 
 
             //TODO: see if we should multiply by power at the end
 
 
-            if(!slidesUp) {
+            if (!slidesUp) {
                 newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative));
-            }else{
+            } else {
                 newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative));
             }
             setPowerAuto(newPower, MecDriveV2.MovementType.ROTATE);
@@ -366,7 +351,7 @@ public class MecDriveV2 {
 
     }
 
-    public void tankRotatePID(double radians, double power, boolean slidesUp, double kickout){
+    public void tankRotatePID(double radians, double power, boolean slidesUp, double kickout) {
 
         /*if(radians > imu.getAngularOrientation().firstAngle){
             power *= -1;
@@ -382,7 +367,7 @@ public class MecDriveV2 {
         double integralSum = 0;
 
 
-        while(Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < kickout){
+        while (Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < kickout) {
 
             telemetry.addData("target", radians);
 
@@ -397,26 +382,26 @@ public class MecDriveV2 {
 
             telemetry.addData("Error", radError);
 
-            integralSum += (radError + previousError)/(currentTime - startTime);
+            integralSum += (radError + previousError) / (currentTime - startTime);
             telemetry.addData("Integral", integralSum);
 
             //TODO:See if we need an integral limit
-            if(integralSum > 10000){
+            if (integralSum > 10000) {
                 integralSum = 10000;
-            }else if(integralSum < -10000){
+            } else if (integralSum < -10000) {
                 integralSum = -10000;
             }
 
-            double derivative = (radError - previousError)/(currentTime - startTime);
+            double derivative = (radError - previousError) / (currentTime - startTime);
             telemetry.addData("Derivative", derivative);
 
 
             //TODO: see if we should multiply by power at the end
 
 
-            if(!slidesUp) {
+            if (!slidesUp) {
                 newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative));
-            }else{
+            } else {
                 newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative));
             }
             setPowerAuto(newPower, MecDriveV2.MovementType.ROTATE);
@@ -432,12 +417,60 @@ public class MecDriveV2 {
         simpleBrake();
 
 
+    }
+
+
+    public void tankRotatePIDVel(double radians, double kickout) {
+
+
+
+        ElapsedTime time = new ElapsedTime();
+        double actualStartTime = time.seconds();
+
+        radians = wrapAngle(radians);
+        double radError = wrapAngle(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians);
+
+
+        while (Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < kickout) {
+
+            telemetry.addData("target", radians);
+
+            double newPower = 0;
+
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+
+
+            radError = wrapAngle(currentAngle - radians);
+            telemetry.addData("current", currentAngle);
+
+            telemetry.addData("Error", radError);
+
+
+
+
+
+
+
+
+            newPower = ((pRotateVel * radError) + 10);
+
+            setVelocity(newPower, -newPower, newPower, -newPower);
+
+
+            telemetry.addData("Power", newPower);
+
+            telemetry.update();
+
+        }
+
+        simpleBrake();
 
 
     }
 
 
-    public void tankRotatePIDSpecial(double radians, double power, boolean slidesUp, double kickout){
+
+    public void tankRotatePIDSpecial(double radians, double power, boolean slidesUp, double kickout) {
 
         /*if(radians > imu.getAngularOrientation().firstAngle){
             power *= -1;
@@ -453,7 +486,7 @@ public class MecDriveV2 {
         double integralSum = 0;
 
 
-        while(Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < kickout){
+        while (Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < kickout) {
 
             telemetry.addData("target", radians);
 
@@ -468,31 +501,31 @@ public class MecDriveV2 {
 
             telemetry.addData("Error", radError);
 
-            integralSum += (radError + previousError)/(currentTime - startTime);
+            integralSum += (radError + previousError) / (currentTime - startTime);
             telemetry.addData("Integral", integralSum);
 
             //TODO:See if we need an integral limit
-            if(integralSum > 10000){
+            if (integralSum > 10000) {
                 integralSum = 10000;
-            }else if(integralSum < -10000){
+            } else if (integralSum < -10000) {
                 integralSum = -10000;
             }
 
-            double derivative = (radError - previousError)/(currentTime - startTime);
+            double derivative = (radError - previousError) / (currentTime - startTime);
             telemetry.addData("Derivative", derivative);
 
 
             //TODO: see if we should multiply by power at the end
 
 
-            if(!slidesUp) {
+            if (!slidesUp) {
                 newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative));
-            }else{
+            } else {
                 newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative));
             }
 
 
-            if(Math.abs(newPower) < 0.15){
+            if (Math.abs(newPower) < 0.15) {
                 break;
             }
 
@@ -508,38 +541,31 @@ public class MecDriveV2 {
 
         power = 0.27;
 
-        if(radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle){
+        if (radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) {
             power *= -1;
         }
 
 
-        while(Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007){
+        while (Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007) {
             setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
         }
 
         simpleBrake();
 
 
-
-
     }
 
-    public double wrapAngle(double angle){
-        while(angle > Math.PI){
+    public double wrapAngle(double angle) {
+        while (angle > Math.PI) {
             angle -= (2 * Math.PI);
         }
 
-        while(angle < -Math.PI){
+        while (angle < -Math.PI) {
             angle += (2 * Math.PI);
         }
 
         return angle;
     }
-
-
-
-
-
 
 
     public void newMoveToPosition(Point p, double power) {
@@ -574,10 +600,10 @@ public class MecDriveV2 {
             int brPos = data.getMotorCurrentPosition(3);
 
             //TODO: might need to change this direction thing
-            if(direction + (Math.PI/4) > 0) {
+            if (direction + (Math.PI / 4) > 0) {
                 frPos *= -1;
                 brPos *= -1;
-            }else{
+            } else {
                 flPos *= -1;
                 blPos *= -1;
             }
@@ -610,10 +636,10 @@ public class MecDriveV2 {
                 blPos = data.getMotorCurrentPosition(2);
                 brPos = data.getMotorCurrentPosition(3);
 
-                if(direction + (Math.PI/4) > 0) {
+                if (direction + (Math.PI / 4) > 0) {
                     frPos *= -1;
                     brPos *= -1;
-                }else{
+                } else {
                     flPos *= -1;
                     blPos *= -1;
                 }
@@ -657,7 +683,6 @@ public class MecDriveV2 {
                 loggingString += "\n";
 
 
-
                 telemetry.update();
 
             }
@@ -665,17 +690,17 @@ public class MecDriveV2 {
         }
     }
 
-    public double getFirstAngle(){
+    public double getFirstAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
     }
 
     //TODO: Test this
-    public void simpleMoveToPosition(int tics, MovementType movement, double power){
+    public void simpleMoveToPosition(int tics, MovementType movement, double power) {
 
-        if(avgPos() > tics){
+        if (avgPos() > tics) {
             power *= -1;
         }
-        while(avgPos() < Math.abs(tics)){
+        while (avgPos() < Math.abs(tics)) {
             setPowerAuto(power, movement);
         }
 
@@ -683,27 +708,25 @@ public class MecDriveV2 {
 
     }
 
-    public double avgPos(){
+    public double avgPos() {
         return (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition())
                 + Math.abs(bl.getCurrentPosition()) /*+ Math.abs(br.getCurrentPosition()))*/) / 4;
     }
 
-    public double actualAvgPos(){
+    public double actualAvgPos() {
         return (Math.abs(-fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition()) + Math.abs(-bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
     }
 
 
-
-
-    public void moveToPosition(Point p, double velocity){
+    public void moveToPosition(Point p, double velocity) {
 
         double robotDirection = robot.getDirection();
         double direction = Utils.wrapAngle(p.getDirection()) - Utils.wrapAngle(robotDirection);
 
-        int flPosition = (int)(Math.sin(direction) * p.magFromOrigin()); //Direction Math.Pi/4 -> 0
-        int frPosition = (int)(Math.cos(direction) * p.magFromOrigin());
-        int blPosition = (int)(Math.cos(direction) * p.magFromOrigin());
-        int brPosition = (int)(Math.sin(direction) * p.magFromOrigin());
+        int flPosition = (int) (Math.sin(direction) * p.magFromOrigin()); //Direction Math.Pi/4 -> 0
+        int frPosition = (int) (Math.cos(direction) * p.magFromOrigin());
+        int blPosition = (int) (Math.cos(direction) * p.magFromOrigin());
+        int brPosition = (int) (Math.sin(direction) * p.magFromOrigin());
 
         double flVelocity = Math.max(1, velocity * Math.sin(direction));
         double frVelocity = Math.max(1, velocity * Math.cos(direction));
@@ -720,10 +743,9 @@ public class MecDriveV2 {
 */
 
 
-
-        if(pidEnabled){
+        if (pidEnabled) {
             setPIDVelocity(flVelocity, flPosition, frVelocity, frPosition, blVelocity, blPosition, brVelocity, brPosition);
-        }else {
+        } else {
             LynxModule.BulkData data = robot.getBulkPacket(isDriveOnChub);
 
             int flPos = data.getMotorCurrentPosition(0);
@@ -760,7 +782,7 @@ public class MecDriveV2 {
     }
 
     public void simpleBrake() {
-        setPower(0,0,0,0);
+        setPower(0, 0, 0, 0);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -776,7 +798,7 @@ public class MecDriveV2 {
 
     private void brake() {
         robot.setShouldUpdate(false);
-        setPower(0,0,0,0);
+        setPower(0, 0, 0, 0);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -790,14 +812,14 @@ public class MecDriveV2 {
 
     }
 
-    private void setMotorVelocity(double flV, double frV, double blV, double brV){
+    private void setMotorVelocity(double flV, double frV, double blV, double brV) {
         fl.setVelocity(flV);
         fr.setVelocity(frV);
         bl.setVelocity(blV);
         br.setVelocity(brV);
     }
 
-    private void setMotorPower(double flP, double frP, double blP, double brP){
+    private void setMotorPower(double flP, double frP, double blP, double brP) {
         fl.setPower(flP);
         fr.setPower(frP);
         bl.setPower(blP);
@@ -813,13 +835,12 @@ public class MecDriveV2 {
     double integralSumLimit = 1000;
 
     /**
-     *
-     * @param flV target velocity d/dx position
+     * @param flV        target velocity d/dx position
      * @param flPosition target
-     * Zeiger-Nichols method
-     * low pass filtering
+     *                   Zeiger-Nichols method
+     *                   low pass filtering
      */
-    private void setPIDVelocity(double flV, int flPosition, double frV, int frPosition, double blV, int blPosition, double brV, int brPosition){
+    private void setPIDVelocity(double flV, int flPosition, double frV, int frPosition, double blV, int blPosition, double brV, int brPosition) {
         double flIntegralSum = 0;
         double flPreviousError = 0;
         double frIntegralSum = 0;
@@ -841,7 +862,7 @@ public class MecDriveV2 {
 //        double previousFilterEstimate = 0;
 //        double currentFilterEstimate = 0;
 
-        while(opModeIsRunning() && flCurr < flPosition && frCurr < frPosition && blCurr < blPosition && brCurr < brPosition){
+        while (opModeIsRunning() && flCurr < flPosition && frCurr < frPosition && blCurr < blPosition && brCurr < brPosition) {
 
             data = robot.getBulkPacket(isDriveOnChub);
             flCurr = data.getMotorCurrentPosition(0);
@@ -872,24 +893,24 @@ public class MecDriveV2 {
             blIntegralSum = blIntegralSum + (blCurr * elapsedTime);
             brIntegralSum = brIntegralSum + (brCurr * elapsedTime);
 
-            if(flIntegralSum > integralSumLimit){
+            if (flIntegralSum > integralSumLimit) {
                 flIntegralSum = integralSumLimit;
-            }else if (flIntegralSum < - integralSumLimit){
+            } else if (flIntegralSum < -integralSumLimit) {
                 flIntegralSum = -integralSumLimit;
             }
-            if(frIntegralSum > integralSumLimit){
+            if (frIntegralSum > integralSumLimit) {
                 frIntegralSum = integralSumLimit;
-            }else if (frIntegralSum < - integralSumLimit){
+            } else if (frIntegralSum < -integralSumLimit) {
                 frIntegralSum = -integralSumLimit;
             }
-            if(blIntegralSum > integralSumLimit){
+            if (blIntegralSum > integralSumLimit) {
                 blIntegralSum = integralSumLimit;
-            }else if (blIntegralSum < - integralSumLimit){
+            } else if (blIntegralSum < -integralSumLimit) {
                 blIntegralSum = -integralSumLimit;
             }
-            if(brIntegralSum > integralSumLimit){
+            if (brIntegralSum > integralSumLimit) {
                 brIntegralSum = integralSumLimit;
-            }else if (brIntegralSum < - integralSumLimit){
+            } else if (brIntegralSum < -integralSumLimit) {
                 brIntegralSum = -integralSumLimit;
             }
 
@@ -899,7 +920,7 @@ public class MecDriveV2 {
             double blOut = (P * blError) + (I * blIntegralSum) + (D * blDerivative) + F;
             double brOut = (P * brError) + (I * brIntegralSum) + (D * brDerivative) + F;
 
-            setMotorVelocity(flOut * flV, frOut * frV,blOut * blV,brOut * brV);
+            setMotorVelocity(flOut * flV, frOut * frV, blOut * blV, brOut * brV);
 
             flPreviousError = flError;
             frPreviousError = frError;
@@ -911,9 +932,9 @@ public class MecDriveV2 {
     }
 
 
-    private double calculateAvgStartPower(int tics){
+    private double calculateAvgStartPower(int tics) {
 
-        tics *= ((denom - 1)/denom);
+        tics *= ((denom - 1) / denom);
 
         //TODO: check if we need to negate any
         int flPos = -1 * getFLEncoder();
@@ -938,13 +959,12 @@ public class MecDriveV2 {
 
     }
 
-    public void goTOPIDPosWithRampUp(int tics, double power, MovementType movement){
+    public void goTOPIDPosWithRampUp(int tics, double power, MovementType movement) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double actualStartTime = startTime;
 
         boolean rampUp = true;
-
 
 
         //TODO: check if we need to negate any
@@ -964,27 +984,25 @@ public class MecDriveV2 {
         int brPreviousError = brError;
 
 
-
         int flIntegralSum = 0;
         int frIntegralSum = 0;
         int blIntegralSum = 0;
         int brIntegralSum = 0;
 
 
-        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5){
+        while (Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5) {
 
-            if(rampUp){
+            if (rampUp) {
 
                 double start = calculateAvgStartPower(tics);
                 int finalRampTics = tics / denom;
 
 
-                while(((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4 < finalRampTics){
+                while (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4 < finalRampTics) {
 
                     double rampPower = (start * (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4)) / finalRampTics;
 
                     setPower(rampPower, rampPower, rampPower, rampPower);
-
 
 
                     try {
@@ -995,7 +1013,7 @@ public class MecDriveV2 {
                 }
                 rampUp = false;
 
-            }else {
+            } else {
 
                 telemetry.addData("target", tics);
 
@@ -1024,7 +1042,6 @@ public class MecDriveV2 {
                 telemetry.addData("frError", frError);
                 telemetry.addData("blError", blError);
                 telemetry.addData("brError", brError);
-
 
 
                 double flDerivative = (flError - flPreviousError) / (currentTime - startTime);
@@ -1075,13 +1092,12 @@ public class MecDriveV2 {
 
     }
 
-    public void goTOPIDPosWithRampUp(int tics, double power, MovementType movement, double limiter){
+    public void goTOPIDPosWithRampUp(int tics, double power, MovementType movement, double limiter) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double actualStartTime = startTime;
 
         boolean rampUp = true;
-
 
 
         //TODO: check if we need to negate any
@@ -1101,35 +1117,33 @@ public class MecDriveV2 {
         int brPreviousError = brError;
 
 
-
         int flIntegralSum = 0;
         int frIntegralSum = 0;
         int blIntegralSum = 0;
         int brIntegralSum = 0;
 
 
-        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5){
+        while (Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5) {
 
-            if(rampUp){
+            if (rampUp) {
 
                 double start = calculateAvgStartPower(tics);
                 int targetRamp = tics / denom;
 
 
-                while(((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4 < targetRamp){
+                while (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4 < targetRamp) {
 
-                    double rampPower = ((denom-1) * pidf.p) * (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4);
+                    double rampPower = ((denom - 1) * pidf.p) * (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4);
 
-                    if(Math.abs(rampPower) > limiter){
-                        if(rampPower < 0){
+                    if (Math.abs(rampPower) > limiter) {
+                        if (rampPower < 0) {
                             rampPower = -1 * limiter;
-                        }else{
+                        } else {
                             rampPower = limiter;
                         }
                     }
 
                     setPower(rampPower, rampPower, rampPower, rampPower);
-
 
 
                     try {
@@ -1140,7 +1154,7 @@ public class MecDriveV2 {
                 }
                 rampUp = false;
 
-            }else {
+            } else {
 
                 telemetry.addData("target", tics);
 
@@ -1171,7 +1185,6 @@ public class MecDriveV2 {
                 telemetry.addData("brError", brError);
 
 
-
                 double flDerivative = (flError - flPreviousError) / (currentTime - startTime);
                 double frDerivative = (frError - frPreviousError) / (currentTime - startTime);
                 double blDerivative = (blError - blPreviousError) / (currentTime - startTime);
@@ -1188,34 +1201,34 @@ public class MecDriveV2 {
                 double blPower = ((pidf.p * blError) + (pidf.i * blIntegralSum) + (pidf.d * blDerivative));
                 double brPower = ((pidf.p * brError) + (pidf.i * brIntegralSum) + (pidf.d * brDerivative));
 
-                if(Math.abs(flPower) > limiter){
-                    if(flPower < 0){
+                if (Math.abs(flPower) > limiter) {
+                    if (flPower < 0) {
                         flPower = -1 * limiter;
-                    }else{
+                    } else {
                         flPower = limiter;
                     }
                 }
 
-                if(Math.abs(frPower) > limiter){
-                    if(frPower < 0){
+                if (Math.abs(frPower) > limiter) {
+                    if (frPower < 0) {
                         frPower = -1 * limiter;
-                    }else{
+                    } else {
                         frPower = limiter;
                     }
                 }
 
-                if(Math.abs(blPower) > limiter){
-                    if(blPower < 0){
+                if (Math.abs(blPower) > limiter) {
+                    if (blPower < 0) {
                         blPower = -1 * limiter;
-                    }else{
+                    } else {
                         blPower = limiter;
                     }
                 }
 
-                if(Math.abs(brPower) > limiter){
-                    if(brPower < 0){
+                if (Math.abs(brPower) > limiter) {
+                    if (brPower < 0) {
                         brPower = -1 * limiter;
-                    }else{
+                    } else {
                         brPower = limiter;
                     }
                 }
@@ -1253,7 +1266,7 @@ public class MecDriveV2 {
     }
 
 
-    public void goTOPIDPos(int tics, double power, MovementType movement){
+    public void goTOPIDPos(int tics, double power, MovementType movement) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double actualStartTime = startTime;
@@ -1262,7 +1275,6 @@ public class MecDriveV2 {
         boolean isInitialErrorNegative;
 
         int half = Math.abs(tics) / 2;
-
 
 
         //TODO: check if we need to negate any
@@ -1281,9 +1293,9 @@ public class MecDriveV2 {
         int blPreviousError = blError;
         int brPreviousError = brError;
 
-        if(flPreviousError < 0){
+        if (flPreviousError < 0) {
             isInitialErrorNegative = true;
-        }else{
+        } else {
             isInitialErrorNegative = false;
         }
 
@@ -1293,7 +1305,7 @@ public class MecDriveV2 {
         int brIntegralSum = 0;
 
 
-        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5){
+        while (Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5) {
 
             telemetry.addData("target", tics);
 
@@ -1305,7 +1317,6 @@ public class MecDriveV2 {
             brPos = getBREncoder();
 
 
-
             telemetry.addData("flPos", flPos);
             telemetry.addData("frPos", frPos);
             telemetry.addData("blPos", blPos);
@@ -1315,7 +1326,6 @@ public class MecDriveV2 {
             frError = tics - frPos;
             blError = tics - blPos;
             brError = tics - brPos;
-
 
 
             double currentTime = time.seconds();
@@ -1337,35 +1347,35 @@ public class MecDriveV2 {
 
 
             //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
-            if(flIntegralSum > 20000){
+            if (flIntegralSum > 20000) {
                 flIntegralSum = 20000;
-            }else if(flIntegralSum < -20000){
+            } else if (flIntegralSum < -20000) {
                 flIntegralSum = -20000;
             }
 
-            if(frIntegralSum > 20000){
+            if (frIntegralSum > 20000) {
                 frIntegralSum = 20000;
-            }else if(frIntegralSum < -20000){
+            } else if (frIntegralSum < -20000) {
                 frIntegralSum = -20000;
             }
 
-            if(blIntegralSum > 20000){
+            if (blIntegralSum > 20000) {
                 blIntegralSum = 20000;
-            }else if(blIntegralSum < -20000){
+            } else if (blIntegralSum < -20000) {
                 blIntegralSum = -20000;
             }
 
-            if(brIntegralSum > 20000){
+            if (brIntegralSum > 20000) {
                 brIntegralSum = 20000;
-            }else if(brIntegralSum < -20000){
+            } else if (brIntegralSum < -20000) {
                 brIntegralSum = -20000;
             }
 
 
-            double flDerivative = (flError - flPreviousError)/(currentTime - startTime);
-            double frDerivative = (frError - frPreviousError)/(currentTime - startTime);
-            double blDerivative = (blError - blPreviousError)/(currentTime - startTime);
-            double brDerivative = (brError - brPreviousError)/(currentTime - startTime);
+            double flDerivative = (flError - flPreviousError) / (currentTime - startTime);
+            double frDerivative = (frError - frPreviousError) / (currentTime - startTime);
+            double blDerivative = (blError - blPreviousError) / (currentTime - startTime);
+            double brDerivative = (brError - brPreviousError) / (currentTime - startTime);
 
 
             //TODO: see if we need this
@@ -1501,11 +1511,11 @@ public class MecDriveV2 {
             }
 */
             //TODO: Fix rotate and check Strafe
-            if(movement == MovementType.STRAIGHT) {
+            if (movement == MovementType.STRAIGHT) {
                 setPower(flPower, frPower, blPower, brPower);
-            }else if(movement == MovementType.ROTATE){
+            } else if (movement == MovementType.ROTATE) {
                 setPower(flPower, -frPower, blPower, -brPower);
-            }else if(movement == MovementType.STRAFE){
+            } else if (movement == MovementType.STRAFE) {
                 setPower(flPower, -frPower, -blPower, brPower);
             }
 
@@ -1526,6 +1536,79 @@ public class MecDriveV2 {
 
     }
 
+    public void goTOPIDPosVel(int tics) {
+        ElapsedTime time = new ElapsedTime();
+        double actualStartTime = time.seconds();
+
+
+
+        //TODO: check if we need to negate any
+        int flPos = -1 * getFLEncoder();
+        int frPos = getFREncoder();
+        int blPos = -1 * getBLEncoder();
+        int brPos = getBREncoder();
+
+        int flError = tics - flPos;
+        int frError = tics - frPos;
+        int blError = tics - blPos;
+        int brError = tics - brPos;
+
+
+        while (Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5) {
+
+            telemetry.addData("target", tics);
+
+
+            //TODO: check if we need to negate any
+            flPos = -1 * getFLEncoder();
+            frPos = getFREncoder();
+            blPos = -1 * getBLEncoder();
+            brPos = getBREncoder();
+
+
+            telemetry.addData("flPos", flPos);
+            telemetry.addData("frPos", frPos);
+            telemetry.addData("blPos", blPos);
+            telemetry.addData("brPos", brPos);
+
+            flError = tics - flPos;
+            frError = tics - frPos;
+            blError = tics - blPos;
+            brError = tics - brPos;
+
+
+
+            telemetry.addData("flError", flError);
+            telemetry.addData("frError", frError);
+            telemetry.addData("blError", blError);
+            telemetry.addData("brError", brError);
+
+
+            double flPower = (pStraightVel * flError) + 10;
+            double frPower = (pStraightVel * frError) + 10;
+            double blPower = (pStraightVel * blError) + 10;
+            double brPower = (pStraightVel * brError) + 10;
+
+
+            telemetry.addData("flPower", flPower);
+            telemetry.addData("frPower", frPower);
+            telemetry.addData("blPower", blPower);
+            telemetry.addData("brPower", brPower);
+
+
+            //TODO: Fix rotate and check Strafe
+            setPower(flPower, frPower, blPower, brPower);
+
+
+            telemetry.update();
+
+
+        }
+
+        simpleBrake();
+
+    }
+
 
     public void goTOPIDPos(int tics, double power, MovementType movement, double kickout) {
         ElapsedTime time = new ElapsedTime();
@@ -1536,7 +1619,6 @@ public class MecDriveV2 {
         boolean isInitialErrorNegative;
 
         int half = Math.abs(tics) / 2;
-
 
 
         //TODO: check if we need to negate any
@@ -1555,9 +1637,9 @@ public class MecDriveV2 {
         int blPreviousError = blError;
         int brPreviousError = brError;
 
-        if(flPreviousError < 0){
+        if (flPreviousError < 0) {
             isInitialErrorNegative = true;
-        }else{
+        } else {
             isInitialErrorNegative = false;
         }
 
@@ -1567,7 +1649,7 @@ public class MecDriveV2 {
         int brIntegralSum = 0;
 
 
-        while(Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < kickout){
+        while (Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < kickout) {
             telemetry.addData("target", tics);
 
 
@@ -1576,7 +1658,6 @@ public class MecDriveV2 {
             frPos = getFREncoder();
             blPos = -1 * getBLEncoder();
             brPos = getBREncoder();
-
 
 
             telemetry.addData("flPos", flPos);
@@ -1588,7 +1669,6 @@ public class MecDriveV2 {
             frError = tics - frPos;
             blError = tics - blPos;
             brError = tics - brPos;
-
 
 
             double currentTime = time.seconds();
@@ -1610,35 +1690,35 @@ public class MecDriveV2 {
 
 
             //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
-            if(flIntegralSum > 20000){
+            if (flIntegralSum > 20000) {
                 flIntegralSum = 20000;
-            }else if(flIntegralSum < -20000){
+            } else if (flIntegralSum < -20000) {
                 flIntegralSum = -20000;
             }
 
-            if(frIntegralSum > 20000){
+            if (frIntegralSum > 20000) {
                 frIntegralSum = 20000;
-            }else if(frIntegralSum < -20000){
+            } else if (frIntegralSum < -20000) {
                 frIntegralSum = -20000;
             }
 
-            if(blIntegralSum > 20000){
+            if (blIntegralSum > 20000) {
                 blIntegralSum = 20000;
-            }else if(blIntegralSum < -20000){
+            } else if (blIntegralSum < -20000) {
                 blIntegralSum = -20000;
             }
 
-            if(brIntegralSum > 20000){
+            if (brIntegralSum > 20000) {
                 brIntegralSum = 20000;
-            }else if(brIntegralSum < -20000){
+            } else if (brIntegralSum < -20000) {
                 brIntegralSum = -20000;
             }
 
 
-            double flDerivative = (flError - flPreviousError)/(currentTime - startTime);
-            double frDerivative = (frError - frPreviousError)/(currentTime - startTime);
-            double blDerivative = (blError - blPreviousError)/(currentTime - startTime);
-            double brDerivative = (brError - brPreviousError)/(currentTime - startTime);
+            double flDerivative = (flError - flPreviousError) / (currentTime - startTime);
+            double frDerivative = (frError - frPreviousError) / (currentTime - startTime);
+            double blDerivative = (blError - blPreviousError) / (currentTime - startTime);
+            double brDerivative = (brError - brPreviousError) / (currentTime - startTime);
 
             telemetry.addData("flDerivative", flDerivative);
             telemetry.addData("frDerivative", frDerivative);
@@ -1658,11 +1738,11 @@ public class MecDriveV2 {
             telemetry.addData("brPower", brPower);
 
             //TODO: Fix rotate and check Strafe
-            if(movement == MovementType.STRAIGHT) {
+            if (movement == MovementType.STRAIGHT) {
                 setPower(flPower, frPower, blPower, brPower);
-            }else if(movement == MovementType.ROTATE){
+            } else if (movement == MovementType.ROTATE) {
                 setPower(flPower, -frPower, blPower, -brPower);
-            }else if(movement == MovementType.STRAFE){
+            } else if (movement == MovementType.STRAFE) {
                 setPower(flPower, -frPower, -blPower, brPower);
             }
 
@@ -1684,7 +1764,7 @@ public class MecDriveV2 {
     }
 
 
-    public int avgPosPID(){
+    public int avgPosPID() {
         return ((-1 * fl.getCurrentPosition()) + fr.getCurrentPosition()
                 + (-1 * bl.getCurrentPosition()) + br.getCurrentPosition()) / 4;
     }
@@ -1829,10 +1909,7 @@ public class MecDriveV2 {
     */
 
 
-
-
-
-    public void PIDPowerNoBulk(double power, int targetPosition){
+    public void PIDPowerNoBulk(double power, int targetPosition) {
         double flIntegralSum = 0;
         double flPreviousError = 0;
         double frIntegralSum = 0;
@@ -1857,7 +1934,7 @@ public class MecDriveV2 {
 //        double currentFilterEstimate = 0;
 
         //TODO: change this logic so that forwards and backwards works along with strafing
-        while(opModeIsRunning() && flCurr < targetPosition && frCurr < targetPosition && blCurr < targetPosition && brCurr < targetPosition){
+        while (opModeIsRunning() && flCurr < targetPosition && frCurr < targetPosition && blCurr < targetPosition && brCurr < targetPosition) {
 
             telemetry.addData("fl", fl.getCurrentPosition());
             telemetry.addData("fr", fr.getCurrentPosition());
@@ -1909,24 +1986,24 @@ public class MecDriveV2 {
             telemetry.addData("blIntegral", blIntegralSum);
             telemetry.addData("brIntegral", brIntegralSum);
 
-            if(flIntegralSum > integralSumLimit){
+            if (flIntegralSum > integralSumLimit) {
                 flIntegralSum = integralSumLimit;
-            }else if (flIntegralSum < - integralSumLimit){
+            } else if (flIntegralSum < -integralSumLimit) {
                 flIntegralSum = -integralSumLimit;
             }
-            if(frIntegralSum > integralSumLimit){
+            if (frIntegralSum > integralSumLimit) {
                 frIntegralSum = integralSumLimit;
-            }else if (frIntegralSum < - integralSumLimit){
+            } else if (frIntegralSum < -integralSumLimit) {
                 frIntegralSum = -integralSumLimit;
             }
-            if(blIntegralSum > integralSumLimit){
+            if (blIntegralSum > integralSumLimit) {
                 blIntegralSum = integralSumLimit;
-            }else if (blIntegralSum < - integralSumLimit){
+            } else if (blIntegralSum < -integralSumLimit) {
                 blIntegralSum = -integralSumLimit;
             }
-            if(brIntegralSum > integralSumLimit){
+            if (brIntegralSum > integralSumLimit) {
                 brIntegralSum = integralSumLimit;
-            }else if (brIntegralSum < - integralSumLimit){
+            } else if (brIntegralSum < -integralSumLimit) {
                 brIntegralSum = -integralSumLimit;
             }
 
@@ -1941,7 +2018,7 @@ public class MecDriveV2 {
             telemetry.addData("blOut", blOut);
             telemetry.addData("brOut", brOut);
 
-            setMotorPower(flOut * power, frOut * power,blOut * power,brOut * power);
+            setMotorPower(flOut * power, frOut * power, blOut * power, brOut * power);
 
             flPreviousError = flError;
             frPreviousError = frError;
@@ -1955,11 +2032,10 @@ public class MecDriveV2 {
     }
 
 
-
-    PIDCoefficients pid = new PIDCoefficients(0,0,0);
+    PIDCoefficients pid = new PIDCoefficients(0, 0, 0);
 
     //TODO: see if can make more efficient using timer.reset() and maybe add pid for each motor
-    private void setPIDRotateVelocity(double targetAngle, double targetPower){
+    private void setPIDRotateVelocity(double targetAngle, double targetPower) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double integralSum = 0;
@@ -1968,7 +2044,7 @@ public class MecDriveV2 {
         double previousError = targetAngle;
 
 
-        while(opModeIsRunning() && robot.getDirection() < targetAngle){
+        while (opModeIsRunning() && robot.getDirection() < targetAngle) {
             double error = Utils.wrapAngle(targetAngle - robot.getDirection());
             double currentTime = time.seconds();
 
@@ -1976,18 +2052,16 @@ public class MecDriveV2 {
             integralSum += (0.5 * (currentTime - startTime) * (previousError + error));
 
 
-            double derivative = (error - previousError)/(currentTime - startTime);
+            double derivative = (error - previousError) / (currentTime - startTime);
 
             double out = (pid.p * error) + (pid.i * integralSum) + (pid.d * derivative);
 
 
-
-            if(targetAngle < 0){
+            if (targetAngle < 0) {
                 out *= -1;
             }
 
             setPower(-out * targetPower, out * targetPower, -out * targetPower, out * targetPower);
-
 
 
             previousError = error;
@@ -2001,7 +2075,7 @@ public class MecDriveV2 {
     }
 
 
-    private boolean opModeIsRunning(){
+    private boolean opModeIsRunning() {
         return OpModeWrapper.currentOpMode().opModeIsActive() && !OpModeWrapper.currentOpMode().isStopRequested();
     }
     /*
@@ -2065,35 +2139,52 @@ public class MecDriveV2 {
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
         fl.setPower(-flPow);
-        fr.setPower(frPow) ;
+        fr.setPower(frPow);
         bl.setPower(-blPow);
         br.setPower(brPow);
     }
 
     public void setVelocity(double flPow, double frPow, double blPow, double brPow) {
         fl.setVelocity(-flPow);
-        fr.setVelocity(frPow); ;
+        fr.setVelocity(frPow);
+        ;
         bl.setVelocity(-blPow);
         br.setVelocity(brPow);
     }
 
     public double getAvgVel() {
-       return (-fl.getVelocity() + fr.getVelocity() - bl.getVelocity() + br.getVelocity()) / 4;
+        return (-fl.getVelocity() + fr.getVelocity() - bl.getVelocity() + br.getVelocity()) / 4;
     }
 
 
-    public void setPower(Vector2D velocity, double turnValue, boolean isSwapped){
+    public double getFLVelocity() {
+        return -fl.getVelocity();
+    }
+
+    public double getFRVelocity() {
+        return fr.getVelocity();
+    }
+
+    public double getBLVelocity() {
+        return -bl.getVelocity();
+    }
+
+    public double getBRVelocity() {
+        return br.getVelocity();
+    }
+
+    public void setPower(Vector2D velocity, double turnValue, boolean isSwapped) {
         turnValue = -turnValue;
-        double direction =  velocity.getDirection();
+        double direction = velocity.getDirection();
 
 
         double power = velocity.magnitude();
 
-        double angle = direction + 3*Math.PI / 4.0;
+        double angle = direction + 3 * Math.PI / 4.0;
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
 
-        if(!isSwapped) {
+        if (!isSwapped) {
             setPower((power * sin - turnValue), (power * cos + turnValue),
                     (power * cos - turnValue), (power * sin + turnValue));
         } else {
@@ -2104,23 +2195,23 @@ public class MecDriveV2 {
 
 
     public double setPowerAuto(double power, MecDriveV2.MovementType movement) {
-        if(movement == MecDriveV2.MovementType.STRAIGHT) {
+        if (movement == MecDriveV2.MovementType.STRAIGHT) {
             setPower(power, power, power, power);
-        }else if(movement == MecDriveV2.MovementType.STRAFE){
+        } else if (movement == MecDriveV2.MovementType.STRAFE) {
             setPower(power, -power, -power, power);
-        }else if(movement == MecDriveV2.MovementType.ROTATE){
+        } else if (movement == MecDriveV2.MovementType.ROTATE) {
             setPower(power, -power, power, -power);
-        }else if(movement == MecDriveV2.MovementType.LDIAGONAL){
-            setPower(0, power, power,0);
-        }else if(movement == MecDriveV2.MovementType.RDIAGONAL){
+        } else if (movement == MecDriveV2.MovementType.LDIAGONAL) {
+            setPower(0, power, power, 0);
+        } else if (movement == MecDriveV2.MovementType.RDIAGONAL) {
             //setPower(0, power, power, 0);
             setPower(power, 0, 0, power);
-        }else if(movement == MecDriveV2.MovementType.RDIAGONALLESS){
+        } else if (movement == MecDriveV2.MovementType.RDIAGONALLESS) {
             //setPower(0, power, power, 0);
-            setPower(power, power/1.35, power/1.35, power);
-        }else if(movement == MecDriveV2.MovementType.LDIAGONALLESS){
+            setPower(power, power / 1.35, power / 1.35, power);
+        } else if (movement == MecDriveV2.MovementType.LDIAGONALLESS) {
             //setPower(0, power, power, 0);
-            setPower(power/1.35, power, power, power/1.35);
+            setPower(power / 1.35, power, power, power / 1.35);
         }
         return power;
     }
@@ -2128,15 +2219,16 @@ public class MecDriveV2 {
 
     //random comment
     private double TIC_TOLERANCE = 25;
-    private boolean isFar(int tics){
+
+    private boolean isFar(int tics) {
         LynxModule.BulkData data = robot.getBulkPacket(isDriveOnChub);
 
         return Math.abs(tics - data.getMotorCurrentPosition(0)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(1)) > TIC_TOLERANCE
                 && Math.abs(tics - data.getMotorCurrentPosition(2)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(3)) > TIC_TOLERANCE;
     }
 
-    public void autoDiagonals(boolean startGoingLeft, boolean longer, boolean toRotate){
-        if(longer) {
+    public void autoDiagonals(boolean startGoingLeft, boolean longer, boolean toRotate) {
+        if (longer) {
             if (startGoingLeft) {
 
                 while (avgPosActual() < 450) {
@@ -2164,18 +2256,15 @@ public class MecDriveV2 {
                 simpleBrake();
 
 
-
-
-
             }
 
-            if(toRotate) {
+            if (toRotate) {
                 simpleMoveToPosition(-30, MovementType.ROTATE, 0.3);
-            }else{
+            } else {
                 simpleMoveToPosition(20, MovementType.ROTATE, 0.3);
 
             }
-        }else{
+        } else {
             if (startGoingLeft) {
 
                 while (avgPosActual() < 350) {
@@ -2205,10 +2294,10 @@ public class MecDriveV2 {
 
             }
 
-            if(toRotate) {
+            if (toRotate) {
                 //Changed for blue left PID (was -50)
                 simpleMoveToPosition(-35, MovementType.ROTATE, 0.3);
-            }else{
+            } else {
                 //Change this later (4 red left)
                 simpleMoveToPosition(-50, MovementType.ROTATE, 0.3);
             }
@@ -2217,8 +2306,8 @@ public class MecDriveV2 {
 
     }
 
-    public void autoDiagonals(boolean startGoingLeft, boolean longer, DiagonalPath auto){
-        if(longer) {
+    public void autoDiagonals(boolean startGoingLeft, boolean longer, DiagonalPath auto) {
+        if (longer) {
             if (startGoingLeft) {
 
                 while (avgPosActual() < 450) {
@@ -2246,18 +2335,15 @@ public class MecDriveV2 {
                 simpleBrake();
 
 
-
-
-
             }
 
-            if(auto == DiagonalPath.REDLEFT) {
+            if (auto == DiagonalPath.REDLEFT) {
                 simpleMoveToPosition(-35, MovementType.ROTATE, 0.3);
-            }else if(auto != DiagonalPath.BLUERIGHT){
+            } else if (auto != DiagonalPath.BLUERIGHT) {
                 simpleMoveToPosition(20, MovementType.ROTATE, 0.3);
 
             }
-        }else{
+        } else {
             if (startGoingLeft) {
 
                 while (avgPosActual() < 350) {
@@ -2287,10 +2373,10 @@ public class MecDriveV2 {
 
             }
 
-            if(auto == DiagonalPath.BLUELEFT) {
+            if (auto == DiagonalPath.BLUELEFT) {
                 //Changed for blue left PID (was -50)
                 simpleMoveToPosition(-35, MovementType.ROTATE, 0.3);
-            }else if(auto == DiagonalPath.REDLEFT){
+            } else if (auto == DiagonalPath.REDLEFT) {
                 //Change this later (4 red left)
                 simpleMoveToPosition(-60, MovementType.ROTATE, 0.3);
             }
@@ -2299,20 +2385,20 @@ public class MecDriveV2 {
 
     }
 
-    public double avgPosActual(){
+    public double avgPosActual() {
         return (Math.abs(fl.getCurrentPosition()) + Math.abs(fr.getCurrentPosition())
                 + Math.abs(bl.getCurrentPosition()) + Math.abs(br.getCurrentPosition())) / 4;
     }
 
-    public void addToLoggingString(String add){
+    public void addToLoggingString(String add) {
         loggingString += (add + "\n");
     }
 
-    public void writeLoggerToFile(){
-        try{
+    public void writeLoggerToFile() {
+        try {
             PrintStream toFile = new PrintStream(loggingFile);
             toFile.println(loggingString);
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }

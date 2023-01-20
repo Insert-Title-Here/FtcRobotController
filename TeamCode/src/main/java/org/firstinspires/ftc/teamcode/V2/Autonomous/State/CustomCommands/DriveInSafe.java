@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,6 +23,7 @@ public class DriveInSafe extends CommandBase {
     ColorRangeSensor distance;
     boolean isBlue;
     double power;
+    ElapsedTime time;
 
 
     public DriveInSafe(MecDriveV2 drive, ColorRangeSensor distance, boolean isBlue, double power){
@@ -36,17 +38,19 @@ public class DriveInSafe extends CommandBase {
 
     @Override
     public void initialize() {
+        time = new ElapsedTime();
+        double startTime = time.seconds();
 
 
 
         if(isBlue){
-            while (distance.getNormalizedColors().blue < 0.85) {
+            while (distance.getNormalizedColors().blue < 0.85 && time.seconds() - startTime < 2) {
                 drive.setPowerAuto(power, MecDriveV2.MovementType.STRAIGHT);
 
             }
 
         }else{
-            while (distance.getNormalizedColors().red < 0.85) {
+            while (distance.getNormalizedColors().red < 0.7 && time.seconds() - startTime < 2) {
                 drive.setPowerAuto(power, MecDriveV2.MovementType.STRAIGHT);
 
             }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.V2.TeleOp;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.V2.NewSubsystem.ScoringSystemV2EpicLift;
 public class JudgingTeleOp extends LinearOpMode {
 
     ////Constants //constants = newConstants();
+    GamepadEx gamepadEx = new GamepadEx(gamepad1);
     ScoringSystemV2EpicLift score;
     MecDrive drive;
 
@@ -54,6 +56,8 @@ public class JudgingTeleOp extends LinearOpMode {
         firstDpadUp = true;
 
         ElapsedTime time = new ElapsedTime();
+
+
 
 
         //Feed forward is going to be off
