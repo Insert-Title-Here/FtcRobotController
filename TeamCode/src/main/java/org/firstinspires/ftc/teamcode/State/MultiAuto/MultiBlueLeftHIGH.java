@@ -30,7 +30,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
     AtomicBoolean liftTurn, liftCone;
 
     // ftc dashboard values + properCX
-    private double properCX = 170; //67
+    private double properCX = 146; //67  170
     private double properCXHigh = 163; //67
 
     private double properCXLow = 180; //160  163
@@ -799,10 +799,11 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
         sleep(50);
 
-        //lower cone ontto pole
-        liftTurn.set(true);
+
         sleep(100);
         score.setClawPosition(constants.getClawOpenPos());
+        //lower cone ontto pole
+        liftTurn.set(true);
 
 
         //move back from pole
@@ -814,7 +815,6 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
         drive.goToPosition(0.3, 0.3, 0.3, 0.3, 20, "move forward");
 
         //begin thread for maintaining height of slides
-
 
         onTimeout = System.currentTimeMillis();
         //3700 - 3800
