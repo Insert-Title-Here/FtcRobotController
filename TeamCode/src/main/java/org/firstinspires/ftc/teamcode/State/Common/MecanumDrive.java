@@ -687,7 +687,7 @@ public void absTurnPID(double radians) {
         double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
 
         double angleTravel = Math.abs(startAngle - radians);
-        double proportionPow = (1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718))-0.04;/*equation to calculate proportion*/
+        double proportionPow = (1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718));/*equation to calculate proportion*/
 
         double priorTime = System.currentTimeMillis();
         double timeDifference = 0;
@@ -727,7 +727,7 @@ public void absTurnPID(double radians) {
         double currentError= angleWrap(radians - imu.getAngularOrientation().firstAngle);
 
         double angleTravel = Math.abs(startAngle - radians);
-        double proportionPow = (1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718))-0.04;/*equation to calculate proportion*/
+        double proportionPow = (1/(0.223359*Math.sqrt((angleTravel*180)/Math.PI) - 0.016718));/*equation to calculate proportion*/
 
         double priorTime = System.currentTimeMillis();
         double timeDifference = 0;
@@ -831,7 +831,7 @@ public void absTurnPID(double radians) {
    // public static double derivative = 0;
     public double PIDAbsTurnPower(double priorError, double currentError, double timeChange, double proportion, double derivative){
         double proportionCoefficient = proportion;//0.47
-        double derivativeCoefficient = derivative;//0.350
+        double derivativeCoefficient = derivative;//
         //double totalPower = currentError * proportion + ((currentError-priorError)/timeChange) * derivative;
         //90 = 0.47
         // 135 = 0.39
@@ -1047,7 +1047,7 @@ public void absTurnPID(double radians) {
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
                         goToPosition(0.3, -0.3, -0.3, 0.3);
                     }else{
-                        goToPosition(0, 0.3, 0.3, 0);
+                        goToPosition(-0.1, 0.3, 0.3, -0.1);
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -1063,7 +1063,7 @@ public void absTurnPID(double radians) {
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
                         goToPosition(-0.3, 0.3, 0.3, -0.3);
                     }else{
-                        goToPosition(0.3, 0, 0, 0.3);
+                        goToPosition(0.3, -0.1, -0.1, 0.3);
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -1078,7 +1078,7 @@ public void absTurnPID(double radians) {
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
                         goToPosition(-0.3, 0.3, 0.3, -0.3);
                     }else{
-                        goToPosition(0.3, 0, 0, 0.3);
+                        goToPosition(0.3, -0.1, -0.1, 0.3);
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -1094,7 +1094,7 @@ public void absTurnPID(double radians) {
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
                         goToPosition(0.3, -0.3, -0.3, 0.3);
                     }else{
-                        goToPosition(0, 0.3, 0.3, 0);
+                        goToPosition(-0.1, 0.3, 0.3, -0.1);
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
