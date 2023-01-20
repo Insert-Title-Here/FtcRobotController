@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.V2.Autonomous.State.Vel;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -24,8 +23,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous(name = "VelRedRight")
-public class CommandRedRightTestVel extends LinearOpMode {
+@Autonomous (name = "Blue Right Cycle Test")
+public class BlueRightCycleTest extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
     //Constants constants;
@@ -96,114 +95,33 @@ public class CommandRedRightTestVel extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
-        cameraServo.setPosition(Constants.sleeveV2);
-
-
-
-
-
+        pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE);
+        cameraServo.setPosition(Constants.poleV2);
 
 
         waitForStart();
 
         double startTime = time.seconds();
 
+        parkPos = KevinGodPipelineAprilTag.ParkPos.LEFT;
 
-        CommandScheduler.getInstance().schedule(
-                new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.REDCONE)),
-                new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2)),
-                new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosVel(-2050)),
-                new WaitCommand(100),
-                new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
-                //new InstantCommand(() -> drive.goTOPIDPosVel(790)),
-                new InstantCommand(() -> drive.simpleMoveToPosition(700, MecDriveV2.MovementType.STRAIGHT, 0.5)),
-
-                new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
-                new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
-                new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
-                new WaitCommand(500),
-                new InstantCommand(() -> pipeline.normalize(0.22, 169, 2))
-                );
-
-        if(distance.getNormalizedColors().red > 0.6) {
-            CommandScheduler.getInstance().schedule(
-
-                    //TODO: need to add preload logic (whether preload or not)
-                    new ParallelCommandGroup(
-                            new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                            new InstantCommand(() -> score.newLiftPID(970, 1, 0.85))
-                    ),
-
-                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
-                    new WaitCommand(200),
-                    new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
-                    new WaitCommand(400),
-                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
-                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 - 0.05)),
-
-                    new WaitCommand(200),
-
-                    new InstantCommand(() -> score.moveToPosition(0, 0.63))
-
-
-
-            );
-        }else {
-            CommandScheduler.getInstance().schedule(
-                    new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
-                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1))
-            );
-        }
-
-
-        CommandScheduler.getInstance().schedule(
-
-                new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
-                new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                new WaitCommand(100),
-                new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                new InstantCommand(() -> score.newLiftPID(1020, 1, 0.85)),
-
-
-                new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
-                new WaitCommand(100),
-                new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
-                new WaitCommand(400),
-                new InstantCommand(() -> score.setLinkagePositionLogistic(0.242, 800, 100)),
-
-
-                new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 - 0.1)),
-                new InstantCommand(() -> score.moveToPosition(0, 0.63))
-
-        );
 
         //Should add 5 cycles
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 5; i++){
+            telemetry.addData("stuff", i);
             int finalI = i;
-
-            //TODO: ask kevin what this is for
-            /*if (i != 3) {
-                finalI = i;
-            } else {
-                finalI = 2;
-            }*/
-
             CommandScheduler.getInstance().schedule(
                     new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                     new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                     new WaitCommand(100),
                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
-
             );
 
             if(counter > 1){
                 break;
             }
 
-            if(distance.getNormalizedColors().red < 0.7){
+            if(distance.getNormalizedColors().blue < 0.7){
                 CommandScheduler.getInstance().schedule(
                         new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
                         new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI) * 0.03), 800, 100)),
@@ -216,18 +134,17 @@ public class CommandRedRightTestVel extends LinearOpMode {
                 counter++;
 
 
-
             }
 
-
             CommandScheduler.getInstance().schedule(
-
-
                     new InstantCommand(() -> pipeline.normalize(0.22, 169, 3)),
-                    new InstantCommand(() -> score.newLiftPID(1020, 1, 0.85))
+
+                    //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
+                    new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83))
             );
 
-            if(distance.getNormalizedColors().red < 0.7){
+
+            if(distance.getNormalizedColors().blue < 0.7){
                 CommandScheduler.getInstance().schedule(
                         new InstantCommand(() -> score.setLinkagePosition(Constants.linkageUpV2)),
                         new InstantCommand(() -> score.moveToPosition(0, 0.63))
@@ -250,16 +167,16 @@ public class CommandRedRightTestVel extends LinearOpMode {
                     new InstantCommand(() -> score.moveToPosition(0, 0.63))
             );
 
-
-            //TODO: added this
             // Check for cone and cycle again if one is present
-            if (i == 3 && distance.getNormalizedColors().red > 0.6) {
+            if (i == 3 && distance.getNormalizedColors().blue > 0.4) {
                 i = 2;
             }
 
             if (time.seconds() - startTime > 25) {
                 i = 5;
             }
+
+            telemetry.update();
         }
 
 
@@ -288,13 +205,9 @@ public class CommandRedRightTestVel extends LinearOpMode {
 
         sleep(200);
 
-        drive.tankRotatePID(0, 1, false);
+        drive.tankRotatePID(-Math.PI/2, 1, false);
         drive.simpleMoveToPosition(250, MecDriveV2.MovementType.STRAIGHT, 1);
         sleep(50);
-
-
-
-
 
 
 

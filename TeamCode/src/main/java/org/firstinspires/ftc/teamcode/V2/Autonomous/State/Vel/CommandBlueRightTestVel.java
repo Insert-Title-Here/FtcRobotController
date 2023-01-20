@@ -187,6 +187,10 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                     new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
             );
 
+            if(counter > 1){
+                break;
+            }
+
             if(distance.getNormalizedColors().blue < 0.7){
                 CommandScheduler.getInstance().schedule(
                         new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
@@ -199,16 +203,27 @@ public class CommandBlueRightTestVel extends LinearOpMode {
 
                 counter++;
 
-                if(counter > 1){
-                    break;
-                }
+
             }
 
             CommandScheduler.getInstance().schedule(
                     new InstantCommand(() -> pipeline.normalize(0.22, 169, 3)),
 
                     //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                    new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83)),
+                    new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83))
+            );
+
+
+            if(distance.getNormalizedColors().blue < 0.7){
+                CommandScheduler.getInstance().schedule(
+                        new InstantCommand(() -> score.setLinkagePosition(Constants.linkageUpV2)),
+                        new InstantCommand(() -> score.moveToPosition(0, 0.63))
+                );
+
+                break;
+            }
+
+            CommandScheduler.getInstance().schedule(
 
 
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
