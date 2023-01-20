@@ -32,6 +32,7 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
     int cycles, rotateTics;
     ColorRangeSensor distance;
+    boolean broken = false;
 
 
     Servo cameraServo;
@@ -40,7 +41,6 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
     KevinGodPipelineAprilTag pipeline;
     KevinGodPipelineAprilTag.ParkPos parkPos;
 
-    boolean failed;
     boolean preloadSuccess = false;
 
 
@@ -61,7 +61,6 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
 
 
         cameraServo = hardwareMap.get(Servo.class, "camera");
-        failed = false;
 
 
         distance.setGain(300);
@@ -156,9 +155,9 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
         );
 
 
-        if(parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER){
+        /*if(parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER){
             cycles = 4;
-        }
+        }*/
 
         for (int i = 0; i < cycles; i++) {
             int finalI = i;
@@ -214,6 +213,12 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
 
 
                 );
+
+                if(distance.getNormalizedColors().blue < 0.7){
+                    broken = true;
+                    break;
+                }
+
             } else {
 
 
@@ -270,16 +275,20 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
 
         CommandScheduler.getInstance().run();
 
-
-        if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
-            drive.simpleMoveToPosition(-420, MecDriveV2.MovementType.STRAIGHT, 1);
-
-
-
-        } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
-            drive.simpleMoveToPosition(850, MecDriveV2.MovementType.STRAIGHT, 1);
-        } else {
-            drive.simpleMoveToPosition(250, MecDriveV2.MovementType.STRAIGHT, 1);
+        if(broken){
+            if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
+                drive.simpleMoveToPosition(-1400, MecDriveV2.MovementType.STRAIGHT, 1);
+            } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER) {
+                drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 1);
+            }
+        }else {
+            if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
+                drive.simpleMoveToPosition(-420, MecDriveV2.MovementType.STRAIGHT, 1);
+            } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
+                drive.simpleMoveToPosition(850, MecDriveV2.MovementType.STRAIGHT, 1);
+            } else {
+                drive.simpleMoveToPosition(250, MecDriveV2.MovementType.STRAIGHT, 1);
+            }
         }
 
         sleep(50);

@@ -32,6 +32,7 @@ public class CommandRedLeftSafeTestVel extends LinearOpMode {
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
     int cycles, rotateTics;
     ColorRangeSensor distance;
+    boolean broken = false;
 
 
     Servo cameraServo;
@@ -40,7 +41,6 @@ public class CommandRedLeftSafeTestVel extends LinearOpMode {
     KevinGodPipelineAprilTag pipeline;
     KevinGodPipelineAprilTag.ParkPos parkPos;
 
-    boolean failed;
     boolean preloadSuccess = false;
 
 
@@ -61,7 +61,6 @@ public class CommandRedLeftSafeTestVel extends LinearOpMode {
 
 
         cameraServo = hardwareMap.get(Servo.class, "camera");
-        failed = false;
 
 
         distance.setGain(300);
@@ -156,9 +155,11 @@ public class CommandRedLeftSafeTestVel extends LinearOpMode {
         );
 
 
-        if(parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER){
+        /*if(parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER){
             cycles = 4;
         }
+
+         */
 
         for (int i = 0; i < cycles; i++) {
             int finalI = i;
@@ -214,6 +215,12 @@ public class CommandRedLeftSafeTestVel extends LinearOpMode {
 
 
                 );
+
+                if(distance.getNormalizedColors().blue < 0.7){
+                    broken = true;
+                    break;
+                }
+
             } else {
 
 
