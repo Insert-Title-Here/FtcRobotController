@@ -11,9 +11,10 @@ import org.firstinspires.ftc.teamcode.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
 @TeleOp
-public class TeleOp2 extends LinearOpMode {
+public class ImagineIfThisWorks extends LinearOpMode {
 
     MecanumDrive drive;
+    Thread scoringThread;
     DcMotor turret, lift;
     Servo claw;
 
@@ -28,25 +29,46 @@ public class TeleOp2 extends LinearOpMode {
         turret = hardwareMap.get(DcMotor.class, "Turret");
         lift = hardwareMap.get(DcMotor.class, "SlideString");
         claw = hardwareMap.get(Servo.class, "claw");
-        telemetry.addData("origTurretPos", turret.getCurrentPosition());
-        telemetry.addData("origLiftPos", lift.getCurrentPosition());
-        telemetry.update();
 
-        boolean clawIsClosed = false;
+        scoringThread = new Thread(){
+            @Override
+            public void run() {
+                while(opModeIsActive()) {
+                    if (gamepad1.dpad_left) {
+                        claw.setPosition(0.3);
+                        try {
+                            Thread.currentThread().sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else if (gamepad1.dpad_right) {
+                        claw.setPosition(0);
+                        try {
+                            Thread.currentThread().sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-        for(int i = 0; i<20; i++){
-            if(i%2==0){
-                claw.setPosition(0.3);
-            } else{
-                claw.setPosition(0);
+                    if (gamepad1.left_trigger > 0.1) {
+                        turret.setPower(-gamepad1.left_trigger);
+                    } else if (gamepad1.right_trigger > 0.1) {
+                        turret.setPower(0.8 * gamepad1.right_trigger);
+                    } else {
+                        turret.setPower(0);
+                    }
+                }
+
+
             }
-            sleep(300);
-        }
+        };
+
+
+
         waitForStart();
-        claw.setPosition(0.3);
-        telemetry.addData("Claw posititon: ", claw.getPosition());
-        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        scoringThread.start();
+
         while (opModeIsActive()) {
             if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * SPRINT_LINEAR_MODIFIER, gamepad1.left_stick_y * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
@@ -54,21 +76,8 @@ public class TeleOp2 extends LinearOpMode {
             else {
                 drive.setPower(new Vector2D(gamepad1.left_stick_x * NORMAL_LINEAR_MODIFIER, gamepad1.left_stick_y * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
             }
-            if (gamepad1.dpad_left) {
-                claw.setPosition(0.3);
-                sleep(300);
-            } else if (gamepad1.dpad_right) {
-                claw.setPosition(0);
-                sleep(300);
-            }
 
-            if (gamepad1.left_trigger>0.1) {
-                turret.setPower(-gamepad1.left_trigger);
-            } else if (gamepad1.right_trigger>0.1) {
-                turret.setPower(0.8* gamepad1.right_trigger);
-            } else {
-                turret.setPower(0);
-            }
+
 
             /*if(gamepad1.left_bumper){
                 claw.setPosition(clawIsClosed ? 0:0.3);
@@ -76,27 +85,6 @@ public class TeleOp2 extends LinearOpMode {
                 clawIsClosed = !clawIsClosed;
             }
 */
-            if(gamepad1.left_bumper && clawIsClosed){
-                for(int i = 0; i<20; i++){
-                    if(i%2==0){
-                        claw.setPosition(0.3);
-                    } else{
-                        claw.setPosition(0);
-                    }
-                    sleep(300);
-                }
-
-                if(claw.getPosition() == 0){
-                    claw.setPosition(0.3);
-                }else if(claw.getPosition() == 0.3){
-                    claw.setPosition(0);
-                }
-
-                clawIsClosed = false;
-
-            }else if(!gamepad1.left_bumper){
-                clawIsClosed = true;
-            }
 
 
             if (gamepad1.dpad_up) {
