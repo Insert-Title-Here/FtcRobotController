@@ -233,7 +233,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             // turn to right 45 degrees to high pole
             drive.absTurnDriftPID(-Math.PI / 4);
             // go to pole a bit
-            drive.goToPosition(0.52, 0.5, 0.52, 0.5, 54, "go forward some to pole");
+            drive.goToPosition(0.52, 0.5, 0.52, 0.5, 20, "go forward some to pole");
             // move arm high
             lifting = true;
             score.goToPositionPID(constants.getHeightHigh() + 5, 0.85);
@@ -306,7 +306,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             score.grabConeAuto();
-            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, 60, "go to left a bit");
+            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, 30, "go to left a bit");
 
             sleep(50);
             drive.goToPosition(-0.5, -0.53, -0.5, -0.53, 937, "go backwards");
@@ -362,7 +362,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
             drive.findTapeMIDAUTO("blueleft");
 
-            /*
+
             // 2nd +' CONE --------------------------------------------------------->
 
 
@@ -377,11 +377,11 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             score.grabConeAuto();
-            drive.goToPosition(-0.4, 0.4, 0.4, -0.4, 60, "go to left a bit");
+            drive.goToPosition(-0.5, 0.5, 0.5, -0.5, 30, "go to left a bit");
 
 
             sleep(50);
-            drive.goToPosition(-0.4, -0.43, -0.4, -0.43, 937, "go backwards");
+            drive.goToPosition(-0.5, -0.53, -0.5, -0.53, 937, "go backwards");
 
             drive.absTurnDriftPID(0);
 
@@ -423,19 +423,19 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                 //            }
             }
 
-            drive.goToPosition(0.42, 0.4, 0.42, 0.4, 72, "forward a bit");
+            drive.goToPosition(0.52, 0.5, 0.52, 0.5, 72, "forward a bit");
 
             scoreConeMed(130, 150, 100, 100);
 
             drive.absTurnPID(Math.PI / 2);
 
-            drive.goToPosition(0.42, 0.4, 0.42, 0.4, 684, "go forwards");
+            drive.goToPosition(0.52, 0.5, 0.52, 0.5, 684, "go forwards");
 
-            drive.goToPosition(0.4, -0.2, -0.2, 0.4, 200, "to the right a bit");
+            drive.goToPosition(0.5, -0.25, -0.25, 0.5, 200, "to the right a bit");
 
 
             drive.findTapeMIDAUTO("blueleft");
-*/
+
         } else if (toggle == 2) {
             while (toggle == 2) {
                 if (inner_toggle == 0) {
