@@ -274,7 +274,7 @@ public class ScoringSystem {
         boolean temp = true;
         drive.goToPosition(0.2, 0.2, 0.2, 0.2);
         while (temp) {
-            if (colorCone.getDistance(DistanceUnit.CM) < 3.5) {
+            if (colorCone.getDistance(DistanceUnit.CM) < 2) {
                 drive.goToPosition(0, 0, 0, 0);
                 // grab cone
                 setClawPosition(constant.getClawClosePos());

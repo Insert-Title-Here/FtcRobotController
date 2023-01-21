@@ -1164,9 +1164,11 @@ public void absTurnPID(double radians) {
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
-                        goToPosition(-0.1, 0.2, 0.2, -0.1);
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+
                     }else{
-                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                        goToPosition(0.3, -0.18, -0.18, 0.3);
+
                     }
 
                     // strafe diagonal left
@@ -1202,8 +1204,10 @@ public void absTurnPID(double radians) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
                         goToPosition(-0.3, 0.3, 0.3, -0.3);
+
                     }else{
-                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                        goToPosition(0.3, -0.18, -0.18, 0.3);
+
                     }
 
                     // strafe diagonal left
