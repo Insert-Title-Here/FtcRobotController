@@ -272,18 +272,18 @@ public class ScoringSystem {
     // auto version
     public void grabConeAuto() {
         boolean temp = true;
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3);
+        drive.goToPosition(0.2, 0.2, 0.2, 0.2);
         while (temp) {
             if (colorCone.getDistance(DistanceUnit.CM) < 3.5) {
                 drive.goToPosition(0, 0, 0, 0);
                 // grab cone
                 setClawPosition(constant.getClawClosePos());
                 try {
-                    sleep(200);
+                    sleep(300);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 20, "move backwards");
+                drive.goToPosition(-0.4, -0.4, -0.4, -0.4, 30, "move backwards");
                 // lift up
                 goToPositionPID(constant.getHeightLow(), 0.7);
 
