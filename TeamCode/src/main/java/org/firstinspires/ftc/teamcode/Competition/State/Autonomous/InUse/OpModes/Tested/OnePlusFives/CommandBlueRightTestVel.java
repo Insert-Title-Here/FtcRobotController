@@ -23,7 +23,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous (name = "VelBlueRight")
+@Autonomous (name = "Blue Right")
 public class CommandBlueRightTestVel extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
@@ -92,7 +92,6 @@ public class CommandBlueRightTestVel extends LinearOpMode {
             }
         });
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         cameraServo.setPosition(Constants.sleeveV2);

@@ -10,8 +10,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@TeleOp
 @Disabled
+@TeleOp
 public class AprilTagAutoTest extends LinearOpMode {
     OpenCvCamera camera;
     KevinGodPipelineAprilTag pipeline;

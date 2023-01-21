@@ -339,11 +339,11 @@ public class ScoringSystemV2EpicLift {
             moveToPosition(960, 1);
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(420, 1);
+            moveToPosition(440, 1);
 
 
         }else if(height == ScoringMode.LOW){
-            moveToPosition(67, 1);
+            moveToPosition(80, 1);
 
         }
 

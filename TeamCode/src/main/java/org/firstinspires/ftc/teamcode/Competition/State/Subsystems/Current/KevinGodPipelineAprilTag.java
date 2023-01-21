@@ -63,12 +63,12 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
     // Configuration variables for isolating pole color
-    public static int H1Field2Red = 100; //lab: 0  gym: 10
-    public static int S1Field2Red = 130;//lab: 100 gym:50
-    public static int V1Field2Red = 50; //lab: 80 gym:160
-    public static int H2Field2Red = 240; //lab: 50 gym: 30
-    public static int S2Field2Red = 160;
-    public static int V2Field2Red = 100;
+    public static int H1Field2Red = 150; //lab: 0  gym: 10
+    public static int S1Field2Red = 135;//lab: 100 gym:50
+    public static int V1Field2Red = 80; //lab: 80 gym:160
+    public static int H2Field2Red = 255; //lab: 50 gym: 30
+    public static int S2Field2Red = 145;
+    public static int V2Field2Red = 116;
 
     public static int H1Field2Blue = 17; //lab: 0  gym: 10
     public static int S1Field2Blue = 20;//lab: 100 gym:50
@@ -97,11 +97,11 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
     //Blue cone color
-    public static int H3 = 0;
+    public static int H3 = 55;
     public static int S3 = 90;
-    public static int V3 = 160;
-    public static int H4 = 200;
-    public static int S4 = 150;
+    public static int V3 = 170;
+    public static int H4 = 170;
+    public static int S4 = 120;
     public static int V4 = 255;
 
     //Red cone color
@@ -338,8 +338,9 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
             }
 
             for(int i = 0; i < contours.size(); i++){
+
                 // Filter out small, irrelevant contours
-                if(Imgproc.contourArea(contours.get(i)) > 300) {
+                if(Imgproc.contourArea(contours.get(i)) > 200) {
 
                     // Draw all contours to the screen
                     if(sleeveSense != Mode.POLE && sleeveSense != Mode.RIGHTAUTOPOLE) {
@@ -377,6 +378,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
             // Find largest contour
             for(int i = 0; i < xList.size() && i < contourLengths.size() && i < yList.size() && i < contours.size(); i++) {
+                
                 if(Imgproc.contourArea(contours.get(i)) > maxLength) {
                     maxLength = Imgproc.contourArea(contours.get(i));
                     maxLengthIndex = i;

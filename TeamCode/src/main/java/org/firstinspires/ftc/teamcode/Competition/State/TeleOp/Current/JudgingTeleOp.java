@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Competition.State.TeleOp.Current;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.MecDrive;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
 
-
+@Disabled
 @TeleOp (name = "JudgingOpMode")
 public class JudgingTeleOp extends LinearOpMode {
 

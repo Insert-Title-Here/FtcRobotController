@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.Tested.SafeAutos;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -24,7 +23,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous(name = "Safe Auto Red Left Vel")
+@Autonomous(name = "Red Left (Safe)")
 public class CommandRedLeftSafeTestVel extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
@@ -90,7 +89,6 @@ public class CommandRedLeftSafeTestVel extends LinearOpMode {
             }
         });
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         cameraServo.setPosition(Constants.sleeveV2);

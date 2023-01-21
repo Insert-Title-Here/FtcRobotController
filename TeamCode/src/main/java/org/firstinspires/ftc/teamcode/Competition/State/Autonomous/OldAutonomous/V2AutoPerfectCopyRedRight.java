@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Disabled
-@Autonomous(name="Red Right")
+@Autonomous(name="Red Right old")
 public class V2AutoPerfectCopyRedRight extends LinearOpMode {
     MecDrive drive;
     ScoringSystemV2 score;
