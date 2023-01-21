@@ -176,7 +176,7 @@ public class MainTeleOp extends LinearOpMode {
                             clawStackFlag.set(true);
                             stackFlag.set(false);
                             score.stackDown();
-                        } else if (!gamepad1.dpad_up && !gamepad1.dpad_down) {
+                        } else if(!gamepad1.dpad_up && !gamepad1.dpad_down && !stackFlag.get()) {
                             stackFlag.set(true);
                         }
 
@@ -221,7 +221,7 @@ public class MainTeleOp extends LinearOpMode {
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
-                                        score.goToPosition(score.getEncoderPosition() + 100, 0.8);
+                                        score.goToPosition(constant.getHeightLow(), 0.8);
                                         score.setPower(constant.getSteadyPow());
                                         clawStackFlag.set(false);
 
@@ -260,7 +260,7 @@ public class MainTeleOp extends LinearOpMode {
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
-                                        score.goToPosition(score.getEncoderPosition() + 150, 0.8);
+                                        score.goToPosition(constant.getHeightLow(), 0.8);
                                         score.setPower(constant.getSteadyPow());
                                         clawStackFlag.set(false);
                                     } else {

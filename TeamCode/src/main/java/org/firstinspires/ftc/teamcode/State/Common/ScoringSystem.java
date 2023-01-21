@@ -87,8 +87,8 @@ public class ScoringSystem {
                     liftMotorRight.setPower(power);
 
                 }else{
-                    liftMotorLeft.setPower(0.8);
-                    liftMotorRight.setPower(0.8);
+                    liftMotorLeft.setPower(power*0.8);
+                    liftMotorRight.setPower(power*0.8);
                 }
                 motorPosition = liftMotorLeft.getCurrentPosition();
             }
@@ -314,46 +314,62 @@ public class ScoringSystem {
         return colorCone.getDistance(DistanceUnit.CM);
     }
 
-    int height1 = 188;
-    int height2 = 145;
-    int height3 = 99;
-    int height4 = 64;
+    int height1 = 170;
+    int height2 = 130;
+    int height3 = 80;
+    int height4 = 50;
     int height5 = 5;
     int currentHeight = 0;
     public void stackUp(){
+        /*
         if(currentHeight == 0){
-            goToPosition(height1, 0.6);
+            goToPosition(height1, 0.1);
             currentHeight = height1;
         }else if(currentHeight == height5){
-            goToPosition(height4, 0.6);
+            goToPosition(height4, 0.1);
             currentHeight = height4;
         }else if(currentHeight == height4){
-            goToPosition(height3, 0.6);
+            goToPosition(height3, 0.1);
             currentHeight = height3;
         }else if(currentHeight == height3){
-            goToPosition(height2, 0.6);
+            goToPosition(height2, 0.1);
             currentHeight = height2;
         }else if(currentHeight == height2){
-            goToPosition(height1, 0.6);
+            goToPosition(height1, 0.1);
             currentHeight = height1;
         }
-    }
-    public void stackDown(){
-        if(currentHeight == height1){
-            goToPosition(height2, 0.4);
-            currentHeight = height2;
-        }else if(currentHeight == height2){
-            goToPosition(height3, 0.4);
-            currentHeight = height3;
-        }else if(currentHeight == height3){
-            goToPosition(height4, 0.4);
-            currentHeight = height4;
-        }else if(currentHeight == height4){
-            goToPosition(height5, 0.4);
-            currentHeight = height5;
+
+         */
+        if(currentHeight == 0){
+            goToPosition(160, 0.6);
+            currentHeight = 160;
+        }else{
+            if(getEncoderPosition() < 210){
+                goToPosition(currentHeight-35, 0.6);
+                currentHeight -= 35;
+            }
         }
     }
 
+    public void stackDown(){
+        /*
+        if(currentHeight == height1){
+            goToPosition(height2, 0.1);
+            currentHeight = height2;
+        }else if(currentHeight == height2){
+            goToPosition(height3, 0.1);
+            currentHeight = height3;
+        }else if(currentHeight == height3){
+            goToPosition(height4, 0.1);
+            currentHeight = height4;
+        }else if(currentHeight == height4){
+            goToPosition(height5, 0.1);
+            currentHeight = height5;
+        }
+
+         */
+        goToPosition(currentHeight + 35, 0.6);
+    }
 
 }
 
