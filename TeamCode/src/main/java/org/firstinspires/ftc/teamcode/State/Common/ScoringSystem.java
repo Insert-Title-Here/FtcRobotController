@@ -369,7 +369,6 @@ public class ScoringSystem {
 
          */
         goToPosition(currentHeight + 35, 0.6);
-        currentHeight += 35;
     }
 
 }
