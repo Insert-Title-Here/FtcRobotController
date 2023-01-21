@@ -21,7 +21,9 @@ public class TestTeleOp extends LinearOpMode {
     private final double SPRINT_ROTATIONAL_MODIFIER = 1;
     @Override
     public void runOpMode() throws InterruptedException {
-        drive = new MecanumDrive(hardwareMap, telemetry, true);
+        drive = new MecanumDrive(hardwareMap, telemetry);
+        //sets teleop driving to float instead of break
+        drive.mecanumDriveTeleOp(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         discontinue = new AtomicBoolean();
         discontinue.set(false);

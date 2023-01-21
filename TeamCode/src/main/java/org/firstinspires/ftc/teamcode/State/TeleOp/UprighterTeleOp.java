@@ -60,7 +60,9 @@ public class UprighterTeleOp extends LinearOpMode {
         imu.initialize(parameters);
 
         //detect = new ContourMultiScore(telemetry);
-        drive = new MecanumDrive(hardwareMap, telemetry, true);
+        drive = new MecanumDrive(hardwareMap, telemetry);
+        //sets teleop driving to float instead of break
+        drive.mecanumDriveTeleOp(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();

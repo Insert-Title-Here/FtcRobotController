@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.State.Common;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -61,6 +63,44 @@ public class MecanumDrive {
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        fl.setDirection(DcMotor.Direction.REVERSE);
+        fr.setDirection(DcMotor.Direction.REVERSE);
+        bl.setDirection(DcMotor.Direction.REVERSE);
+        br.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    public void mecanumDriveAuto(HardwareMap hardwareMap, Telemetry telemetry) {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        this.telemetry = telemetry;
+        active = new AtomicBoolean();
+        colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
+        accumulatedError = 0;
+
+        colorTape.setGain(100);
+        //initiallises drive motors
+        fl = hardwareMap.get(DcMotor.class, "fl");
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        br = hardwareMap.get(DcMotor.class, "br");
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -77,7 +117,7 @@ public class MecanumDrive {
         bl.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.FORWARD);
     }
-    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry, boolean notused) {
+    public void mecanumDriveTeleOp(HardwareMap hardwareMap, Telemetry telemetry) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -120,6 +160,7 @@ public class MecanumDrive {
         bl.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.FORWARD);
     }
+
     public void resetIMU(){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -695,7 +736,7 @@ public void absTurnPID(double radians) {
         while (Math.abs(imu.getAngularOrientation().firstAngle-radians) > 0.08) {
             double currentRadians = imu.getAngularOrientation().firstAngle;
 
-            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference, proportionPow, 0);
+            double drivePower = PIDAbsTurnPower(priorError, currentError, timeDifference, proportionPow, 70);
             if (radians < currentRadians-0.004) {
                 //if(startAngle > 0){
                     //setPower(-drivePower, drivePower, -drivePower, drivePower);
@@ -1045,9 +1086,9 @@ public void absTurnPID(double radians) {
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
-                        goToPosition(0.3, -0.3, -0.3, 0.3);
-                    }else{
                         goToPosition(-0.1, 0.3, 0.3, -0.1);
+                    }else{
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
