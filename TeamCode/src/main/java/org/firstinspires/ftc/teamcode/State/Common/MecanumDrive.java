@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.State.Common;
 
-import android.annotation.SuppressLint;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -1086,9 +1084,9 @@ public void absTurnPID(double radians) {
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
-                        goToPosition(-0.1, 0.3, 0.3, -0.1);
+                        goToPosition(0.25, -0.25, -0.25, 0.25);
                     }else{
-                        goToPosition(0.3, -0.3, -0.3, 0.3);
+                        goToPosition(-0.1, 0.3, 0.3, -0.1);
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -1102,9 +1100,11 @@ public void absTurnPID(double radians) {
                     //If time takes too long, strafe right or left back to the tape
 
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
-                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                        goToPosition(0.25, -0.25, -0.25, 0.25);
+
                     }else{
-                        goToPosition(0.3, -0.1, -0.1, 0.3);
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -1117,9 +1117,11 @@ public void absTurnPID(double radians) {
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
-                        goToPosition(-0.3, 0.3, 0.3, -0.3);
-                    }else{
                         goToPosition(0.3, -0.1, -0.1, 0.3);
+
+                    }else{
+                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -1133,9 +1135,11 @@ public void absTurnPID(double radians) {
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
-                        goToPosition(0.3, -0.3, -0.3, 0.3);
-                    }else{
                         goToPosition(-0.1, 0.3, 0.3, -0.1);
+
+                    }else{
+                        goToPosition(0.3, -0.3, -0.3, 0.3);
+
                     }
                     // strafe diagonal left
                     //goToPosition(0.4, 0, 0, 0.4);
@@ -1153,14 +1157,14 @@ public void absTurnPID(double radians) {
         boolean temp = true;
         long time = System.currentTimeMillis();
         if (color.equalsIgnoreCase("blueleft")) {
-            goToPosition(0.3, 0.6, 0.6, 0.3, 300, "left" );
+//            goToPosition(0.3, 0.6, 0.6, 0.3, 300, "left" );
 
             while (currentBlueColor() < 0.52) { //blue tape
 
                 if (temp) {
                     //If time takes too long, strafe right or left back to the tape
                     if((System.currentTimeMillis() - time)/1000 > 2.8){
-                        goToPosition(-0.3, 0.3, 0.3, -0.3);
+                        goToPosition(-0.1, 0.2, 0.2, -0.1);
                     }else{
                         goToPosition(0.3, -0.3, -0.3, 0.3);
                     }
@@ -1172,7 +1176,7 @@ public void absTurnPID(double radians) {
 
             }
         } else if (color.equalsIgnoreCase("redright")) {
-            goToPosition(0.6, 0.3, 0.3, 0.6, 300, "left" );
+//            goToPosition(0.6, 0.3, 0.3, 0.6, 300, "left" );
             while (currentRedColor() < 0.26) { //red tape
 
 
@@ -1190,7 +1194,7 @@ public void absTurnPID(double radians) {
 
             }
         } else if (color.equalsIgnoreCase("redleft")) {
-            goToPosition(0.3, 0.6, 0.6, 0.3, 300, "left" );
+//            goToPosition(0.3, 0.6, 0.6, 0.3, 300, "left" );
 
 
             while (currentRedColor() < 0.26) { //blue tape
@@ -1209,7 +1213,7 @@ public void absTurnPID(double radians) {
 
             }
         } else if (color.equalsIgnoreCase("blueright")) {
-            goToPosition(0.6, 0.3, 0.3, 0.6, 300, "left" );
+//            goToPosition(0.6, 0.3, 0.3, 0.6, 300, "left" );
 
             while (currentBlueColor() < 0.52) { //red tape
 

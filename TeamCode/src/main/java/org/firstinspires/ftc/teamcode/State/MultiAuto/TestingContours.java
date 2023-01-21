@@ -110,15 +110,12 @@ public class TestingContours extends LinearOpMode {
     }
     public void blueLeft() throws InterruptedException {
         //lift claw a little bit
-        score.goToPosition(50, 0.7);
+        score.goToPosition(50, 0.8);
+        sleep(100);
         // go forward next to pole
-        drive.goToPosition(0.3, 0.3, 0.3, 0.3, drive.avgPosition(1550, 1420, 1475, 1470), "go forward");
-        // turn45 to left 45 degrees to medium pole
-        drive.turn45(-Math.PI / 4.3);
-        // scoring cone
-        scoreCone(150, 200, 100, 225);
-        // turn45 back straight
-        drive.turn45(-Math.PI / 5);
+        drive.goToPosition(0.9, 0.8, 0.9, 0.8, 1350, "go forward next to pole");
+        // turn to right 45 degrees to high pole
+        drive.absTurnDriftPID(-Math.PI / 4);
         //moves robot to correct parking position
 //        if (park.getPosition() == DetectionAlgorithmLeft.ParkingPosition.LEFT) {
 //            // move to left park (strafe right)
