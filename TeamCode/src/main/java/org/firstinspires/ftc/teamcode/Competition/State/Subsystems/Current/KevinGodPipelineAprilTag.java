@@ -476,6 +476,44 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
     }
 
 
+    public int normalize(double power, int target, int tolerance, double lowerThreshold, double upperThreshold) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+
+
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+            if(getXContour() > xMax && drive.getFirstAngle() > lowerThreshold) {
+                drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+            } else if(getXContour() < xMin && drive.getFirstAngle() > upperThreshold) {
+                drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
+            }
+
+//            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
+
+                break;
+            }
+        }
+        drive.simpleBrake();
+
+        isNormalizing = false;
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+        return (int)(startPos - drive.avgPos());
+    }
+
+
+
     public int normalize(int velocity, int target, int tolerance) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
