@@ -30,8 +30,8 @@ public class MultiRedLeftHIGH extends LinearOpMode {
     AtomicBoolean liftTurn, liftCone, safePark;
 
     // ftc dashboard values + properCX
-    private double properCX = 165; //67  170
-    private double properCXHigh = 160   ; //67
+    private double properCX = 160; //67  170
+    private double properCXHigh = 155; //67
 
     private double properCXLow = 180; //160  163
 
@@ -600,8 +600,8 @@ public class MultiRedLeftHIGH extends LinearOpMode {
         sleep(100);
         // old: 7900     (9100 new)  (6800 new)  7400
 
-        while (detect1.getBoundArea() <= 5700.0 || detect1.getBoundArea() >= 8400) { //7200
-            if (detect1.getBoundArea() >= 5700.0 && detect1.getBoundArea() <= 8400 && detect1.getDistance() <= 5.5/*|| detect1.getcX() <= 18*/) {
+        while (detect1.getBoundArea() <= 5900.0 || detect1.getBoundArea() >= 8400) { //7200
+            if (detect1.getBoundArea() >= 5900.0 && detect1.getBoundArea() <= 8400 && detect1.getDistance() <= 5.5/*|| detect1.getcX() <= 18*/) {
                 drive.goToPosition(0, 0, 0, 0);
                 break;
             } else if ((System.currentTimeMillis() - onTimeout) / 1000 > 3) {
@@ -642,8 +642,8 @@ public class MultiRedLeftHIGH extends LinearOpMode {
         drive.goToPosition(0.1, 0.1, 0.1, 0.1);
         // old: 7900     (9100 new)  (6800 new)  7400
 
-        while (detect1.getBoundArea() <= 5000.0 || detect1.getBoundArea() >= 8400) { //7200
-            if (detect1.getBoundArea() >= 5000.0 && detect1.getBoundArea() <= 8400 && detect1.getDistance() <= 5.5/*|| detect1.getcX() <= 18*/) {
+        while (detect1.getBoundArea() <= 5900.0 || detect1.getBoundArea() >= 8400) { //7200
+            if (detect1.getBoundArea() >= 5900.0 && detect1.getBoundArea() <= 8400 && detect1.getDistance() <= 5.5/*|| detect1.getcX() <= 18*/) {
                 drive.goToPosition(0, 0, 0, 0);
                 break;
             } else if ((System.currentTimeMillis() - onTimeout) / 1000 > 3) {
