@@ -63,12 +63,12 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
     // Configuration variables for isolating pole color
-    public static int H1Field2Red = 150; //lab: 0  gym: 10
+    public static int H1Field2Red = 143; //lab: 0  gym: 10
     public static int S1Field2Red = 135;//lab: 100 gym:50
-    public static int V1Field2Red = 80; //lab: 80 gym:160
+    public static int V1Field2Red = 70; //lab: 80 gym:160
     public static int H2Field2Red = 255; //lab: 50 gym: 30
     public static int S2Field2Red = 145;
-    public static int V2Field2Red = 116;
+    public static int V2Field2Red = 130;
 
     public static int H1Field2Blue = 17; //lab: 0  gym: 10
     public static int S1Field2Blue = 20;//lab: 100 gym:50
@@ -378,7 +378,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
             // Find largest contour
             for(int i = 0; i < xList.size() && i < contourLengths.size() && i < yList.size() && i < contours.size(); i++) {
-                
+
                 if(Imgproc.contourArea(contours.get(i)) > maxLength) {
                     maxLength = Imgproc.contourArea(contours.get(i));
                     maxLengthIndex = i;

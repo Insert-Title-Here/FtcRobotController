@@ -72,7 +72,7 @@ public class CommandRedRightTestVel extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_RIGHT, true);
+        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.RED_RIGHT, false);
 
         camera.setPipeline(pipeline);
 
@@ -121,7 +121,7 @@ public class CommandRedRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
-                new InstantCommand(() -> pipeline.normalize(0.22, 169, 2))
+                new InstantCommand(() -> pipeline.normalize(0.16, 169, 2))
                 );
 
         if(distance.getNormalizedColors().red > 0.6) {
@@ -220,7 +220,7 @@ public class CommandRedRightTestVel extends LinearOpMode {
             CommandScheduler.getInstance().schedule(
 
 
-                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3)),
+                    //new InstantCommand(() -> pipeline.normalize(0.22, 169, 3)),
                     new InstantCommand(() -> score.newLiftPID(1020, 1, 0.85))
             );
 
@@ -269,7 +269,7 @@ public class CommandRedRightTestVel extends LinearOpMode {
         CommandScheduler.getInstance().run();
 
         while(CommandScheduler.getInstance().isScheduled(
-                new InstantCommand(() -> drive.simpleMoveToPosition(-80, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI/2, 0.4, false, 1)),
                 new InstantCommand(() -> sleep(50))
         )){
 

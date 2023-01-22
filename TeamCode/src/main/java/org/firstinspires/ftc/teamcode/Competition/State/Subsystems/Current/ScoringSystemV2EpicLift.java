@@ -332,14 +332,16 @@ public class ScoringSystemV2EpicLift {
 
     public void autoGoToPosition(){
 
-        if(getConeStack() > 1){
-            moveToPosition(870, 1);
-        }
+
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            moveToPosition(960, 1);
+            if(getConeStack() > 1){
+                moveToPosition(885, 1);
+            }else {
+                moveToPosition(960, 1);
+            }
 
         }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(440, 1);
+            moveToPosition(500, 1);
 
 
         }else if(height == ScoringMode.LOW){
