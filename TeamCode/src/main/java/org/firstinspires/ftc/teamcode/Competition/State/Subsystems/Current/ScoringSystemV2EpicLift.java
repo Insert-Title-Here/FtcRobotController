@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current;
 
 
+import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
+import org.firstinspires.ftc.teamcode.Testing.MotionProfile.LinkageMotionProfiler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -189,6 +191,8 @@ public class ScoringSystemV2EpicLift {
         lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
         rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
 
+        MotionProfiler profile = new MotionProfiler(this, telemetry);
+
         lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
         rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
@@ -197,8 +201,11 @@ public class ScoringSystemV2EpicLift {
 
         if(up){
             setLinkagePosition(Constants.linkageUpV2);
+            //profile.trapezoidalServoProfile(400, Constants.linkageUpV2);
         }else {
             setLinkagePosition(Constants.linkageDownV2);
+            //profile.trapezoidalServoProfile(400, Constants.linkageDownV2);
+
         }
         //setLinkagePosition(0.8);
         grabber.setPosition(Constants.open);
@@ -354,14 +361,14 @@ public class ScoringSystemV2EpicLift {
 
     public void commandAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            setLiftTarget(960);
+            setLiftTarget(1020);
 
         }else if(height == ScoringMode.MEDIUM){
-            setLiftTarget(450);
+            setLiftTarget(585);
 
 
         }else if(height == ScoringMode.LOW){
-            setLiftTarget(100);
+            setLiftTarget(155);
 
         }
 
@@ -1528,6 +1535,10 @@ public class ScoringSystemV2EpicLift {
 
     public void setLiftTarget(int target){
         liftTarget = target;
+    }
+
+    public int getLiftTarget(){
+        return liftTarget;
     }
 
 

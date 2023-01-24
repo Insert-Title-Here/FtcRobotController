@@ -489,17 +489,56 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
         while((getXContour() > xMax || getXContour() < xMin)) {
-            if(getXContour() > xMax && drive.getFirstAngle() > lowerThreshold) {
-                drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
-            } else if(getXContour() < xMin && drive.getFirstAngle() > upperThreshold) {
-                drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
+            /*if(getXContour() > xMax) {
+                if(drive.getFirstAngle() < lowerThreshold){
+                    drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
+
+                }else{
+                    drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+                }
+            } else if(getXContour() < xMin) {
+                if(drive.getFirstAngle() < upperThreshold){
+                    drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+
+                }else{
+                    drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
+
+                }
             }
 
+             */
+
+            if(drive.getFirstAngle() < lowerThreshold){
+                drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
+                telemetry.addData("normalize", "less than lower");
+
+
+            }else if(drive.getFirstAngle() > upperThreshold){
+                drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+                telemetry.addData("normalize", "greater than upper");
+
+
+            }else{
+                if(getXContour() > xMax) {
+                    drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+                }else{
+                    drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
+                }
+                telemetry.addData("normalize", "normal");
+
+            }
+
+
 //            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
-            if(time.seconds() - startTime > 2){
+            /*if(time.seconds() - startTime > 2){
 
                 break;
             }
+
+             */
+
+            telemetry.addData("angle", drive.getFirstAngle() * (180 / Math.PI));
+            telemetry.update();
         }
         drive.simpleBrake();
 

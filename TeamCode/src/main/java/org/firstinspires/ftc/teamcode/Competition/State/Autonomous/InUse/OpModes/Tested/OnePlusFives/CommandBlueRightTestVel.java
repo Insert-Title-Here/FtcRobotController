@@ -121,7 +121,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
-                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3))
+                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (3 * Math.PI) / 8, (3.4 * Math.PI)/8))
 
         );
 

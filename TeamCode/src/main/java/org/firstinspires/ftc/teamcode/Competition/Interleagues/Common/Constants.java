@@ -47,7 +47,7 @@ public class Constants {
     public static final double score = 0.3;
 
     //Drive Modifiers
-    public static final double NORMAL_LINEAR_MODIFIER = 0.5;
+    public static final double NORMAL_LINEAR_MODIFIER = 0.8;
     public static final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
     public static final double EXTENDED_LINEAR_MODIFIER = 0.5;
     public static final double EXTENDED_ROTATIONAL_MODIFIER = 0.3;

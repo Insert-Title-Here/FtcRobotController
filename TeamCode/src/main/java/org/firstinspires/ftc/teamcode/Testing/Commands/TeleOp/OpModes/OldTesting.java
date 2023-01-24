@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Testing.Commands.Subsystems.ScoringSystemC
 
 @Disabled
 @TeleOp
-public class CommandTestingTeleOp extends CommandOpMode {
+public class OldTesting extends CommandOpMode {
 
     private GamepadEx driver, beaconMechDriver;
     //AtomicBoolean initializeRobot;

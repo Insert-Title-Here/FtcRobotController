@@ -16,6 +16,11 @@ public class MotionProfiler {
         this.telemetry = telemetry;
     }
 
+    public MotionProfiler(ScoringSystemV2EpicLift score, Telemetry telemetry){
+        this.score = score;
+        this.telemetry = telemetry;
+    }
+
     public void trapezoidalServoProfile(int milliseconds, double startPos, double targetPos){
         double distance = targetPos - startPos;
         double averageVel = (distance / milliseconds);

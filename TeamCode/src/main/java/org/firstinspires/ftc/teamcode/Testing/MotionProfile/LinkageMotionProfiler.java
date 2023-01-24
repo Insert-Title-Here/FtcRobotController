@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
+
 public class LinkageMotionProfiler {
     ServoImplEx rLinkage, lLinkage;
 
@@ -15,6 +17,8 @@ public class LinkageMotionProfiler {
         rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
     }
+
+
 
     public void triangularMotionProfile(double targetPosition, int millis){
         double distance = 355 * Math.abs(targetPosition - rLinkage.getPosition());

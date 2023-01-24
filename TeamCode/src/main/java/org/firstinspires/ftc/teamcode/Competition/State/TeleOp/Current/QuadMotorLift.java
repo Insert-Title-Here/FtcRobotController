@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.Competition.State.TeleOp.Current;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.MecDrive;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
+import org.firstinspires.ftc.teamcode.Testing.MotionProfile.LinkageMotionProfiler;
 
 
 @TeleOp (name = "KevinGodModeSequence")
@@ -22,7 +24,7 @@ public class QuadMotorLift extends LinearOpMode {
 
     ColorRangeSensor distance;
 
-    PassivePower passive;
+    //PassivePower passive;
 
     volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp, scoringPattern, changeToggle;
     volatile boolean liftBrokenMode = false;
@@ -59,10 +61,11 @@ public class QuadMotorLift extends LinearOpMode {
 
 
         //Feed forward is going to be off
-        passive = PassivePower.ZERO;
+        //passive = PassivePower.ZERO;
 
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, true);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, new ElapsedTime(), true);
         //robot = new Robot(hardwareMap);
+
         drive = new MecDrive(hardwareMap,false, telemetry);
         //systems = new EndgameSystems(hardwareMap);
 
@@ -89,25 +92,25 @@ public class QuadMotorLift extends LinearOpMode {
                         //score.setPower(0.2);
                         if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA && !liftBrokenMode) {
 
-                            score.autoGoToPosition();
+                            score.commandAutoGoToPosition();
 
                             if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW) {
-                                score.setLinkagePosition(0.72);
+                                score.setLinkagePosition(0.7);
                             } else {
                                 score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
                             }
-                            passive = PassivePower.EXTENDED;
+                            //passive = PassivePower.EXTENDED;
                         }else if (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA){
                             score.setLinkagePosition(0.15);
                         }
                         
-                    }else {
+                    }/*else {
                         if(passive == PassivePower.EXTENDED){
                             score.setPowerSingular(0.23);
                         }else if(passive == PassivePower.ZERO){
                             score.setPower(0);
                         }
-                    }
+                    }*/
 
 
                     //Scoring feature
@@ -130,8 +133,9 @@ public class QuadMotorLift extends LinearOpMode {
 
                             //Do nothing during movement phase
                             //Reset to zero and no passive power
-                            score.moveToPosition(0, 0.5);
-                            passive = PassivePower.ZERO;
+                            //score.moveToPosition(0, 0.5);
+                            score.setLiftTarget(0);
+                            //passive = PassivePower.ZERO;
 
                             //Open Grabber and reset linkage
 
@@ -320,12 +324,34 @@ public class QuadMotorLift extends LinearOpMode {
 
                     //Manual slides (dpad right and left)
                     if(gamepad1.dpad_right){
-                        passive = PassivePower.MOVEMENT;
+                        //passive = PassivePower.MOVEMENT;
                         score.setPower(1);
+                        score.setLiftTarget(-1 * score.getRightEncoderPos());
                     }else if(gamepad1.dpad_left){
-                        passive = PassivePower.MOVEMENT;
+                        //passive = PassivePower.MOVEMENT;
                         score.setPower(-0.55);
+                        score.setLiftTarget(-1 * score.getRightEncoderPos());
+
                     }else{
+                        if(score.getLiftTarget() == 0){
+                            score.newLiftPIDUpdate(0.55);
+                            telemetry.addData("stuff", "slow");
+
+                        }else {
+                            score.newLiftPIDUpdate(1);
+                            telemetry.addData("stuff", "fast");
+
+                        }
+
+                    }
+
+                    telemetry.addData("target", score.getLiftTarget());
+
+                    telemetry.update();
+
+
+
+                    /*else{
 
                         //Feedforward if slides are extended
                         if(score.isExtended() && (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.MEDIUM)){
@@ -335,7 +361,7 @@ public class QuadMotorLift extends LinearOpMode {
                         }
 
 
-                    }
+                    }*/
 
                     if (gamepad1.ps && optionsFlag) {
                         optionsFlag = false;
@@ -506,7 +532,7 @@ public class QuadMotorLift extends LinearOpMode {
 
             //Telemetry
 
-            telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
+            /*telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
             telemetry.addData("distanceRed", distance.getNormalizedColors().red);
@@ -520,11 +546,11 @@ public class QuadMotorLift extends LinearOpMode {
             //telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);
             telemetry.addData("rightServoTarget", score.getRightLinkage());
             telemetry.addData("leftServoTarget", score.getLeftLinkage());
-            telemetry.addData("passive", passive);
+            //telemetry.addData("passive", passive);
             telemetry.addData("coneStack", score.getConeStack());
             telemetry.addData("rip robot", liftBrokenMode);
             telemetry.update();
-
+*/
 
         }
 

@@ -23,7 +23,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Disabled
+
 @Autonomous (name = "Blue Right Cycle Test")
 public class BlueRightCycleTest extends LinearOpMode {
     MecDriveV2 drive;
@@ -138,7 +138,7 @@ public class BlueRightCycleTest extends LinearOpMode {
             }
 
             CommandScheduler.getInstance().schedule(
-                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3)),
+                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, -Math.PI/9, -Math.PI/15)),
 
                     //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                     new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83))
@@ -182,7 +182,7 @@ public class BlueRightCycleTest extends LinearOpMode {
 
 
         CommandScheduler.getInstance().schedule(
-                new InstantCommand(() -> drive.simpleMoveToPosition(-80, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(0, 1, false, 1)),
                 new WaitCommand(50)
         );
 
@@ -190,7 +190,7 @@ public class BlueRightCycleTest extends LinearOpMode {
         CommandScheduler.getInstance().run();
 
         while(CommandScheduler.getInstance().isScheduled(
-                new InstantCommand(() -> drive.simpleMoveToPosition(-80, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(0, 1, false, 1)),
                 new InstantCommand(() -> sleep(50))
         )){
 
