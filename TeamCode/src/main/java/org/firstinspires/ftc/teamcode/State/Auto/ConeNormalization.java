@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.League3.Auto;
+package org.firstinspires.ftc.teamcode.State.Auto;
+
+import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -18,8 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-//@Config
-public class NormalizationTesting extends OpenCvPipeline {
+
+@Config
+public class ConeNormalization extends OpenCvPipeline {
 
     // defining vars
     private Mat contourMat = new Mat(), generalMat = new Mat(), highestPole = new Mat(), hierarchy = new Mat();
@@ -33,7 +36,7 @@ public class NormalizationTesting extends OpenCvPipeline {
     private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference, boundArea = 0;
     // for points on contour
     double numCurrent, num1Prev, num2Prev, num3Prev, num4Prev, num5Prev = 0;
-    boolean toggle, toggle2;
+    boolean toggle, toggle2, isBlue;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -43,17 +46,27 @@ public class NormalizationTesting extends OpenCvPipeline {
     Telemetry telemetry;
 
     /* make stuff public static  */
-    public static int lower1 = 50; //50   50
-    public static int lower2 = 50; //50   50
-    public static int lower3 = 30; //10   40
-    public static int upper1 = 180; //255   180
-    public static int upper2 = 170; //255   200
-    public static int upper3 = 108; //105   108//value was 80 when servo was perpendicular to the ground
-    //blueupper3 value 114 when @Krish's
+
+    //BLUE
+    public static int bluelower1 = 30; //50   50
+    public static int bluelower2 = 90; //50   50
+    public static int bluelower3 = 150; //10   40
+    public static int blueupper1 = 130; //255   180
+    public static int blueupper2 = 120; //255   200
+    public static int blueupper3 = 255; //105   108//value was 80 when servo was perpendicular to the ground
+
+
+    //RED
+    public static int redlower1 = 0; //50   50
+    public static int redlower2 = 160; //50   50
+    public static int redlower3 = 50; //10   40
+    public static int redupper1 = 230; //255   180
+    public static int redupper2 = 235; //255   200
+    public static int redupper3 = 150;
     public static double widthRemoveConstant = 3.1;
 
 
-    public NormalizationTesting (Telemetry telemetry) {
+    public ConeNormalization(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
@@ -71,6 +84,7 @@ public class NormalizationTesting extends OpenCvPipeline {
         toggle2 = false;
         leftContour = new ArrayList<>();
         rightContour = new ArrayList<>();
+        isBlue = true;
 
         generalMat = input.clone();
         //input.copyTo(generalMat);
@@ -84,7 +98,12 @@ public class NormalizationTesting extends OpenCvPipeline {
         Imgproc.dilate(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
         Imgproc.cvtColor(contourMat, contourMat, Imgproc.COLOR_RGB2YCrCb);
 //        Core.extractChannel(contourMat, contourMat, 0);
-        Core.inRange(contourMat, new Scalar(lower1, lower2, lower3), new Scalar(upper1, upper2, upper3), contourMat);
+        if (isBlue) {
+            Core.inRange(contourMat, new Scalar(bluelower1, bluelower2, bluelower3), new Scalar(blueupper1, blueupper2, blueupper3), contourMat);
+        } else {
+            Core.inRange(contourMat, new Scalar(redlower1, redlower2, redlower3), new Scalar(redupper1, redupper2, redupper3), contourMat);
+
+        }
 
         //extracts yellow (for poles)
         //Core.extractChannel(generalMat, contourMat, 0);
@@ -232,16 +251,6 @@ public class NormalizationTesting extends OpenCvPipeline {
                     telemetry.addData("error", e);
                 }
     */
-            if (mainContour.length > 8) {
-                for (int i = mainContour.length - 1; i >= 0; i--) {
-                    loggingString += (mainContour[i].toString() + "\n");
-                    if (Math.abs(mainContour[4].x - mainContour[i].x) > 6 && mainContour[i].y > 3) {
-                        perWidth = Math.abs(mainContour[4].x - mainContour[i].x);
-                        loggingString += ("perWidth " + perWidth + "\n");
-                        break;
-                    }
-                }
-            }
 
             //draws circle of centroid
             Imgproc.circle(generalMat, new Point(cX, cY), 1, new Scalar(255, 49, 0, 255), 2);
@@ -251,9 +260,6 @@ public class NormalizationTesting extends OpenCvPipeline {
             telemetry.addData("index", indexOfMax);
             telemetry.addData("cX", cX);
             telemetry.addData("cY", cY);
-            telemetry.addData("width", perWidth);
-            telemetry.addData("width v.2", boundRect.width);
-            telemetry.addData("distanceInches", distance);
             telemetry.addData("area", boundArea);
 //                telemetry.addData("array", mainContour[0].x + " " + mainContour[0].y);
 //                telemetry.addData("array", mainContour[1].x + " " + mainContour[1].y);

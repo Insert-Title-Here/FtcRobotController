@@ -14,8 +14,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous @Config
-public class Cam extends LinearOpMode {
-    DetectionAlgorithmLeft detect;
+public class ConeNormalizationTesting extends LinearOpMode {
+    ConeNormalization detect;
     String position; //temp
     OpenCvWebcam webcam;
     ScoringSystem score;
@@ -26,7 +26,7 @@ public class Cam extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        detect = new DetectionAlgorithmLeft(telemetry);
+        detect = new ConeNormalization(telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -48,16 +48,17 @@ public class Cam extends LinearOpMode {
             }
         });
 
-
+        detect.isBlue = true;
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         telemetry.addData("position", position);
+        telemetry.addData("cX", detect.getcX());
         telemetry.addData("Status", "Initialized");
 
         telemetry.update();
 
         while (opModeInInit()) {
-
+            score.setCamPosition(pos);
         }
         waitForStart();
         webcam.stopStreaming();

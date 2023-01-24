@@ -51,7 +51,7 @@ public class NormalizationTesting extends OpenCvPipeline {
     public static int upper1 = 180; //255   180
     public static int upper2 = 170; //255   200
     public static int upper3 = 108; //105   108//value was 80 when servo was perpendicular to the ground
-    //upper3 value 114 when @Krish's
+    //blueupper3 value 114 when @Krish's
     public static double widthRemoveConstant = 3.1;
 
 

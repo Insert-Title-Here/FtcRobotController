@@ -9,7 +9,7 @@ public class  Constants {
     private int heightLow = 460;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.25;
-    private double clawClosePos = 0.36; // was 0.38 for old design
+    private double clawClosePos = 0.35; // was 0.38 for old design
     private double clawHighThreshold = 0.8;
     private int stackHeight = 188;
     private double steadyPow = 0.18;
@@ -19,6 +19,7 @@ public class  Constants {
     private double straightCamPos = 0.32;
     private double strafeMedCamPos = 0.75;
     private double strafeLowCamPos = 0.21;
+    private double strafeConeCamPos = 0.245;
     //TODO: add comments
     public double getClawOpenPos(){
         return clawOpenPos;
@@ -77,6 +78,16 @@ public class  Constants {
 
     public double getStrafeLowCamPos() {
         return strafeLowCamPos;
+    }
+
+    public double getStrafeConeCamPos() {
+        return strafeConeCamPos;
+    }
+
+    public enum Pipeline {
+        PARK,
+        POLE,
+        CONE
     }
 }
 
