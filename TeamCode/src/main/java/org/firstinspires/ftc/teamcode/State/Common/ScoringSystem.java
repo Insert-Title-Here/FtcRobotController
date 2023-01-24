@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.State.Common;
 
 import static java.lang.Thread.sleep;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -14,10 +16,9 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-
+@Config
 public class ScoringSystem {
-    private DcMotor liftMotorLeft;
-    private DcMotor liftMotorRight;
+    private DcMotorEx liftMotorLeft, liftMotorRight;
     private Servo claw;
     private Servo camTurn;
     //private Servo uprighter;
@@ -36,8 +37,8 @@ public class ScoringSystem {
         claw = hardwareMap.get(Servo.class, "claw");
         camTurn = hardwareMap.get(Servo.class, "camTurn");
         //uprighter = hardwareMap.get(Servo.class, "uprighter");
-        liftMotorLeft = hardwareMap.get(DcMotor.class, "liftMotorLeft");
-        liftMotorRight = hardwareMap.get(DcMotor.class, "liftMotorRight");
+        liftMotorLeft = hardwareMap.get(DcMotorEx.class, "liftMotorLeft");
+        liftMotorRight = hardwareMap.get(DcMotorEx.class, "liftMotorRight");
         colorCone = hardwareMap.get(ColorRangeSensor.class, "colorCone");
         drive = new MecanumDrive(hardwareMap, telemetry);
         this.telemetry = telemetry;
@@ -139,6 +140,8 @@ public class ScoringSystem {
 
 
     }
+    public static double proportion = 0;
+    public static double derivative = 0;
     public double PIDLiftPower(double priorError, double currentError, double timeChange, int tics) {
         double proportionCoefficient;
         if(liftMotorLeft.getCurrentPosition() > tics){
@@ -158,7 +161,7 @@ public class ScoringSystem {
         loggingString += "proportionPower: " + currentError * proportionCoefficient + "   ";
          */
 
-        return currentError * proportionCoefficient /*+ ((currentError-priorError)/timeChange) * derivative*/;
+        return currentError * proportion + ((currentError-priorError)/timeChange) * derivative;
 
     }
 
@@ -322,21 +325,18 @@ public class ScoringSystem {
     int currentHeight = 0;
     public void stackUp(){
         /*
-        if(currentHeight == 0){
+        if(currentHeight == 0 || currentHeight == height2){
             goToPosition(height1, 0.1);
             currentHeight = height1;
-        }else if(currentHeight == height5){
-            goToPosition(height4, 0.1);
-            currentHeight = height4;
-        }else if(currentHeight == height4){
-            goToPosition(height3, 0.1);
-            currentHeight = height3;
         }else if(currentHeight == height3){
             goToPosition(height2, 0.1);
             currentHeight = height2;
-        }else if(currentHeight == height2){
-            goToPosition(height1, 0.1);
-            currentHeight = height1;
+        }else if(currentHeight == height4){
+            goToPosition(height3, 0.1);
+            currentHeight = height3;
+        }else if(currentHeight == height5){
+            goToPosition(height4, 0.1);
+            currentHeight = height4;
         }
 
          */
