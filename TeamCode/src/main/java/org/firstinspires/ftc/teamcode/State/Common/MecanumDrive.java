@@ -5,7 +5,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -15,9 +17,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-@Config
+
 public class MecanumDrive {
-    DcMotor fl, fr, bl, br;
+    DcMotorEx fl, fr, bl, br;
     Telemetry telemetry;
     Thread driveThread;
     AtomicBoolean active;
@@ -51,10 +53,10 @@ public class MecanumDrive {
 
         colorTape.setGain(100);
         //initiallises drive motors
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        br = hardwareMap.get(DcMotor.class, "br");
+        fl = hardwareMap.get(DcMotorEx.class, "fl");
+        fr = hardwareMap.get(DcMotorEx.class, "fr");
+        bl = hardwareMap.get(DcMotorEx.class, "bl");
+        br = hardwareMap.get(DcMotorEx.class, "br");
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -89,10 +91,10 @@ public class MecanumDrive {
 
         colorTape.setGain(100);
         //initiallises drive motors
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        br = hardwareMap.get(DcMotor.class, "br");
+        fl = hardwareMap.get(DcMotorEx.class, "fl");
+        fr = hardwareMap.get(DcMotorEx.class, "fr");
+        bl = hardwareMap.get(DcMotorEx.class, "bl");
+        br = hardwareMap.get(DcMotorEx.class, "br");
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -132,10 +134,10 @@ public class MecanumDrive {
 
         colorTape.setGain(100);
         //initiallises drive motors
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        br = hardwareMap.get(DcMotor.class, "br");
+        fl = hardwareMap.get(DcMotorEx.class, "fl");
+        fr = hardwareMap.get(DcMotorEx.class, "fr");
+        bl = hardwareMap.get(DcMotorEx.class, "bl");
+        br = hardwareMap.get(DcMotorEx.class, "br");
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -217,6 +219,7 @@ public class MecanumDrive {
             setPower(-(power * sin - turnValue), -(power * cos + turnValue),
                     -(power * cos - turnValue), -(power * sin + turnValue));
         }
+        loggingString += "FlVelocity: " + fl.getVelocity() +", " + "FrVelocity: " + fr.getVelocity() +", " + "BlVelocity: " + bl.getVelocity() +", " + "BrVelocity: " + br.getVelocity() +"\n";
     }
 
 
@@ -537,6 +540,21 @@ public class MecanumDrive {
         setPower(0, 0, 0, 0);
         accumulatedError = 0;
         error = 0;
+    }
+    public PIDCoefficients goToPos = new PIDCoefficients(0,0,0);
+    public void velocityPositionPID(double targetTics){
+        double flCurrentTics = fl.getCurrentPosition();
+        double frCurrentTics = fr.getCurrentPosition();
+        double blCurrentTics = bl.getCurrentPosition();
+        double brCurrentTics = br.getCurrentPosition();
+
+        double flDeltaError = targetTics - flCurrentTics;
+        double frDeltaError = targetTics - frCurrentTics;
+        double blDeltaError = targetTics - blCurrentTics;
+        double brDeltaError = targetTics - brCurrentTics;
+
+
+
     }
 
 
@@ -960,18 +978,32 @@ public void absTurnPID(double radians) {
     }
 
     // returns the power of a mecanum wheel
-    public double getPowerFl(){
+    public double getFlPower(){
         return fl.getPower();
     }
-    public double getPowerFr(){
+    public double getFrPower(){
         return fr.getPower();
     }
-    public double getPowerBl(){
+    public double getBlPower(){
         return bl.getPower();
     }
-    public double getPowerBr(){
+    public double getBrPower(){
         return br.getPower();
     }
+    public double getFlVelocity(){
+        return fl.getVelocity();
+    }
+    public double getFrVelocity(){
+        loggingString += fr.getVelocity();
+        return fr.getVelocity();
+    }
+    public double getBlVelocity(){
+        return bl.getVelocity();
+    }
+    public double getBrVelocity(){
+        return br.getVelocity();
+    }
+
 
     // logs string into file
     public void writeLoggerToFile(){
