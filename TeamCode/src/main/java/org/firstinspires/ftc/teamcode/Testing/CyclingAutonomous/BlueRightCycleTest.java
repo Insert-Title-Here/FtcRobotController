@@ -99,6 +99,12 @@ public class BlueRightCycleTest extends LinearOpMode {
         pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE);
         cameraServo.setPosition(Constants.poleV2);
 
+        while(opModeInInit()){
+            telemetry.addData("angleDeg", drive.getFirstAngle() * 180 / Math.PI);
+            telemetry.addData("angleRad", drive.getFirstAngle());
+            telemetry.update();
+        }
+
 
         waitForStart();
 

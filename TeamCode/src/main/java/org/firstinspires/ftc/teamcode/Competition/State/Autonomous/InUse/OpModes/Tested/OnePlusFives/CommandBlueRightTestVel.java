@@ -113,15 +113,15 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> drive.goTOPIDPosVel(-2050)),
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
-                new InstantCommand(() -> drive.goTOPIDPosVel(790)),
-                //new InstantCommand(() -> drive.simpleMoveToPosition(700, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                //new InstantCommand(() -> drive.goTOPIDPosVel(790)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(730, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
-                new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
+                new InstantCommand(() -> pipeline.normalizeStrafe(0.28, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
-                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (3 * Math.PI) / 8, (3.4 * Math.PI)/8))
+                new InstantCommand(() -> pipeline.normalize(0.18, 169, 3, (Math.PI/2) - (4 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180)))
 
         );
 
@@ -158,7 +158,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new InstantCommand(() -> sleep(250)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3)),
+                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (Math.PI/2) - (4 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180))),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                 new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83)),
 
@@ -206,7 +206,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
             }
 
             CommandScheduler.getInstance().schedule(
-                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3)),
+                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (Math.PI/2) - (4 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180))),
 
                     //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                     new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83))

@@ -489,24 +489,6 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
         while((getXContour() > xMax || getXContour() < xMin)) {
-            /*if(getXContour() > xMax) {
-                if(drive.getFirstAngle() < lowerThreshold){
-                    drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
-
-                }else{
-                    drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
-                }
-            } else if(getXContour() < xMin) {
-                if(drive.getFirstAngle() < upperThreshold){
-                    drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
-
-                }else{
-                    drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
-
-                }
-            }
-
-             */
 
             if(drive.getFirstAngle() < lowerThreshold){
                 drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
@@ -530,12 +512,70 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
 //            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
-            /*if(time.seconds() - startTime > 2){
+            if(time.seconds() - startTime > 2){
 
                 break;
             }
 
-             */
+
+
+            telemetry.addData("angle", drive.getFirstAngle() * (180 / Math.PI));
+            telemetry.update();
+        }
+        drive.simpleBrake();
+
+        isNormalizing = false;
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+        return (int)(startPos - drive.avgPos());
+    }
+
+
+    public int normalize(double power, int target, int tolerance, double lowerThreshold, double upperThreshold, double broken) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+
+
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+
+            if(drive.getFirstAngle() < lowerThreshold){
+                drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
+                telemetry.addData("normalize", "less than lower");
+
+
+            }else if(drive.getFirstAngle() > upperThreshold){
+                drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+                telemetry.addData("normalize", "greater than upper");
+
+
+            }else{
+                if(getXContour() > xMax) {
+                    drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+                }else{
+                    drive.setPowerAuto(-power, MecDriveV2.MovementType.ROTATE);
+                }
+                telemetry.addData("normalize", "normal");
+
+            }
+
+
+//            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
+                drive.tankRotatePIDSpecial(broken, 0.3, false, 1);
+                break;
+            }
+
+
 
             telemetry.addData("angle", drive.getFirstAngle() * (180 / Math.PI));
             telemetry.update();
