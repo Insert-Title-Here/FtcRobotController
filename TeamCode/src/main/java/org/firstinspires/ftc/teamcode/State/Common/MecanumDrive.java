@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+@Config
 public class MecanumDrive {
     DcMotorEx fl, fr, bl, br;
     Telemetry telemetry;
@@ -541,18 +541,50 @@ public class MecanumDrive {
         accumulatedError = 0;
         error = 0;
     }
-    public PIDCoefficients goToPos = new PIDCoefficients(0,0,0);
-    public void velocityPositionPID(double targetTics){
+
+    double flIntegral = 0;
+    double frIntegral = 0;
+    double blIntegral = 0;
+    double brIntegral = 0;
+
+    double flPriorError = 0;
+    double frPriorError = 0;
+    double blPriorError = 0;
+    double brPriorError = 0;
+
+    public static PIDCoefficients goToPos = new PIDCoefficients(0,0,0);
+
+    //make sure to pass in the starting time(just do System.currentTimeMillis())
+    public void velocityPositionPID(double targetTics, long startTime){
         double flCurrentTics = fl.getCurrentPosition();
         double frCurrentTics = fr.getCurrentPosition();
         double blCurrentTics = bl.getCurrentPosition();
         double brCurrentTics = br.getCurrentPosition();
 
-        double flDeltaError = targetTics - flCurrentTics;
-        double frDeltaError = targetTics - frCurrentTics;
-        double blDeltaError = targetTics - blCurrentTics;
-        double brDeltaError = targetTics - brCurrentTics;
+        double flError = targetTics - flCurrentTics;
+        double frError = targetTics - frCurrentTics;
+        double blError = targetTics - blCurrentTics;
+        double brError = targetTics - brCurrentTics;
 
+        flIntegral += flError * startTime;
+        frIntegral += frError * startTime;
+        blIntegral += blError * startTime;
+        brIntegral += brError * startTime;
+
+        double flDerivative = (flError - flPriorError) / (System.currentTimeMillis() - startTime);
+        double frDerivative = (frError - frPriorError) / (System.currentTimeMillis() - startTime);
+        double blDerivative = (blError - blPriorError) / (System.currentTimeMillis() - startTime);
+        double brDerivative = (brError - brPriorError) / (System.currentTimeMillis() - startTime);
+
+        fl.setVelocity(goToPos.p * flError + goToPos.d * flDerivative + goToPos.i * flIntegral);
+        fr.setVelocity(goToPos.p * frError + goToPos.p * frDerivative + goToPos.p * frIntegral);
+        bl.setVelocity(goToPos.p * blError + goToPos.d * blDerivative + goToPos.i * blIntegral);
+        br.setVelocity(goToPos.p * brError + goToPos.d * brDerivative + goToPos.i * brIntegral);
+
+        flPriorError = flError;
+        frPriorError = frError;
+        blPriorError = blError;
+        brPriorError = brError;
 
 
     }

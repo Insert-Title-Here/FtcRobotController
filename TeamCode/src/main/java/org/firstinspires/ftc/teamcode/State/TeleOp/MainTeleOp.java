@@ -387,7 +387,7 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
             if(gamepad1.right_bumper){
-                drive.absTurnPID(Math.PI /2);
+                drive.velocityPositionPID(2000, System.currentTimeMillis());
             }
             /*
             //turn scoring(turn in other thread)

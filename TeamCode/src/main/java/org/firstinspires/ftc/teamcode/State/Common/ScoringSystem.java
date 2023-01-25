@@ -67,7 +67,7 @@ public class ScoringSystem {
     public void goToPosition(int tics, double power) {
         int motorPosition = liftMotorLeft.getCurrentPosition();
         if (motorPosition > tics) {
-            power *= -1;
+            power *= -0.7;
         }
         long time = System.currentTimeMillis();
         long timeChange= 0;
@@ -83,14 +83,8 @@ public class ScoringSystem {
                 //stops while loop
                 break;
             }else{
-                if(Math.abs(tics) - motorPosition < 0){
-                    liftMotorLeft.setPower(power);
-                    liftMotorRight.setPower(power);
-
-                }else{
-                    liftMotorLeft.setPower(power*0.8);
-                    liftMotorRight.setPower(power*0.8);
-                }
+                liftMotorLeft.setPower(power);
+                liftMotorRight.setPower(power);
                 motorPosition = liftMotorLeft.getCurrentPosition();
             }
             timeChange =  System.currentTimeMillis() - time;
@@ -140,17 +134,16 @@ public class ScoringSystem {
 
 
     }
-    public static double proportion = 0;
-    public static double derivative = 0;
+
     public double PIDLiftPower(double priorError, double currentError, double timeChange, int tics) {
         double proportionCoefficient;
         if(liftMotorLeft.getCurrentPosition() > tics){
-            proportionCoefficient = 0.006;
+            proportionCoefficient = 0.0086/3;
         }else{
-            proportionCoefficient = 0.0119;
+            proportionCoefficient = 0.0086;
         }
         //0.0119
-        //double derivativeCoefficient = 0.0;//0.2
+        double derivativeCoefficient = 3;//0.2
        // proportionCoefficient = proportion;
         //derivativeCoefficient = derivative;
         /*
@@ -161,7 +154,7 @@ public class ScoringSystem {
         loggingString += "proportionPower: " + currentError * proportionCoefficient + "   ";
          */
 
-        return currentError * proportion + ((currentError-priorError)/timeChange) * derivative;
+        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
 
     }
 
@@ -324,22 +317,22 @@ public class ScoringSystem {
     int height5 = 5;
     int currentHeight = 0;
     public void stackUp(){
-        /*
+
         if(currentHeight == 0 || currentHeight == height2){
-            goToPosition(height1, 0.1);
+            goToPosition(height1, 0.7);
             currentHeight = height1;
         }else if(currentHeight == height3){
-            goToPosition(height2, 0.1);
+            goToPosition(height2, 0.7);
             currentHeight = height2;
         }else if(currentHeight == height4){
-            goToPosition(height3, 0.1);
+            goToPosition(height3, 0.7);
             currentHeight = height3;
         }else if(currentHeight == height5){
-            goToPosition(height4, 0.1);
+            goToPosition(height4, 0.7);
             currentHeight = height4;
         }
 
-         */
+         /*
         if(currentHeight == 0){
             goToPosition(160, 0.6);
             currentHeight = 160;
@@ -349,26 +342,30 @@ public class ScoringSystem {
                 currentHeight -= 35;
             }
         }
+
+          */
     }
 
     public void stackDown(){
-        /*
+
         if(currentHeight == height1){
-            goToPosition(height2, 0.1);
+            goToPosition(height2, 0.7);
             currentHeight = height2;
         }else if(currentHeight == height2){
-            goToPosition(height3, 0.1);
+            goToPosition(height3, 0.7);
             currentHeight = height3;
         }else if(currentHeight == height3){
-            goToPosition(height4, 0.1);
+            goToPosition(height4, 0.7);
             currentHeight = height4;
         }else if(currentHeight == height4){
-            goToPosition(height5, 0.1);
+            goToPosition(height5, 0.7);
             currentHeight = height5;
         }
 
-         */
+         /*
         goToPosition(currentHeight + 35, 0.6);
+
+          */
     }
 
 }

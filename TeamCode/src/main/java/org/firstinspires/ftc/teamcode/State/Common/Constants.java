@@ -4,9 +4,9 @@ public class  Constants {
     //TODO: Edit values
     private int heightTrueLimit = 1378;
     private int heightLimit = 1358;
-    private int heightHigh = 1195;
-    private int heightMed = 835;
-    private int heightLow = 460;
+    private int heightHigh = 1180;
+    private int heightMed = 860;
+    private int heightLow = 500;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.2;
     private double clawClosePos = 0.35; // was 0.38 for old design
