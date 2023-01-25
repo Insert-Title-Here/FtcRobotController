@@ -45,7 +45,7 @@ public class MecDriveV2 {
     int pStraightVel = 4;
     int pRotateVel = 1700;
 
-    private final int denom = 6;
+    private final int denom = 2;
     //PIDCoefficients pidf = new PIDCoefficients(0.031, 0,0.00055);
 
     //PIDCoefficients rotate = new PIDCoefficients(0.8, 0, 0.01);
@@ -423,7 +423,6 @@ public class MecDriveV2 {
     public void tankRotatePIDVel(double radians, double kickout) {
 
 
-
         ElapsedTime time = new ElapsedTime();
         double actualStartTime = time.seconds();
 
@@ -446,12 +445,6 @@ public class MecDriveV2 {
             telemetry.addData("Error", radError);
 
 
-
-
-
-
-
-
             newPower = ((pRotateVel * radError) + 10);
 
             setVelocity(newPower, -newPower, newPower, -newPower);
@@ -467,7 +460,6 @@ public class MecDriveV2 {
 
 
     }
-
 
 
     public void tankRotatePIDSpecial(double radians, double power, boolean slidesUp, double kickout) {
@@ -958,6 +950,9 @@ public class MecDriveV2 {
 
 
     }
+
+
+
 
     public void goTOPIDPosWithRampUp(int tics, double power, MovementType movement) {
         ElapsedTime time = new ElapsedTime();
@@ -1536,9 +1531,37 @@ public class MecDriveV2 {
 
     }
 
-    public void goTOPIDPosVel(int tics) {
+    private double calculateAvgStartVel(int tics) {
+
+        tics *= ((denom - 1) / denom);
+
+        //TODO: check if we need to negate any
+        int flPos = -1 * getFLEncoder();
+        int frPos = getFREncoder();
+        int blPos = -1 * getBLEncoder();
+        int brPos = getBREncoder();
+
+
+        int flError = tics - flPos;
+        int frError = tics - frPos;
+        int blError = tics - blPos;
+        int brError = tics - brPos;
+
+
+        double flPower = ((pStraightVel * flError));
+        double frPower = ((pStraightVel * frError));
+        double blPower = ((pStraightVel * blError));
+        double brPower = ((pStraightVel * brError));
+
+        return (flPower + frPower + blPower + brPower) / 4;
+
+
+    }
+
+    public void goTOPIDPosVel(int tics, boolean stuff) {
         ElapsedTime time = new ElapsedTime();
         double actualStartTime = time.seconds();
+        boolean rampUp = true;
 
 
 
@@ -1555,6 +1578,136 @@ public class MecDriveV2 {
 
 
         while (Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5) {
+
+            if (rampUp) {
+
+                double start = calculateAvgStartVel(tics);
+                int finalRampTics = tics / denom;
+
+                loggingString += "Starting Power after RampUp: " + start + "\n";
+                loggingString += "Amt of tics for rampUp: " + finalRampTics + "\n";
+                loggingString += "FL: " + (-1 * getFLEncoder()) + "\n";
+                loggingString += "FR: " + getFREncoder() + "\n";
+                loggingString += "BL: " + (-1 * getBLEncoder()) + "\n";
+                loggingString += "BR: " + getBREncoder() + "\n";
+                loggingString += "Avg Motors: " + (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4) + "\n";
+                loggingString += "\n";
+
+
+
+                while (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4 < Math.abs(finalRampTics)) {
+
+                    double rampPower = (start * (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4)) / finalRampTics;
+
+                    loggingString += "Amt of tics for rampUp: " + finalRampTics + "\n";
+                    loggingString += "FL: " + (-1 * getFLEncoder()) + "\n";
+                    loggingString += "FR: " + getFREncoder() + "\n";
+                    loggingString += "BL: " + (-1 * getBLEncoder()) + "\n";
+                    loggingString += "BR: " + getBREncoder() + "\n";
+                    loggingString += "Avg Motors: " + (((-1 * getFLEncoder()) + getFREncoder() + (-1 * getBLEncoder()) + getBREncoder()) / 4) + "\n";
+                    loggingString += "rampPower: " + rampPower + "\n";
+                    loggingString += "\n";
+
+
+                    if(finalRampTics < 0){
+                        rampPower -= 150;
+                        //rampPower *= -1;
+                    }else{
+                        rampPower += 150;
+                    }
+
+                    setVelocity(rampPower, rampPower, rampPower, rampPower);
+
+
+                    try {
+                        Thread.currentThread().sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(time.seconds() > 10){
+                        break;
+                    }
+                }
+                rampUp = false;
+
+                writeLoggerToFile();
+
+            }else {
+
+                telemetry.addData("target", tics);
+
+
+                //TODO: check if we need to negate any
+                flPos = -1 * getFLEncoder();
+                frPos = getFREncoder();
+                blPos = -1 * getBLEncoder();
+                brPos = getBREncoder();
+
+
+                telemetry.addData("flPos", flPos);
+                telemetry.addData("frPos", frPos);
+                telemetry.addData("blPos", blPos);
+                telemetry.addData("brPos", brPos);
+
+                flError = tics - flPos;
+                frError = tics - frPos;
+                blError = tics - blPos;
+                brError = tics - brPos;
+
+
+                telemetry.addData("flError", flError);
+                telemetry.addData("frError", frError);
+                telemetry.addData("blError", blError);
+                telemetry.addData("brError", brError);
+
+
+                double flPower = (pStraightVel * flError) + 10;
+                double frPower = (pStraightVel * frError) + 10;
+                double blPower = (pStraightVel * blError) + 10;
+                double brPower = (pStraightVel * brError) + 10;
+
+
+                telemetry.addData("flPower", flPower);
+                telemetry.addData("frPower", frPower);
+                telemetry.addData("blPower", blPower);
+                telemetry.addData("brPower", brPower);
+
+
+                //TODO: Fix rotate and check Strafe
+                setPower(flPower, frPower, blPower, brPower);
+
+
+                telemetry.update();
+            }
+
+
+        }
+
+        simpleBrake();
+
+    }
+
+
+    public void goTOPIDPosVel(int tics) {
+        ElapsedTime time = new ElapsedTime();
+        double actualStartTime = time.seconds();
+
+
+        //TODO: check if we need to negate any
+        int flPos = -1 * getFLEncoder();
+        int frPos = getFREncoder();
+        int blPos = -1 * getBLEncoder();
+        int brPos = getBREncoder();
+
+        int flError = tics - flPos;
+        int frError = tics - frPos;
+        int blError = tics - blPos;
+        int brError = tics - brPos;
+
+
+        while (Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5) {
+
 
             telemetry.addData("target", tics);
 
@@ -1575,7 +1728,6 @@ public class MecDriveV2 {
             frError = tics - frPos;
             blError = tics - blPos;
             brError = tics - brPos;
-
 
 
             telemetry.addData("flError", flError);

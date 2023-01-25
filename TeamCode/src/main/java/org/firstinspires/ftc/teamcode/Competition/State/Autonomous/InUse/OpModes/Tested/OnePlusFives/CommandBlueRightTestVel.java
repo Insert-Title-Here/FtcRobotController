@@ -121,7 +121,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
-                new InstantCommand(() -> pipeline.normalize(0.18, 169, 3, (Math.PI/2) - (4 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180)))
+                new InstantCommand(() -> pipeline.normalize(0.18, 169, 3, (Math.PI/2) - (3 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180)))
 
         );
 
@@ -158,7 +158,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new InstantCommand(() -> sleep(250)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (Math.PI/2) - (4 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180))),
+                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (Math.PI/2) - (3 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180))),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                 new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83)),
 
@@ -190,7 +190,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 break;
             }
 
-            if(distance.getNormalizedColors().blue < 0.7){
+            if(distance.getNormalizedColors().blue < 0.55){
                 CommandScheduler.getInstance().schedule(
                         new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
                         new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI) * 0.03), 800, 100)),
@@ -206,14 +206,14 @@ public class CommandBlueRightTestVel extends LinearOpMode {
             }
 
             CommandScheduler.getInstance().schedule(
-                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (Math.PI/2) - (4 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180))),
+                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (Math.PI/2) - (3 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180))),
 
                     //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                     new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83))
             );
 
 
-            if(distance.getNormalizedColors().blue < 0.7){
+            if(distance.getNormalizedColors().blue < 0.55){
                 CommandScheduler.getInstance().schedule(
                         new InstantCommand(() -> score.setLinkagePosition(Constants.linkageUpV2)),
                         new InstantCommand(() -> score.moveToPosition(0, 0.63))
@@ -285,4 +285,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
 
 
     }
+
+
+
 }

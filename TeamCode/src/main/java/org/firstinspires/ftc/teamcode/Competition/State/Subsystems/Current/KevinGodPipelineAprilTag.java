@@ -388,9 +388,12 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
             // Make sure the program doesn't crash if no contours are found
             if(contourLengths.size() > 0) {
                 // Find x coordinate of largest contour and display it on the screen
-                longestContourX = xList.get(maxLengthIndex);
-                longestContourY = yList.get(maxLengthIndex);
-                Imgproc.circle(input, new Point(xList.get(maxLengthIndex), yList.get(maxLengthIndex)), 3, new Scalar(0, 255, 0));
+                //TODO: Error is here
+                if(maxLengthIndex < xList.size() && maxLengthIndex < yList.size()) {
+                    longestContourX = xList.get(maxLengthIndex);
+                    longestContourY = yList.get(maxLengthIndex);
+                    Imgproc.circle(input, new Point(xList.get(maxLengthIndex), yList.get(maxLengthIndex)), 3, new Scalar(0, 255, 0));
+                }
             }
 
             // Telemetry stuff
@@ -570,7 +573,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
 
 //            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
-            if(time.seconds() - startTime > 2){
+            if(time.seconds() - startTime > 1){
                 drive.tankRotatePIDSpecial(broken, 0.3, false, 1);
                 break;
             }
