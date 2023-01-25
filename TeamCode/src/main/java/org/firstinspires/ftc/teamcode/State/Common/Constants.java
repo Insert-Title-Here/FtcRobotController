@@ -19,6 +19,7 @@ public class  Constants {
     private double straightCamPos = 0.32;
     private double strafeMedCamPos = 0.75;
     private double strafeLowCamPos = 0.21;
+    private double strafeConeCamPos = 0.245;
     //TODO: add comments
     public double getClawOpenPos(){
         return clawOpenPos;
@@ -77,6 +78,16 @@ public class  Constants {
 
     public double getStrafeLowCamPos() {
         return strafeLowCamPos;
+    }
+
+    public double getStrafeConeCamPos() {
+        return strafeConeCamPos;
+    }
+
+    public enum Pipeline {
+        PARK,
+        POLE,
+        CONE
     }
 }
 

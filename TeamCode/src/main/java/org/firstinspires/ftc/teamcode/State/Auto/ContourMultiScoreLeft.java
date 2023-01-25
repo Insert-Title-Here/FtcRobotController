@@ -7,6 +7,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.State.Common.Constants;
+import org.firstinspires.ftc.teamcode.State.MultiAuto.MultiBlueLeftHIGH;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -25,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class ContourMultiScoreLeft extends OpenCvPipeline {
-    public boolean park = true;
+    Constants constants = new Constants();
+    public boolean park;
 
     /*
    YELLOW  = Parking Left
@@ -40,7 +43,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     public static int y = 95; //95
 
     // top left point of submat (original 320, 176)
-    public static Point BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
+    public static Point BOX_TOPLEFT = new Point(x, y); // 175, 150 ... 175, 114
 
     // width and height of submat
     public static int BOX_WIDTH = 23;
@@ -65,17 +68,17 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
 
     // Lower and upper boundaries for colors -> YCrCb
     private static final Scalar
-            lower_yellow_bounds  = new Scalar(convertToY(200, 200, 0)),
-            upper_yellow_bounds  = new Scalar(convertToY(255, 255, 130)),
-            lower_cyan_bounds    = new Scalar(convertToCb(0, 200, 200)),
-            upper_cyan_bounds    = new Scalar(convertToCb(150, 255, 255)),
+            lower_yellow_bounds = new Scalar(convertToY(200, 200, 0)),
+            upper_yellow_bounds = new Scalar(convertToY(255, 255, 130)),
+            lower_cyan_bounds = new Scalar(convertToCb(0, 200, 200)),
+            upper_cyan_bounds = new Scalar(convertToCb(150, 255, 255)),
             lower_magenta_bounds = new Scalar(convertToCr(170, 0, 170)),
             upper_magenta_bounds = new Scalar(convertToCr(255, 60, 255));
 
     // Color definitions -> RGB
     private final Scalar
-            YELLOW  = new Scalar(255, 255, 0),
-            CYAN    = new Scalar(0, 255, 255),
+            YELLOW = new Scalar(255, 255, 0),
+            CYAN = new Scalar(0, 255, 255),
             MAGENTA = new Scalar(255, 0, 255);
 
 
@@ -85,7 +88,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     private Mat contourMat = new Mat(), generalMat = new Mat(), highestPole = new Mat(), hierarchy = new Mat();
     Moments M;
     private int cX;
-    private  int cY;
+    private int cY;
     private List<MatOfPoint> contours = new ArrayList<>();
     private Point[] mainContour;
     private ArrayList<Double> leftContour, rightContour;
@@ -93,7 +96,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     private double knownWidth, focalLength, perWidth, distance, leftOfContour, rightOfContour, difference, boundRectWidth, boundArea = 0;
     // for points on contour
     double numCurrent, num1Prev, num2Prev, num3Prev, num4Prev, num5Prev = 0;
-    boolean toggle, toggle2;
+    boolean toggle, toggle2, isBlue;
 
     // creates/accesses file
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
@@ -103,6 +106,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     Telemetry telemetry;
 
     /* make stuff public static  */
+    //POLE (yellow)
     public static int lower1 = 50; //50   50
     public static int lower2 = 50; //50   50
     public static int lower3 = 30; //10   40
@@ -111,6 +115,23 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     public static int upper3 = 108; //105   108         //value was 80 when servo was perpendicular to the ground
     public static double widthRemoveConstant = 3.1;
 
+    //BLUE
+    public static int bluelower1 = 30; //50   50
+    public static int bluelower2 = 90; //50   50
+    public static int bluelower3 = 150; //10   40
+    public static int blueupper1 = 130; //255   180
+    public static int blueupper2 = 120; //255   200
+    public static int blueupper3 = 255; //105   108//value was 80 when servo was perpendicular to the ground
+
+
+    //RED
+    public static int redlower1 = 0; //50   50
+    public static int redlower2 = 160; //50   50
+    public static int redlower3 = 50; //10   40
+    public static int redupper1 = 230; //255   180
+    public static int redupper2 = 235; //255   200
+    public static int redupper3 = 150;
+
 
     public ContourMultiScoreLeft(Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -118,7 +139,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        BOX_TOPLEFT = new Point(x,y); // 175, 150 ... 175, 114
+        BOX_TOPLEFT = new Point(x, y); // 175, 150 ... 175, 114
 
         // width and height of submat
         BOX_WIDTH = 23;
@@ -132,14 +153,12 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 BOX_TOPLEFT.y + BOX_HEIGHT);
 
 
-
-
-        if (park) {
+        if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.PARK) {
             Mat befChange = new Mat();
 
             input.copyTo(original);
 
-            if(original.empty()) {
+            if (original.empty()) {
                 return input;
             }
             // cyan magenta yellow
@@ -152,10 +171,9 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
             changed = original.submat(new Rect(box_top_left, box_bottom_right));
 
 
-
             //Core.extractChannel(changed, changed, 1);
 
-            Imgproc.GaussianBlur(changed, changed, new Size(5,5), 0);
+            Imgproc.GaussianBlur(changed, changed, new Size(5, 5), 0);
             Imgproc.erode(changed, changed, new Mat(), new Point(-1, -1), 2);
             Imgproc.dilate(changed, changed, new Mat(), new Point(-1, -1), 2);
             Imgproc.cvtColor(changed, changed, Imgproc.COLOR_RGB2YCrCb);
@@ -215,7 +233,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                     //telemetry.addData("park position", position);
                     Imgproc.rectangle(original, new Rect(box_top_left, box_bottom_right), MAGENTA, 2);
                 }
-            } else if(cyaPercent > magPercent) {
+            } else if (cyaPercent > magPercent) {
                 // cyan greatest, position center
                 position = ParkingPosition.CENTER;
                 //telemetry.addData("park position", position);
@@ -238,7 +256,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
             magMat.release();
 
             return original;
-        } else {
+        } else if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.POLE) {
             // var inits / resets
             knownWidth = 1.04; //inches
             contours = new ArrayList<>();
@@ -255,7 +273,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
             generalMat = input.clone();
             //input.copyTo(generalMat);
 
-            if(input.empty()) {
+            if (input.empty()) {
                 return input;
             }
             // image tuning
@@ -298,7 +316,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 // bounding box (approximate width)
                 Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
                 boundRectWidth = boundRect.width;
-                Imgproc.rectangle(generalMat, boundRect, new Scalar (20,20,20), 1);
+                Imgproc.rectangle(generalMat, boundRect, new Scalar(20, 20, 20), 1);
 
     /*
             int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
@@ -308,7 +326,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 //gets the moments of the contour in question ...idk how
                 M = Imgproc.moments(contours.get(indexOfMax));
                 // gets x and y of centroid
-                cX = (int)(M.get_m10() / M.get_m00());
+                cX = (int) (M.get_m10() / M.get_m00());
                 cY = (int) (M.get_m01() / M.get_m00());
 
     /*
@@ -447,9 +465,123 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 //            }
             }
             return generalMat;
+        } else if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.CONE) {
+            // var inits / resets
+            knownWidth = 1.04; //inches
+            contours = new ArrayList<>();
+            // 43, 157, 166
+            perWidth = 0;
+            rightOfContour = 0;
+            leftOfContour = 0;
+            difference = 0;
+            toggle = true;
+            toggle2 = false;
+            leftContour = new ArrayList<>();
+            rightContour = new ArrayList<>();
+
+
+            generalMat = input.clone();
+            //input.copyTo(generalMat);
+
+            if(input.empty()) {
+                return input;
+            }
+            // image tuning
+            Imgproc.GaussianBlur(generalMat, contourMat, new Size(5, 5), 0);
+            Imgproc.erode(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
+            Imgproc.dilate(contourMat, contourMat, new Mat(), new Point(-1, -1), 2);
+            Imgproc.cvtColor(contourMat, contourMat, Imgproc.COLOR_RGB2YCrCb);
+//        Core.extractChannel(contourMat, contourMat, 0);
+            if (isBlue) {
+                Core.inRange(contourMat, new Scalar(bluelower1, bluelower2, bluelower3), new Scalar(blueupper1, blueupper2, blueupper3), contourMat);
+            } else {
+                Core.inRange(contourMat, new Scalar(redlower1, redlower2, redlower3), new Scalar(redupper1, redupper2, redupper3), contourMat);
+
+            }
+
+            //extracts yellow (for poles)
+            //Core.extractChannel(generalMat, contourMat, 0);
+            // detects edges
+            //Imgproc.Canny(contourMat, contourMat, 100, 300);
+
+
+            //contours
+            Imgproc.findContours(contourMat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+//        Imgproc.drawContours(generalMat, contours, -1, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
+//                hierarchy, 2, new Point()*/);
+
+
+            // loop through contours to find max
+            int indexOfMax = 0;
+            boundArea = 0;
+            for (int i = 0; i < contours.size(); i++) {
+                double area = Imgproc.contourArea(contours.get(i));
+                if (area > boundArea) {
+                    boundArea = area;
+                    indexOfMax = i;
+                }
+            }
+
+
+            if (contours.size() != 0) {
+                //draws largest contour
+                Imgproc.drawContours(generalMat, contours, indexOfMax, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
+            hierarchy, 2, new Point()*/);
+
+                // bounding box (approximate width)
+                Rect boundRect = Imgproc.boundingRect(contours.get(indexOfMax));
+                perWidth = boundRect.width;
+                Imgproc.rectangle(generalMat, boundRect, new Scalar (20,20,20), 1);
+
+    /*
+            int x,y,w,h = contourMat.boundingRect(contours.get(indexOfMax));
+            perWidth =
+    */
+
+                //gets the moments of the contour in question ...idk how
+                M = Imgproc.moments(contours.get(indexOfMax));
+                // gets x and y of centroid
+                cX = (int)(M.get_m10() / M.get_m00());
+                cY = (int) (M.get_m01() / M.get_m00());
+
+    /*
+            // another method of finding center of contour
+            Rect boundRect = Imgproc.boundingRect(contour);
+            double centerX = boundRect.x + (boundRect.width / 2)
+            double centerY = boundRect.y + (boundRect.height / 2)
+    */
+                // gets points of the main contour
+                mainContour = contours.get(indexOfMax).toArray();
+
+                //draws circle of centroid
+                Imgproc.circle(generalMat, new Point(cX, cY), 1, new Scalar(255, 49, 0, 255), 2);
+                focalLength = (311.5384615 + 311.5384615 + 311.9711538) / 3.0;
+                distance = distanceFromPole(1.04, focalLength, perWidth) * Math.cos(38.6);
+
+                telemetry.addData("index", indexOfMax);
+                telemetry.addData("cX", cX);
+                telemetry.addData("cY", cY);
+                telemetry.addData("area", boundArea);
+//                telemetry.addData("array", mainContour[0].x + " " + mainContour[0].y);
+//                telemetry.addData("array", mainContour[1].x + " " + mainContour[1].y);
+//                telemetry.addData("leftcontour size", leftContour.size());
+//                telemetry.addData("rightcontour size", rightContour.size());
+//                telemetry.addData("maincontour", mainContour[1].y);
+//
+                loggingString += ("---------------------------------------------------------" + "\n");
+                writeLoggerToFile();
+
+                telemetry.update();
+//            }
+            }
+            return generalMat;
+
         }
 
+        return input;
     }
+
+
 
     // method for determining distance of camera to object
     // knownWidth = the actual width of the object "irl"
@@ -519,5 +651,9 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     // Returns an enum being the current position where the robot will park
     public ParkingPosition getParkPosition() {
         return position;
+    }
+
+    public void setIsBlue(boolean isBlue) {
+        this.isBlue = isBlue;
     }
 }
