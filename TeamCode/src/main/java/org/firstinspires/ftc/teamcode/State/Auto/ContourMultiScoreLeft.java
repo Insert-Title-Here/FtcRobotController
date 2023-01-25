@@ -116,12 +116,12 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     public static double widthRemoveConstant = 3.1;
 
     //BLUE
-    public static int bluelower1 = 30; //50   50
-    public static int bluelower2 = 90; //50   50
-    public static int bluelower3 = 150; //10   40
-    public static int blueupper1 = 130; //255   180
-    public static int blueupper2 = 120; //255   200
-    public static int blueupper3 = 255; //105   108//value was 80 when servo was perpendicular to the ground
+    public static int bluelower1 = 120; // 30
+    public static int bluelower2 = 80; // 90
+    public static int bluelower3 = 155; // 150
+    public static int blueupper1 = 170; // 130
+    public static int blueupper2 = 120; // 120
+    public static int blueupper3 = 195; // 255
 
 
     //RED

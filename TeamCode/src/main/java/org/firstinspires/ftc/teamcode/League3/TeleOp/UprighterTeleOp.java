@@ -115,9 +115,9 @@ public class UprighterTeleOp extends LinearOpMode {
                     }else if(gamepad1.dpad_down) {
                        /*
                         if(score.getEncoderPosition() < 7){
-                            score.setPower(0);
+                            score.setVelocity(0);
                         }else{
-                            score.setPower(-0.2);
+                            score.setVelocity(-0.2);
                         }
 
                         */

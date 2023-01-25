@@ -393,19 +393,19 @@ public class ScoringSystem {
             //set power to zero if tics pretty high and power continually being used, stops lift
             //system from breaking itself from trying to go past mechanical max
             if((Math.abs(timeChange) > 2000)){
-                liftMotorLeft.setPower(0);
-                liftMotorRight.setPower(0);
+                liftMotorLeft.setVelocity(0);
+                liftMotorRight.setVelocity(0);
 
                 //stops while loop
                 break;
             }else{
                 if(Math.abs(tics) - motorPositionLeft < 0 && Math.abs(tics) - motorPositionRight < 0){
-                    liftMotorLeft.setPower(power);
-                    liftMotorRight.setPower(power);
+                    liftMotorLeft.setVelocity(power);
+                    liftMotorRight.setVelocity(power);
 
                 }else{
-                    liftMotorLeft.setPower(0.8);
-                    liftMotorRight.setPower(0.8);
+                    liftMotorLeft.setVelocity(0.8);
+                    liftMotorRight.setVelocity(0.8);
 
                 }
                 motorPositionLeft = liftMotorLeft.getCurrentPosition();
@@ -415,8 +415,8 @@ public class ScoringSystem {
         }
 
 
-        liftMotorLeft.setPower(0);
-        liftMotorRight.setPower(0);
+        liftMotorLeft.setVelocity(0);
+        liftMotorRight.setVelocity(0);
 
 
     }

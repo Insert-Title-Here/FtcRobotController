@@ -296,7 +296,7 @@ public class MecanumDrive {
             priorErrorFr = currentErrorFr;
             priorErrorBr = currentErrorBr;
 
-            setPower(PIDfl(priorErrorFl, currentErrorFl, timeDifference), PIDfr(priorErrorFr, currentErrorFr, timeDifference), PIDbl(priorErrorBl, currentErrorBl, timeDifference), PIDbr(priorErrorBr, currentErrorBr, timeDifference));
+            setVelocity(PIDfl(priorErrorFl, currentErrorFl, timeDifference), PIDfr(priorErrorFr, currentErrorFr, timeDifference), PIDbl(priorErrorBl, currentErrorBl, timeDifference), PIDbr(priorErrorBr, currentErrorBr, timeDifference));
             loggingString += " fltotalPower: " + PIDfl(priorErrorFl, currentErrorFl, timeDifference);
             loggingString += " bltotalPower: " + PIDbl(priorErrorBl, currentErrorBl, timeDifference);
             loggingString += " frtotalPower: " + PIDfr(priorErrorFr, currentErrorFr, timeDifference);
@@ -321,7 +321,7 @@ public class MecanumDrive {
 
             if(timeDifference > tics * 1)break;
         }
-        setPower(0, 0, 0, 0);
+        setVelocity(0, 0, 0, 0);
 
         // DDD
 
@@ -966,25 +966,25 @@ public class MecanumDrive {
                     } else {
                         //fl
                         if ((Math.abs(flTics) - Math.abs(fl.getCurrentPosition())) > 0) {
-                            setPower(power, power, power, power);
+                            setVelocity(power, power, power, power);
                         } else {
                             flDone = true;
                         }
                         //fr
                         if ((Math.abs(frTics) - Math.abs(fr.getCurrentPosition())) > 0) {
-                            setPower(power, power, power, power);
+                            setVelocity(power, power, power, power);
                         } else {
                             frDone = true;
                         }
                         //bl
                         if ((Math.abs(blTics) - Math.abs(bl.getCurrentPosition())) > 0) {
-                            setPower(power, power, power, power);
+                            setVelocity(power, power, power, power);
                         } else {
                             blDone = true;
                         }
                         //br
                         if ((Math.abs(brTics) - Math.abs(br.getCurrentPosition())) > 0) {
-                            setPower(power, power, power, power);
+                            setVelocity(power, power, power, power);
                         } else {
                             brDone = true;
                         }
@@ -998,7 +998,7 @@ public class MecanumDrive {
                     }
 
                 }
-                setPower(0, 0, 0, 0);
+                setVelocity(0, 0, 0, 0);
             }
         };
         driveThread.start();

@@ -287,7 +287,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 //            drive.goToPosition(0.52, 0.5, 0.52, 0.5, 25, "go forward some to pole");
             // move arm high
             lifting = true;
-            score.goToPositionPID(constants.getHeightHigh()-10, 0.85);
+            score.goToPositionPID(constants.getHeightHigh(), 0.85);
             lifting = false;
             sleep(50);
 
@@ -392,7 +392,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             drive.absTurnDriftPID(0);
 
             lifting = true;
-            score.goToPositionPID(constants.getHeightHigh()-30, 0.85);
+            score.goToPositionPID(constants.getHeightHigh(), 0.85);
             lifting = false;
 
             right = true;
@@ -518,7 +518,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 //            drive.goToPosition(0.52, 0.5, 0.52, 0.5, 25, "go forward some to pole");
             // move arm high
             lifting = true;
-            score.goToPositionPID(constants.getHeightHigh()-10, 0.85);
+            score.goToPositionPID(constants.getHeightHigh(), 0.85);
             lifting = false;
             sleep(50);
 
@@ -618,7 +618,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             drive.absTurnDriftPID(0);
 
             lifting = true;
-            score.goToPositionPID(constants.getHeightHigh()-30, 0.85);
+            score.goToPositionPID(constants.getHeightHigh(), 0.85);
             lifting = false;
 
             right = true;
@@ -721,7 +721,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             lifting = true;
-            score.goToPositionPID(constants.getHeightHigh()-30, 0.85);
+            score.goToPositionPID(constants.getHeightHigh(), 0.85);
             lifting = false;
 
             right = true;

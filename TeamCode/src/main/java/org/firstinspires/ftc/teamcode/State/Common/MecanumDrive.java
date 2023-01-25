@@ -229,6 +229,7 @@ public class MecanumDrive {
         bl.setPower(blPow);
         br.setPower(brPow);
     }
+
     /*
 
      GoToPosition methods, including PID
@@ -576,10 +577,10 @@ public class MecanumDrive {
         double blDerivative = (blError - blPriorError) / (System.currentTimeMillis() - startTime);
         double brDerivative = (brError - brPriorError) / (System.currentTimeMillis() - startTime);
 
-        fl.setVelocity(goToPos.p * flError + goToPos.d * flDerivative + goToPos.i * flIntegral);
-        fr.setVelocity(goToPos.p * frError + goToPos.p * frDerivative + goToPos.p * frIntegral);
-        bl.setVelocity(goToPos.p * blError + goToPos.d * blDerivative + goToPos.i * blIntegral);
-        br.setVelocity(goToPos.p * brError + goToPos.d * brDerivative + goToPos.i * brIntegral);
+        fl.setPower(goToPos.p * flError + goToPos.d * flDerivative + goToPos.i * flIntegral);
+        fr.setPower(goToPos.p * frError + goToPos.p * frDerivative + goToPos.p * frIntegral);
+        bl.setPower(goToPos.p * blError + goToPos.d * blDerivative + goToPos.i * blIntegral);
+        br.setPower(goToPos.p * brError + goToPos.d * brDerivative + goToPos.i * brIntegral);
 
         flPriorError = flError;
         frPriorError = frError;

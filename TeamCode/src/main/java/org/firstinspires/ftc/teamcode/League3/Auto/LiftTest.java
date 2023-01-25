@@ -60,7 +60,7 @@ public class LiftTest extends LinearOpMode {
 
         }
 
-        //liftMotor.setPower(0);
+        //liftMotor.setVelocity(0);
         score.setPower(0);
 
 
@@ -78,13 +78,13 @@ public class LiftTest extends LinearOpMode {
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-        liftMotor.setPower(power);
+        liftMotor.setVelocity(power);
         while(liftMotor.isBusy()){
             telemetry.addData("motorPosition", liftMotor.getCurrentPosition());
             telemetry.update();
         }
 
-        liftMotor.setPower(0);
+        liftMotor.setVelocity(0);
     }
     */
 
@@ -104,13 +104,13 @@ public class LiftTest extends LinearOpMode {
 
         while((Math.abs(motorPosition - tics) > 10)){
 
-            liftMotor.setPower(power);
+            liftMotor.setVelocity(power);
 
             motorPosition = liftMotor.getCurrentPosition();
 
         }
 
-        liftMotor.setPower(0);
+        liftMotor.setVelocity(0);
 
     }
     */
