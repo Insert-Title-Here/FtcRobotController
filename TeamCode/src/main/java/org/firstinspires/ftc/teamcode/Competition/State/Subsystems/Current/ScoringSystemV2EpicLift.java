@@ -368,7 +368,7 @@ public class ScoringSystemV2EpicLift {
 
 
         }else if(height == ScoringMode.LOW){
-            setLiftTarget(155);
+            setLiftTarget(165);
 
         }
 
