@@ -1,30 +1,32 @@
 package org.firstinspires.ftc.teamcode.Competition.State.TeleOp.Current;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Vector2D;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.MecDrive;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
+import org.firstinspires.ftc.teamcode.Testing.MotionProfile.LinkageMotionProfiler;
 
-@Disabled
 
-@TeleOp (name = "NoSequenceKevinGodMode")
+@TeleOp (name = "KevinGodModeNOSequence")
 public class NoSequenceTeleOp extends LinearOpMode {
 
     ScoringSystemV2EpicLift score;
     MecDrive drive;
 
+    double linkageToggleSpeed = 0.001;
+
 
     ColorRangeSensor distance;
 
-    PassivePower passive;
+    //PassivePower passive;
 
-    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp;
+    volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp, changeToggle;
     volatile boolean liftBrokenMode = false;
     volatile boolean optionsFlag = true;
 
@@ -53,14 +55,15 @@ public class NoSequenceTeleOp extends LinearOpMode {
         linkageDown = false;
         linkageUp = false;
         firstDpadUp = true;
+        changeToggle = true;
 
 
 
         //Feed forward is going to be off
-        passive = PassivePower.ZERO;
 
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, true);
+        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, new ElapsedTime(), true);
         //robot = new Robot(hardwareMap);
+
         drive = new MecDrive(hardwareMap,false, telemetry);
         //systems = new EndgameSystems(hardwareMap);
 
@@ -73,7 +76,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
         //Color sensor gain values
         //color.setGain(300);
-        distance.setGain(180);
+        distance.setGain(300);
 
 
         //Lift Thread
@@ -86,25 +89,26 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     if(gamepad1.left_trigger > 0.1){
                         //score.setPower(0.2);
                         if(score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA && !liftBrokenMode) {
-                            score.epicAutoGoToPosition();
+
+                            score.commandAutoGoToPosition();
 
                             if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW) {
-                                score.setLinkagePosition(0.72);
+                                score.setLinkagePosition(0.7);
                             } else {
                                 score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
                             }
-                            passive = PassivePower.EXTENDED;
+                            //passive = PassivePower.EXTENDED;
                         }else if (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA){
                             score.setLinkagePosition(0.15);
                         }
-                        
-                    }else {
+
+                    }/*else {
                         if(passive == PassivePower.EXTENDED){
                             score.setPowerSingular(0.23);
                         }else if(passive == PassivePower.ZERO){
                             score.setPower(0);
                         }
-                    }
+                    }*/
 
 
                     //Scoring feature
@@ -127,8 +131,9 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                             //Do nothing during movement phase
                             //Reset to zero and no passive power
-                            score.moveToPosition(0, 0.5);
-                            passive = PassivePower.ZERO;
+                            //score.moveToPosition(0, 0.5);
+                            score.setLiftTarget(0);
+                            //passive = PassivePower.ZERO;
 
                             //Open Grabber and reset linkage
 
@@ -155,7 +160,6 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                         //TODO: fix this
                         score.lowerConeStack();
-
 
 
 
@@ -223,10 +227,10 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     //TODO: tune this (both raise and lower)
                     //Linkage stack cone heights with dpad up and down
-                    if((gamepad1.left_bumper || gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
+                    if((gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
 
                         //Raise linkage by height of a cone (max height of 5)
-                        if(gamepad1.left_bumper || gamepad1.dpad_up) {
+                        if(gamepad1.dpad_up) {
                             score.setConeStack(5);
                             score.setLinkageConeStack(false);
                             changeStackFlag = false;
@@ -246,7 +250,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         }
 
                     }
-                    if(!gamepad1.dpad_down && !gamepad1.dpad_up && !gamepad1.left_bumper){
+                    if(!gamepad1.dpad_down && !gamepad1.dpad_up){
                         changeStackFlag = true;
                     }
 
@@ -260,7 +264,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
 
                     //Manual open and close grabber
-                    if(gamepad1.start && manualFlag){
+                    if(gamepad1.right_stick_button && manualFlag){
                         if(score.getGrabberPosition() != Constants.open - 0.15) {
                             score.setGrabberPosition(Constants.open - 0.15);
                             try {
@@ -279,7 +283,9 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             grabFlag = false;
                         }
                         manualFlag = false;
-                    }else if(!gamepad1.start){
+                    }
+
+                    if(!gamepad1.right_stick_button){
                         manualFlag = true;
                     }
 
@@ -288,6 +294,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     //Changing scoring modes (toggle)
                     if(gamepad1.y){
                         score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.LOW);
+
 
                     }else if(gamepad1.x){
                         score.setScoringMode(ScoringSystemV2EpicLift.ScoringMode.MEDIUM);
@@ -303,12 +310,34 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     //Manual slides (dpad right and left)
                     if(gamepad1.dpad_right){
-                        passive = PassivePower.MOVEMENT;
+                        //passive = PassivePower.MOVEMENT;
                         score.setPower(1);
+                        score.setLiftTarget(-1 * score.getRightEncoderPos());
                     }else if(gamepad1.dpad_left){
-                        passive = PassivePower.MOVEMENT;
+                        //passive = PassivePower.MOVEMENT;
                         score.setPower(-0.55);
+                        score.setLiftTarget(-1 * score.getRightEncoderPos());
+
                     }else{
+                        if(score.getLiftTarget() == 0){
+                            score.newLiftPIDUpdate(0.55);
+                            telemetry.addData("stuff", "slow");
+
+                        }else {
+                            score.newLiftPIDUpdate(1);
+                            telemetry.addData("stuff", "fast");
+
+                        }
+
+                    }
+
+                    telemetry.addData("target", score.getLiftTarget());
+
+                    telemetry.update();
+
+
+
+                    /*else{
 
                         //Feedforward if slides are extended
                         if(score.isExtended() && (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW || score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.MEDIUM)){
@@ -318,22 +347,40 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         }
 
 
-                    }
+                    }*/
 
-                    if (gamepad1.ps && optionsFlag) {
+                    if (gamepad1.left_bumper && optionsFlag) {
                         optionsFlag = false;
                         liftBrokenMode = !liftBrokenMode;
+
+                        if(liftBrokenMode){
+                            gamepad1.rumble(1500);
+                        }else{
+                            gamepad1.rumble(200);
+                        }
                     }
-                    if (!gamepad1.ps) {
+                    if (!gamepad1.left_bumper) {
                         optionsFlag = true;
                     }
 
                     if (gamepad2.dpad_up) {
-                        score.setLinkagePosition(score.getLeftLinkage() + 0.001);
+                        score.setLinkagePosition(score.getLeftLinkage() + linkageToggleSpeed);
                     }
 
                     if (gamepad2.dpad_down) {
-                        score.setLinkagePosition(score.getLeftLinkage() - 0.001);
+                        score.setLinkagePosition(score.getLeftLinkage() - linkageToggleSpeed);
+                    }
+
+                    if(gamepad2.left_bumper && changeToggle){
+                        if(linkageToggleSpeed == 0.001){
+                            linkageToggleSpeed = 0.0012;
+                        }else{
+                            linkageToggleSpeed = 0.001;
+                        }
+                    }
+
+                    if(!gamepad2.left_bumper){
+                        changeToggle = true;
                     }
 
 
@@ -465,19 +512,20 @@ public class NoSequenceTeleOp extends LinearOpMode {
                 leftStickX = 0;
             }
 
-            if (gamepad1.right_bumper) {
+            /*if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
-            } else if(score.isExtended()){
+            } else*/
+            if(score.isExtended()){
                 //Slow down when slides are extended
                 drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else{
-                drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
             //Telemetry
 
-            telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
+            /*telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
             telemetry.addData("distance: ", distance.getDistance(DistanceUnit.CM));
             telemetry.addData("distanceRed", distance.getNormalizedColors().red);
@@ -491,11 +539,11 @@ public class NoSequenceTeleOp extends LinearOpMode {
             //telemetry.addData("colorBlue: ", color.getNormalizedColors().blue);
             telemetry.addData("rightServoTarget", score.getRightLinkage());
             telemetry.addData("leftServoTarget", score.getLeftLinkage());
-            telemetry.addData("passive", passive);
+            //telemetry.addData("passive", passive);
             telemetry.addData("coneStack", score.getConeStack());
             telemetry.addData("rip robot", liftBrokenMode);
             telemetry.update();
-
+*/
 
         }
 

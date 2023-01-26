@@ -1688,6 +1688,10 @@ public class MecDriveV2 {
 
     }
 
+    private void rampUp(int millis){
+        
+    }
+
 
     public void goTOPIDPosVel(int tics) {
         ElapsedTime time = new ElapsedTime();

@@ -78,7 +78,7 @@ public class QuadMotorLift extends LinearOpMode {
 
         //Color sensor gain values
         //color.setGain(300);
-        distance.setGain(250);
+        distance.setGain(300);
 
 
         //Lift Thread
@@ -238,10 +238,10 @@ public class QuadMotorLift extends LinearOpMode {
 
                     //TODO: tune this (both raise and lower)
                     //Linkage stack cone heights with dpad up and down
-                    if((gamepad1.left_bumper || gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
+                    if((gamepad1.dpad_up || gamepad1.dpad_down) && changeStackFlag){
 
                         //Raise linkage by height of a cone (max height of 5)
-                        if(gamepad1.left_bumper || gamepad1.dpad_up) {
+                        if(gamepad1.dpad_up) {
                             score.setConeStack(5);
                             score.setLinkageConeStack(false);
                             changeStackFlag = false;
@@ -261,7 +261,7 @@ public class QuadMotorLift extends LinearOpMode {
                         }
 
                     }
-                    if(!gamepad1.dpad_down && !gamepad1.dpad_up && !gamepad1.left_bumper){
+                    if(!gamepad1.dpad_down && !gamepad1.dpad_up){
                         changeStackFlag = true;
                     }
 
@@ -363,11 +363,17 @@ public class QuadMotorLift extends LinearOpMode {
 
                     }*/
 
-                    if (gamepad1.ps && optionsFlag) {
+                    if (gamepad1.left_bumper && optionsFlag) {
                         optionsFlag = false;
                         liftBrokenMode = !liftBrokenMode;
+
+                        if(liftBrokenMode){
+                            gamepad1.rumble(1500);
+                        }else{
+                            gamepad1.rumble(200);
+                        }
                     }
-                    if (!gamepad1.ps) {
+                    if (!gamepad1.left_bumper) {
                         optionsFlag = true;
                     }
 
@@ -520,13 +526,14 @@ public class QuadMotorLift extends LinearOpMode {
                 leftStickX = 0;
             }
 
-            if (gamepad1.right_bumper) {
+            /*if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
-            } else if(score.isExtended()){
+            } else*/
+            if(score.isExtended()){
                 //Slow down when slides are extended
                 drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else{
-                drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
             }
 
 
