@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.Tested.SafeAutos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -93,6 +94,8 @@ public class CommandRedLeftSafeTestVel extends LinearOpMode {
 
         cameraServo.setPosition(Constants.sleeveV2);
 
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
+
 
         waitForStart();
 
@@ -118,7 +121,7 @@ public class CommandRedLeftSafeTestVel extends LinearOpMode {
                 ),
 
                 new InstantCommand(() -> drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAIGHT, 0.4)),
-                new WaitCommand(100),
+                new WaitCommand(500),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
                 new WaitCommand(300),
 
