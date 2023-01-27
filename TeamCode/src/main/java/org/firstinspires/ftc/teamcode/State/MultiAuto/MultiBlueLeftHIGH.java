@@ -34,7 +34,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
     private static volatile Constants.Pipeline normalization;
 
     // ftc dashboard values + properCX
-    private double properCX = 148; //67  165
+    private double properCX = 152; //67  165
     private double properCXHigh = 145   ; //67
     private double properCXCone = 165;
 
@@ -52,7 +52,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
     volatile boolean findingTape = false;
     volatile boolean scoringPole = false;
     volatile boolean strafing = false;
-
+    volatile long fullTime;
 
     long time;
     long onTimeout;
@@ -121,30 +121,31 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                         long time = System.currentTimeMillis();
                         while (grabbingCone) {
 
-                            if ((System.currentTimeMillis() - time) / 1000 > 2.5) {
+                            if ((System.currentTimeMillis() - time) / 1000 > 2.5 || (System.currentTimeMillis() - fullTime) / 1000 < 2.5) {
                                 safeParking(true, false, false, false);
 
                             }
                         }
                         while (findingTape) {
-                            if ((System.currentTimeMillis() - time) / 1000 > 2.5) {
+                            if ((System.currentTimeMillis() - time) / 1000 > 2.5 || (System.currentTimeMillis() - fullTime) / 1000 < 2.5) {
                                 safeParking(false, true, false, false);
 
                             }
                         }
                         while (scoringPole) {
-                            if ((System.currentTimeMillis() - time) / 1000 > 3) {
+                            if ((System.currentTimeMillis() - time) / 1000 > 3 || (System.currentTimeMillis() - fullTime) / 1000 < 2.5) {
                                 safeParking(false, false, true, false);
 
                             }
                         }
                         while (strafing) {
-                            if ((System.currentTimeMillis() - time) / 1000 > 1.5) {
+                            if ((System.currentTimeMillis() - time) / 1000 > 1.5 || (System.currentTimeMillis() - fullTime) / 1000 < 2.5) {
                                 safeParking(false, false, false, true);
 
                             }
                         }
                     }
+
 //
                     telemetry.addData("imu", drive.currentAngle());
                     telemetry.update();
@@ -176,6 +177,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
         waitForStart();
+        fullTime = System.currentTimeMillis();
         normalization = Constants.Pipeline.POLE;
         // turn servo of cam forward for poles
         //score.setCamPosition(constants.getStrafeLowCamPos());
@@ -386,7 +388,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             grabbingCone = false;
 
             //strafe to the left a bit
-            drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 20, "strafe to left a bit");
+            //drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 20, "strafe to left a bit");
 
             //makes sure actually turned 90 degrees
             if (Math.abs(drive.getAngularOrientation() - Math.PI / 1.9) > 0.05) {
@@ -524,7 +526,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             //strafe to the left a bit
-            drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 20, "strafe to left a bit");
+            //drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 20, "strafe to left a bit");
 
             //makes sure actually turned 90 degrees
             if (Math.abs(drive.getAngularOrientation() - Math.PI / 1.9) > 0.05) {
@@ -670,7 +672,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
             //strafe to the left a bit
-            drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 20, "strafe to left a bit");
+           // drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 20, "strafe to left a bit");
 
             //makes sure actually turned 90 degrees
             if (Math.abs(drive.getAngularOrientation() - Math.PI / 1.9) > 0.05) {
@@ -1318,7 +1320,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
         // old: 7900     (9100 new)  (6800 new)  7400
 
         while (detect1.getBoundArea() <= 6000.0 || detect1.getBoundArea() >= 8400) { //7200
-            if (detect1.getBoundArea() >= 6000.0 && detect1.getBoundArea() <= 8400 && detect1.getDistance() <= 5.5/*|| detect1.getcX() <= 18*/) {
+            if (detect1.getBoundArea() >= 6000.0 && detect1.getBoundArea() <= 8400 && detect1.getDistance() <= 5.5 && detect1.getDistance() >= 4.6/*|| detect1.getcX() <= 18*/) {
                 drive.goToPosition(0, 0, 0, 0);
                 break;
             } else if ((System.currentTimeMillis() - onTimeout) / 1000 > 3) {
@@ -1421,7 +1423,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
     }
 
     public void safeParking(boolean grabbingCone, boolean findingTape, boolean scoringPole, boolean strafing) {
-        boolean running = true;
+        boolean  running = true;
         if (opModeIsActive()) {
 
             drive.goToPosition(0, 0, 0, 0);
