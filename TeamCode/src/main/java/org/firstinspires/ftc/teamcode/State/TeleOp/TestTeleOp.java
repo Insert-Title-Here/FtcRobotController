@@ -22,7 +22,7 @@ public class TestTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, telemetry);
         //sets teleop driving to float instead of break
-        drive.mecanumDriveTeleOp(hardwareMap, telemetry);
+
         score = new ScoringSystem(hardwareMap, telemetry);
         discontinue = new AtomicBoolean();
         discontinue.set(false);

@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,7 +20,7 @@ import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 @Config
 public class MecanumDrive {
-    DcMotorEx fl, fr, bl, br;
+    DcMotor fl, fr, bl, br;
     Telemetry telemetry;
     Thread driveThread;
     AtomicBoolean active;
@@ -53,54 +54,15 @@ public class MecanumDrive {
 
         colorTape.setGain(100);
         //initiallises drive motors
-        fl = hardwareMap.get(DcMotorEx.class, "fl");
-        fr = hardwareMap.get(DcMotorEx.class, "fr");
-        bl = hardwareMap.get(DcMotorEx.class, "bl");
-        br = hardwareMap.get(DcMotorEx.class, "br");
+        fl = hardwareMap.get(DcMotor.class, "fl");
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        br = hardwareMap.get(DcMotor.class, "br");
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        fl.setDirection(DcMotor.Direction.REVERSE);
-        fr.setDirection(DcMotor.Direction.REVERSE);
-        bl.setDirection(DcMotor.Direction.REVERSE);
-        br.setDirection(DcMotor.Direction.FORWARD);
-    }
-
-    public void mecanumDriveAuto(HardwareMap hardwareMap, Telemetry telemetry) {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        this.telemetry = telemetry;
-        active = new AtomicBoolean();
-        colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
-        accumulatedError = 0;
-
-        colorTape.setGain(100);
-        //initiallises drive motors
-        fl = hardwareMap.get(DcMotorEx.class, "fl");
-        fr = hardwareMap.get(DcMotorEx.class, "fr");
-        bl = hardwareMap.get(DcMotorEx.class, "bl");
-        br = hardwareMap.get(DcMotorEx.class, "br");
-
-        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -113,50 +75,7 @@ public class MecanumDrive {
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         fl.setDirection(DcMotor.Direction.REVERSE);
-        fr.setDirection(DcMotor.Direction.REVERSE);
-        bl.setDirection(DcMotor.Direction.REVERSE);
-        br.setDirection(DcMotor.Direction.FORWARD);
-    }
-    public void mecanumDriveTeleOp(HardwareMap hardwareMap, Telemetry telemetry) {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // seehe calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        this.telemetry = telemetry;
-        active = new AtomicBoolean();
-        colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
-        accumulatedError = 0;
-
-        colorTape.setGain(100);
-        //initiallises drive motors
-        fl = hardwareMap.get(DcMotorEx.class, "fl");
-        fr = hardwareMap.get(DcMotorEx.class, "fr");
-        bl = hardwareMap.get(DcMotorEx.class, "bl");
-        br = hardwareMap.get(DcMotorEx.class, "br");
-
-        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        fl.setDirection(DcMotor.Direction.REVERSE);
-        fr.setDirection(DcMotor.Direction.REVERSE);
+        fr.setDirection(DcMotor.Direction.FORWARD);
         bl.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.FORWARD);
     }
@@ -219,7 +138,7 @@ public class MecanumDrive {
             setPower(-(power * sin - turnValue), -(power * cos + turnValue),
                     -(power * cos - turnValue), -(power * sin + turnValue));
         }
-        loggingString += "FlVelocity: " + fl.getVelocity() +", " + "FrVelocity: " + fr.getVelocity() +", " + "BlVelocity: " + bl.getVelocity() +", " + "BrVelocity: " + br.getVelocity() +"\n";
+        //loggingString += "FlVelocity: " + fl.getVelocity() +", " + "FrVelocity: " + fr.getVelocity() +", " + "BlVelocity: " + bl.getVelocity() +", " + "BrVelocity: " + br.getVelocity() +"\n";
     }
 
 
@@ -1023,6 +942,7 @@ public void absTurnPID(double radians) {
     public double getBrPower(){
         return br.getPower();
     }
+    /*
     public double getFlVelocity(){
         return fl.getVelocity();
     }
@@ -1037,6 +957,8 @@ public void absTurnPID(double radians) {
         return br.getVelocity();
     }
 
+
+     */
 
     // logs string into file
     public void writeLoggerToFile(){

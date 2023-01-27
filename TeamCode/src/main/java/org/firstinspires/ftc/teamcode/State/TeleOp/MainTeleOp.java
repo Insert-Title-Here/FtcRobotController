@@ -70,7 +70,7 @@ public class MainTeleOp extends LinearOpMode {
         //detect1 = new ContourMultiScoreLeft(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         //sets teleop driving to float instead of break
-        drive.mecanumDriveTeleOp(hardwareMap, telemetry);
+        
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();
@@ -379,14 +379,14 @@ public class MainTeleOp extends LinearOpMode {
                     drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
                 } else {
                     if (score.getEncoderPosition() > 480) {
-                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.28, false);
+                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.2, false);
                     } else {
                         drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                     }
                 }
             }
             if(gamepad1.right_bumper){
-                drive.velocityPositionPID(2000, System.currentTimeMillis());
+                drive.absTurnPID(Math.PI / 2);
             }
             /*
             //turn scoring(turn in other thread)

@@ -60,7 +60,7 @@ public class SecondTeleOp extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, telemetry);
         score = new ScoringSystem(hardwareMap, telemetry);
         //sets teleop driving to float instead of break
-        drive.mecanumDriveTeleOp(hardwareMap, telemetry);
+
         clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();
         clawMoveDownToggle = new AtomicBoolean();

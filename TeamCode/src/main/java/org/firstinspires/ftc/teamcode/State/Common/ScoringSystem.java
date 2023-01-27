@@ -235,7 +235,7 @@ public class ScoringSystem {
             setClawPosition(constant.getClawClosePos());
             sleep(500);
             // lift up
-            goToPosition(getEncoderPosition() + 200, 0.9);
+            goToPosition(constant.getHeightLow(), 0.9);
             telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
             telemetry.update();
             return true;
@@ -252,7 +252,7 @@ public class ScoringSystem {
             sleep(500);
             // lift up
             if(stack){
-                goToPosition(getEncoderPosition() + 330, 1);
+                goToPosition(constant.getHeightLow(), 1);
             }else{
                 goToPosition(constant.getHeightLow(), 1);
             }
@@ -268,7 +268,9 @@ public class ScoringSystem {
     // auto version
     public void grabConeAuto() {
         boolean temp = true;
-        drive.goToPosition(0.2, 0.2, 0.2, 0.2);
+        drive.goToPosition(0.52, 0.5, 0.52, 0.5, 100, "forward a bit");
+
+        drive.goToPosition(0.21, 0.2, 0.21, 0.2);
         while (temp) {
             if (colorCone.getDistance(DistanceUnit.CM) < 2) {
                 drive.goToPosition(0, 0, 0, 0);
@@ -289,7 +291,7 @@ public class ScoringSystem {
             }
         }
     }
-    boolean high = false;
+    boolean high = true;
     boolean mid = false;
     boolean low = false;
     public void setScoreBoolean(boolean h, boolean m, boolean l){
@@ -319,17 +321,19 @@ public class ScoringSystem {
     public void stackUp(){
 
         if(currentHeight == 0 || currentHeight == height2){
-            goToPosition(height1, 0.7);
+            goToPosition(height1, 0.5);
             currentHeight = height1;
         }else if(currentHeight == height3){
-            goToPosition(height2, 0.7);
+            goToPosition(height2, 0.5);
             currentHeight = height2;
         }else if(currentHeight == height4){
-            goToPosition(height3, 0.7);
+            goToPosition(height3, 0.5);
             currentHeight = height3;
         }else if(currentHeight == height5){
-            goToPosition(height4, 0.7);
+            goToPosition(height4, 0.5);
             currentHeight = height4;
+        }else if(currentHeight == height1 && getEncoderPosition() < 40){
+          goToPosition(getEncoderPosition() + 35, 0.5);
         }
 
          /*
@@ -347,18 +351,17 @@ public class ScoringSystem {
     }
 
     public void stackDown(){
-
         if(currentHeight == height1){
-            goToPosition(height2, 0.7);
+            goToPosition(height2, 0.3);
             currentHeight = height2;
         }else if(currentHeight == height2){
-            goToPosition(height3, 0.7);
+            goToPosition(height3, 0.3);
             currentHeight = height3;
         }else if(currentHeight == height3){
-            goToPosition(height4, 0.7);
+            goToPosition(height4, 0.3);
             currentHeight = height4;
         }else if(currentHeight == height4){
-            goToPosition(height5, 0.7);
+            goToPosition(height5, 0.3);
             currentHeight = height5;
         }
 

@@ -4,9 +4,9 @@ public class  Constants {
     //TODO: Edit values
     private int heightTrueLimit = 1378;
     private int heightLimit = 1358;
-    private int heightHigh = 1180;
-    private int heightMed = 860;
-    private int heightLow = 500;
+    private int heightHigh = 1190;
+    private int heightMed = 870;
+    private int heightLow = 490;
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.2;
     private double clawClosePos = 0.35; // was 0.38 for old design
@@ -19,7 +19,7 @@ public class  Constants {
     private double straightCamPos = 0.32;
     private double strafeMedCamPos = 0.75;
     private double strafeLowCamPos = 0.21;
-    private double strafeConeCamPos = 0.245;
+    private double strafeConeCamPos = 0.22;
     //TODO: add comments
     public double getClawOpenPos(){
         return clawOpenPos;

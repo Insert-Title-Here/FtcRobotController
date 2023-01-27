@@ -52,7 +52,7 @@ public class MultiBlueRightMID extends LinearOpMode {
         detect1 = new ContourMultiScoreRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         //sets Auto driving to break instead of float
-        drive.mecanumDriveAuto(hardwareMap, telemetry);
+        
         score = new ScoringSystem(hardwareMap, telemetry);
         constants = new Constants();
         liftTurn = new AtomicBoolean();

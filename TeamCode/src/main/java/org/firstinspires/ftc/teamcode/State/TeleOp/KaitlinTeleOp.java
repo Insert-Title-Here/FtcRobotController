@@ -68,7 +68,7 @@ public class KaitlinTeleOp extends LinearOpMode {
         //detect1 = new ContourMultiScoreLeft(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         //sets teleop driving to float instead of break
-        drive.mecanumDriveTeleOp(hardwareMap, telemetry);
+
         score = new ScoringSystem(hardwareMap, telemetry);
         clawOpenCloseToggle = new AtomicBoolean();
         constant = new Constants();
@@ -91,6 +91,7 @@ public class KaitlinTeleOp extends LinearOpMode {
             public void onOpened() {
                 webcam.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
             }
+
             @Override
             public void onError(int errorCode) {
                 telemetry.addData("Camera Init Error", errorCode);
@@ -99,13 +100,12 @@ public class KaitlinTeleOp extends LinearOpMode {
         });
 
 
-
         //ftc dashboard
 
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         //Thread for the slides
-        liftThread = new Thread(){
+        liftThread = new Thread() {
             @Override
             public void run() {
                 if (!isTurnLifting) {
@@ -121,7 +121,7 @@ public class KaitlinTeleOp extends LinearOpMode {
                         } else if (gamepad1.dpad_left) {
                             score.setPower(-0.24);
                         } else {
-                            if(steadyPower) {
+                            if (steadyPower) {
                                 if (score.getEncoderPosition() > 20) {
                                     score.setPower(constant.getSteadyPow());
                                 } else {
@@ -167,15 +167,15 @@ public class KaitlinTeleOp extends LinearOpMode {
                         }
 
                         //stack code
-                        if (gamepad1.dpad_up && stackFlag.get()) {
+                        if (gamepad1.right_bumper && stackFlag.get()) {
                             clawStackFlag.set(true);
                             stackFlag.set(false);
                             score.stackUp();
-                        } else if (gamepad1.dpad_down && stackFlag.get()) {
+                        } else if (gamepad1.left_bumper && stackFlag.get()) {
                             clawStackFlag.set(true);
                             stackFlag.set(false);
                             score.stackDown();
-                        } else if (!gamepad1.dpad_up && !gamepad1.dpad_down) {
+                        } else if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
                             stackFlag.set(true);
                         }
 
@@ -220,7 +220,7 @@ public class KaitlinTeleOp extends LinearOpMode {
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
-                                        score.goToPosition(score.getEncoderPosition() + 100, 0.8);
+                                        score.goToPosition(constant.getHeightLow(), 0.8);
                                         score.setPower(constant.getSteadyPow());
                                         clawStackFlag.set(false);
 
@@ -312,33 +312,31 @@ public class KaitlinTeleOp extends LinearOpMode {
         liftThread.start();
         score.goToPosition(constant.getHeightBottom(), 0.6);
         score.setPower(constant.getSteadyPow());
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             double gamepadX = gamepad1.left_stick_x;
             double gamepadY = gamepad1.left_stick_y;
-            if(Math.abs(gamepadX) < Math.abs(gamepadY)){
+            if (Math.abs(gamepadX) < Math.abs(gamepadY)) {
                 gamepadX = 0;
-            }else if(Math.abs(gamepadX) > Math.abs(gamepadY)){
+            } else if (Math.abs(gamepadX) > Math.abs(gamepadY)) {
                 gamepadY = 0;
-            }else{
+            } else {
                 gamepadX = 0;
                 gamepadY = 0;
             }
             //robot movement(using controls/gamepads) with sprint mode
-            if(!isTurning) {
-                if (gamepad1.left_stick_button) { // replace this with a button for sprint
-                    drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+            //if(!isTurning) {
+            if (gamepad1.left_stick_button) { // replace this with a button for sprint
+                drive.setPower(new Vector2D(gamepadX * SPRINT_LINEAR_MODIFIER, gamepadY * SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * SPRINT_ROTATIONAL_MODIFIER, false);
+            } else {
+                if (score.getEncoderPosition() > 480) {
+                    drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.24, false);
                 } else {
-                    if (score.getEncoderPosition() > 480) {
-                        drive.setPower(new Vector2D(gamepadX * 0.55, gamepadY * 0.55), gamepad1.right_stick_x * 0.28, false);
-                    } else {
-                        drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
-                    }
+                    drive.setPower(new Vector2D(gamepadX * NORMAL_LINEAR_MODIFIER, gamepadY * NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
-            if(gamepad1.right_bumper){
-                drive.absTurnPID(Math.PI / 2);
-            }
+            // }
+
             /*
             //turn scoring(turn in other thread)
             if (gamepad1.left_bumper) {
@@ -375,15 +373,15 @@ public class KaitlinTeleOp extends LinearOpMode {
             //Sets the booleans for which pole to go to for lifts system
             if (gamepad1.a) {
                 //low cone
-                score.setScoreBoolean(false,false,true);
+                score.setScoreBoolean(false, false, true);
             }
             //moves slides to medium pole height
-            if(gamepad1.x){
+            if (gamepad1.x) {
                 //medium cone
                 score.setScoreBoolean(false, true, false);
             }
             //moves slides to low pole
-            if(gamepad1.y){
+            if (gamepad1.y) {
                 //high cone
                 score.setScoreBoolean(true, false, false);
             }
@@ -420,12 +418,11 @@ public class KaitlinTeleOp extends LinearOpMode {
             }
 
              */
-            if(gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
                 scoring = true;
-            }else if(!gamepad1.right_bumper){
+            } else if (!gamepad1.right_bumper) {
                 scoring = false;
             }
-
 
 
             //resets the drive motor encoders
