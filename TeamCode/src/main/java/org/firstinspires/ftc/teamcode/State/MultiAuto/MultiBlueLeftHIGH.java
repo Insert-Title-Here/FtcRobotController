@@ -34,7 +34,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
     private static volatile Constants.Pipeline normalization;
 
     // ftc dashboard values + properCX
-    private double properCX = 168; //67  165
+    private double properCX = 167; //67  165
     private double properCXHigh = 145   ; //67
     private double properCXCone = 165;
 
