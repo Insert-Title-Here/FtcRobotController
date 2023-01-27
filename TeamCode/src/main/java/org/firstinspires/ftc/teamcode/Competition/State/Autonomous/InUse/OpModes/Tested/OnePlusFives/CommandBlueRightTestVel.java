@@ -125,6 +125,21 @@ public class CommandBlueRightTestVel extends LinearOpMode {
 
         );
 
+
+        //TODO: remove
+        while(opModeIsActive()){
+
+            double rads = drive.getFirstAngle();
+            double degrees = drive.getFirstAngle() * 180 / Math.PI;
+
+            telemetry.addData("Angle rads", rads);
+            telemetry.addData("Angle degrees", degrees);
+            telemetry.addData("Lower Threshold",  (degrees - 5) * Math.PI / 180);
+            telemetry.addData("High Threshold",  (degrees + 5) * Math.PI / 180);
+            telemetry.update();
+
+        }
+
         if (distance.getNormalizedColors().blue > 0.6) {
             CommandScheduler.getInstance().schedule(
                     new ParallelCommandGroup(

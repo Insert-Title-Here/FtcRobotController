@@ -109,7 +109,25 @@ public class CommandBlueRightSafeTestVel extends LinearOpMode {
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID((5.3 * Math.PI) / 8, 1, false)),
                 //new InstantCommand(() -> drive.simpleMoveToPosition(-780, MecDriveV2.MovementType.ROTATE, 1)),
-                new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
+                new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2))
+
+        );
+
+        //TODO: remove
+        while(opModeIsActive()){
+
+            double rads = drive.getFirstAngle();
+            double degrees = drive.getFirstAngle() * 180 / Math.PI;
+
+            telemetry.addData("Angle rads", rads);
+            telemetry.addData("Angle degrees", degrees);
+            telemetry.addData("Lower Threshold",  (degrees - 5) * Math.PI / 180);
+            telemetry.addData("High Threshold",  (degrees + 5) * Math.PI / 180);
+            telemetry.update();
+
+        }
+
+        CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
                         new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
                         new InstantCommand(() -> score.newLiftPID(940, 1)),
