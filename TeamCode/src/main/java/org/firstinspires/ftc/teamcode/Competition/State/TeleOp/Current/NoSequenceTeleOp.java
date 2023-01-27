@@ -363,25 +363,35 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         optionsFlag = true;
                     }
 
-                    if (gamepad2.dpad_up) {
-                        score.setLinkagePosition(score.getLeftLinkage() + linkageToggleSpeed);
-                    }
+                    /*if (gamepad2.dpad_up) {
+                        score.setLinkagePosition(score.getLeftLinkage() + 0.001);
+                    }else if (gamepad2.dpad_down) {
+                        score.setLinkagePosition(score.getLeftLinkage() - 0.001);
+                    }else if(gamepad2.dpad_left){
+                        score.setLinkagePosition(score.getLeftLinkage() - 0.002);
+                    }else if(gamepad2.dpad_right){
+                        score.setLinkagePosition(score.getLeftLinkage() + 0.002);
+                    }*/
 
-                    if (gamepad2.dpad_down) {
-                        score.setLinkagePosition(score.getLeftLinkage() - linkageToggleSpeed);
-                    }
+                    if((gamepad2.dpad_up || gamepad2.dpad_down) && changeToggle){
+                        if(gamepad2.dpad_up){
+                            score.setLinkagePosition(score.getLeftLinkage() + 0.025);
 
-                    if(gamepad2.left_bumper && changeToggle){
-                        if(linkageToggleSpeed == 0.001){
-                            linkageToggleSpeed = 0.0012;
                         }else{
-                            linkageToggleSpeed = 0.001;
+                            score.setLinkagePosition(score.getLeftLinkage() - 0.025);
+
+
                         }
+
+                        changeToggle = false;
+
+
                     }
 
-                    if(!gamepad2.left_bumper){
+                    if(!gamepad2.dpad_up && !gamepad2.dpad_down){
                         changeToggle = true;
                     }
+
 
 
                 }
