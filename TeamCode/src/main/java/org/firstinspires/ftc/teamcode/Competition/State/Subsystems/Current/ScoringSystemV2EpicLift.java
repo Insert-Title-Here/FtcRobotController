@@ -361,7 +361,7 @@ public class ScoringSystemV2EpicLift {
 
     public void commandAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            setLiftTarget(1020);
+            setLiftTarget(1025);
 
         }else if(height == ScoringMode.MEDIUM){
             setLiftTarget(585);

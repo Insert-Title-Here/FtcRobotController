@@ -110,7 +110,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosVel(-2050)),
+                new InstantCommand(() -> drive.goTOPIDPosVel(-2050, 500)),
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
                 //new InstantCommand(() -> drive.goTOPIDPosVel(790)),

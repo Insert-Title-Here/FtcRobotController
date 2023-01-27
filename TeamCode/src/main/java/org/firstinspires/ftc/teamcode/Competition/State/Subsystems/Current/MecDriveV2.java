@@ -952,8 +952,6 @@ public class MecDriveV2 {
     }
 
 
-
-
     public void goTOPIDPosWithRampUp(int tics, double power, MovementType movement) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
@@ -1558,11 +1556,9 @@ public class MecDriveV2 {
 
     }
 
-    public void goTOPIDPosVel(int tics, boolean stuff) {
+    public void goTOPIDPosVel(int tics, int millis) {
         ElapsedTime time = new ElapsedTime();
         double actualStartTime = time.seconds();
-        boolean rampUp = true;
-
 
 
         //TODO: check if we need to negate any
@@ -1577,9 +1573,11 @@ public class MecDriveV2 {
         int brError = tics - brPos;
 
 
+        rampUp(millis, tics, time);
+
         while (Math.abs(flError) > 2 && Math.abs(frError) > 2 && Math.abs(blError) > 2 && Math.abs(brError) > 2 && (time.seconds() - actualStartTime) < 1.5) {
 
-            if (rampUp) {
+            /*if (rampUp) {
 
                 double start = calculateAvgStartVel(tics);
                 int finalRampTics = tics / denom;
@@ -1633,53 +1631,53 @@ public class MecDriveV2 {
 
                 writeLoggerToFile();
 
-            }else {
+            }else {*/
 
-                telemetry.addData("target", tics);
-
-
-                //TODO: check if we need to negate any
-                flPos = -1 * getFLEncoder();
-                frPos = getFREncoder();
-                blPos = -1 * getBLEncoder();
-                brPos = getBREncoder();
+            telemetry.addData("target", tics);
 
 
-                telemetry.addData("flPos", flPos);
-                telemetry.addData("frPos", frPos);
-                telemetry.addData("blPos", blPos);
-                telemetry.addData("brPos", brPos);
-
-                flError = tics - flPos;
-                frError = tics - frPos;
-                blError = tics - blPos;
-                brError = tics - brPos;
+            //TODO: check if we need to negate any
+            flPos = -1 * getFLEncoder();
+            frPos = getFREncoder();
+            blPos = -1 * getBLEncoder();
+            brPos = getBREncoder();
 
 
-                telemetry.addData("flError", flError);
-                telemetry.addData("frError", frError);
-                telemetry.addData("blError", blError);
-                telemetry.addData("brError", brError);
+            telemetry.addData("flPos", flPos);
+            telemetry.addData("frPos", frPos);
+            telemetry.addData("blPos", blPos);
+            telemetry.addData("brPos", brPos);
+
+            flError = tics - flPos;
+            frError = tics - frPos;
+            blError = tics - blPos;
+            brError = tics - brPos;
 
 
-                double flPower = (pStraightVel * flError) + 10;
-                double frPower = (pStraightVel * frError) + 10;
-                double blPower = (pStraightVel * blError) + 10;
-                double brPower = (pStraightVel * brError) + 10;
+            telemetry.addData("flError", flError);
+            telemetry.addData("frError", frError);
+            telemetry.addData("blError", blError);
+            telemetry.addData("brError", brError);
 
 
-                telemetry.addData("flPower", flPower);
-                telemetry.addData("frPower", frPower);
-                telemetry.addData("blPower", blPower);
-                telemetry.addData("brPower", brPower);
+            double flPower = (pStraightVel * flError) + 10;
+            double frPower = (pStraightVel * frError) + 10;
+            double blPower = (pStraightVel * blError) + 10;
+            double brPower = (pStraightVel * brError) + 10;
 
 
-                //TODO: Fix rotate and check Strafe
-                setPower(flPower, frPower, blPower, brPower);
+            telemetry.addData("flPower", flPower);
+            telemetry.addData("frPower", frPower);
+            telemetry.addData("blPower", blPower);
+            telemetry.addData("brPower", brPower);
 
 
-                telemetry.update();
-            }
+            //TODO: Fix rotate and check Strafe
+            setPower(flPower, frPower, blPower, brPower);
+
+
+            telemetry.update();
+            //}
 
 
         }
@@ -1688,8 +1686,14 @@ public class MecDriveV2 {
 
     }
 
-    private void rampUp(int millis){
-        
+    private void rampUp(int millis, int targetTics, ElapsedTime time) {
+        double startTime = time.milliseconds();
+        double slope = (pStraightVel * targetTics) / millis;
+        while (time.milliseconds() - startTime < millis) {
+            setVelocity(slope * (time.milliseconds() - startTime), slope * (time.milliseconds() - startTime), slope * (time.milliseconds() - startTime), slope * (time.milliseconds() - startTime));
+        }
+
+        setVelocity(pStraightVel * targetTics, pStraightVel * targetTics, pStraightVel * targetTics, pStraightVel * targetTics);
     }
 
 
