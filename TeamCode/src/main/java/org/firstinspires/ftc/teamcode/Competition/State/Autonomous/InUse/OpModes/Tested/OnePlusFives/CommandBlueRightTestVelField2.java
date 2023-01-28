@@ -118,7 +118,7 @@ public class CommandBlueRightTestVelField2 extends LinearOpMode {
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
                 //new InstantCommand(() -> drive.goTOPIDPosVel(790)),
-                new InstantCommand(() -> drive.simpleMoveToPosition(725, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(660, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
                 new InstantCommand(() -> pipeline.normalizeStrafe(0.28, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
@@ -126,7 +126,7 @@ public class CommandBlueRightTestVelField2 extends LinearOpMode {
                 new WaitCommand(500),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
                 //new InstantCommand(() -> pipeline.normalize(0.22, 162, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355))
-                new InstantCommand(() -> drive.tankRotatePIDSpecial(1.355, 0.4, false, 1))
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(1.34, 0.4, false, 1))
 
         );
 
@@ -137,7 +137,7 @@ public class CommandBlueRightTestVelField2 extends LinearOpMode {
             CommandScheduler.getInstance().schedule(
                     new ParallelCommandGroup(
                             new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                            new InstantCommand(() -> score.newLiftPID(960, 0.95, 1))
+                            new InstantCommand(() -> score.newLiftPID(980, 0.95, 1))
                     ),
 
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -168,7 +168,7 @@ public class CommandBlueRightTestVelField2 extends LinearOpMode {
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
                 //new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                new InstantCommand(() -> score.newLiftPID(1005, 0.95, 1)),
+                new InstantCommand(() -> score.newLiftPID(1015, 0.95, 1)),
 
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -217,7 +217,7 @@ public class CommandBlueRightTestVelField2 extends LinearOpMode {
                     //new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
 
                     //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                    new InstantCommand(() -> score.newLiftPID(1005, 0.95, 1))
+                    new InstantCommand(() -> score.newLiftPID(1020, 0.95, 1))
             );
 
 
