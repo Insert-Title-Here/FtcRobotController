@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpMode
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 
+//Changed camera servo height
+//Checked pipeline parameters
+
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;

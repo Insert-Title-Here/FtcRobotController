@@ -24,6 +24,11 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
+//Didnt change camera pole height cuz tuned for 1 + 5
+//Checked pipeline parameters
+
+
 //@Disabled
 @Autonomous(name = "Red Right (Safe) Field 2")
 public class CommandRedRightSafeTestVelField2 extends LinearOpMode {
@@ -73,7 +78,7 @@ public class CommandRedRightSafeTestVelField2 extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_RIGHT, false);
+        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.RED_RIGHT, false);
 
         camera.setPipeline(pipeline);
 
@@ -102,7 +107,7 @@ public class CommandRedRightSafeTestVelField2 extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                new InstantCommand(() -> cameraServo.setPosition(0.4)),
+                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
                 new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2250, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
                 new WaitCommand(100),
@@ -141,7 +146,7 @@ public class CommandRedRightSafeTestVelField2 extends LinearOpMode {
                 new ParallelCommandGroup(
                         new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
                         new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                        new InstantCommand(() -> cameraServo.setPosition(0.4))
+                        new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
                 ),
 
                 new DriveInSafe(drive, distance, false, 0.35),
@@ -194,7 +199,7 @@ public class CommandRedRightSafeTestVelField2 extends LinearOpMode {
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
                                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                                new InstantCommand(() -> cameraServo.setPosition(0.4))
+                                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
                         ),
 
                         new DriveInSafe(drive, distance, true, 0.35),

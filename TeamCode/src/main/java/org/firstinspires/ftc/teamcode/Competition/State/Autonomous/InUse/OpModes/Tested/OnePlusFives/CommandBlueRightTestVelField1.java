@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.Tested.OnePlusFives;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
+
+
+//Changed camera pole height
+//Checked pipeline parameters
+
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -114,14 +119,15 @@ public class CommandBlueRightTestVelField1 extends LinearOpMode {
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
                 //new InstantCommand(() -> drive.goTOPIDPosVel(790)),
-                new InstantCommand(() -> drive.simpleMoveToPosition(745, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(725, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
                 new InstantCommand(() -> pipeline.normalizeStrafe(0.28, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(0.37)), // pole
                 new WaitCommand(500),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
-                new InstantCommand(() -> pipeline.normalize(0.22, 162, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355))
+                //new InstantCommand(() -> pipeline.normalize(0.22, 162, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355))
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(1.355, 0.4, false, 1))
 
         );
 
@@ -161,7 +167,7 @@ public class CommandBlueRightTestVelField1 extends LinearOpMode {
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new InstantCommand(() -> sleep(250)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
+                //new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                 new InstantCommand(() -> score.newLiftPID(1005, 0.95, 1)),
 
@@ -209,7 +215,7 @@ public class CommandBlueRightTestVelField1 extends LinearOpMode {
             }
 
             CommandScheduler.getInstance().schedule(
-                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
+                    //new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
 
                     //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
                     new InstantCommand(() -> score.newLiftPID(1005, 0.95, 1))

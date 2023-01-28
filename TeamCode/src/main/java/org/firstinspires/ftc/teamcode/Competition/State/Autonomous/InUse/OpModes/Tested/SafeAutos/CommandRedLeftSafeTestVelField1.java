@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.Tested.SafeAutos;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
+
+//Changed camera pole height
+//Checked pipeline parameter
+
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -104,7 +108,7 @@ public class CommandRedLeftSafeTestVelField1 extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033)),
+                new InstantCommand(() -> cameraServo.setPosition(0.365)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
                 new InstantCommand(() -> drive.goTOPIDPosVel(-2050)),
 
@@ -145,7 +149,7 @@ public class CommandRedLeftSafeTestVelField1 extends LinearOpMode {
                 new ParallelCommandGroup(
                         new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
                         new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                        new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
+                        new InstantCommand(() -> cameraServo.setPosition(0.365))
                 ),
 
                 new DriveInSafe(drive, distance, false, 0.35),
@@ -206,7 +210,7 @@ public class CommandRedLeftSafeTestVelField1 extends LinearOpMode {
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
                                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
+                                new InstantCommand(() -> cameraServo.setPosition(0.365))
                         ),
 
                         new DriveInSafe(drive, distance, false, 0.35),

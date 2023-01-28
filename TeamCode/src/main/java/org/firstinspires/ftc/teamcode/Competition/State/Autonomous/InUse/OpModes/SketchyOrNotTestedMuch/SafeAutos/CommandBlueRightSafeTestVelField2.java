@@ -24,6 +24,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+//Didnt change camera pole height cuz only tuned 1 + 5 on that side
+//Checked pipeline parameters
+
 //@Disabled
 @Autonomous(name = "Blue Right (Safe) Field 2")
 public class CommandBlueRightSafeTestVelField2 extends LinearOpMode {

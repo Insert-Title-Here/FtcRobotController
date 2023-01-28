@@ -25,6 +25,9 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+//Didnt change camera pole height cuz tuned for 1 + 5
+//Checked pipeline parameters
+
 //@Disabled
 @Autonomous(name = "Red Right (Safe) Field 1")
 public class CommandRedRightSafeTestVelField1 extends LinearOpMode {
@@ -74,7 +77,7 @@ public class CommandRedRightSafeTestVelField1 extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_RIGHT, true);
+        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.RED_RIGHT, true);
 
         camera.setPipeline(pipeline);
 

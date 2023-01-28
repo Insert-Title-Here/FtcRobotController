@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.Tested.SafeAutos;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
+
+//Changed camera pole height
+//Checked pipeline parameters
+
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
