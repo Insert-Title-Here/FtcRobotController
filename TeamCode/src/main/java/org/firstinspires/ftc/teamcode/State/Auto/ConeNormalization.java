@@ -84,7 +84,7 @@ public class ConeNormalization extends OpenCvPipeline {
         toggle2 = false;
         leftContour = new ArrayList<>();
         rightContour = new ArrayList<>();
-        isBlue = true;
+
 
         generalMat = input.clone();
         //input.copyTo(generalMat);

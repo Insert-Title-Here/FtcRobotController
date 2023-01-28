@@ -284,7 +284,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             score.goToPosition(50, 0.8);
             sleep(100);
             // go forward next to pole
-            drive.goToPosition(0.74, 0.7, 0.74, 0.7, 1430, "go forward next to pole");
+            drive.goToPosition(0.74, 0.7, 0.74, 0.7, 1380, "go forward next to pole");
             // turn to right  45 degrees to high pole
             drive.absTurnDriftPID(-Math.PI / 4);
 //            // go to pole a bit
@@ -342,12 +342,12 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 60, "back up a little");
             // turn to left
 //            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
-            drive.absTurnPID(Math.PI / 2);
+            drive.absTurnPID(Math.PI / 2.15);
 
-            //makes sure actually turned 90 degrees
-            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
-                drive.absTurnPID(Math.PI / 2);
-            }
+//            //makes sure actually turned 90 degrees
+//            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+//                drive.absTurnPID(Math.PI / 2);
+//            }
 
             score.setCamPosition(constants.getStrafeConeCamPos());
 
@@ -466,7 +466,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             scoreConePreload(100, 0, 0, 0);
             // turn to left
 //            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
-            drive.absTurnPID(Math.PI / 2);
+            drive.absTurnPID(Math.PI / 2.22);
 
             score.setCamPosition(constants.getStrafeConeCamPos());
 
@@ -588,18 +588,20 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 80, "back up a little");
             // turn to left
 //            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
-            drive.absTurnPID(Math.PI / 2);
+            drive.absTurnPID(Math.PI / 2.21);
 
-            //makes sure actually turned 90 degrees
-            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
-                drive.absTurnPID(Math.PI / 2);
-            }
+//            //makes sure actually turned 90 degrees
+//            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+//                drive.absTurnPID(Math.PI / 2);
+//            }
 
             score.setCamPosition(constants.getStrafeConeCamPos());
 
             normalization = Constants.Pipeline.CONE;
 
             score.setClawPosition(constants.getClawOpenPos());
+
+
 
             // +3s ---------------------------------------->
 
@@ -708,12 +710,12 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             scoreConePreload(100, 0, 0, 0);
             // turn to left
 //            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
-            drive.absTurnPID(Math.PI / 2);
+            drive.absTurnPID(Math.PI / 2.23);
 
-            //makes sure actually turned 90 degrees
-            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
-                drive.absTurnPID(Math.PI / 2);
-            }
+//            //makes sure actually turned 90 degrees
+//            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+//                drive.absTurnPID(Math.PI / 2);
+//            }
 
             score.setCamPosition(constants.getStrafeConeCamPos());
 
@@ -729,25 +731,25 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             //moves robot to correct parking position
             if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.LEFT) {
                 // go forward
-                drive.goToPosition(0.62, 0.6, 0.62, 0.6, 700, "go forwards");
+                drive.goToPosition(0.74, 0.7, 0.74, 0.7, 650, "go forwards");
                 sleep(100);
                 // strafe left
-                drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
+                drive.goToPosition(-0.7, 0.7, 0.7, -0.7, 100, "strafe left");
 
             } else if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.CENTER) {
                 // go forward
-                drive.goToPosition(0.62, 0.6, 0.62, 0.6, 70, "go forwards");
+                drive.goToPosition(0.74, 0.7, 0.74, 0.7, 80, "go forwards");
                 sleep(100);
 
                 // strafe left
-                drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
+                drive.goToPosition(-0.7, 0.7, 0.7, -0.7, 200, "strafe left");
             } else {
                 // go backwards
-                drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 530, "go backwards");
+                drive.goToPosition(-0.7, -0.7, -0.7, -0.7, 390, "go backwards");
                 sleep(100);
 
                 // strafe left
-                drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
+                drive.goToPosition(-0.7, 0.7, 0.7, -0.7, 200, "strafe left");
 
 
             }
@@ -1485,7 +1487,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                     drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
                 } else {
                     // go backwards
-                    drive.goToPosition(-0.5, -0.52, -0.5, -0.52, 1480, "go backwards");
+                    drive.goToPosition(-0.5, -0.52, -0.5, -0.52, 1400, "go backwards");
                     // strafe left
                     drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
 

@@ -48,7 +48,7 @@ public class ConeNormalizationTesting extends LinearOpMode {
             }
         });
 
-        detect.isBlue = true;
+        detect.isBlue = false;
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         telemetry.addData("position", position);

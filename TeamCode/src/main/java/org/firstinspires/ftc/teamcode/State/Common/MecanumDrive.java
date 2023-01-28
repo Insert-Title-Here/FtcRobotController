@@ -851,7 +851,9 @@ public void absTurnPID(double radians) {
         loggingString += "------------------------------------------------------------------------------------------------" + "\n";
 
          */
-        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
+        return currentError * proportionCoefficient + ((currentError - priorError) / timeChange) * derivativeCoefficient;
+
+
 
     }
 

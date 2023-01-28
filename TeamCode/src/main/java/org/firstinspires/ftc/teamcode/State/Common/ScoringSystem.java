@@ -153,8 +153,13 @@ public class ScoringSystem {
         loggingString += "derivativePower: " + ((currentError-priorError)/timeChange) * derivativeCoefficient + "   ";
         loggingString += "proportionPower: " + currentError * proportionCoefficient + "   ";
          */
+        double power = currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
+        if(power > 0.75){
+            return 0.75;
+        }else{
+            return power;
+        }
 
-        return currentError * proportionCoefficient + ((currentError-priorError)/timeChange) * derivativeCoefficient;
 
     }
 
@@ -268,14 +273,14 @@ public class ScoringSystem {
     // auto version
     public void grabConeAuto() {
         boolean temp = true;
-        drive.goToPosition(0.53, 0.5, 0.53, 0.5, 200, "forward a bit");
+        drive.goToPosition(0.55, 0.5, 0.55, 0.5, 240, "forward a bit");
 
-        drive.goToPosition(0.245, 0.23, 0.245, 0.23);
+        drive.goToPosition(0.27, 0.23, 0.27, 0.23);
         while (temp) {
             if (colorCone.getDistance(DistanceUnit.CM) < 3.5) {
                 drive.goToPosition(0, 0, 0, 0);
                 // grab cone
-                setClawPosition(constant.getClawClosePos());
+                setClawPosition(constant.getAutoClawClosePos());
                 try {
                     sleep(300);
                 } catch (InterruptedException e) {

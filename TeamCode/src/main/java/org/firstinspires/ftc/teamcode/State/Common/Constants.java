@@ -10,14 +10,18 @@ public class  Constants {
     private double clawOpenPos = 0.0;
     private double clawLowThreshold = 0.2;
     private double clawClosePos = 0.35; // was 0.38 for old design
+
+
+
+    private double autoClawClosePos = 0.37;
     private double clawHighThreshold = 0.5;
     private int stackHeight = 188;
     private double steadyPow = 0.18;
     private int stackIntervalHeight = 50;
 
 
-    private int stack4 = 133;
-    private int stack3 = 83;
+    private int stack4 = 129;
+    private int stack3 = 79;
     private int stack2 = 33;
 
 
@@ -29,6 +33,10 @@ public class  Constants {
     private double strafeLowCamPos = 0.21;
     private double strafeConeCamPos = 0.22;
     //TODO: add comments
+    public double getAutoClawClosePos() {
+        return autoClawClosePos;
+    }
+
     public int getStack4() {
         return stack4;
     }

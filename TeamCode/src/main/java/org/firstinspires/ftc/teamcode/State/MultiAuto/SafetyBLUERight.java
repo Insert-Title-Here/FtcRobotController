@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft;
+import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreRight;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
@@ -23,7 +23,7 @@ public class SafetyBLUERight extends LinearOpMode {
     // instantiating
     Thread liftThread;
     MecanumDrive drive;
-    ContourMultiScoreLeft detect1;
+    ContourMultiScoreRight detect1;
     ScoringSystem score;
     Constants constants;
     OpenCvWebcam webcam;
@@ -39,7 +39,7 @@ public class SafetyBLUERight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // value initializing
-        detect1 = new ContourMultiScoreLeft(telemetry);
+        detect1 = new ContourMultiScoreRight(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         //sets Auto driving to break instead of float
         
@@ -192,7 +192,7 @@ public class SafetyBLUERight extends LinearOpMode {
         // PARK ------------------------------------------------------>
 
         //moves robot to correct parking position
-        if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.LEFT) {
+        if (detect1.getParkPosition() == ContourMultiScoreRight.ParkingPosition.LEFT) {
 
             // strafe left
             drive.goToPosition(0.6, -0.6, -0.6, 0.6, 601, "strafe right");
@@ -202,7 +202,7 @@ public class SafetyBLUERight extends LinearOpMode {
             drive.goToPosition(0.6, -0.6, -0.6, 0.6, 501, "strafe right");
 
 
-        } else if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.CENTER) {
+        } else if (detect1.getParkPosition() == ContourMultiScoreRight.ParkingPosition.CENTER) {
             // strafe left
             drive.goToPosition(0.6, -0.6, -0.6, 0.6, 601, "strafe right");
 

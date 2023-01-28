@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.State.Auto;
 
 
-//import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -22,7 +22,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Config
+@Config
 public class ContourMultiScoreRight extends OpenCvPipeline {
     public boolean park = true;
 
@@ -35,8 +35,8 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
     private Mat yelMat = new Mat(), cyaMat = new Mat(), magMat = new Mat(), changed = new Mat(), original = new Mat();
     private double yelPercent, cyaPercent, magPercent;
 
-    private static int box_x = 232;
-    private static int box_y = 95;
+    public static int box_x = 160;
+    public static int box_y = 93;
 
     // top left point of submat (original 320, 176)
     private static Point BOX_TOPLEFT = new Point(box_x,box_y); // 175, 150
@@ -118,6 +118,22 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        BOX_TOPLEFT = new Point(box_x, box_y); // 175, 150 ... 175, 114
+
+        // width and height of submat
+        BOX_WIDTH = 23;
+        BOX_HEIGHT = -38;
+
+        Point box_top_left = new Point(
+                BOX_TOPLEFT.x,
+                BOX_TOPLEFT.y);
+        Point box_bottom_right = new Point(
+                BOX_TOPLEFT.x + BOX_WIDTH,
+                BOX_TOPLEFT.y + BOX_HEIGHT);
+
+
+
+
         if (park) {
             Mat befChange = new Mat();
 
@@ -162,10 +178,10 @@ public class ContourMultiScoreRight extends OpenCvPipeline {
             // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
             // yellow 190
 //        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
-            Core.inRange(yelMat, new Scalar(140), new Scalar(190), yelMat);
+            Core.inRange(yelMat, new Scalar(157), new Scalar(177), yelMat);
             // cyan 183
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-            Core.inRange(cyaMat, new Scalar(158), new Scalar(180), cyaMat);
+            Core.inRange(cyaMat, new Scalar(160), new Scalar(180), cyaMat);
             // magenta 186
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
             Core.inRange(magMat, new Scalar(161), new Scalar(195), magMat);

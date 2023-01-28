@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.MultiAuto.MultiBlueLeftHIGH;
+import org.firstinspires.ftc.teamcode.State.MultiAuto.MultiRedLeftHIGH;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -153,7 +154,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 BOX_TOPLEFT.y + BOX_HEIGHT);
 
 
-        if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.PARK) {
+        if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.PARK || MultiRedLeftHIGH.getNormalization() == Constants.Pipeline.PARK) {
             Mat befChange = new Mat();
 
             input.copyTo(original);
@@ -196,13 +197,13 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
             // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
             // yellow 197  173  179
 //        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
-            Core.inRange(yelMat, new Scalar(169), new Scalar(189), yelMat);
+            Core.inRange(yelMat, new Scalar(158), new Scalar(178), yelMat);
             // cyan 173  165  178
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-            Core.inRange(cyaMat, new Scalar(168), new Scalar(188), cyaMat);
+            Core.inRange(cyaMat, new Scalar(155), new Scalar(175), cyaMat);
             // magenta 188  184
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
-            Core.inRange(magMat, new Scalar(171), new Scalar(195), magMat);
+            Core.inRange(magMat, new Scalar(160), new Scalar(180), magMat);
 
 //        befChange.convertTo(befChange, CvType.CV_64FC3);
 //        byte buff[] = new byte[ (int) (befChange.total() * befChange.channels())];
@@ -256,7 +257,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
             magMat.release();
 
             return original;
-        } else if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.POLE) {
+        } else if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.POLE || MultiRedLeftHIGH.getNormalization() == Constants.Pipeline.POLE) {
             // var inits / resets
             knownWidth = 1.04; //inches
             contours = new ArrayList<>();
@@ -465,7 +466,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 //            }
             }
             return generalMat;
-        } else if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.CONE) {
+        } else if (MultiBlueLeftHIGH.getNormalization()  == Constants.Pipeline.CONE || MultiRedLeftHIGH.getNormalization()  == Constants.Pipeline.CONE) {
             // var inits / resets
             knownWidth = 1.04; //inches
             contours = new ArrayList<>();
@@ -558,6 +559,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 focalLength = (311.5384615 + 311.5384615 + 311.9711538) / 3.0;
                 distance = distanceFromPole(1.04, focalLength, perWidth) * Math.cos(38.6);
 
+                /*
                 telemetry.addData("index", indexOfMax);
                 telemetry.addData("cX", cX);
                 telemetry.addData("cY", cY);
@@ -572,6 +574,8 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 writeLoggerToFile();
 
                 telemetry.update();
+
+                 */
 //            }
             }
             return generalMat;
