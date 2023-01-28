@@ -35,12 +35,13 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
     // ftc dashboard values + properCX
     private double properCX = 167; //67  165
-    private double properCXHigh = 145   ; //67
+    private double properCXHigh = 170; //67
     private double properCXCone = 165;
 
     private double properCXLow = 180; //160  163
 
-
+    public static boolean togg = false;
+    public static int pos = 0;
     public static int positive_negative = 1;
     public static int turnDenom = 4;
     public static int toggle = 1;
@@ -107,7 +108,9 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                     }
                     if (liftTurn.get()) {
                         //score.stackDown();
-                        score.goToPosition(constants.getStackHeight() - sum - 15, 0.5);
+                        stackPos(pos);
+
+
                         liftTurn.set(false);
                     }
                     if (liftCone.get()) {
@@ -148,6 +151,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 //
                     telemetry.addData("imu", drive.currentAngle());
+                    telemetry.addData("power", drive.getBlPower());
                     telemetry.update();
                 }
 
@@ -280,7 +284,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             score.goToPosition(50, 0.8);
             sleep(100);
             // go forward next to pole
-            drive.goToPosition(0.74, 0.7, 0.74, 0.7, 1300, "go forward next to pole");
+            drive.goToPosition(0.74, 0.7, 0.74, 0.7, 1430, "go forward next to pole");
             // turn to right  45 degrees to high pole
             drive.absTurnDriftPID(-Math.PI / 4);
 //            // go to pole a bit
@@ -333,12 +337,18 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
 
-            sum = 15;
+            pos = 5;
             scoreConePreload(100, 0, 0, 0);
-            drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 80, "back up a little");
+            drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 60, "back up a little");
             // turn to left
 //            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
             drive.absTurnPID(Math.PI / 2);
+
+            //makes sure actually turned 90 degrees
+            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+                drive.absTurnPID(Math.PI / 2);
+            }
+
             score.setCamPosition(constants.getStrafeConeCamPos());
 
             normalization = Constants.Pipeline.CONE;
@@ -352,7 +362,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
             // +'s ---------------------------------------->
 
-            sum += constants.getStackIntervalHeight();
+            pos = 4;
 
 
 
@@ -398,12 +408,12 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             //drive.goToPosition(-0.5, 0.5, 0.5, -0.5, 35, "go to left a bit");
 
             sleep(50);
-            drive.goToPosition(-0.7, -0.7, -0.7, -0.7, 600, "go backwards");
+            drive.goToPosition(-0.7, -0.7, -0.7, -0.7, 450, "go backwards");
 
             // turn to right  45 degrees to high pole
-            drive.absTurnDriftPID(-Math.PI / 4);
+            drive.absTurnDriftPID(-Math.PI / 3.7);
 //            // go to pole a bit
-            drive.goToPosition(0.62, 0.6, 0.62, 0.6, 100, "go forward some to pole");
+            drive.goToPosition(0.62, 0.6, 0.62, 0.6, 60, "go forward some to pole");
             // move arm high
             lifting = true;
             score.goToPositionPID(constants.getHeightHigh(), 0.85);
@@ -454,10 +464,10 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
             sum = 15;
             scoreConePreload(100, 0, 0, 0);
-            drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 80, "back up a little");
             // turn to left
 //            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
             drive.absTurnPID(Math.PI / 2);
+
             score.setCamPosition(constants.getStrafeConeCamPos());
 
             normalization = Constants.Pipeline.CONE;
@@ -471,9 +481,9 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             //drive.goToPosition(-0.5, 0.5, 0.5, -0.5, 110, "to the left a bit");
 
 
-            // +'s ---------------------------------------->
+            // +2s ---------------------------------------->
 
-            sum += constants.getStackIntervalHeight();
+            pos = 3;
 
 
 
@@ -484,6 +494,127 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             }
 
              */
+            drive.goToPosition(0.52, 0.5, 0.52, 0.5, 40, "forward a bit");
+            safePark.set(true);
+            findingTape = true;
+            findCone();
+
+            safePark.set(false);
+            findingTape = false;
+
+            score.setCamPosition(constants.getSleeveCamPos() + 0.02);
+
+            normalization = Constants.Pipeline.POLE;
+            /*
+            //makes sure actually turned 90 degrees
+            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+                drive.turn(Math.PI / 2);
+            }
+
+             */
+            drive.goToPosition(0.53, 0.5, 0.53, 0.5, 250, "forward a bit");
+            safePark.set(true);
+            grabbingCone = true;
+            score.grabConeAuto();
+            safePark.set(false);
+            grabbingCone = false;
+
+            //strafe to the left a bit
+            //drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 20, "strafe to left a bit");
+
+            //makes sure actually turned 90 degrees
+            if (Math.abs(drive.getAngularOrientation() - Math.PI / 1.9) > 0.05) {
+                drive.absTurnPID(Math.PI / 1.9);
+            }
+            //drive.goToPosition(-0.5, 0.5, 0.5, -0.5, 35, "go to left a bit");
+
+            sleep(50);
+            drive.goToPosition(-0.7, -0.7, -0.7, -0.7, 450, "go backwards");
+
+            // turn to right  45 degrees to high pole
+            drive.absTurnDriftPID(-Math.PI / 3.7);
+//            // go to pole a bit
+            drive.goToPosition(0.62, 0.6, 0.62, 0.6, 60, "go forward some to pole");
+            // move arm high
+            lifting = true;
+            score.goToPositionPID(constants.getHeightHigh(), 0.85);
+            lifting = false;
+            sleep(50);
+
+            right = true;
+            left = true;
+
+
+
+
+            // camera position correction
+            while (detect1.getcX() < properCXHigh - 5 || detect1.getcX() > properCXHigh + 5) {
+                telemetry.addData("success", "sucess");
+                telemetry.update();
+                if (detect1.getcX() < properCXHigh - 5 && right) {
+                    // strafe to the right
+                    //                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
+                    drive.goToPosition(-0.265, 0.265, 0.265, -0.265);
+
+
+                    telemetry.addData("success 1", "sucess");
+                    telemetry.update();
+                    right = false;
+                }
+                if (detect1.getcX() > properCXHigh + 5 && left) {
+                    // strafe to the left (change fr and bl)
+                    drive.goToPosition(0.265, -0.265, -0.265, 0.265);
+
+
+                    //                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+
+                    telemetry.addData("success 2", "sucess");
+                    telemetry.update();
+                    left = false;
+                }
+                //            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
+                //                drive.goToPosition(0, 0, 0, 0);
+                //            }
+            }
+
+
+            drive.goToPosition(0, 0, 0, 0);
+
+
+
+
+//            pos = 2;
+            scoreConePreload(0, 0, 0, 0);
+            drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 80, "back up a little");
+            // turn to left
+//            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
+            drive.absTurnPID(Math.PI / 2);
+
+            //makes sure actually turned 90 degrees
+            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+                drive.absTurnPID(Math.PI / 2);
+            }
+
+            score.setCamPosition(constants.getStrafeConeCamPos());
+
+            normalization = Constants.Pipeline.CONE;
+
+            score.setClawPosition(constants.getClawOpenPos());
+
+            // +3s ---------------------------------------->
+
+            sum += constants.getStackIntervalHeight()+10;
+
+
+
+            /*
+            //makes sure actually turned 90 degrees
+            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+                drive.turn(Math.PI / 2);
+            }
+
+             */
+            drive.goToPosition(0.52, 0.5, 0.52, 0.5, 40, "forward a bit");
 
             safePark.set(true);
             findingTape = true;
@@ -492,7 +623,138 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             safePark.set(false);
             findingTape = false;
 
-            score.setCamPosition(constants.getSleeveCamPos());
+            score.setCamPosition(constants.getSleeveCamPos()+0.03);
+
+            normalization = Constants.Pipeline.POLE;
+            /*
+            //makes sure actually turned 90 degrees
+            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+                drive.turn(Math.PI / 2);
+            }
+
+             */
+            drive.goToPosition(0.55, 0.5, 0.55, 0.5, 250, "forward a bit");
+            safePark.set(true);
+            grabbingCone = true;
+            score.grabConeAuto();
+            safePark.set(false);
+            grabbingCone = false;
+
+            //strafe to the left a bit
+            //drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 20, "strafe to left a bit");
+
+            //makes sure actually turned 90 degrees
+            if (Math.abs(drive.getAngularOrientation() - Math.PI / 1.9) > 0.05) {
+                drive.absTurnPID(Math.PI / 1.9);
+            }
+            //drive.goToPosition(-0.5, 0.5, 0.5, -0.5, 35, "go to left a bit");
+
+            sleep(50);
+            drive.goToPosition(-0.7, -0.7, -0.7, -0.7, 450, "go backwards");
+
+            // turn to right  45 degrees to high pole
+            drive.absTurnDriftPID(-Math.PI / 3.7);
+            // go to pole a bit
+            drive.goToPosition(0.62, 0.6, 0.62, 0.6, 60, "go forward some to pole");
+            // move arm high
+            lifting = true;
+            score.goToPositionPID(constants.getHeightHigh(), 0.85);
+            lifting = false;
+            sleep(50);
+
+            right = true;
+            left = true;
+
+
+
+
+            // camera position correction
+            while (detect1.getcX() < properCXHigh - 5 || detect1.getcX() > properCXHigh + 5) {
+                telemetry.addData("success", "sucess");
+                telemetry.update();
+                if (detect1.getcX() < properCXHigh - 5 && right) {
+                    // strafe to the right
+                    //                drive.goToPosition(0.15, -0.15, -0.15, 0.15);
+                    drive.goToPosition(-0.265, 0.265, 0.265, -0.265);
+
+
+                    telemetry.addData("success 1", "sucess");
+                    telemetry.update();
+                    right = false;
+                }
+                if (detect1.getcX() > properCXHigh + 5 && left) {
+                    // strafe to the left (change fr and bl)
+                    drive.goToPosition(0.265, -0.265, -0.265, 0.265);
+
+
+                    //                drive.goToPosition(-0.15, 0.15, 0.15, -0.15);
+
+                    telemetry.addData("success 2", "sucess");
+                    telemetry.update();
+                    left = false;
+                }
+                //            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
+                //                drive.goToPosition(0, 0, 0, 0);
+                //            }
+            }
+
+
+            drive.goToPosition(0, 0, 0, 0);
+
+
+
+
+
+            scoreConePreload(100, 0, 0, 0);
+            // turn to left
+//            drive.turn90(Math.PI / 4 + Math.PI / 1.9);
+            drive.absTurnPID(Math.PI / 2);
+
+            //makes sure actually turned 90 degrees
+            if (Math.abs(drive.getAngularOrientation() - Math.PI / 2) > 0.05) {
+                drive.absTurnPID(Math.PI / 2);
+            }
+
+            score.setCamPosition(constants.getStrafeConeCamPos());
+
+            normalization = Constants.Pipeline.CONE;
+
+            score.setClawPosition(constants.getClawOpenPos());
+
+
+
+
+            // PARK ------------------------------------------------------>
+
+            //moves robot to correct parking position
+            if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.LEFT) {
+                // go forward
+                drive.goToPosition(0.62, 0.6, 0.62, 0.6, 700, "go forwards");
+                sleep(100);
+                // strafe left
+                drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
+
+            } else if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.CENTER) {
+                // go forward
+                drive.goToPosition(0.62, 0.6, 0.62, 0.6, 70, "go forwards");
+                sleep(100);
+
+                // strafe left
+                drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
+            } else {
+                // go backwards
+                drive.goToPosition(-0.6, -0.6, -0.6, -0.6, 530, "go backwards");
+                sleep(100);
+
+                // strafe left
+                drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
+
+
+            }
+            score.goToPosition(0, 0.85);
+
+
+
 
         } else if (toggle == 2) {
             while (toggle == 2) {
@@ -511,6 +773,12 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
         } else if (toggle == 3) {
 
+            while (opModeIsActive() ) {
+
+                if (togg) {
+                    stackPos(pos);
+                }
+            }
 
         }else {
 //lift claw a little bit
@@ -1000,7 +1268,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
             //moves robot to correct parking position
             if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.LEFT) {
                 // go forward
-                drive.goToPosition(0.62, 0.6, 0.62, 0.6, 880, "go forwards");
+                drive.goToPosition(0.62, 0.6, 0.62, 0.6, 700, "go forwards");
                 // strafe left
                 drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 501, "strafe left");
 
@@ -1036,8 +1304,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
         onTimeout = System.currentTimeMillis();
         //3700 - 3800
-        drive.goToPosition(0.13, 0.13, 0.13, 0.13);
-        sleep(100);
+        drive.goToPosition(0.135, 0.135, 0.135, 0.135);
         // old: 7900     (9100 new)  (6800 new)  7400
 
         while (detect1.getBoundArea() <= 5700.0 || detect1.getBoundArea() >= 8400) { //7200
@@ -1053,7 +1320,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
 
 
 
-        sleep(200);
+        sleep(100);
         score.setClawPosition(constants.getClawOpenPos());
 
         //move back from pole
@@ -1165,6 +1432,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                     telemetry.addData("success 1", "sucess");
                     telemetry.update();
                     right = false;
+                    left = true;
                 }
                 if (detect1.getcX() > properCXCone + 5 && left) {
                     // strafe to the left (change fr and bl)
@@ -1176,6 +1444,7 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
                     telemetry.addData("success 2", "sucess");
                     telemetry.update();
                     left = false;
+                    right = true;
                 }
                 //            if (detect1.getcX() >= properCX - 5 && detect1.getcX() <= properCX + 5) {
                 //                drive.goToPosition(0, 0, 0, 0);
@@ -1351,6 +1620,22 @@ public class MultiBlueLeftHIGH extends LinearOpMode {
         score.grabConeAuto();
 
 
+    }
+
+    public void stackPos(int pos) {
+
+        if (pos == 5) {
+            score.goToPosition(constants.getStackHeight() - 5, 0.7);
+        } else if (pos == 4) {
+            score.goToPosition(constants.getStack4() - 5, 0.7);
+        } else if (pos == 3) {
+            score.goToPosition(constants.getStack3() - 5, 0.7);
+
+        } else if (pos == 2) {
+            score.goToPosition(constants.getStack2() - 5, 0.7);
+
+        }
+        sleep(50);
     }
 
     public static Constants.Pipeline getNormalization() {

@@ -14,6 +14,14 @@ public class  Constants {
     private int stackHeight = 188;
     private double steadyPow = 0.18;
     private int stackIntervalHeight = 50;
+
+
+    private int stack4 = 133;
+    private int stack3 = 83;
+    private int stack2 = 33;
+
+
+
     private int heightBottom = 0;
     private double sleeveCamPos = 0.23;
     private double straightCamPos = 0.32;
@@ -21,6 +29,18 @@ public class  Constants {
     private double strafeLowCamPos = 0.21;
     private double strafeConeCamPos = 0.22;
     //TODO: add comments
+    public int getStack4() {
+        return stack4;
+    }
+
+    public int getStack2() {
+        return stack2;
+    }
+
+    public int getStack3() {
+        return stack3;
+    }
+
     public double getClawOpenPos(){
         return clawOpenPos;
     }

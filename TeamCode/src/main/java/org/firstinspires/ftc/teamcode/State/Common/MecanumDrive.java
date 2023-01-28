@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.State.Common;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -25,7 +22,7 @@ public class MecanumDrive {
     Thread driveThread;
     AtomicBoolean active;
     BNO055IMU imu;
-    ColorRangeSensor colorTape;
+//    ColorRangeSensor colorTape;
     boolean timeout;
 
     private double accumulatedError;
@@ -49,10 +46,10 @@ public class MecanumDrive {
         imu.initialize(parameters);
         this.telemetry = telemetry;
         active = new AtomicBoolean();
-        colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
+//        colorTape = hardwareMap.get(ColorRangeSensor.class, "colorTape");
         accumulatedError = 0;
 
-        colorTape.setGain(100);
+//        colorTape.setGain(100);
         //initiallises drive motors
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -973,12 +970,14 @@ public void absTurnPID(double radians) {
     // for color sensor, returns the blue color
     public double currentBlueColor() {
 
-        return Math.round(colorTape.getNormalizedColors().blue * 100.0) / 100.0; // if current color is really high // 410
+//        return Math.round(colorTape.getNormalizedColors().blue * 100.0) / 100.0; // if current color is really high // 410
+        return 0.0;
     }
 
     // for color sensor, returns the blue colo
     public double currentRedColor() {
-        return Math.round(colorTape.getNormalizedColors().red * 100.0) / 100.0; // if current color is really high // 410
+//        return Math.round(colorTape.getNormalizedColors().red * 100.0) / 100.0; // if current color is really high // 410
+        return 0.0;
     }
 
 
