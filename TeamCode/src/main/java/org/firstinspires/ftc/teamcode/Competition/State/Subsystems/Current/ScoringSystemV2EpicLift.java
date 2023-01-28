@@ -103,7 +103,7 @@ public class ScoringSystemV2EpicLift {
         height = ScoringMode.HIGH;
         extended = false;
 
-        distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
+        //distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
 
         rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift1 = hardwareMap.get(DcMotorEx.class, "LeftLift");
@@ -160,7 +160,7 @@ public class ScoringSystemV2EpicLift {
         height = ScoringMode.HIGH;
         extended = false;
 
-        distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
+        //distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
 
         rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift1 = hardwareMap.get(DcMotorEx.class, "LeftLift");

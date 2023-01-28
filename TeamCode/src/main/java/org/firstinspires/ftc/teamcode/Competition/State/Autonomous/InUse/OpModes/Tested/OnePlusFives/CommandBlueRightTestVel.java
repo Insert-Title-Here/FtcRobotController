@@ -114,37 +114,25 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
                 //new InstantCommand(() -> drive.goTOPIDPosVel(790)),
-                new InstantCommand(() -> drive.simpleMoveToPosition(730, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(745, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
                 new InstantCommand(() -> pipeline.normalizeStrafe(0.28, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
                 new WaitCommand(500),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
-                new InstantCommand(() -> pipeline.normalize(0.18, 169, 3, (Math.PI/2) - (3 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180)))
+                new InstantCommand(() -> pipeline.normalize(0.22, 162, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355))
 
         );
 
 
-        //TODO: remove
-        while(opModeIsActive()){
 
-            double rads = drive.getFirstAngle();
-            double degrees = drive.getFirstAngle() * 180 / Math.PI;
-
-            telemetry.addData("Angle rads", rads);
-            telemetry.addData("Angle degrees", degrees);
-            telemetry.addData("Lower Threshold",  (degrees - 5) * Math.PI / 180);
-            telemetry.addData("High Threshold",  (degrees + 5) * Math.PI / 180);
-            telemetry.update();
-
-        }
 
         if (distance.getNormalizedColors().blue > 0.6) {
             CommandScheduler.getInstance().schedule(
                     new ParallelCommandGroup(
                             new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                            new InstantCommand(() -> score.newLiftPID(970, 1, 0.83))
+                            new InstantCommand(() -> score.newLiftPID(960, 0.85, 1.2))
                     ),
 
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -173,9 +161,9 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new InstantCommand(() -> sleep(250)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (Math.PI/2) - (3 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180))),
+                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83)),
+                new InstantCommand(() -> score.newLiftPID(1005, 0.85, 1.2)),
 
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -205,7 +193,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 break;
             }
 
-            if(distance.getNormalizedColors().blue < 0.55){
+            if(distance.getNormalizedColors().blue < 0.65){
                 CommandScheduler.getInstance().schedule(
                         new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
                         new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI) * 0.03), 800, 100)),
@@ -221,14 +209,14 @@ public class CommandBlueRightTestVel extends LinearOpMode {
             }
 
             CommandScheduler.getInstance().schedule(
-                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, (Math.PI/2) - (3 * Math.PI/45), (Math.PI/2) - (Math.PI/18), (Math.PI/2) - (13 * Math.PI/180))),
+                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
 
                     //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                    new InstantCommand(() -> score.newLiftPID(1012, 1, 0.83))
+                    new InstantCommand(() -> score.newLiftPID(1005, 0.85, 1.2))
             );
 
 
-            if(distance.getNormalizedColors().blue < 0.55){
+            if(distance.getNormalizedColors().blue < 0.65){
                 CommandScheduler.getInstance().schedule(
                         new InstantCommand(() -> score.setLinkagePosition(Constants.linkageUpV2)),
                         new InstantCommand(() -> score.moveToPosition(0, 0.63))

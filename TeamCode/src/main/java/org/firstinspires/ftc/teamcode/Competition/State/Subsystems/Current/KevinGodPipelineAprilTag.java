@@ -25,7 +25,7 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
     // AprilTag Setup Stuff
 
-    int LEFT_PARK_ID = 1; // Tag ID 18 from the 36h11 family
+    int LEFT_PARK_ID = 1; // Tag ID 1 from the 36h11 family
     int MIDDLE_PARK_ID = 2;
     int RIGHT_PARK_ID = 3;
 
@@ -62,55 +62,85 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
     public boolean isField1 = true;
 
 
-    // Configuration variables for isolating pole color
-    public static int H1Field2Red = 143; //lab: 0  gym: 10
-    public static int S1Field2Red = 135;//lab: 100 gym:50
-    public static int V1Field2Red = 70; //lab: 80 gym:160
-    public static int H2Field2Red = 255; //lab: 50 gym: 30
-    public static int S2Field2Red = 145;
-    public static int V2Field2Red = 130;
+    // Configuration variables for isolating pole color (all for 1 + 5 autos)
+    public static int Y1Field2Red = 143; //lab: 0  gym: 10
+    public static int Cr1Field2Red = 135;//lab: 100 gym:50
+    public static int Cb1Field2Red = 70; //lab: 80 gym:160
+    public static int Y2Field2Red = 255; //lab: 50 gym: 30
+    public static int Cr2Field2Red = 145;
+    public static int Cb2Field2Red = 130;
 
-    public static int H1Field2Blue = 17; //lab: 0  gym: 10
-    public static int S1Field2Blue = 20;//lab: 100 gym:50
-    public static int V1Field2Blue = 220; //lab: 80 gym:160
-    public static int H2Field2Blue = 30; //lab: 50 gym: 30
-    public static int S2Field2Blue = 150;
-    public static int V2Field2Blue = 255;
+    public static int Y1Field2Blue = 17; //lab: 0  gym: 10
+    public static int Cr1Field2Blue = 20;//lab: 100 gym:50
+    public static int Cb1Field2Blue = 220; //lab: 80 gym:160
+    public static int Y2Field2Blue = 30; //lab: 50 gym: 30
+    public static int Cr2Field2Blue = 150;
+    public static int Cb2Field2Blue = 255;
 
-    public static int H1Field1Red = 17; //lab: 0  gym: 10
-    public static int S1Field1Red = 30;//lab: 100 gym:50
-    public static int V1Field1Red = 170; //lab: 80 gym:160
-    public static int H2Field1Red = 30; //lab: 50 gym: 30
-    public static int S2Field1Red = 200;
-    public static int V2Field1Red = 255;
+    public static int Y1Field1Red = 17; //lab: 0  gym: 10
+    public static int Cr1Field1Red = 30;//lab: 100 gym:50
+    public static int Cb1Field1Red = 170; //lab: 80 gym:160
+    public static int Y2Field1Red = 30; //lab: 50 gym: 30
+    public static int Cr2Field1Red = 200;
+    public static int Cb2Field1Red = 255;
 
-    public static int H1Field1Blue = 100; //lab: 0  gym: 10
-    public static int S1Field1Blue = 130;//lab: 100 gym:50
-    public static int V1Field1Blue = 50; //lab: 80 gym:160
-    public static int H2Field1Blue = 240; //lab: 50 gym: 30
-    public static int S2Field1Blue = 160;
-    public static int V2Field1Blue = 100;
+    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
+    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
+    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
+    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
+    public static int Cr2Field1Blue = 160;
+    public static int Cb2Field1Blue = 100;
 
+
+    /*//Left Sides for Safe Autos
+    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
+    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
+    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
+    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
+    public static int Cr2Field1Blue = 160;
+    public static int Cb2Field1Blue = 100;
+
+    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
+    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
+    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
+    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
+    public static int Cr2Field1Blue = 160;
+    public static int Cb2Field1Blue = 100;
+
+    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
+    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
+    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
+    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
+    public static int Cr2Field1Blue = 160;
+    public static int Cb2Field1Blue = 100;
+
+    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
+    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
+    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
+    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
+    public static int Cr2Field1Blue = 160;
+    public static int Cb2Field1Blue = 100;
+*/
 
 
 
 
 
     //Blue cone color
-    public static int H3 = 55;
-    public static int S3 = 90;
-    public static int V3 = 170;
-    public static int H4 = 170;
-    public static int S4 = 120;
-    public static int V4 = 255;
+    public static int Y1BlueCone = 55;
+    public static int Cr1BlueCone = 90;
+    public static int Cb1BlueCone = 170;
+    public static int Y2BlueCone = 170;
+    public static int Cr2BlueCone = 120;
+    public static int Cb2BlueCone = 255;
 
     //Red cone color
-    public static int H5 = 0;
-    public static int S5 = 160;
-    public static int V5 = 50;
-    public static int H6 = 230;
-    public static int S6 = 235;
-    public static int V6 = 150;
+    public static int Y1RedCone = 0;
+    public static int Cr1RedCone = 160;
+    public static int Cb1RedCone = 50;
+    public static int Y2RedCone = 230;
+    public static int Cr2RedCone = 235;
+    public static int Cb2RedCone = 150;
 
     public int contourTarget = 0;
     public boolean isNormalizing = false;
@@ -300,25 +330,25 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
             if(sleeveSense == Mode.POLE || sleeveSense == Mode.RIGHTAUTOPOLE) {
                 if(isField1){
                     if(autoside == AutoSide.RED_RIGHT){
-                        Core.inRange(temp, new Scalar(H1Field1Red, S1Field1Red, V1Field1Red), new Scalar(H2Field1Red, S2Field1Red, V2Field1Red), temp);
+                        Core.inRange(temp, new Scalar(Y1Field1Red, Cr1Field1Red, Cb1Field1Red), new Scalar(Y2Field1Red, Cr2Field1Red, Cb2Field1Red), temp);
                     }else{
-                        Core.inRange(temp, new Scalar(H1Field1Blue, S1Field1Blue, V1Field1Blue), new Scalar(H2Field1Blue, S2Field1Blue, V2Field1Blue), temp);
+                        Core.inRange(temp, new Scalar(Y1Field1Blue, Cr1Field1Blue, Cb1Field1Blue), new Scalar(Y2Field1Blue, Cr2Field1Blue, Cb2Field1Blue), temp);
 
                     }
                 }else{
                     if(autoside == AutoSide.RED_RIGHT){
-                        Core.inRange(temp, new Scalar(H1Field2Red, S1Field2Red, V1Field2Red), new Scalar(H2Field2Red, S2Field2Red, V2Field2Red), temp);
+                        Core.inRange(temp, new Scalar(Y1Field2Red, Cr1Field2Red, Cb1Field2Red), new Scalar(Y2Field2Red, Cr2Field2Red, Cb2Field2Red), temp);
 
                     }else{
-                        Core.inRange(temp, new Scalar(H1Field2Blue, S1Field2Blue, V1Field2Blue), new Scalar(H2Field2Blue, S2Field2Blue, V2Field2Blue), temp);
+                        Core.inRange(temp, new Scalar(Y1Field2Blue, Cr1Field2Blue, Cb1Field2Blue), new Scalar(Y2Field2Blue, Cr2Field2Blue, Cb2Field2Blue), temp);
 
                     }
                 }
 
             }else if(sleeveSense == Mode.BLUECONE){
-                Core.inRange(temp, new Scalar(H3, S3, V3), new Scalar(H4, S4, V4), temp);
+                Core.inRange(temp, new Scalar(Y1BlueCone, Cr1BlueCone, Cb1BlueCone), new Scalar(Y2BlueCone, Cr2BlueCone, Cb2BlueCone), temp);
             }else if(sleeveSense == Mode.REDCONE){
-                Core.inRange(temp, new Scalar(H5, S5, V5), new Scalar(H6, S6, V6), temp);
+                Core.inRange(temp, new Scalar(Y1RedCone, Cr1RedCone, Cb1RedCone), new Scalar(Y2RedCone, Cr2RedCone, Cb2RedCone), temp);
             }
 
             // Blur image to reduce noise

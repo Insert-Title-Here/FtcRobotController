@@ -338,7 +338,7 @@ public class QuadMotorLift extends LinearOpMode {
                             telemetry.addData("stuff", "slow");
 
                         }else {
-                            score.newLiftPIDUpdate(1);
+                            score.newLiftPIDUpdate(0.85);
                             telemetry.addData("stuff", "fast");
 
                         }
