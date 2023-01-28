@@ -4,6 +4,16 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.BlueCone;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field1BlueLeft;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field1BlueRight;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field1RedLeft;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field1RedRight;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field2BlueLeft;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field2BlueRight;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field2RedLeft;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field2RedRight;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.RedCone;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -61,86 +71,6 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
     AutoSide autoside;
     public boolean isField1 = true;
 
-
-    // Configuration variables for isolating pole color (all for 1 + 5 autos)
-    public static int Y1Field2Red = 143; //lab: 0  gym: 10
-    public static int Cr1Field2Red = 135;//lab: 100 gym:50
-    public static int Cb1Field2Red = 70; //lab: 80 gym:160
-    public static int Y2Field2Red = 255; //lab: 50 gym: 30
-    public static int Cr2Field2Red = 145;
-    public static int Cb2Field2Red = 130;
-
-    public static int Y1Field2Blue = 17; //lab: 0  gym: 10
-    public static int Cr1Field2Blue = 20;//lab: 100 gym:50
-    public static int Cb1Field2Blue = 220; //lab: 80 gym:160
-    public static int Y2Field2Blue = 30; //lab: 50 gym: 30
-    public static int Cr2Field2Blue = 150;
-    public static int Cb2Field2Blue = 255;
-
-    public static int Y1Field1Red = 17; //lab: 0  gym: 10
-    public static int Cr1Field1Red = 30;//lab: 100 gym:50
-    public static int Cb1Field1Red = 170; //lab: 80 gym:160
-    public static int Y2Field1Red = 30; //lab: 50 gym: 30
-    public static int Cr2Field1Red = 200;
-    public static int Cb2Field1Red = 255;
-
-    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
-    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
-    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
-    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
-    public static int Cr2Field1Blue = 160;
-    public static int Cb2Field1Blue = 100;
-
-
-    /*//Left Sides for Safe Autos
-    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
-    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
-    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
-    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
-    public static int Cr2Field1Blue = 160;
-    public static int Cb2Field1Blue = 100;
-
-    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
-    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
-    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
-    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
-    public static int Cr2Field1Blue = 160;
-    public static int Cb2Field1Blue = 100;
-
-    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
-    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
-    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
-    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
-    public static int Cr2Field1Blue = 160;
-    public static int Cb2Field1Blue = 100;
-
-    public static int Y1Field1Blue = 100; //lab: 0  gym: 10
-    public static int Cr1Field1Blue = 130;//lab: 100 gym:50
-    public static int Cb1Field1Blue = 50; //lab: 80 gym:160
-    public static int Y2Field1Blue = 240; //lab: 50 gym: 30
-    public static int Cr2Field1Blue = 160;
-    public static int Cb2Field1Blue = 100;
-*/
-
-
-
-
-
-    //Blue cone color
-    public static int Y1BlueCone = 55;
-    public static int Cr1BlueCone = 90;
-    public static int Cb1BlueCone = 170;
-    public static int Y2BlueCone = 170;
-    public static int Cr2BlueCone = 120;
-    public static int Cb2BlueCone = 255;
-
-    //Red cone color
-    public static int Y1RedCone = 0;
-    public static int Cr1RedCone = 160;
-    public static int Cb1RedCone = 50;
-    public static int Y2RedCone = 230;
-    public static int Cr2RedCone = 235;
-    public static int Cb2RedCone = 150;
 
     public int contourTarget = 0;
     public boolean isNormalizing = false;
@@ -330,25 +260,30 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
             if(sleeveSense == Mode.POLE || sleeveSense == Mode.RIGHTAUTOPOLE) {
                 if(isField1){
                     if(autoside == AutoSide.RED_RIGHT){
-                        Core.inRange(temp, new Scalar(Y1Field1Red, Cr1Field1Red, Cb1Field1Red), new Scalar(Y2Field1Red, Cr2Field1Red, Cb2Field1Red), temp);
-                    }else{
-                        Core.inRange(temp, new Scalar(Y1Field1Blue, Cr1Field1Blue, Cb1Field1Blue), new Scalar(Y2Field1Blue, Cr2Field1Blue, Cb2Field1Blue), temp);
-
+                        Core.inRange(temp, new Scalar(Field1RedRight.Y1, Field1RedRight.Cr1, Field1RedRight.Cb1), new Scalar(Field1RedRight.Y2, Field1RedRight.Cr2, Field1RedRight.Cb2), temp);
+                    }else if (autoside == AutoSide.RED_LEFT){
+                        Core.inRange(temp, new Scalar(Field1RedLeft.Y1, Field1RedLeft.Cr1, Field1RedLeft.Cb1), new Scalar(Field1RedLeft.Y2, Field1RedLeft.Cr2, Field1RedLeft.Cb2), temp);
+                    } else if (autoside == AutoSide.BLUE_RIGHT) {
+                        Core.inRange(temp, new Scalar(Field1BlueRight.Y1, Field1BlueRight.Cr1, Field1BlueRight.Cb1), new Scalar(Field1BlueRight.Y2, Field1BlueRight.Cr2, Field1BlueRight.Cb2), temp);
+                    } else {
+                        Core.inRange(temp, new Scalar(Field1BlueLeft.Y1, Field1BlueLeft.Cr1, Field1BlueLeft.Cb1), new Scalar(Field1BlueLeft.Y2, Field1BlueLeft.Cr2, Field1BlueLeft.Cb2), temp);
                     }
                 }else{
                     if(autoside == AutoSide.RED_RIGHT){
-                        Core.inRange(temp, new Scalar(Y1Field2Red, Cr1Field2Red, Cb1Field2Red), new Scalar(Y2Field2Red, Cr2Field2Red, Cb2Field2Red), temp);
-
-                    }else{
-                        Core.inRange(temp, new Scalar(Y1Field2Blue, Cr1Field2Blue, Cb1Field2Blue), new Scalar(Y2Field2Blue, Cr2Field2Blue, Cb2Field2Blue), temp);
-
+                        Core.inRange(temp, new Scalar(Field2RedRight.Y1, Field2RedRight.Cr1, Field2RedRight.Cb1), new Scalar(Field2RedRight.Y2, Field2RedRight.Cr2, Field2RedRight.Cb2), temp);
+                    }else if (autoside == AutoSide.RED_LEFT){
+                        Core.inRange(temp, new Scalar(Field2RedLeft.Y1, Field2RedLeft.Cr1, Field2RedLeft.Cb1), new Scalar(Field2RedLeft.Y2, Field2RedLeft.Cr2, Field2RedLeft.Cb2), temp);
+                    } else if (autoside == AutoSide.BLUE_RIGHT) {
+                        Core.inRange(temp, new Scalar(Field2BlueRight.Y1, Field2BlueRight.Cr1, Field2BlueRight.Cb1), new Scalar(Field2BlueRight.Y2, Field2BlueRight.Cr2, Field2BlueRight.Cb2), temp);
+                    } else {
+                        Core.inRange(temp, new Scalar(Field2BlueLeft.Y1, Field2BlueLeft.Cr1, Field2BlueLeft.Cb1), new Scalar(Field2BlueLeft.Y2, Field2BlueLeft.Cr2, Field2BlueLeft.Cb2), temp);
                     }
                 }
 
             }else if(sleeveSense == Mode.BLUECONE){
-                Core.inRange(temp, new Scalar(Y1BlueCone, Cr1BlueCone, Cb1BlueCone), new Scalar(Y2BlueCone, Cr2BlueCone, Cb2BlueCone), temp);
+                Core.inRange(temp, new Scalar(BlueCone.Y1, BlueCone.Cr1, BlueCone.Cb1), new Scalar(BlueCone.Y2, BlueCone.Cr2, BlueCone.Cb2), temp);
             }else if(sleeveSense == Mode.REDCONE){
-                Core.inRange(temp, new Scalar(Y1RedCone, Cr1RedCone, Cb1RedCone), new Scalar(Y2RedCone, Cr2RedCone, Cb2RedCone), temp);
+                Core.inRange(temp, new Scalar(RedCone.Y1, RedCone.Cr1, RedCone.Cb1), new Scalar(RedCone.Y2, RedCone.Cr2, RedCone.Cb2), temp);
             }
 
             // Blur image to reduce noise
