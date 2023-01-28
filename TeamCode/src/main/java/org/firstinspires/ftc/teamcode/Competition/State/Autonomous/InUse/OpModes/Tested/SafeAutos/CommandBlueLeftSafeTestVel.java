@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.Tested.SafeAutos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -70,7 +71,7 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.RED_RIGHT, false);
+        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_LEFT, false);
 
         camera.setPipeline(pipeline);
 
@@ -90,6 +91,8 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
         });
 
 
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
+
 
         cameraServo.setPosition(Constants.sleeveV2);
 
@@ -103,29 +106,14 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosVel(-2050)),
+                new InstantCommand(() -> drive.goTOPIDPosVel(-2050, 500)),
 
                 //new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2250, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID((-5 * Math.PI) / 8, 1, false)),
                 //new InstantCommand(() -> drive.simpleMoveToPosition(-780, MecDriveV2.MovementType.ROTATE, 1)),
-                new InstantCommand(() -> rotateTics = pipeline.normalize(0.16, 170, 2))
-
+                new InstantCommand(() -> rotateTics = pipeline.normalize(0.16, 165, 2, -2.2, -1.8071, -1.91))
         );
-
-        //TODO: remove
-        while(opModeIsActive()){
-
-            double rads = drive.getFirstAngle();
-            double degrees = drive.getFirstAngle() * 180 / Math.PI;
-
-            telemetry.addData("Angle rads", rads);
-            telemetry.addData("Angle degrees", degrees);
-            telemetry.addData("Lower Threshold",  (degrees - 5) * Math.PI / 180);
-            telemetry.addData("High Threshold",  (degrees + 5) * Math.PI / 180);
-            telemetry.update();
-
-        }
 
 
         CommandScheduler.getInstance().schedule(
@@ -136,7 +124,7 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
                         new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
                 ),
 
-                new InstantCommand(() -> drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAIGHT, 0.4)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(-170, MecDriveV2.MovementType.STRAIGHT, 0.4)),
                 new WaitCommand(100),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
                 new WaitCommand(300),
@@ -181,13 +169,13 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
             if (i != 2) {
                 CommandScheduler.getInstance().schedule(
 
-                        new InstantCommand(() -> drive.goTOPIDPosVel(-1250)),
+                        new InstantCommand(() -> drive.goTOPIDPosVel(-1160, 400)),
 
                         //new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1360, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
                         //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
-                        new InstantCommand(() -> drive.tankRotatePID((-5 * Math.PI) / 8, 1, false)),
+                        new InstantCommand(() -> drive.tankRotatePID(((-5 * Math.PI) / 8) - (Math.PI/60), 1, false)),
                         //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
-                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.16, 170, 2)),
+                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.16, 165, 2, -2.2, -1.8071, -1.91)),
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
                                 new InstantCommand(() -> score.newLiftPID(930, 0.85)),
@@ -215,7 +203,7 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
                         //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
                         new InstantCommand(() -> sleep(5)),
                         new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.235 - ((finalI + 1) * 0.03), 100)),
+                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.237 - ((finalI + 1) * 0.027), 100)),
 
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
@@ -231,7 +219,7 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
 
                 );
 
-                if(distance.getNormalizedColors().blue < 0.7){
+                if (distance.getNormalizedColors().blue < 0.7) {
                     broken = true;
                     break;
                 }
@@ -239,66 +227,66 @@ public class CommandBlueLeftSafeTestVel extends LinearOpMode {
             } else {
 
 
+                CommandScheduler.getInstance().schedule(
 
-                    CommandScheduler.getInstance().schedule(
+                        new InstantCommand(() -> drive.goTOPIDPosVel(-1250)),
 
-                            new InstantCommand(() -> drive.goTOPIDPosVel(-1250)),
+                        //new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1360, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
+                        //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
+                        new InstantCommand(() -> drive.tankRotatePID((-5 * Math.PI) / 8, 1, false)),
+                        //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
+                        new InstantCommand(() -> rotateTics = pipeline.normalize(0.16, 165, 2, -2.2, -1.8071, -1.91)), new ParallelCommandGroup(
+                                new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
+                                new InstantCommand(() -> score.newLiftPID(930, 0.85)),
+                                new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
+                                new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
+                        ),
 
-                            //new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-1360, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
-                            //new InstantCommand(() -> pipeline.normalizeStraight(0.3, 82, 1)),
-                            new InstantCommand(() -> drive.tankRotatePID((-5 * Math.PI) / 8, 1, false)),
-                            //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
-                            new InstantCommand(() -> rotateTics = pipeline.normalize(0.16, 170, 2)),
-                            new ParallelCommandGroup(
-                                    new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
-                                    new InstantCommand(() -> score.newLiftPID(930, 0.85)),
-                                    new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
-                                    new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
-                            ),
-
-                            //new InstantCommand(() -> drive.simpleMoveToPosition(-40, MecDriveV2.MovementType.STRAIGHT, 0.4)),
-                            new WaitCommand(100),
-                            new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
-                            new WaitCommand(250),
+                        //new InstantCommand(() -> drive.simpleMoveToPosition(-40, MecDriveV2.MovementType.STRAIGHT, 0.4)),
+                        new WaitCommand(100),
+                        new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
+                        new WaitCommand(250),
 
 
-                            new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto - 0.1, 300, 100)),
-                            new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
+                        new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto - 0.1, 300, 100)),
+                        new InstantCommand(() -> score.setGrabberPosition(Constants.openV2)),
 
-                            new WaitCommand(200),
-
-
-                            new InstantCommand(() -> score.moveToPosition(0, 0.75)),
-                            new InstantCommand(() -> drive.tankRotatePIDSpecial(-Math.PI / 2, 1, false, 0.9)),
-
-                            //new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false, 0.9)),
-                            //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
-                            //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
-
-                            new InstantCommand(() -> sleep(5))
-                    );
+                        new WaitCommand(200),
 
 
-                }
+                        new InstantCommand(() -> score.moveToPosition(0, 0.75)),
+                        new InstantCommand(() -> drive.tankRotatePIDSpecial(-Math.PI / 2, 1, false, 0.9)),
+
+                        //new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false, 0.9)),
+                        //new InstantCommand(() -> drive.simpleMoveToPosition(160 + rotateTics, MecDriveV2.MovementType.ROTATE, 1)),
+                        //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
+
+                        new InstantCommand(() -> sleep(5))
+                );
+
+
+            }
 
 
             if (time.seconds() - startTime > 25) {
                 i = 5;
-            }
+                drive.tankRotatePIDSpecial(-Math.PI / 2, 1, false, 0.9);
+                broken = true;
 
+            }
 
 
         }
 
         CommandScheduler.getInstance().run();
 
-        if(broken){
+        if (broken) {
             if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
                 drive.simpleMoveToPosition(-1400, MecDriveV2.MovementType.STRAIGHT, 1);
             } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER) {
                 drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 1);
             }
-        }else {
+        } else {
             if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
                 drive.simpleMoveToPosition(-420, MecDriveV2.MovementType.STRAIGHT, 1);
             } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {

@@ -9,7 +9,7 @@ public class BlueCone {
     public static int Cr1 = 90;
     public static int Cb1 = 170;
     public static int Y2 = 170;
-    public static int Cr2 = 120;
+    public static int Cr2 = 140;
     public static int Cb2 = 255;
 
 }

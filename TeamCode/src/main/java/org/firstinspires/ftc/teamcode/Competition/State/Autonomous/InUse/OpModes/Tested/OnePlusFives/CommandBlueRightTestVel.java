@@ -132,7 +132,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
             CommandScheduler.getInstance().schedule(
                     new ParallelCommandGroup(
                             new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                            new InstantCommand(() -> score.newLiftPID(960, 0.85, 1.2))
+                            new InstantCommand(() -> score.newLiftPID(960, 0.95, 1))
                     ),
 
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -163,7 +163,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
                 new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                new InstantCommand(() -> score.newLiftPID(1005, 0.85, 1.2)),
+                new InstantCommand(() -> score.newLiftPID(1005, 0.95, 1)),
 
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -212,7 +212,7 @@ public class CommandBlueRightTestVel extends LinearOpMode {
                     new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
 
                     //new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                    new InstantCommand(() -> score.newLiftPID(1005, 0.85, 1.2))
+                    new InstantCommand(() -> score.newLiftPID(1005, 0.95, 1))
             );
 
 

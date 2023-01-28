@@ -25,8 +25,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Disabled
-@Autonomous(name = "Safe Auto Red Right Vel")
+//@Disabled
+@Autonomous(name = "Red Right (Safe)")
 public class CommandRedRightSafeTestVel extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
