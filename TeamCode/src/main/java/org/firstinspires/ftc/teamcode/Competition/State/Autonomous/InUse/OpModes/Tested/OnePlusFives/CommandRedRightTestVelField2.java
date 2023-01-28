@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.Tested.OnePlusFives;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.FtcDashboard;
+
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
@@ -12,8 +13,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.KevinGodPipelineAprilTag;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
+import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.KevinGodPipelineAprilTag;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -23,8 +24,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous(name = "Red Right")
-public class CommandRedRightTestVel extends LinearOpMode {
+@Autonomous(name = "Red Right Field 2")
+public class CommandRedRightTestVelField2 extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
     //Constants constants;
@@ -97,7 +98,7 @@ public class CommandRedRightTestVel extends LinearOpMode {
         cameraServo.setPosition(Constants.sleeveV2);
 
 
-        FtcDashboard.getInstance().startCameraStream(camera, 0);
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         waitForStart();
@@ -118,7 +119,7 @@ public class CommandRedRightTestVel extends LinearOpMode {
                 new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
                 new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
+                new InstantCommand(() -> cameraServo.setPosition(0.375)),
                 new WaitCommand(500),
                 new InstantCommand(() -> pipeline.normalize(0.22, 162, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355))
                 );

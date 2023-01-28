@@ -6,16 +6,15 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.KevinGodPipelineAprilTag;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.CustomCommands.DriveInSafe;
+import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.KevinGodPipelineAprilTag;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -26,8 +25,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 //@Disabled
-@Autonomous(name = "Red Right (Safe)")
-public class CommandRedRightSafeTestVel extends LinearOpMode {
+@Autonomous(name = "Blue Right (Safe) Field 2")
+public class CommandBlueRightSafeTestVelField2 extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
     ElapsedTime time = new ElapsedTime();
@@ -74,7 +73,7 @@ public class CommandRedRightSafeTestVel extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_RIGHT, true);
+        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_RIGHT, false);
 
         camera.setPipeline(pipeline);
 
@@ -105,15 +104,22 @@ public class CommandRedRightSafeTestVel extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2250, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
+                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2230, 1, MecDriveV2.MovementType.STRAIGHT, 1)),
                 new WaitCommand(100),
-                new InstantCommand(() -> drive.tankRotatePID((5 * Math.PI) / 8, 1, false)),
+                new InstantCommand(() -> drive.tankRotatePID((5.3 * Math.PI) / 8, 1, false)),
                 //new InstantCommand(() -> drive.simpleMoveToPosition(-780, MecDriveV2.MovementType.ROTATE, 1)),
-                new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
+                new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2))
+
+        );
+
+        //TODO: remove
+
+
+        CommandScheduler.getInstance().schedule(
                 new ParallelCommandGroup(
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                        new InstantCommand(() -> score.newLiftPID(940, 1)),
-                        new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.REDCONE)),
+                        new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2 - 0.025, 300, 100)),
+                        new InstantCommand(() -> score.newLiftPID(955, 1)),
+                        new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                         new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
                 ),
 
@@ -145,7 +151,7 @@ public class CommandRedRightSafeTestVel extends LinearOpMode {
                         new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2 - 0.033))
                 ),
 
-                new DriveInSafe(drive, distance, false, 0.35),
+                new DriveInSafe(drive, distance, true, 0.35),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new WaitCommand(125),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
@@ -164,14 +170,15 @@ public class CommandRedRightSafeTestVel extends LinearOpMode {
                         //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
                         new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
                         new ParallelCommandGroup(
-                                new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
+                                new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2 - 0.025, 300, 100)),
                                 new InstantCommand(() -> score.newLiftPID(930, 0.85)),
-                                new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.REDCONE)),
+                                new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
                         ),
 
                         //new InstantCommand(() -> drive.simpleMoveToPosition(-40, MecDriveV2.MovementType.STRAIGHT, 0.4)),
                         new WaitCommand(100),
+                        //new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.1, 300, 100)),
                         new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
                         new WaitCommand(250),
 
@@ -190,7 +197,7 @@ public class CommandRedRightSafeTestVel extends LinearOpMode {
                         //new InstantCommand(() -> drive.tankRotate(Math.PI/2, 0.3)),
                         new InstantCommand(() -> sleep(5)),
                         new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 151, 2)),
-                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 2) * 0.025), 100)),
+                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI + 1) * 0.025), 100)),
 
                         new ParallelCommandGroup(
                                 new InstantCommand(() -> drive.simpleMoveToPosition(585, MecDriveV2.MovementType.STRAIGHT, 1)),
@@ -218,7 +225,7 @@ public class CommandRedRightSafeTestVel extends LinearOpMode {
                             //new InstantCommand(() -> drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.ROTATE, 1)),
                             new InstantCommand(() -> rotateTics = pipeline.normalize(0.25, 156, 2)),
                             new ParallelCommandGroup(
-                                    new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.02, 300, 100)),
+                                    new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2 - 0.025, 300, 100)),
                                     new InstantCommand(() -> score.newLiftPID(930, 0.85)),
                                     new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                                     new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2))
@@ -226,6 +233,7 @@ public class CommandRedRightSafeTestVel extends LinearOpMode {
 
                             //new InstantCommand(() -> drive.simpleMoveToPosition(-40, MecDriveV2.MovementType.STRAIGHT, 0.4)),
                             new WaitCommand(100),
+                            //new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto + 0.1, 300, 100)),
                             new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
                             new WaitCommand(250),
 

@@ -121,6 +121,9 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
         RIGHTAUTOPOLE,
     }
 
+    //public static AutoSide side = AutoSide.RED_LEFT;
+    //public static boolean itsTotallyField1 = true;
+
 
     //Cone submat
     public static int topLeftXCone = 75;

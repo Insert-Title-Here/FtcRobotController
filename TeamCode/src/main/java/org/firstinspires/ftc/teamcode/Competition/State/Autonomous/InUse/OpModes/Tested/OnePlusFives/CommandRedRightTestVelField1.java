@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.SketchyOrNotTestedMuch.OnePlusFives;
+package org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.OpModes.Tested.OnePlusFives;
 
 //import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -6,7 +6,6 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,16 +23,15 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Disabled
-@Autonomous(name = "VelRedLeft")
-public class CommandRightLeftTestVel extends LinearOpMode {
+@Autonomous(name = "Red Right Field 1")
+public class CommandRedRightTestVelField1 extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2EpicLift score;
     //Constants constants;
     ElapsedTime time = new ElapsedTime();
     AtomicBoolean hold, armUp, armDown, finalMove, linkageUp;
     int cycles;
-    int liftPos = 900;
+    int counter = 0;
 
     ColorRangeSensor distance;
     Servo cameraServo;
@@ -75,7 +73,7 @@ public class CommandRightLeftTestVel extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.BLUE_RIGHT, true);
+        pipeline = new KevinGodPipelineAprilTag(telemetry, drive, KevinGodPipelineAprilTag.AutoSide.RED_RIGHT, true);
 
         camera.setPipeline(pipeline);
 
@@ -94,15 +92,12 @@ public class CommandRightLeftTestVel extends LinearOpMode {
             }
         });
 
-        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         cameraServo.setPosition(Constants.sleeveV2);
 
 
-
-
-
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
 
 
         waitForStart();
@@ -114,33 +109,36 @@ public class CommandRightLeftTestVel extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.REDCONE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosWithRampUp(-2230, 1, MecDriveV2.MovementType.STRAIGHT, 0.85)),
+                new InstantCommand(() -> drive.goTOPIDPosVel(-2050, 500)),
                 new WaitCommand(100),
-                new InstantCommand(() -> drive.tankRotatePID(-Math.PI / 2, 1, false)),
-                new InstantCommand(() -> drive.simpleMoveToPosition(685, MecDriveV2.MovementType.STRAIGHT, 0.5)),
-                new InstantCommand(() -> drive.tankRotatePID(-3 * Math.PI / 8, 1, false)),
+                new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
+                //new InstantCommand(() -> drive.goTOPIDPosVel(790)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(707, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+
+                new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
                 new InstantCommand(() -> pipeline.normalizeStrafe(0.3, 150, 2)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
-                new InstantCommand(() -> cameraServo.setPosition(Constants.poleV2)),
+                new InstantCommand(() -> cameraServo.setPosition(0.36)), // pole
                 new WaitCommand(500),
-                new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
-        );
+                new InstantCommand(() -> pipeline.normalize(0.22, 162, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355))
+                );
 
         if(distance.getNormalizedColors().red > 0.6) {
             CommandScheduler.getInstance().schedule(
 
-
+                    //TODO: need to add preload logic (whether preload or not)
                     new ParallelCommandGroup(
                             new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                            new InstantCommand(() -> score.newLiftPID(970, 1))
+                            new InstantCommand(() -> score.newLiftPID(960, 0.95, 1))
                     ),
 
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
                     new WaitCommand(200),
                     new InstantCommand(() -> score.setGrabberPosition(Constants.score + 0.1)),
                     new WaitCommand(400),
+                    new InstantCommand(() -> sleep(400)),
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
-                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1)),
+                    new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 - 0.05)),
 
                     new WaitCommand(200),
 
@@ -148,9 +146,8 @@ public class CommandRightLeftTestVel extends LinearOpMode {
 
 
 
-
             );
-        }else{
+        }else {
             CommandScheduler.getInstance().schedule(
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.245, 100)),
                     new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 + 0.1))
@@ -159,12 +156,13 @@ public class CommandRightLeftTestVel extends LinearOpMode {
 
 
         CommandScheduler.getInstance().schedule(
+
                 new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new WaitCommand(100),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                new InstantCommand(() -> score.newLiftPID(1025, 1)),
+                new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
+                new InstantCommand(() -> score.newLiftPID(1020, 0.95, 1)),
 
 
                 new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -176,18 +174,66 @@ public class CommandRightLeftTestVel extends LinearOpMode {
 
                 new InstantCommand(() -> score.setGrabberPosition(Constants.openV2 - 0.1)),
                 new InstantCommand(() -> score.moveToPosition(0, 0.63))
+
         );
 
         //Should add 5 cycles
         for(int i = 0; i < 4; i++){
             int finalI = i;
+
+            //TODO: ask kevin what this is for
+            /*if (i != 3) {
+                finalI = i;
+            } else {
+                finalI = 2;
+            }*/
+
             CommandScheduler.getInstance().schedule(
                     new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5)),
-                    new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing + 0.05)),
+                    new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                     new WaitCommand(100),
-                    new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
-                    new InstantCommand(() -> pipeline.normalize(0.15, 169, 3)),
-                    new InstantCommand(() -> score.newLiftPID(1025, 1)),
+                    new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
+
+            );
+
+            if(counter > 1){
+                break;
+            }
+
+            if(distance.getNormalizedColors().red < 0.7){
+                CommandScheduler.getInstance().schedule(
+                        new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
+                        new InstantCommand(() -> score.setLinkagePositionLogistic(0.242 - ((finalI) * 0.03), 800, 100)),
+                        new InstantCommand(() -> drive.simpleMoveToPosition(8, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                        new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
+                        new WaitCommand(100),
+                        new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100))
+                );
+
+                counter++;
+
+
+
+            }
+
+
+            CommandScheduler.getInstance().schedule(
+
+
+                    new InstantCommand(() -> pipeline.normalize(0.22, 169, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355)),
+                    new InstantCommand(() -> score.newLiftPID(1012, 0.95, 1))
+            );
+
+            if(distance.getNormalizedColors().red < 0.7){
+                CommandScheduler.getInstance().schedule(
+                        new InstantCommand(() -> score.setLinkagePosition(Constants.linkageUpV2)),
+                        new InstantCommand(() -> score.moveToPosition(0, 0.63))
+                );
+
+                break;
+            }
+
+            CommandScheduler.getInstance().schedule(
 
 
                     new InstantCommand(() -> score.setLinkagePositionLogistic(0.8, 100)),
@@ -200,6 +246,7 @@ public class CommandRightLeftTestVel extends LinearOpMode {
                     new InstantCommand(() -> score.setGrabberPosition(Constants.openV2- 0.1)),
                     new InstantCommand(() -> score.moveToPosition(0, 0.63))
             );
+
 
             //TODO: added this
             // Check for cone and cycle again if one is present
@@ -214,16 +261,15 @@ public class CommandRightLeftTestVel extends LinearOpMode {
 
 
         CommandScheduler.getInstance().schedule(
-                new InstantCommand(() -> drive.simpleMoveToPosition(80, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(-80, MecDriveV2.MovementType.ROTATE, 0.5)),
                 new WaitCommand(50)
         );
 
 
-        //TODO: need to add fail timer
         CommandScheduler.getInstance().run();
 
         while(CommandScheduler.getInstance().isScheduled(
-                new InstantCommand(() -> drive.simpleMoveToPosition(80, MecDriveV2.MovementType.ROTATE, 0.5)),
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(Math.PI/2, 0.4, false, 1)),
                 new InstantCommand(() -> sleep(50))
         )){
 
@@ -231,7 +277,7 @@ public class CommandRightLeftTestVel extends LinearOpMode {
 
         if (parkPos == KevinGodPipelineAprilTag.ParkPos.CENTER) {
             drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAIGHT, 1);
-        } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.RIGHT) {
+        } else if (parkPos == KevinGodPipelineAprilTag.ParkPos.LEFT) {
             drive.simpleMoveToPosition(-1450, MecDriveV2.MovementType.STRAIGHT, 1);
         }
 
@@ -240,7 +286,7 @@ public class CommandRightLeftTestVel extends LinearOpMode {
         sleep(200);
 
         drive.tankRotatePID(0, 1, false);
-        drive.simpleMoveToPosition(400, MecDriveV2.MovementType.STRAIGHT, 0.4);
+        drive.simpleMoveToPosition(250, MecDriveV2.MovementType.STRAIGHT, 1);
         sleep(50);
 
 
