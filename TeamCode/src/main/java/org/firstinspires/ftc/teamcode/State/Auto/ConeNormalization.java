@@ -48,12 +48,12 @@ public class ConeNormalization extends OpenCvPipeline {
     /* make stuff public static  */
 
     //BLUE
-    public static int bluelower1 = 120; // 30
-    public static int bluelower2 = 80; // 90
+    public static int bluelower1 = 60; // 30
+    public static int bluelower2 = 60; // 90
     public static int bluelower3 = 120; // 150
-    public static int blueupper1 = 170; // 130
+    public static int blueupper1 = 190; // 130
     public static int blueupper2 = 120; // 120
-    public static int blueupper3 = 195; // 255
+    public static int blueupper3 = 255; // 255
 
 
     //RED

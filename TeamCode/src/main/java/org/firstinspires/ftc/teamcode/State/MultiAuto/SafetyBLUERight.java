@@ -189,34 +189,36 @@ public class SafetyBLUERight extends LinearOpMode {
 
         score.setClawPosition(constants.getClawOpenPos());
 
+
+
         // PARK ------------------------------------------------------>
 
         //moves robot to correct parking position
         if (detect1.getParkPosition() == ContourMultiScoreRight.ParkingPosition.LEFT) {
-
-            // strafe left
-            drive.goToPosition(0.6, -0.6, -0.6, 0.6, 601, "strafe right");
             // go forward
-            drive.goToPosition(0.62, 0.6, 0.62, 0.6, 200, "go forwards");
+            drive.goToPosition(0.74, 0.7, 0.74, 0.7, 650, "go forwards");
+            sleep(100);
             // strafe left
-            drive.goToPosition(0.6, -0.6, -0.6, 0.6, 501, "strafe right");
-
+            drive.goToPosition(0.7, -0.7, -0.7, 0.7, 100, "strafe right");
 
         } else if (detect1.getParkPosition() == ContourMultiScoreRight.ParkingPosition.CENTER) {
-            // strafe left
-            drive.goToPosition(0.6, -0.6, -0.6, 0.6, 601, "strafe right");
+            // go forward
+            drive.goToPosition(0.74, 0.7, 0.74, 0.7, 80, "go forwards");
+            sleep(100);
 
             // strafe left
-            drive.goToPosition(0.6, -0.6, -0.6, 0.6, 501, "strafe right");
+            drive.goToPosition(0.7, -0.7, -0.7, 0.7, 200, "strafe right");
         } else {
-            // strafe left
-            drive.goToPosition(0.6, -0.6, -0.6, 0.6, 601, "strafe right");
             // go backwards
-            drive.goToPosition(-0.6, -0.63, -0.6, -0.63, 200, "go backwards");
+            drive.goToPosition(-0.7, -0.7, -0.7, -0.7, 390, "go backwards");
+            sleep(100);
+
             // strafe left
-            drive.goToPosition(0.6, -0.6, -0.6, 0.6, 501, "strafe right");
+            drive.goToPosition(0.7, -0.7, -0.7, 0.7, 200, "strafe right");
+
 
         }
+        score.goToPosition(0, 0.85);
 
             liftThread.stop();
     }

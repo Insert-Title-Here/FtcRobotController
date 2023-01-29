@@ -267,9 +267,9 @@ public class SpecialTeleOp extends LinearOpMode {
                     if (score.getClawPosition() == 0.0) {
                         try {
                             if(clawStackFlag.get()){
-                                score.grabCone(true);
+                                score.grabConeRed(true);
                             }else{
-                                score.grabCone(false);
+                                score.grabConeRed(false);
                             }
                             clawOpenCloseToggle.set(true);
                         } catch (InterruptedException e) {

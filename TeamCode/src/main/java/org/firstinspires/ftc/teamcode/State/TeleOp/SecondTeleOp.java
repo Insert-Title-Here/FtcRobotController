@@ -6,7 +6,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft;
+import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft2;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
@@ -34,7 +34,7 @@ public class SecondTeleOp extends LinearOpMode {
     BNO055IMU imu;
 
     OpenCvWebcam webcam;
-    ContourMultiScoreLeft detect;
+    ContourMultiScoreLeft2 detect;
 
     private boolean uprighterToggle = true;
 
@@ -296,9 +296,9 @@ public class SecondTeleOp extends LinearOpMode {
                     if (score.getClawPosition() == 0.0) {
                         try {
                             if(clawStackFlag.get()){
-                                score.grabCone(true);
+                                score.grabConeRed(true);
                             }else{
-                                score.grabCone(false);
+                                score.grabConeRed(false);
                             }
                             clawOpenCloseToggle.set(true);
                         } catch (InterruptedException e) {

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft;
+import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft2;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
@@ -22,7 +22,7 @@ public class TestMultiBlueLeftLOW extends LinearOpMode {
     // instantiating
     Thread liftThread;
     MecanumDrive drive;
-    ContourMultiScoreLeft detect1;
+    ContourMultiScoreLeft2 detect1;
     ScoringSystem score;
     Constants constants;
     OpenCvWebcam webcam;
@@ -44,7 +44,7 @@ public class TestMultiBlueLeftLOW extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // value initializing
-        detect1 = new ContourMultiScoreLeft(telemetry);
+        detect1 = new ContourMultiScoreLeft2(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         //sets Auto driving to break instead of float
         
@@ -485,14 +485,14 @@ public class TestMultiBlueLeftLOW extends LinearOpMode {
             // PARK ------------------------------------------------------>
 
             //moves robot to correct parking position
-                if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.LEFT) {
+                if (detect1.getParkPosition() == ContourMultiScoreLeft2.ParkingPosition.LEFT) {
 
                     //strafes right to left parkign pos
                     drive.goToPosition(0.9, -0.9, -0.9, 0.9, 490, "strafe right");
                     //moves forward a bit
                     drive.goToPosition(0.3, 0.3, 0.3, 0.3 , 400, "move forward");
 
-                } else if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.CENTER) {
+                } else if (detect1.getParkPosition() == ContourMultiScoreLeft2.ParkingPosition.CENTER) {
                     // move to center park (strafes left)
                     drive.goToPosition(-0.8, 0.8, 0.8, -0.8, 500, "strafe right");
                     //moves forward a bit

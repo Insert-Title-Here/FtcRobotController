@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.State.MultiAuto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft;
+import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft2;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
@@ -17,13 +15,13 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous
-@Config
+//@Autonomous
+//@Config
 public class MultiBlueLeftMID extends LinearOpMode {
     // instantiating
     Thread liftThread;
     MecanumDrive drive;
-    ContourMultiScoreLeft detect1;
+    ContourMultiScoreLeft2 detect1;
     ScoringSystem score;
     Constants constants;
     OpenCvWebcam webcam;
@@ -51,7 +49,7 @@ public class MultiBlueLeftMID extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // value initializing
-        detect1 = new ContourMultiScoreLeft(telemetry);
+        detect1 = new ContourMultiScoreLeft2(telemetry);
         drive = new MecanumDrive(hardwareMap, telemetry);
         //sets Auto driving to break instead of float
         
@@ -643,13 +641,13 @@ public class MultiBlueLeftMID extends LinearOpMode {
             // PARK ------------------------------------------------------>
 
             //moves robot to correct parking position
-                if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.LEFT) {
+                if (detect1.getParkPosition() == ContourMultiScoreLeft2.ParkingPosition.LEFT) {
                     // go forward
                     drive.goToPosition(0.6, 0.6, 0.6, 0.6, 1240, "go forwards");
                     // strafe left
                     drive.goToPosition(-0.6, 0.6, 0.6, -0.6, 700, "strafe left");
 
-                } else if (detect1.getParkPosition() == ContourMultiScoreLeft.ParkingPosition.CENTER) {
+                } else if (detect1.getParkPosition() == ContourMultiScoreLeft2.ParkingPosition.CENTER) {
                     // go forward
                     drive.goToPosition(0.6, 0.6, 0.6, 0.6, 300, "go forwards");
                     // strafe left

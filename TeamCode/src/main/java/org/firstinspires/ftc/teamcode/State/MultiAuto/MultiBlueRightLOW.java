@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.State.MultiAuto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,7 +16,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Autonomous @Config
+//@Autonomous @Config
 public class MultiBlueRightLOW extends LinearOpMode {
     // instantiating
     Thread liftThread;

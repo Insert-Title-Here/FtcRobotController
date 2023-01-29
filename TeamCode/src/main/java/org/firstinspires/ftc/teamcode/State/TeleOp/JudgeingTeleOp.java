@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft;
+import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft2;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -27,7 +27,7 @@ public class JudgeingTeleOp extends LinearOpMode {
     Constants constant;
     BNO055IMU imu;
     OpenCvWebcam webcam;
-    ContourMultiScoreLeft detect1;
+    ContourMultiScoreLeft2 detect1;
 
     AtomicBoolean clawOpenCloseToggle;
     AtomicBoolean clawStackFlag;
@@ -270,9 +270,9 @@ public class JudgeingTeleOp extends LinearOpMode {
                         if (score.getClawPosition() == 0.0) {
                             try {
                                 if (clawStackFlag.get()) {
-                                    score.grabCone(true);
+                                    score.grabConeRed(true);
                                 } else {
-                                    score.grabCone(false);
+                                    score.grabConeRed(false);
                                 }
                                 clawOpenCloseToggle.set(true);
                             } catch (InterruptedException e) {
@@ -409,6 +409,8 @@ public class JudgeingTeleOp extends LinearOpMode {
             telemetry.addData("RightliftPow", score.getRightPower());
             telemetry.addData("clawOpenCloseToggle", clawOpenCloseToggle.get());
             telemetry.addData("imu", imu.getAngularOrientation().firstAngle);
+            telemetry.addData("redsensor", score.currentRedColor()); // 560
+            telemetry.addData("bluesensor", score.currentBlueColor());
             //// telemetry.addData("blue", color.currentBlueColor());
             //telemetry.addData("red", color.currentRedColor());
             //  telemetry.update();

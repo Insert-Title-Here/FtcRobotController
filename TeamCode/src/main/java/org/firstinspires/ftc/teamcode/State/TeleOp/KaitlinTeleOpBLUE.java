@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft;
+import org.firstinspires.ftc.teamcode.State.Auto.ContourMultiScoreLeft2;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
 import org.firstinspires.ftc.teamcode.State.Common.MecanumDrive;
 import org.firstinspires.ftc.teamcode.State.Common.ScoringSystem;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp
 // This teleop does not contain the colorsensor code
-public class KaitlinTeleOp extends LinearOpMode {
+public class KaitlinTeleOpBLUE extends LinearOpMode {
     //TODO: change names if you want to
     MecanumDrive drive;
     ScoringSystem score;
@@ -30,7 +30,7 @@ public class KaitlinTeleOp extends LinearOpMode {
     Constants constant;
     BNO055IMU imu;
     OpenCvWebcam webcam;
-    ContourMultiScoreLeft detect1;
+    ContourMultiScoreLeft2 detect1;
 
     AtomicBoolean clawOpenCloseToggle;
     AtomicBoolean clawStackFlag;
@@ -275,9 +275,9 @@ public class KaitlinTeleOp extends LinearOpMode {
                         if (score.getClawPosition() == 0.0) {
                             try {
                                 if (clawStackFlag.get()) {
-                                    score.grabCone(true);
+                                    score.grabConeBlue(true);
                                 } else {
-                                    score.grabCone(false);
+                                    score.grabConeBlue(false);
                                 }
                                 clawOpenCloseToggle.set(true);
                             } catch (InterruptedException e) {

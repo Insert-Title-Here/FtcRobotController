@@ -39,7 +39,7 @@ public class TestTeleOp extends LinearOpMode {
             //Limits robot movement from controls to only the 4 cardinal directions N,S,W,E
             if (score.getClawPosition() == 0.0) {
                 try {
-                    score.grabCone(true);
+                    score.grabConeRed(true);
                     discontinue.set(false);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

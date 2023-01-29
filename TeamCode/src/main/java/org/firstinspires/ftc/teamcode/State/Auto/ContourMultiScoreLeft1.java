@@ -8,8 +8,8 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.State.Common.Constants;
-import org.firstinspires.ftc.teamcode.State.MultiAuto.MultiBlueLeftHIGH;
-import org.firstinspires.ftc.teamcode.State.MultiAuto.MultiRedLeftHIGH;
+import org.firstinspires.ftc.teamcode.State.MultiAuto.MultiBlueLeftHIGH1;
+import org.firstinspires.ftc.teamcode.State.MultiAuto.MultiRedLeftHIGH1;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -26,8 +26,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+
 @Config
-public class ContourMultiScoreLeft extends OpenCvPipeline {
+public class ContourMultiScoreLeft1 extends OpenCvPipeline {
     Constants constants = new Constants();
     public boolean park;
 
@@ -111,18 +112,18 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     public static int lower1 = 50; //50   50
     public static int lower2 = 50; //50   50
     public static int lower3 = 30; //10   40
-    public static int upper1 = 180; //255   180
+    public static int upper1 = 190; //255   180
     public static int upper2 = 170; //255   200
     public static int upper3 = 108; //105   108         //value was 80 when servo was perpendicular to the ground
     public static double widthRemoveConstant = 3.1;
 
     //BLUE
-    public static int bluelower1 = 120; // 30
-    public static int bluelower2 = 80; // 90
+    public static int bluelower1 = 60; // 30
+    public static int bluelower2 = 60; // 90
     public static int bluelower3 = 120; // 150
-    public static int blueupper1 = 170; // 130
+    public static int blueupper1 = 190; // 130
     public static int blueupper2 = 120; // 120
-    public static int blueupper3 = 195; // 255
+    public static int blueupper3 = 255; // 255
 
 
     //RED
@@ -134,7 +135,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
     public static int redupper3 = 150;
 
 
-    public ContourMultiScoreLeft(Telemetry telemetry) {
+    public ContourMultiScoreLeft1(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
@@ -154,7 +155,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 BOX_TOPLEFT.y + BOX_HEIGHT);
 
 
-        if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.PARK || MultiRedLeftHIGH.getNormalization() == Constants.Pipeline.PARK) {
+        if (MultiBlueLeftHIGH1.getNormalization() == Constants.Pipeline.PARK || MultiRedLeftHIGH1.getNormalization() == Constants.Pipeline.PARK) {
             Mat befChange = new Mat();
 
             input.copyTo(original);
@@ -195,15 +196,15 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
              */
 
             // https://sistenix.com/rgb2ycbcr.html -> convert between rgb and ycbcr
-            // yellow 197  173  179
+            // yellow 197  173  179 162;field 1
 //        Core.inRange(yelMat, lower_yellow_bounds, upper_yellow_bounds, yelMat);
-            Core.inRange(yelMat, new Scalar(158), new Scalar(178), yelMat);
-            // cyan 173  165  178
+            Core.inRange(yelMat, new Scalar(152), new Scalar(172), yelMat);
+            // cyan 173  165  180;field 1
 //        Core.inRange(cyaMat, lower_cyan_bounds, upper_cyan_bounds, cyaMat);
-            Core.inRange(cyaMat, new Scalar(155), new Scalar(175), cyaMat);
-            // magenta 188  184
+            Core.inRange(cyaMat, new Scalar(155), new Scalar(170), cyaMat);
+            // magenta 188  184 170;field 1
 //        Core.inRange(magMat, lower_magenta_bounds, upper_magenta_bounds, magMat);
-            Core.inRange(magMat, new Scalar(160), new Scalar(180), magMat);
+            Core.inRange(magMat, new Scalar(160), new Scalar(170), magMat);
 
 //        befChange.convertTo(befChange, CvType.CV_64FC3);
 //        byte buff[] = new byte[ (int) (befChange.total() * befChange.channels())];
@@ -257,7 +258,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
             magMat.release();
 
             return original;
-        } else if (MultiBlueLeftHIGH.getNormalization() == Constants.Pipeline.POLE || MultiRedLeftHIGH.getNormalization() == Constants.Pipeline.POLE) {
+        } else if (MultiBlueLeftHIGH1.getNormalization() == Constants.Pipeline.POLE || MultiRedLeftHIGH1.getNormalization() == Constants.Pipeline.POLE) {
             // var inits / resets
             knownWidth = 1.04; //inches
             contours = new ArrayList<>();
@@ -466,7 +467,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 //            }
             }
             return generalMat;
-        } else if (MultiBlueLeftHIGH.getNormalization()  == Constants.Pipeline.CONE || MultiRedLeftHIGH.getNormalization()  == Constants.Pipeline.CONE) {
+        } else if (MultiBlueLeftHIGH1.getNormalization()  == Constants.Pipeline.CONE || MultiRedLeftHIGH1.getNormalization()  == Constants.Pipeline.CONE) {
             // var inits / resets
             knownWidth = 1.04; //inches
             contours = new ArrayList<>();
@@ -559,7 +560,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
                 focalLength = (311.5384615 + 311.5384615 + 311.9711538) / 3.0;
                 distance = distanceFromPole(1.04, focalLength, perWidth) * Math.cos(38.6);
 
-                /*
+
                 telemetry.addData("index", indexOfMax);
                 telemetry.addData("cX", cX);
                 telemetry.addData("cY", cY);
@@ -575,7 +576,7 @@ public class ContourMultiScoreLeft extends OpenCvPipeline {
 
                 telemetry.update();
 
-                 */
+
 //            }
             }
             return generalMat;

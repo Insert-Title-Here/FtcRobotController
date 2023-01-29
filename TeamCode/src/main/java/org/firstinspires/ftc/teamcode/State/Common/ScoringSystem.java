@@ -234,7 +234,7 @@ public class ScoringSystem {
         return colorCone.red(); // if current color is really high // 177
     }
     // Uses color sensor to grab cone
-    public boolean grabCone() throws InterruptedException {
+    public boolean grabConeRed() throws InterruptedException {
         if (colorCone.getDistance(DistanceUnit.CM) < 2.5) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
@@ -250,8 +250,29 @@ public class ScoringSystem {
     }
     //uses color sensor to grab cone(this one is used when trying to grab from the stack of 5 cones
     // tele version
-    public boolean grabCone(boolean stack) throws InterruptedException {
-        if (colorCone.getDistance(DistanceUnit.CM) < 2.5) {
+    public boolean grabConeRed(boolean stack) throws InterruptedException {
+        if (colorCone.getDistance(DistanceUnit.CM) < 2.5 && currentBlueColor() < currentRedColor()) {
+            // grab cone
+            setClawPosition(constant.getClawClosePos());
+            sleep(500);
+            // lift up
+            if(stack){
+                goToPosition(constant.getHeightLow(), 1);
+            }else{
+                goToPosition(constant.getHeightLow(), 1);
+            }
+            telemetry.addData("distance", colorCone.getDistance(DistanceUnit.CM));
+            telemetry.update();
+            return true;
+
+        }
+        return false;
+    }
+
+    //uses color sensor to grab cone(this one is used when trying to grab from the stack of 5 cones
+    // tele version
+    public boolean grabConeBlue(boolean stack) throws InterruptedException {
+        if (colorCone.getDistance(DistanceUnit.CM) < 2.5 && currentBlueColor() > currentRedColor()) {
             // grab cone
             setClawPosition(constant.getClawClosePos());
             sleep(500);
