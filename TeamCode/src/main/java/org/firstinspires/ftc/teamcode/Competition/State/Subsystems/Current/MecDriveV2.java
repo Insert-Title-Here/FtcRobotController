@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Vector2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Vector;
 
 ////@Config
 public class MecDriveV2 {
@@ -2336,6 +2337,26 @@ public class MecDriveV2 {
     public void setPower(Vector2D velocity, double turnValue, boolean isSwapped) {
         turnValue = -turnValue;
         double direction = velocity.getDirection();
+
+
+        double power = velocity.magnitude();
+
+        double angle = direction + 3 * Math.PI / 4.0;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+
+        if (!isSwapped) {
+            setPower((power * sin - turnValue), (power * cos + turnValue),
+                    (power * cos - turnValue), (power * sin + turnValue));
+        } else {
+            setPower(-(power * sin - turnValue), -(power * cos + turnValue),
+                    -(power * cos - turnValue), -(power * sin + turnValue));
+        }
+    }
+
+    public void fieldCentricSetPower(Vector2D velocity, double turnValue, boolean isSwapped){
+        turnValue = -turnValue;
+        double direction = velocity.getDirection() - getFirstAngle();
 
 
         double power = velocity.magnitude();
