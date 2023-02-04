@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.M
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Old.ScoringSystemV2;
 
-@Disabled
+
 @Autonomous
 @Config
 public class PIDFTestingDriveVel extends LinearOpMode {

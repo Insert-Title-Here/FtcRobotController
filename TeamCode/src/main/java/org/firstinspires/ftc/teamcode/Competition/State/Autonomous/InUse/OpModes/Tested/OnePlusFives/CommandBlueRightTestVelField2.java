@@ -120,7 +120,8 @@ public class CommandBlueRightTestVelField2 extends LinearOpMode {
                 //new InstantCommand(() -> drive.goTOPIDPosVel(790)),
                 new InstantCommand(() -> drive.simpleMoveToPosition(660, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
-                new InstantCommand(() -> pipeline.normalizeStrafe(0.28, 150, 2)),
+                //new InstantCommand(() -> pipeline.normalizeStrafe(0.28, 150, 2)),\
+                new InstantCommand(() -> drive.simpleMoveToPosition(60, MecDriveV2.MovementType.STRAFE, 0.4)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(0.4)), // pole
                 new WaitCommand(500),

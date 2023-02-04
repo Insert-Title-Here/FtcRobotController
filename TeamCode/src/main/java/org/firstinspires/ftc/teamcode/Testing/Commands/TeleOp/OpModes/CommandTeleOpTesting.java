@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 //TODO: cant drive when lift is going down
 
-@Disabled
+
 @TeleOp(name = "New TeleOp (Dont use yet)")
 public class CommandTeleOpTesting extends LinearOpMode {
 
@@ -88,10 +89,7 @@ public class CommandTeleOpTesting extends LinearOpMode {
         distance.setGain(180);
 
 
-
-
         waitForStart();
-
 
 
         while (opModeIsActive()) {
@@ -136,19 +134,19 @@ public class CommandTeleOpTesting extends LinearOpMode {
                     if (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.LOW) {
 
 
-                                score.setLinkagePosition(0.71);
+                        score.setLinkagePosition(0.71);
 
 
                     } else {
 
 
-                                score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
+                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
 
                     }
 
                 } else if (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
 
-                            score.setLinkagePosition(0.15);
+                    score.setLinkagePosition(0.15);
 
 
                 }
@@ -162,20 +160,19 @@ public class CommandTeleOpTesting extends LinearOpMode {
                 if (score.getScoringMode() != ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
 
                     CommandScheduler.getInstance().schedule(
-                            new InstantCommand(() -> score.setGrabberPosition(Constants.score)),
-                            new InstantCommand(() -> new Timing.Timer(600, TimeUnit.MILLISECONDS)),
+                            new SequentialCommandGroup(
+                                    new InstantCommand(() -> score.setGrabberPosition(Constants.score)),
+                                    new WaitCommand(5000),
 
-                            new ParallelCommandGroup(
-                                    new SequentialCommandGroup(
-                                            new InstantCommand(() -> score.setLinkagePosition(Constants.linkageUpV2)),
-                                            new InstantCommand(() -> new Timing.Timer(70, TimeUnit.MILLISECONDS)),
-                                            new InstantCommand(() -> score.setLinkageConeStack(true))
-                                    ),
+
+                                    new InstantCommand(() -> score.setLinkagePosition(Constants.linkageUpV2)),
+                                    new WaitCommand(70),
+                                    new InstantCommand(() -> score.setLinkageConeStack(true)),
+
 
                                     new InstantCommand(() -> score.setGrabberPosition(Constants.open - 0.15))
 
                             )
-
 
                     );
 
@@ -191,8 +188,10 @@ public class CommandTeleOpTesting extends LinearOpMode {
                 } else {
 
                     CommandScheduler.getInstance().schedule(
-                            new InstantCommand(() -> score.setGrabberPosition(Constants.open - 0.15)),
-                            new InstantCommand(() -> new Timing.Timer(700, TimeUnit.MILLISECONDS))
+                            new SequentialCommandGroup(
+                                    new InstantCommand(() -> score.setGrabberPosition(Constants.open - 0.15)),
+                                    new WaitCommand(700)
+                            )
                     );
 
                 }
@@ -200,7 +199,9 @@ public class CommandTeleOpTesting extends LinearOpMode {
                 if (liftBrokenMode) {
 
                     CommandScheduler.getInstance().schedule(
-                            new InstantCommand(() -> new Timing.Timer(2000, TimeUnit.MILLISECONDS))
+                            new SequentialCommandGroup(
+                                    new WaitCommand(2000)
+                            )
                     );
 
                 }
@@ -236,42 +237,36 @@ public class CommandTeleOpTesting extends LinearOpMode {
             } else if ((distance.getNormalizedColors().red > 0.80 || distance.getNormalizedColors().blue > 0.80) && autoLinkageFlag) {
 
 
-
-
                 grabFlag = false;
 
-                CommandScheduler.getInstance().schedule(
-                        new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
-                        new InstantCommand(() -> new Timing.Timer(150, TimeUnit.MILLISECONDS))
-                );
 
                 if (score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA) {
 
                     CommandScheduler.getInstance().schedule(
-                            new InstantCommand(() -> new Timing.Timer(400, TimeUnit.MILLISECONDS))
+                            new SequentialCommandGroup(
+                                    new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
+                                    new WaitCommand(500),
+                                    new InstantCommand(() -> score.setLinkagePosition(0.25))
+                            )
+
                     );
 
-                }
 
-                CommandScheduler.getInstance().schedule(
-                        new InstantCommand(() -> new Timing.Timer(100, TimeUnit.MILLISECONDS))
-
-                );
-
-                if(score.getScoringMode() == ScoringSystemV2EpicLift.ScoringMode.ULTRA){
+                } else if (liftBrokenMode) {
                     CommandScheduler.getInstance().schedule(
-                            new InstantCommand(() -> new Timing.Timer(400, TimeUnit.MILLISECONDS)),
-                            new InstantCommand(() -> score.setLinkagePosition(0.25))
+                            new SequentialCommandGroup(
+                                    new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
+                                    new WaitCommand(400),
+                                    new InstantCommand(() -> score.setLinkagePosition(0.54))
+                            )
                     );
-                }else if(liftBrokenMode){
+                } else {
                     CommandScheduler.getInstance().schedule(
-                            new InstantCommand(() -> new Timing.Timer(400, TimeUnit.MILLISECONDS)),
-                            new InstantCommand(() -> score.setLinkagePosition(0.54))
-                    );
-                }else{
-                    CommandScheduler.getInstance().schedule(
-                            new InstantCommand(() -> new Timing.Timer(400, TimeUnit.MILLISECONDS)),
-                            new InstantCommand(() -> score.setLinkagePosition(Constants.linkageScoreV2 - 0.05))
+                            new SequentialCommandGroup(
+                                    new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
+                                    new WaitCommand(400),
+                                    new InstantCommand(() -> score.setLinkagePosition(Constants.linkageScoreV2 - 0.05))
+                            )
                     );
                 }
                 autoLinkageFlag = false;
@@ -279,9 +274,6 @@ public class CommandTeleOpTesting extends LinearOpMode {
                 CommandScheduler.getInstance().run();
 
             }
-
-
-
 
 
             //TODO: see if need to fix this logic
@@ -305,8 +297,6 @@ public class CommandTeleOpTesting extends LinearOpMode {
                     changeStackFlag = false;
 
                 }
-
-
 
 
             }

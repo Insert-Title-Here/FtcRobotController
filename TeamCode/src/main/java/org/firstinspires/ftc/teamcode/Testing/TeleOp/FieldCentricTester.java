@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MecDr
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
 
 
-@TeleOp (name = "KevinGodModeSequence")
+@TeleOp (name = "Field Centric")
 public class FieldCentricTester extends LinearOpMode {
 
     ScoringSystemV2EpicLift score;

@@ -125,7 +125,7 @@ public class CommandRedRightTestVelField1 extends LinearOpMode {
                 new InstantCommand(() -> cameraServo.setPosition(0.36)), // pole
                 new WaitCommand(500),
                 //new InstantCommand(() -> pipeline.normalize(0.22, 162, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355))
-                new InstantCommand(() -> drive.tankRotatePIDSpecial(1.355, 0.4, false, 1))
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(1.337, 0.4, false, 1))
 
 
         );

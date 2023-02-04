@@ -251,6 +251,9 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
             } else {
                 telemetry.addData("Status", "no AprilTag found!");
             }
+
+            telemetry.addData("angle", (int)(drive.getFirstAngle() * 180 / Math.PI));
+            telemetry.addData("isCorrect", ((int)(drive.getFirstAngle() * 180 / Math.PI) == -2));
             telemetry.update();
 
         } else{

@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.CustomCommands.DriveInSafe;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.KevinGodPipelineAprilTag;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MecDriveV2;
@@ -115,19 +116,20 @@ public class CommandBlueRightTestVelField1 extends LinearOpMode {
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.BLUECONE)),
                 new InstantCommand(() -> cameraServo.setPosition(Constants.coneV2)),
                 new InstantCommand(() -> parkPos = pipeline.getPosition()),
-                new InstantCommand(() -> drive.goTOPIDPosVel(-2050, 500)),
+                new InstantCommand(() -> drive.goTOPIDPosVel(-2050, 700)),
                 new WaitCommand(100),
                 new InstantCommand(() -> drive.tankRotatePID(Math.PI / 2, 1, false)),
-                //new InstantCommand(() -> drive.goTOPIDPosVel(790)),
-                new InstantCommand(() -> drive.simpleMoveToPosition(660, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                new InstantCommand(() -> drive.goTOPIDPosVel(780, 550)),
+                //new InstantCommand(() -> drive.simpleMoveToPosition(660, MecDriveV2.MovementType.STRAIGHT, 0.5)),
                 new InstantCommand(() -> drive.tankRotatePID(3.14 * Math.PI / 8, 1, false)),
-                new InstantCommand(() -> pipeline.normalizeStrafe(0.28, 150, 2)),
+                //new InstantCommand(() -> pipeline.normalizeStrafe(0.28, 150, 2)),
+                new InstantCommand(() -> drive.simpleMoveToPosition(-185, MecDriveV2.MovementType.STRAFE, 0.3)),
                 new InstantCommand(() -> pipeline.changeMode(KevinGodPipelineAprilTag.Mode.POLE)),
                 new InstantCommand(() -> cameraServo.setPosition(0.37)), // pole
                 new WaitCommand(500),
                 //new InstantCommand(() -> pipeline.normalize(0.15, 169, 2))
                 //new InstantCommand(() -> pipeline.normalize(0.22, 162, 3, /*(Math.PI/2) - (3 * Math.PI/45)*/1.269, /*(Math.PI/2) - (Math.PI/18)*/1.433, /*(Math.PI/2) - (13 * Math.PI/180)*/1.355))
-                new InstantCommand(() -> drive.tankRotatePIDSpecial(1.34, 0.4, false, 1))
+                new InstantCommand(() -> drive.tankRotatePIDSpecial(1.32, 0.4, false, 1))
 
         );
 
@@ -163,7 +165,8 @@ public class CommandBlueRightTestVelField1 extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(
 
-                new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                //new InstantCommand(() -> drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAIGHT, 0.5)),
+                new DriveInSafe(drive, distance, false, 0.3),
                 new InstantCommand(() -> score.setGrabberPosition(Constants.grabbing)),
                 new InstantCommand(() -> sleep(250)),
                 new InstantCommand(() -> score.setLinkagePositionLogistic(Constants.linkageUpV2Auto, 300, 100)),
