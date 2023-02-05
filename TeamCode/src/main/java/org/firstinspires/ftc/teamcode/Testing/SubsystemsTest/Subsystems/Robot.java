@@ -11,6 +11,6 @@ public class Robot {
     public Robot(HardwareMap hardwareMap){
         data = new Data(hardwareMap);
         drive = new MecDriveBulk(hardwareMap, data);
-        score = new ScoringSystemBulk(hardwareMap, data);
+        score = new ScoringSystemBulk(hardwareMap, data, true);
     }
 }

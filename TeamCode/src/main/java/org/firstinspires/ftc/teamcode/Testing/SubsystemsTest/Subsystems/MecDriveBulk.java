@@ -59,7 +59,7 @@ public class MecDriveBulk {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        data = new Data(hardwareMap);
+        this.data = data;
 
         CorrectMotors();
     }
