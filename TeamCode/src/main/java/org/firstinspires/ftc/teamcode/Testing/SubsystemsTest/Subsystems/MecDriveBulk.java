@@ -287,7 +287,7 @@ public class MecDriveBulk {
     }
 
 
-    private void brake() {
+    public void brake() {
         data.setUpdate(false);
         setPower(0, 0, 0, 0);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

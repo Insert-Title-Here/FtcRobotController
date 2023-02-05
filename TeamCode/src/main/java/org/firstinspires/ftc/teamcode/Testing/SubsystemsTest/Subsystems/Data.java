@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Testing.SubsystemsTest.Subsystems;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -18,6 +21,7 @@ public class Data extends Thread {
     private volatile LynxModule chub, ehub;
     private volatile BNO055IMU imu;
     private volatile ColorRangeSensor distance;
+
     //Could try out Encoder class or DcMotorImpl/DcMotorImplEx or DcMotorController/DcMotorControllerEx
     //DcMotorImplEx seems to have the most functionality
 
@@ -27,10 +31,11 @@ public class Data extends Thread {
     private final long loopTime = 20;
     private String howLoopingIsGoing = "Start";
     private Orientation imuAngle;
+    private NormalizedRGBA rgba;
 
 
 
-    public Data(HardwareMap hardwareMap){
+    public Data(HardwareMap hardwareMap, ColorRangeSensor distance){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -42,7 +47,7 @@ public class Data extends Thread {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        distance = hardwareMap.get(ColorRangeSensor.class, "distance");
+        this.distance = distance;
 
         chub = hardwareMap.get(LynxModule.class, "Control Hub");
 
@@ -81,6 +86,10 @@ public class Data extends Thread {
         return imuAngle;
     }
 
+    public NormalizedRGBA getColor(){
+        return rgba;
+    }
+
     public String getHowLoopingIsGoing(){
         return howLoopingIsGoing;
     }
@@ -91,6 +100,7 @@ public class Data extends Thread {
         chubData = chub.getBulkData();
         ehubData = ehub.getBulkData();
         imuAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        rgba = distance.getNormalizedColors();
 
         chub.clearBulkCache();
         ehub.clearBulkCache();

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
+//TODO: Check lift ports and negations
 public class ScoringSystemBulk {
 
     Data data;
@@ -26,14 +27,18 @@ public class ScoringSystemBulk {
     public Servo grabber;
     ServoImplEx rLinkage, lLinkage;
     public ScoringMode height;
-    private boolean grabbing, linkageUp, extended;
     private int coneStack, rightPreviousError, leftPreviousError, liftTarget;
     private double startTime, currentTime;
     ElapsedTime time;
+
+    private boolean manualFlag, autoLinkageFlag, extended, changeStackFlag, liftBrokenMode, changeToggle, toLinkageDown, toLinkageUp;
+
     PIDCoefficients pidf = new PIDCoefficients(0.0085, 0.0000275, 0.00023);
 
     File file = AppUtil.getInstance().getSettingsFile("motion.txt");
     String composite = "";
+
+
 
 
     public enum ScoringMode {
@@ -120,6 +125,27 @@ public class ScoringSystemBulk {
 
     }
 
+    public int getLiftTarget() {
+        return liftTarget;
+    }
+
+    public boolean getAutoLinkageFlag() {
+        return autoLinkageFlag;
+    }
+
+    public boolean getChangeStackFlag() {
+        return changeStackFlag;
+    }
+
+    public void setChangeStackFlag(boolean changeStackFlag) {
+        this.changeStackFlag = changeStackFlag;
+    }
+
+    public void setAutoLinkageFlag(boolean autoLinkageFlag) {
+        this.autoLinkageFlag = autoLinkageFlag;
+    }
+
+
     //TODO: tune this
     public void setLinkageConeStack(boolean logistic) {
         if (logistic) {
@@ -148,6 +174,11 @@ public class ScoringSystemBulk {
             }
         }
     }
+
+    public int getRightEncoderPos() {
+        return rLift1.getCurrentPosition();
+    }
+
 
     public boolean isExtended() {
         return extended;
@@ -673,21 +704,51 @@ public class ScoringSystemBulk {
         }
     }
 
-    public void setGrabbing(boolean grabbing) {
-        this.grabbing = grabbing;
+    public void setManualFlag(boolean manualFlag) {
+        this.manualFlag = manualFlag;
     }
 
-    public void setLinkageUp(boolean linkageUp) {
-        this.linkageUp = linkageUp;
+
+    public boolean getManualFlag() {
+        return manualFlag;
     }
 
-    public boolean isGrabbing() {
-        return grabbing;
+    public void setLiftBrokenMode(boolean liftBrokenMode) {
+        this.liftBrokenMode = liftBrokenMode;
     }
 
-    public boolean isLinkageUp() {
-        return linkageUp;
+
+    public boolean getLiftBrokenMode() {
+        return liftBrokenMode;
     }
+
+    public void setChangeToggle(boolean changeToggle) {
+        this.changeToggle = changeToggle;
+    }
+
+
+    public boolean getChangeToggle() {
+        return changeToggle;
+    }
+
+    public void setToLinkageDown(boolean toLinkageDown) {
+        this.toLinkageDown = toLinkageDown;
+    }
+
+
+    public boolean getToLinkageDown() {
+        return toLinkageDown;
+    }
+
+    public void setToLinkageUp(boolean toLinkageUp) {
+        this.toLinkageUp = toLinkageUp;
+    }
+
+
+    public boolean getToLinkageUp() {
+        return toLinkageUp;
+    }
+
 
     public void addToLoggingString(String add) {
         composite += (add + "\n");

@@ -33,16 +33,6 @@ public class NoSequenceTeleOp extends LinearOpMode {
     Thread liftThread, linkageThread;
 
     //Enums for feed forward
-    public enum PassivePower{
-        //Feed forward is on
-        EXTENDED,
-
-        //Nothing
-        MOVEMENT,
-
-        //Power is set to 0
-        ZERO,
-    }
 
 
     @Override
