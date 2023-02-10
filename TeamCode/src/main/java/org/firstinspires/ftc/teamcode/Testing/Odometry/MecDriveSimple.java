@@ -47,17 +47,17 @@ public class MecDriveSimple {
     }
 
     public int getFRPosition(){
-        return fl.getCurrentPosition();
+        return fr.getCurrentPosition();
 
     }
 
     public int getBLPosition(){
-        return fl.getCurrentPosition();
+        return bl.getCurrentPosition();
 
     }
 
     public int getBRPosition(){
-        return fl.getCurrentPosition();
+        return br.getCurrentPosition();
 
     }
 
