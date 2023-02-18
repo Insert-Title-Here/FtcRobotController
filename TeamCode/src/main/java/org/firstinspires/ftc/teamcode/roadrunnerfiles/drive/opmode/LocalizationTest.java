@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.roadrunnerfiles.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunnerfiles.util.Encoder;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -19,20 +21,26 @@ import org.firstinspires.ftc.teamcode.roadrunnerfiles.drive.SampleMecanumDrive;
 //@Disabled
 
 public class LocalizationTest extends LinearOpMode {
+
+    Encoder leftEncoder, rightEncoder, frontEncoder;
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "fl"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "bl"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "fr"));
+
         waitForStart();
 
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y / 2,
-                            -gamepad1.left_stick_x / 2,
-                            -gamepad1.right_stick_x / 2
+                            gamepad1.left_stick_y / 2,
+                            gamepad1.left_stick_x / 2,
+                            gamepad1.right_stick_x / 2
                     )
             );
 
@@ -42,6 +50,9 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("rightEncoder", rightEncoder.getCurrentPosition());
+            telemetry.addData("leftEncoder", leftEncoder.getCurrentPosition());
+            telemetry.addData("frontEncoder",frontEncoder.getCurrentPosition());
             telemetry.update();
         }
     }
