@@ -15,14 +15,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
+import org.firstinspires.ftc.teamcode.Competition.MTI.ScoringSystemNewest;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
 
-@Disabled
+//rLift1 = positive
+//rLift2 = negative
+//lLift1 = negative
+//lLift2 = positive
 @Autonomous
 @Config
 public class PIDFTestingLift extends LinearOpMode {
 
-    ScoringSystemV2EpicLift score;
+    ScoringSystemNewest score;
     //Constants constants;
 
     public static boolean pid = true;
@@ -30,7 +34,7 @@ public class PIDFTestingLift extends LinearOpMode {
 
 
     public static int target = 300;
-    public static double p = 0.0085, i = 0, d = 0.00023;
+    public static double p = 0, i = 0, d = 0;
 
     int rightPreviousError = 0;
     int leftPreviousError = 0;
@@ -50,9 +54,7 @@ public class PIDFTestingLift extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //constants = newConstants();
-        score = new ScoringSystemV2EpicLift(hardwareMap, telemetry, false);
-
-        score.setLinkagePosition(Constants.linkageUpV2);
+        score = new ScoringSystemNewest(hardwareMap, telemetry);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -103,7 +105,8 @@ public class PIDFTestingLift extends LinearOpMode {
             telemetry.addData("rightIntegral", rightIntegralSum);
             telemetry.addData("leftIntegral",leftIntegralSum);
             telemetry.addData("rightPos", -1 * score.getRightEncoderPos());
-            telemetry.addData("leftPos", -1 * score.getLeftEncoderPos());
+            telemetry.addData("leftPos", score.getLeftEncoderPos());
+            telemetry.addData("target", target);
 
 
 
@@ -124,7 +127,7 @@ public class PIDFTestingLift extends LinearOpMode {
         //TODO: check if we need to negate any
 
         int rightPos = -1 * score.getRightEncoderPos();
-        int leftPos = -1 * score.getLeftEncoderPos();
+        int leftPos = score.getLeftEncoderPos();
 
         int rightError = tics - rightPos;
         int leftError = tics - leftPos;
