@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current;
+package org.firstinspires.ftc.teamcode.Competition.MTI;
 
 
-import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -17,13 +16,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
-import org.firstinspires.ftc.teamcode.Testing.MotionProfile.LinkageMotionProfiler;
+import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MotionProfiler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-public class ScoringSystemV2EpicLift {
+public class ScoringSystemNewest {
     public DcMotorEx lLift1, rLift1, lLift2, rLift2;
     public Servo grabber;
     public DistanceSensor distance;
@@ -34,7 +33,7 @@ public class ScoringSystemV2EpicLift {
     private double startTime, currentTime;
     Telemetry telemetry;
     ElapsedTime time;
-    PIDCoefficients pidf = new PIDCoefficients(0.0085, 0.0000275, 0.00023);
+    PIDCoefficients pidf = new PIDCoefficients(0.000475, 0, 0.0000081);
 
     File file = AppUtil.getInstance().getSettingsFile("motion.txt");
     String composite = "";
@@ -47,7 +46,7 @@ public class ScoringSystemV2EpicLift {
         ULTRA
     }
 
-    public ScoringSystemV2EpicLift(HardwareMap hardwareMap /*Constants constants*/) {
+    public ScoringSystemNewest(HardwareMap hardwareMap /*Constants constants*/) {
 
 
         coneStack = 1;
@@ -96,7 +95,7 @@ public class ScoringSystemV2EpicLift {
 
     }
 
-    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Telemetry telemetry) {
+    public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         coneStack = 1;
@@ -134,7 +133,7 @@ public class ScoringSystemV2EpicLift {
 
     }
 
-    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Telemetry telemetry, boolean up) {
+    public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry, boolean up) {
         this.telemetry = telemetry;
 
         coneStack = 1;
@@ -188,7 +187,7 @@ public class ScoringSystemV2EpicLift {
     }
 
 
-    public ScoringSystemV2EpicLift(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime time, boolean up) {
+    public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime time, boolean up) {
         this.telemetry = telemetry;
         this.time = time;
         startTime = time.seconds();
@@ -229,7 +228,7 @@ public class ScoringSystemV2EpicLift {
         lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
         rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
 
-        MotionProfiler profile = new MotionProfiler(this, telemetry);
+        //MotionProfiler profile = new MotionProfiler(this, telemetry);
 
         lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
         rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
@@ -356,8 +355,8 @@ public class ScoringSystemV2EpicLift {
     }
 
     public void setPower(double rightPower, double leftPower){
-        rLift1.setPower(-rightPower);
-        lLift1.setPower(leftPower);
+        rLift1.setPower(rightPower);
+        lLift1.setPower(-leftPower);
 
         rLift2.setPower(-rightPower);
         lLift2.setPower(leftPower);
