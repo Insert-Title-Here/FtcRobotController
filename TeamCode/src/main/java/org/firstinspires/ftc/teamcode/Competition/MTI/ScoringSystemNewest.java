@@ -187,67 +187,6 @@ public class ScoringSystemNewest {
     }
 
 
-    public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime time, boolean up) {
-        this.telemetry = telemetry;
-        this.time = time;
-        startTime = time.seconds();
-        liftTarget = 0;
-
-        coneStack = 1;
-        height = ScoringMode.HIGH;
-        extended = false;
-
-        //distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
-
-        rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
-        lLift1 = hardwareMap.get(DcMotorEx.class, "LeftLift");
-
-        rLift2 = hardwareMap.get(DcMotorEx.class, "RightLift2");
-        lLift2 = hardwareMap.get(DcMotorEx.class, "LeftLift2");
-
-        rLift1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lLift1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        rLift2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lLift2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        rLift1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        lLift1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        rLift2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        lLift2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        rLift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lLift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-
-        rLift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lLift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
-        rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
-
-        //MotionProfiler profile = new MotionProfiler(this, telemetry);
-
-        lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
-        rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
-
-        grabber = hardwareMap.get(Servo.class, "Grabber");
-
-
-        if(up){
-            setLinkagePosition(Constants.linkageUpV2);
-            //profile.trapezoidalServoProfile(400, Constants.linkageUpV2);
-        }else {
-            setLinkagePosition(Constants.linkageDownV2);
-            //profile.trapezoidalServoProfile(400, Constants.linkageDownV2);
-
-        }
-        //setLinkagePosition(0.8);
-        grabber.setPosition(Constants.open);
-
-    }
 
     public int getConeStack(){
         return coneStack;
@@ -315,9 +254,6 @@ public class ScoringSystemNewest {
         return height;
     }
 
-    public double getI(){
-        return pidf.i;
-    }
 
 
     //TODO: Fix this
@@ -334,25 +270,14 @@ public class ScoringSystemNewest {
     }
 
     public void setPower(double power) {
-        rLift1.setPower(-power);
-        lLift1.setPower(power);
+        rLift1.setPower(power);
+        lLift1.setPower(-power);
 
         rLift2.setPower(-power);
         lLift2.setPower(power);
     }
 
-    public void setPowerSingular(double power) {
-        rLift1.setPower(-power);
-        lLift1.setPower(power);
-    }
 
-    public void setPowerSingularRight(double power) {
-        rLift2.setPower(power);
-    }
-
-    public void setPowerSingularLeft(double power) {
-        lLift2.setPower(power);
-    }
 
     public void setPower(double rightPower, double leftPower){
         rLift1.setPower(rightPower);
@@ -363,8 +288,8 @@ public class ScoringSystemNewest {
     }
 
     public void setVelocity(double rightPower, double leftPower){
-        rLift1.setVelocity(-rightPower);
-        lLift1.setVelocity(leftPower);
+        rLift1.setVelocity(rightPower);
+        lLift1.setVelocity(-leftPower);
 
         rLift2.setVelocity(-rightPower);
         lLift2.setVelocity(leftPower);
@@ -380,28 +305,6 @@ public class ScoringSystemNewest {
 
     public void changeMode(ScoringMode score){
         height = score;
-    }
-
-    public void autoGoToPosition(){
-
-
-        if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            if(getConeStack() > 1){
-                moveToPosition(885, 1);
-            }else {
-                moveToPosition(960, 1);
-            }
-
-        }else if(height == ScoringMode.MEDIUM){
-            moveToPosition(500, 1);
-
-
-        }else if(height == ScoringMode.LOW){
-            moveToPosition(80, 1);
-
-        }
-
-        extended = true;
     }
 
     public void commandAutoGoToPosition(){
@@ -420,157 +323,7 @@ public class ScoringSystemNewest {
         extended = true;
     }
 
-    public void epicAutoGoToPosition(){
-        if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            newLiftPID(1000);
 
-        }else if(height == ScoringMode.MEDIUM){
-            newLiftPID(550);
-
-
-        }else if(height == ScoringMode.LOW){
-            newLiftPID(150);
-
-        }
-
-        extended = true;
-    }
-
-    //TODO: fix this
-    public void autoGoToPosition(ScoringMode height) {
-        this.height = height;
-        if (height == ScoringMode.HIGH || height == ScoringMode.ULTRA) {
-            moveToPosition(600, 1);
-
-        } else if (height == ScoringMode.MEDIUM) {
-
-            //TODO: Find tic value
-            moveToPosition(400, 1);
-
-
-        } else if (height == ScoringMode.LOW) {
-            //TODO: Find tic value
-            moveToPosition(200, 1);
-
-        }
-
-
-    }
-
-
-
-
-
-
-    public void moveToPosition(int tics, double power){
-
-        PrintStream ps = null;
-        try {
-            ps = new PrintStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        ElapsedTime time = new ElapsedTime();
-        double startTime = time.seconds();
-
-        int rLiftPos = -1 * rLift1.getCurrentPosition();
-        int lLiftPos = -1 * lLift1.getCurrentPosition();
-
-
-        if(tics < ((rLiftPos + lLiftPos) / 2)){
-            power *= -1;
-        }
-
-        double rightPower = power;
-        double leftPower = power;
-
-
-
-
-
-        //Dont know if need the != condition
-        //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
-
-        //TODO: Check if logic for encoder positions works
-
-        int counter = 0;
-
-        if(power > 0) {
-            while ((time.seconds() - startTime) < 2.25 && (rLiftPos < tics || lLiftPos < tics)) {
-
-                //TODO: figure out if we need to negate either of them
-
-                /*
-                if (rLiftPos >= tics) {
-                    rightPower = 0;
-                }
-
-                if (lLiftPos >= tics) {
-                    leftPower = 0;
-                }
-
-                 */
-
-                rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = -1 * lLift1.getCurrentPosition();
-
-                setPower(rightPower, leftPower);
-
-
-                /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
-                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
-                composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
-                composite += "\n";
-
-                counter++;
-
-
-            }
-        }else{
-            while ((time.seconds() - startTime) < 2.5 &&   (rLiftPos > tics || lLiftPos > tics)) {
-
-                //TODO: figure out if we need to negate either of them
-
-                /*
-                if (rLiftPos <= tics) {
-                    rightPower = 0;
-                }
-
-                if (lLiftPos <= tics) {
-                    leftPower = 0;
-                }
-
-                 */
-
-
-                rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = -1 * lLift1.getCurrentPosition();
-
-                setPower(rightPower, leftPower);
-
-
-               /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
-                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
-                composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
-                composite += "\n";
-
-                counter++;
-
-
-
-            }
-        }
-
-        setPower(0);
-
-        ps.println(composite);
-
-    }
 
     public void moveToPosition(int tics, double power, double kickout){
 
@@ -733,148 +486,6 @@ public class ScoringSystemNewest {
         setPower(0);
 
         return Math.abs(rLift1.getCurrentPosition());
-
-    }
-
-
-
-    public int[] moveToPosition(int tics, double power, boolean isPID){
-
-        int[] intSums = {0, 0};
-
-
-        ElapsedTime time = new ElapsedTime();
-        double startTime = time.seconds();
-        double intStartTime = time.seconds();
-
-        int rLiftPos = -1 * rLift1.getCurrentPosition();
-        int lLiftPos = lLift1.getCurrentPosition();
-
-        int leftPreviousError = Math.abs(tics - lLiftPos);
-        int rightPreviousError = Math.abs(tics - rLiftPos);
-
-
-
-        if(tics < ((rLiftPos + lLiftPos) / 2)){
-            power *= -1;
-        }
-
-        double rightPower = power;
-        double leftPower = power;
-
-
-
-
-
-        //Dont know if need the != condition
-        //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
-
-        //TODO: Check if logic for encoder positions works
-
-        if(power > 0) {
-            while ((time.seconds() - startTime) < 3 && rLiftPos < tics || lLiftPos < tics) {
-
-                //TODO: figure out if we need to negate either of them
-
-                //left
-                intSums[0] += tics - lLiftPos;
-
-                //right
-                intSums[1] += tics - rLiftPos;
-
-
-
-                if (rLiftPos >= tics) {
-                    rightPower = 0;
-                }
-                if (lLiftPos >= tics) {
-                    leftPower = 0;
-                }
-
-
-                rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = lLift1.getCurrentPosition();
-
-                telemetry.addData("rLift", rLiftPos);
-                telemetry.addData("lLift", lLiftPos);
-
-                double currentTime = time.seconds();
-
-                int leftError = tics - lLiftPos;
-                int rightError = tics - rLiftPos;
-
-                telemetry.addData("leftError", leftError);
-                telemetry.addData("rightError", rightError);
-
-                //left
-                intSums[0] += (0.5 * (leftError + leftPreviousError) * (currentTime - intStartTime));
-
-                //right
-                intSums[1] += (0.5 * (rightError + rightPreviousError) * (currentTime - intStartTime));
-
-
-                telemetry.addData("rightIntegral", intSums[0]);
-                telemetry.addData("leftIntegral", intSums[1]);
-
-
-
-
-
-                if(intSums[0] > 20000){
-                    intSums[0] = 20000;
-                }else if(intSums[0] < -20000){
-                    intSums[0] = -20000;
-                }
-
-                if(intSums[1] > 20000){
-                    intSums[1] = 20000;
-                }else if(intSums[1] < -20000){
-                    intSums[1] = -20000;
-                }
-
-
-                setPower(rightPower, leftPower);
-
-                telemetry.update();
-
-
-                intStartTime = currentTime;
-                leftPreviousError = leftError;
-                rightPreviousError = rightError;
-
-
-            }
-        }else{
-            while ((time.seconds() - startTime) < 3 && rLiftPos > tics || lLiftPos > tics) {
-
-                //TODO: figure out if we need to negate either of them
-
-                //left
-                intSums[0] += tics - lLiftPos;
-
-                //right
-                intSums[1] += tics - rLiftPos;
-
-                if (rLiftPos <= tics) {
-                    rightPower = 0;
-                }
-                if (lLiftPos <= tics) {
-                    leftPower = 0;
-                }
-
-
-                rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = lLift1.getCurrentPosition();
-
-                setPower(rightPower, leftPower);
-
-
-            }
-        }
-
-        setPower(0);
-
-        return intSums;
 
     }
 
@@ -1070,42 +681,12 @@ public class ScoringSystemNewest {
         return lLinkage.getPosition();
     }
 
-    public void linkageAutomated(boolean up){
-        if(up){
-            setLinkagePosition(Constants.linkageUp);
-        }else{
-            setLinkagePosition(Constants.linkageDown);
-
-        }
-    }
-
-    //TODO: Tune this
-    public void shiftLinkagePosition(){
-        double setHeight = getGrabberPosition() - 0.04;
-
-        if(setHeight < 0.09){
-            setHeight = 0.25;
-        }else if(setHeight > 0.25){
-            setHeight = 0.25;
-        }
-
-        setLinkagePosition(setHeight);
-    }
 
     public void linkageUpAndDown(boolean up){
         if(up) {
             setLinkagePosition(Constants.linkageUp);
         }else{
             setLinkagePosition(Constants.linkageDown);
-        }
-    }
-
-    public int getEncoderPosition(boolean right){
-        if(right){
-            return rLift1.getCurrentPosition();
-        }else{
-            return lLift1.getCurrentPosition();
-
         }
     }
 
@@ -1125,264 +706,7 @@ public class ScoringSystemNewest {
 
     }
 
-    public boolean isBusy(){
-        return rLift1.isBusy() && lLift1.isBusy();
-    }
 
-
-    public void newLiftPID(int tics){
-
-
-        ElapsedTime time = new ElapsedTime();
-        double startTime = time.seconds();
-        double actualStartTime = startTime;
-
-        PrintStream ps = null;
-        try {
-            ps = new PrintStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-
-        //TODO: check if we need to negate any
-
-        int rightPos = -1 * getRightEncoderPos();
-        int leftPos = -1 * getLeftEncoderPos();
-
-        int rightError = tics - rightPos;
-        int leftError = tics - leftPos;
-
-        int rightPreviousError = 0;
-        int leftPreviousError = 0;
-
-        int rightIntegralSum = 0;
-        int leftIntegralSum = 0;
-
-        int counter = 0;
-
-        while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < 1.5){
-            //telemetry.addData("target", tics);
-
-
-            //TODO: check if we need to negate any
-
-            rightPos = -1 * getRightEncoderPos();
-            leftPos = -1 * getLeftEncoderPos();
-
-
-            //telemetry.addData("rightPos", rightPos);
-            //telemetry.addData("leftPos", leftPos);
-
-            rightError = tics - rightPos;
-            leftError = tics - leftPos;
-
-            double currentTime = time.seconds();
-
-            //telemetry.addData("rightError", rightError);
-            //telemetry.addData("leftError", leftError);
-
-/*
-            rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
-            leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
-
-            //telemetry.addData("rightIntegralSum", rightIntegralSum);
-            //telemetry.addData("leftIntegralSum", leftIntegralSum);
-
-
-
-            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
-            if(rightIntegralSum > 20000){
-                rightIntegralSum = 20000;
-            }else if(rightIntegralSum < -20000){
-                rightIntegralSum = -20000;
-            }
-
-            if(leftIntegralSum > 20000){
-                leftIntegralSum = 20000;
-            }else if(leftIntegralSum < -20000){
-                leftIntegralSum = -20000;
-            }*/
-
-
-
-            double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
-            double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
-
-            //telemetry.addData("rightDerivative", rightDerivative);
-            //telemetry.addData("leftDerivative", leftDerivative);
-
-            double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative));
-            double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative));
-
-
-            //telemetry.addData("rightError", rightError);
-            //telemetry.addData("leftError", leftError);
-
-            setPower(rightPower, leftPower);
-
-
-            startTime = currentTime;
-            rightPreviousError = rightError;
-            leftPreviousError = leftError;
-
-
-           /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
-                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
-            composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
-            composite += "\n";
-
-
-            counter++;
-            //telemetry.update();
-
-
-        }
-
-        //setPower(0,0,0,0);
-        setPower(0);
-
-        ps.println(composite);
-    }
-
-
-    public void newLiftPID(int tics, double limiter){
-
-
-        ElapsedTime time = new ElapsedTime();
-        double startTime = time.seconds();
-        double actualStartTime = startTime;
-
-        PrintStream ps = null;
-        try {
-            ps = new PrintStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-
-        //TODO: check if we need to negate any
-
-        int rightPos = -1 * getRightEncoderPos();
-        int leftPos = -1 * getLeftEncoderPos();
-
-        int rightError = tics - rightPos;
-        int leftError = tics - leftPos;
-
-        int rightPreviousError = 0;
-        int leftPreviousError = 0;
-
-        int rightIntegralSum = 0;
-        int leftIntegralSum = 0;
-
-        int counter = 0;
-
-        while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < 1.2){
-            //telemetry.addData("target", tics);
-
-
-            //TODO: check if we need to negate any
-
-            rightPos = -1 * getRightEncoderPos();
-            leftPos = -1 * getLeftEncoderPos();
-
-
-            //telemetry.addData("rightPos", rightPos);
-            //telemetry.addData("leftPos", leftPos);
-
-            rightError = tics - rightPos;
-            leftError = tics - leftPos;
-
-            double currentTime = time.seconds();
-
-            //telemetry.addData("rightError", rightError);
-            //telemetry.addData("leftError", leftError);
-
-/*
-            rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
-            leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
-
-            //telemetry.addData("rightIntegralSum", rightIntegralSum);
-            //telemetry.addData("leftIntegralSum", leftIntegralSum);
-
-
-
-            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
-            if(rightIntegralSum > 20000){
-                rightIntegralSum = 20000;
-            }else if(rightIntegralSum < -20000){
-                rightIntegralSum = -20000;
-            }
-
-            if(leftIntegralSum > 20000){
-                leftIntegralSum = 20000;
-            }else if(leftIntegralSum < -20000){
-                leftIntegralSum = -20000;
-            }*/
-
-
-
-            double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
-            double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
-
-            //telemetry.addData("rightDerivative", rightDerivative);
-            //telemetry.addData("leftDerivative", leftDerivative);
-
-            double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative));
-            double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative));
-
-            if(Math.abs(rightPower) > limiter){
-                if(rightPower < 0){
-                    rightPower = -1 * limiter;
-                }else{
-                    rightPower = limiter;
-                }
-            }
-
-            if(Math.abs(leftPower) > limiter){
-                if(leftPower < 0){
-                    leftPower = -1 * limiter;
-                }else{
-                    leftPower = limiter;
-                }
-            }
-
-
-            //telemetry.addData("rightError", rightError);
-            //telemetry.addData("leftError", leftError);
-
-            setPower(rightPower, leftPower);
-
-
-            startTime = currentTime;
-            rightPreviousError = rightError;
-            leftPreviousError = leftError;
-
-
-            /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
-                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
-            composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
-            composite += "\n";
-
-            counter++;
-
-
-            //telemetry.update();
-
-
-        }
-
-        //setPower(0,0,0,0);
-        setPower(0);
-
-        ps.println(composite);
-    }
 
 
     public void newLiftPID(int tics, double limiter, double kickout){
@@ -1585,10 +909,6 @@ public class ScoringSystemNewest {
     public int getLiftTarget(){
         return liftTarget;
     }
-
-
-
-
 
 
     public void setGrabberPosition(double position){
