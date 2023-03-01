@@ -38,13 +38,16 @@ public class MecDriveV2 {
     private boolean pidEnabled;
     Telemetry telemetry;
     ColorRangeSensor color;
-    double baseRed, baseBlue;
+    private double baseRed, baseBlue, startTime, currentTime, previousError;
+    ElapsedTime time;
 
 
     //Original
     PIDCoefficients pidf = new PIDCoefficients(0.006, 0, 0.0003);
     int pStraightVel = 4;
     int pRotateVel = 1700;
+    int pTipping = 0;
+    int dTipping = 0;
 
     private final int denom = 2;
     //PIDCoefficients pidf = new PIDCoefficients(0.031, 0,0.00055);
@@ -143,6 +146,11 @@ public class MecDriveV2 {
 
 
         CorrectMotors();
+    }
+
+    public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, ElapsedTime time) {
+        this(hardwareMap, pidEnabled, telemetry);
+        this.time = time;
     }
 
     public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, boolean usingImu) {
@@ -685,6 +693,10 @@ public class MecDriveV2 {
 
     public double getFirstAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+    }
+
+    public double getTippingAngle() {
+        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.YZX, AngleUnit.RADIANS).firstAngle;
     }
 
     //TODO: Test this
@@ -2298,6 +2310,36 @@ public class MecDriveV2 {
 
      */
 
+    public void tippingUpdate(double limiterVel, double imuOrientation) {
+
+
+        currentTime = time.seconds();
+
+        double error = 0 - imuOrientation;
+
+
+        double derivative = (error - previousError) / (currentTime - startTime);
+
+
+        double velocity = ((pTipping * error) + (dTipping * derivative));
+
+        if (Math.abs(velocity) > limiterVel) {
+            if (velocity < 0) {
+                velocity = -1 * limiterVel;
+            } else {
+                velocity = limiterVel;
+            }
+        }
+
+        setVelocity(velocity, velocity, velocity, velocity);
+
+
+        startTime = currentTime;
+        previousError = error;
+
+    }
+
+
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
         fl.setPower(-flPow);
         fr.setPower(frPow);
@@ -2308,7 +2350,7 @@ public class MecDriveV2 {
     public void setVelocity(double flPow, double frPow, double blPow, double brPow) {
         fl.setVelocity(-flPow);
         fr.setVelocity(frPow);
-        ;
+
         bl.setVelocity(-blPow);
         br.setVelocity(brPow);
     }
@@ -2354,7 +2396,7 @@ public class MecDriveV2 {
         }
     }
 
-    public void fieldCentricSetPower(Vector2D velocity, double turnValue, boolean isSwapped){
+    public void fieldCentricSetPower(Vector2D velocity, double turnValue, boolean isSwapped) {
         turnValue = -turnValue;
         double direction = velocity.getDirection() - getFirstAngle();
 

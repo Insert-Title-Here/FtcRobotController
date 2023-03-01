@@ -1,23 +1,25 @@
 package org.firstinspires.ftc.teamcode.Testing.Odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Vector2D;
 
 public class MecDriveSimple {
-    DcMotor fl, fr, bl, br;
+    DcMotorEx fl, fr, bl, br;
     Telemetry telemetry;
     public MecDriveSimple(HardwareMap hardwareMap, Telemetry telemetry){
         this.telemetry = telemetry;
 
         //TODO: Change the deviceName for each
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        br = hardwareMap.get(DcMotor.class, "br");
+        fl = hardwareMap.get(DcMotorEx.class, "fl");
+        fr = hardwareMap.get(DcMotorEx.class, "fr");
+        bl = hardwareMap.get(DcMotorEx.class, "bl");
+        br = hardwareMap.get(DcMotorEx.class, "br");
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -39,6 +41,111 @@ public class MecDriveSimple {
         fr.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.FORWARD);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
+
+    }
+
+    //Prob make use of velocity
+    public void odometryPID(int xfeet, int yfeet, double heading, int delayRotateTics, int delayStrafeTics, double kickout, int limiter){
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+
+        double circumference = 2 * 1.89 * Math.PI;
+
+        double xTicsTarget = ((xfeet / 12) / circumference) * 4096;
+        double yTicsTarget = ((yfeet / 12) / circumference) * 4096;
+
+        //TODO: make current values for x, y, and heading
+
+        double xError = xTicsTarget - 0; //0 is supposed to be the currentTics of x
+        double yError = yTicsTarget - 0; //0 is supposed to be the currentTics of y
+        double headingError = heading - 0; //0 is supposed to be the current heading position
+
+        double xPreviousError = 0;
+        double yPreviousError = 0;
+        double headingPreviousError = 0;
+
+        double flVel = 0;
+        double frVel = 0;
+        double blVel = 0;
+        double brVel = 0;
+
+        while((Math.abs(xError) > 10 || Math.abs(yError) > 10 || Math.abs(headingError) > 10) && (time.seconds() - actualStartTime) < kickout){
+            //TODO: make current values for x, y, and heading
+
+            xError = xTicsTarget - 0; //0 is supposed to be the currentTics of x
+            yError = yTicsTarget - 0; //0 is supposed to be the currentTics of y
+            headingError = heading - 0; //0 is supposed to be the current heading position
+
+            double currentTime = time.seconds();
+
+            double xDerivative = (xError - xPreviousError)/(currentTime - startTime);
+            double yDerviative = (yError - yPreviousError)/(currentTime - startTime);
+            double headingDerivative = (headingError - headingPreviousError)/(currentTime - startTime);
+
+
+
+            //Will have four different powers for each wheel
+            double xPower = xError + xDerivative;
+            double yPower = yError + yDerviative;
+            double headingPower = headingError + headingDerivative;
+
+            //if there is a delay then make the yPower and headingPower take effect later
+            //if(!(Current XPosition > Starting XPosition + delayStrafeTics)) -> set yPower to 0
+            //if(!(Current XPosition > Starting XPosition + delayRotateTics)) -> set headingPower to 0
+
+            //When going positive, need to figure out which direction wheels will go
+            flVel += xPower - yPower + headingPower;
+            frVel += xPower - yPower - headingPower;
+            blVel += xPower + yPower + headingPower;
+            brVel += xPower + yPower - headingPower;
+
+            if(Math.abs(flVel) > limiter){
+                if(flVel < 0){
+                    flVel = -limiter;
+                }else{
+                    flVel = limiter;
+                }
+            }
+
+            if(Math.abs(frVel) > limiter){
+                if(frVel < 0){
+                    frVel = -limiter;
+                }else{
+                    frVel = limiter;
+                }
+            }
+
+            if(Math.abs(blVel) > limiter){
+                if(blVel < 0){
+                    blVel = -limiter;
+                }else{
+                    blVel = limiter;
+                }
+            }
+
+            if(Math.abs(brVel) > limiter){
+                if(brVel < 0){
+                    brVel = -limiter;
+                }else{
+                    brVel = limiter;
+                }
+            }
+
+            setVelocity(flVel, frVel, blVel, brVel);
+
+            startTime = currentTime;
+            xPreviousError = xError;
+            yPreviousError = yError;
+            headingPreviousError = headingError;
+
+
+
+        }
+
+
+
 
     }
 
@@ -84,8 +191,15 @@ public class MecDriveSimple {
 
     public void setPower(double flPow, double frPow, double blPow, double brPow) {
         fl.setPower(-flPow);
-        fr.setPower(-frPow);
-        bl.setPower(blPow);
+        fr.setPower(frPow);
+        bl.setPower(-blPow);
+        br.setPower(brPow);
+    }
+
+    public void setVelocity(double flPow, double frPow, double blPow, double brPow) {
+        fl.setVelocity(-flPow);
+        fr.setPower(frPow);
+        bl.setPower(-blPow);
         br.setPower(brPow);
     }
 

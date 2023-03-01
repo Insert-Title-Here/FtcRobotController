@@ -8,20 +8,23 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.MecDrive;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Old.ScoringSystemV2;
 
 
-@Autonomous
+@Autonomous (name = "testing Tipping PID")
 @Config
 public class PIDFTestingDriveVel extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystemV2 score;
     //Constants constants;
 
-    public static double target = 1000;
+    public static double target = 0;
     public static double p = 0, i = 0, d = 0;
 
     int flPreviousError = 0;
@@ -193,7 +196,7 @@ public class PIDFTestingDriveVel extends LinearOpMode {
 
         currentTime = time.seconds();
 
-        double radError = drive.wrapAngle(drive.getFirstAngle() - radians);
+        double radError = drive.wrapAngle(drive.getTippingAngle() - radians);
 
 
 

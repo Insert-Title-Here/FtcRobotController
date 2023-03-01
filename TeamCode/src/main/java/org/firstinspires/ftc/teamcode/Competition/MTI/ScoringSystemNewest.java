@@ -93,6 +93,8 @@ public class ScoringSystemNewest {
         setLinkagePosition(Constants.linkageDownV2);
         grabber.setPosition(Constants.open);
 
+        time = new ElapsedTime();
+
     }
 
     public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -133,7 +135,7 @@ public class ScoringSystemNewest {
 
     }
 
-    public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry, boolean up) {
+    public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry, boolean up, ElapsedTime time) {
         this.telemetry = telemetry;
 
         coneStack = 1;
@@ -183,6 +185,9 @@ public class ScoringSystemNewest {
         }
         //setLinkagePosition(0.8);
         grabber.setPosition(Constants.open);
+
+        this.time = time;
+
 
     }
 
@@ -309,14 +314,14 @@ public class ScoringSystemNewest {
 
     public void commandAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            setLiftTarget(1025);
+            setLiftTarget(60000);
 
         }else if(height == ScoringMode.MEDIUM){
-            setLiftTarget(610);
+            setLiftTarget(40000);
 
 
         }else if(height == ScoringMode.LOW){
-            setLiftTarget(165);
+            setLiftTarget(25000);
 
         }
 
@@ -489,7 +494,7 @@ public class ScoringSystemNewest {
 
     }
 
-    public void moveToPIDPosition(int tics, double power){
+    public void newLiftPID(int tics, double power){
 
 
         ElapsedTime time = new ElapsedTime();
@@ -517,7 +522,7 @@ public class ScoringSystemNewest {
 
         //TODO: Check if logic for encoder positions works
 
-        while ((time.seconds() - startTime) < 1.25 && Math.abs(leftError) > 2 || Math.abs(leftError) > 2) {
+        while ((time.seconds() - startTime) < 1.25 && Math.abs(leftError) > 2 && Math.abs(leftError) > 2) {
 
             //TODO: figure out if we need to negate either of them
 
@@ -709,19 +714,12 @@ public class ScoringSystemNewest {
 
 
 
-    public void newLiftPID(int tics, double limiter, double kickout){
+    public void newLiftPD(int tics, double limiter, double kickout){
 
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double actualStartTime = startTime;
-
-        PrintStream ps = null;
-        try {
-            ps = new PrintStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
 
 
 
@@ -736,10 +734,6 @@ public class ScoringSystemNewest {
         int rightPreviousError = 0;
         int leftPreviousError = 0;
 
-        int rightIntegralSum = 0;
-        int leftIntegralSum = 0;
-
-        int counter = 0;
 
         while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < kickout){
             //telemetry.addData("target", tics);
@@ -751,46 +745,18 @@ public class ScoringSystemNewest {
             leftPos = -1 * getLeftEncoderPos();
 
 
-            //telemetry.addData("rightPos", rightPos);
-            //telemetry.addData("leftPos", leftPos);
+
 
             rightError = tics - rightPos;
             leftError = tics - leftPos;
 
             double currentTime = time.seconds();
 
-            //telemetry.addData("rightError", rightError);
-            //telemetry.addData("leftError", leftError);
-
-/*
-            rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - startTime));
-            leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - startTime));
-
-            //telemetry.addData("rightIntegralSum", rightIntegralSum);
-            //telemetry.addData("leftIntegralSum", leftIntegralSum);
-
-
-
-            //TODO: look at telemetry and see if we can have new bound (change integral sum limit)
-            if(rightIntegralSum > 20000){
-                rightIntegralSum = 20000;
-            }else if(rightIntegralSum < -20000){
-                rightIntegralSum = -20000;
-            }
-
-            if(leftIntegralSum > 20000){
-                leftIntegralSum = 20000;
-            }else if(leftIntegralSum < -20000){
-                leftIntegralSum = -20000;
-            }*/
-
 
 
             double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
             double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
 
-            //telemetry.addData("rightDerivative", rightDerivative);
-            //telemetry.addData("leftDerivative", leftDerivative);
 
             double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative));
             double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative));
@@ -823,17 +789,8 @@ public class ScoringSystemNewest {
             leftPreviousError = leftError;
 
 
-            /*composite += "right1: " + rLift1.getCurrent(CurrentUnit.AMPS) + "\n";
-                composite += "right2: " + rLift2.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left1: " + lLift1.getCurrent(CurrentUnit.AMPS) + "\n";;
-                composite += "left2: " + lLift2.getCurrent(CurrentUnit.AMPS) + "\n";;*/
-            composite += "(" + counter + ", "  + (rLift1.getCurrent(CurrentUnit.AMPS) + rLift2.getCurrent(CurrentUnit.AMPS) + lLift1.getCurrent(CurrentUnit.AMPS) + lLift2.getCurrent(CurrentUnit.AMPS)) + ")\n";
-            composite += "\n";
-
-            counter++;
 
 
-            //telemetry.update();
 
 
         }
@@ -841,7 +798,7 @@ public class ScoringSystemNewest {
         //setPower(0,0,0,0);
         setPower(0);
 
-        ps.println(composite);
+
     }
 
 
@@ -849,7 +806,7 @@ public class ScoringSystemNewest {
         currentTime = time.seconds();
 
         int rightPos = -1 * getRightEncoderPos();
-        int leftPos = -1 * getLeftEncoderPos();
+        int leftPos = getLeftEncoderPos();
 
 
         //telemetry.addData("rightPos", rightPos);
