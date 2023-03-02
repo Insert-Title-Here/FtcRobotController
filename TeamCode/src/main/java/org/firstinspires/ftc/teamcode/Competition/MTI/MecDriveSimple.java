@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Testing.Odometry;
+package org.firstinspires.ftc.teamcode.Competition.MTI;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -143,6 +143,9 @@ public class MecDriveSimple {
 
 
         }
+
+
+        setVelocity(0,0,0,0);
 
 
 
