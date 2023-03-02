@@ -16,10 +16,10 @@ public class MecDriveSimple {
         this.telemetry = telemetry;
 
         //TODO: Change the deviceName for each
-        fl = hardwareMap.get(DcMotorEx.class, "fl");
-        fr = hardwareMap.get(DcMotorEx.class, "fr");
-        bl = hardwareMap.get(DcMotorEx.class, "bl");
-        br = hardwareMap.get(DcMotorEx.class, "br");
+        fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
+        fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
+        bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
+        br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
 
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
