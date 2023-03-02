@@ -14,7 +14,7 @@ public class OdoTeleopTest extends LinearOpMode {
 
     MecDriveSimple drive;
     Servo servo;
-    private Encoder leftEncoder, rightEncoder, frontEncoder;
+    private Encoder leftEncoder, rightEncoder, frontEncoder, ll, ll2, rl, rl2, br;
 
     private final double NORMAL_LINEAR_MODIFIER = 0.5;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.5;
@@ -24,13 +24,24 @@ public class OdoTeleopTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "fl"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "bl"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "fr"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftLift2"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift2"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift"));
+
+        ll = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftLift"));
+        ll2 = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftLift2"));
+        rl = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift"));
+        rl2 = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift2"));
+        br = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightDrive"));
+
+
+        // center = RightLift
+        // left = LeftLift2
+        // right = RightLift2
 
         drive = new MecDriveSimple(hardwareMap, telemetry);
 
-        servo = hardwareMap.get(Servo.class, "turret");
+        //servo = hardwareMap.get(Servo.class, "turret");
 
 
         waitForStart();
@@ -58,6 +69,11 @@ public class OdoTeleopTest extends LinearOpMode {
             telemetry.addData("pod 1 - Left", leftEncoder.getCurrentPosition());
             telemetry.addData("pod 2 - Back/Center", frontEncoder.getCurrentPosition());
             telemetry.addData("pod 3 - Right", rightEncoder.getCurrentPosition());
+            telemetry.addData("ll", ll.getCurrentPosition());
+            telemetry.addData("ll2", ll2.getCurrentPosition());
+            telemetry.addData("rl", rl.getCurrentPosition());
+            telemetry.addData("rl2", rl2.getCurrentPosition());
+            telemetry.addData("br", br.getCurrentPosition());
             telemetry.update();
 
             if(gamepad1.a){
