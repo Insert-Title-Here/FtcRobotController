@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Competition.State.TeleOp.Current;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.M
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
 import org.firstinspires.ftc.teamcode.Testing.MotionProfile.LinkageMotionProfiler;
 
-
+@Disabled
 @TeleOp (name = "KevinGodModeSequence")
 public class QuadMotorLift extends LinearOpMode {
 

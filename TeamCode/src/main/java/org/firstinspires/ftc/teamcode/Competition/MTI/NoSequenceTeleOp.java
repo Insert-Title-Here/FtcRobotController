@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.M
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MecDriveV2;
 
 
-@TeleOp (name = "NewestBotStuffThatIDontKnowWhatToCall")
+@TeleOp (name = "MTI Version2.5 Teleop")
 public class NoSequenceTeleOp extends LinearOpMode {
 
     ScoringSystemNewest score;
@@ -501,7 +501,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
         while(opModeIsActive()){
 
-            double imuOrientation = drive.getTippingAngle();
+           double imuOrientation = drive.getTippingAngle();
 
 
 
@@ -529,9 +529,9 @@ public class NoSequenceTeleOp extends LinearOpMode {
             }else {
                 if (score.isExtended()) {
                     //Slow down when slides are extended
-                    drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                    drive.setPower(new Vector2D(-leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, -leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), -gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
                 } else {
-                    drive.setPower(new Vector2D(leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                    drive.setPower(new Vector2D(-leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
 

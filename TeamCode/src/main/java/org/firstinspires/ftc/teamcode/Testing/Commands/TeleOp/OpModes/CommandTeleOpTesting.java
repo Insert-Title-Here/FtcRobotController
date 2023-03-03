@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 //TODO: cant drive when lift is going down
 
-
+@Disabled
 @TeleOp(name = "New TeleOp (Dont use yet)")
 public class CommandTeleOpTesting extends LinearOpMode {
 

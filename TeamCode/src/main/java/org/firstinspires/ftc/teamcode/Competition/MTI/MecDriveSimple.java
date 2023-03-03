@@ -11,9 +11,14 @@ import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Vector2D;
 
 public class MecDriveSimple {
     DcMotorEx fl, fr, bl, br;
+    Localizer odometry;
     Telemetry telemetry;
+
+    private double wheelCircumference = 2 * 1.89 * Math.PI;
+
     public MecDriveSimple(HardwareMap hardwareMap, Telemetry telemetry){
         this.telemetry = telemetry;
+        odometry = new Localizer(hardwareMap);
 
         //TODO: Change the deviceName for each
         fl = hardwareMap.get(DcMotorEx.class, "FrontLeftDrive");
@@ -44,23 +49,37 @@ public class MecDriveSimple {
 
     }
 
-    //Prob make use of velocity
+    private double feetToCM(int feet){
+        return feet * 30.48;
+    }
+
+    /**
+     * Goes to targeted position using dead wheels
+     * Can receive a delay for strafing and rotating (based on linear movement)
+     * Has a limiter to the power and a kickout for the loop
+     * @param xfeet
+     * @param yfeet
+     * @param heading
+     * @param delayRotateTics
+     * @param delayStrafeTics
+     * @param kickout
+     * @param limiter
+     */
     public void odometryPID(int xfeet, int yfeet, double heading, int delayRotateTics, int delayStrafeTics, double kickout, int limiter){
+        double firstX = odometry.getX();
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double actualStartTime = startTime;
 
-        double circumference = 2 * 1.89 * Math.PI;
-
-        double xTicsTarget = ((xfeet / 12) / circumference) * 4096;
-        double yTicsTarget = ((yfeet / 12) / circumference) * 4096;
+        double xTarget = feetToCM(xfeet);
+        double yTarget = feetToCM(yfeet);
 
         //TODO: make current values for x, y, and heading
 
-        double xError = xTicsTarget - 0; //0 is supposed to be the currentTics of x
-        double yError = yTicsTarget - 0; //0 is supposed to be the currentTics of y
-        double headingError = heading - 0; //0 is supposed to be the current heading position
+        double xError = xTarget - odometry.getX();
+        double yError = yTarget - odometry.getY();
+        double headingError = heading - odometry.getHeading();
 
         double xPreviousError = 0;
         double yPreviousError = 0;
@@ -72,11 +91,10 @@ public class MecDriveSimple {
         double brVel = 0;
 
         while((Math.abs(xError) > 10 || Math.abs(yError) > 10 || Math.abs(headingError) > 10) && (time.seconds() - actualStartTime) < kickout){
-            //TODO: make current values for x, y, and heading
 
-            xError = xTicsTarget - 0; //0 is supposed to be the currentTics of x
-            yError = yTicsTarget - 0; //0 is supposed to be the currentTics of y
-            headingError = heading - 0; //0 is supposed to be the current heading position
+            xError = xTarget - odometry.getX();
+            yError = yTarget - odometry.getY();
+            headingError = heading - odometry.getHeading();
 
             double currentTime = time.seconds();
 
@@ -94,6 +112,14 @@ public class MecDriveSimple {
             //if there is a delay then make the yPower and headingPower take effect later
             //if(!(Current XPosition > Starting XPosition + delayStrafeTics)) -> set yPower to 0
             //if(!(Current XPosition > Starting XPosition + delayRotateTics)) -> set headingPower to 0
+
+            if(!(odometry.getX() > (firstX + delayStrafeTics))){
+                yPower = 0;
+            }
+
+            if(!(odometry.getX() > (firstX + delayRotateTics))){
+                headingPower = 0;
+            }
 
             //When going positive, need to figure out which direction wheels will go
             flVel += xPower - yPower + headingPower;

@@ -278,8 +278,8 @@ public class ScoringSystemNewest {
         rLift1.setPower(power);
         lLift1.setPower(-power);
 
-        rLift2.setPower(-power);
-        lLift2.setPower(power);
+        rLift2.setPower(power);
+        lLift2.setPower(-power);
     }
 
 
@@ -288,16 +288,16 @@ public class ScoringSystemNewest {
         rLift1.setPower(rightPower);
         lLift1.setPower(-leftPower);
 
-        rLift2.setPower(-rightPower);
-        lLift2.setPower(leftPower);
+        rLift2.setPower(rightPower);
+        lLift2.setPower(-leftPower);
     }
 
     public void setVelocity(double rightPower, double leftPower){
         rLift1.setVelocity(rightPower);
         lLift1.setVelocity(-leftPower);
 
-        rLift2.setVelocity(-rightPower);
-        lLift2.setVelocity(leftPower);
+        rLift2.setVelocity(rightPower);
+        lLift2.setVelocity(-leftPower);
     }
 
     public int getLeftEncoderPos() {
