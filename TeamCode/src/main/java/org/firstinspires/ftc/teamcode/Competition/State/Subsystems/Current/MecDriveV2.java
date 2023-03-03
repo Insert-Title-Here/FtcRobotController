@@ -149,7 +149,7 @@ public class MecDriveV2 {
     }
 
     public MecDriveV2(HardwareMap hardwareMap, boolean pidEnabled, Telemetry telemetry, ElapsedTime time) {
-        this(hardwareMap, pidEnabled, telemetry);
+        this(hardwareMap, pidEnabled, telemetry, true);
         this.time = time;
     }
 
