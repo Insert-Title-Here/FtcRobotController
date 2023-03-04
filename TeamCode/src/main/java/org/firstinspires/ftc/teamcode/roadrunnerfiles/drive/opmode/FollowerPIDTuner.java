@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.roadrunnerfiles.trajectorysequence.Traject
  */
 @Config
 @Autonomous(group = "drive")
-@Disabled
+
 
 public class FollowerPIDTuner extends LinearOpMode {
     public static double DISTANCE = 48; // in
