@@ -17,13 +17,30 @@ public class TestingAutoRR extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         drive.setPoseEstimate(new Pose2d());
-        Trajectory trajectory = drive.trajectoryBuilder(new Pose2d(), true)
-                        .splineTo(new Vector2d(-45, 0), Math.toRadians(270))
+
+        Trajectory firstTrajectory = drive.trajectoryBuilder(new Pose2d())
+                .strafeTo(new Vector2d(-7, -4))
+                .build();
+
+        Trajectory trajectory = drive.trajectoryBuilder(firstTrajectory.end(), true)
+
+                .splineTo(new Vector2d(-20, -4), Math.toRadians(180))
+                .splineTo(new Vector2d(-30, -4), Math.toRadians(180))
+                .splineTo(new Vector2d(-50, -27), Math.toRadians(270))
+
                                 .build();
+
+        Trajectory newestTrajectory = drive.trajectoryBuilder(trajectory.end())
+                .strafeRight(5.2)
+                        .build();
 
         waitForStart();
 
+        drive.followTrajectory(firstTrajectory);
         drive.followTrajectory(trajectory);
+        drive.followTrajectory(newestTrajectory);
+
+        drive.turn(Math.toRadians(9));
 
     }
 }

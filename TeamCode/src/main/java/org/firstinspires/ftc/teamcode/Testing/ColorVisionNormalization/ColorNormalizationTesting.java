@@ -10,25 +10,25 @@ import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.MecDrive;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Subsystems.Used.ScoringSystem2;
 
-@Disabled
+//@Disabled
 @Autonomous
 public class ColorNormalizationTesting extends LinearOpMode {
-    MecDrive drive;
+    //MecDrive drive;
     //Constants constants;
-    ScoringSystem2 score;
+    //ScoringSystem2 score;
     ColorRangeSensor color, distance;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         //constants = newConstants();
-        drive = new MecDrive(hardwareMap, false, telemetry, hardwareMap.get(ColorRangeSensor.class, "color"));
-        score = new ScoringSystem2(hardwareMap, telemetry);
+        //drive = new MecDrive(hardwareMap, false, telemetry, hardwareMap.get(ColorRangeSensor.class, "color"));
+        //score = new ScoringSystem2(hardwareMap, telemetry);
         //color = hardwareMap.get(ColorRangeSensor.class, "color");
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
-        drive.coast();
-        color.setGain(200);
+        //drive.coast();
+        distance.setGain(200);
 
 
         waitForStart();
@@ -41,25 +41,25 @@ public class ColorNormalizationTesting extends LinearOpMode {
 */
        //color.resetDeviceConfigurationForOpMode();
 
-       drive.autoDiagonals(false, false, false);
+       //drive.autoDiagonals(false, false, false);
 
 
         while(opModeIsActive()){
-            if(color.red() > 105 || color.blue() > 200){
-                score.setGrabberPosition(Constants.grabbing);
-            }else{
-                score.setGrabberPosition(Constants.open);
-            }
+            //if(color.red() > 105 || color.blue() > 200){
+                //score.setGrabberPosition(Constants.grabbing);
+            //}else{
+                //score.setGrabberPosition(Constants.open);
+            //}
 
-            telemetry.addData("Nred", color.getNormalizedColors().red);
-            telemetry.addData("Nblue", color.getNormalizedColors().blue);
-            telemetry.addData("blue", color.blue());
-            telemetry.addData("red", color.red());
+            telemetry.addData("Nred", distance.getNormalizedColors().red);
+            telemetry.addData("Nblue", distance.getNormalizedColors().blue);
+            telemetry.addData("blue", distance.blue());
+            telemetry.addData("red", distance.red());
             telemetry.addData("distance", distance.getDistance(DistanceUnit.CM));
-            telemetry.addData("fl", drive.getFLEncoder());
-            telemetry.addData("fr", drive.getFREncoder());
-            telemetry.addData("bl", drive.getBLEncoder());
-            telemetry.addData("br", drive.getBREncoder());
+            //telemetry.addData("fl", drive.getFLEncoder());
+            //telemetry.addData("fr", drive.getFREncoder());
+            //telemetry.addData("bl", drive.getBLEncoder());
+            //telemetry.addData("br", drive.getBREncoder());
 
             telemetry.update();
 
