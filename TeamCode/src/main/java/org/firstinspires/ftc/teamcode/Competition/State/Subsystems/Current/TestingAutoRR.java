@@ -27,25 +27,24 @@ public class TestingAutoRR extends LinearOpMode {
                 .splineTo(new Vector2d(-20, -4), Math.toRadians(180))
                 .splineTo(new Vector2d(-30, -4), Math.toRadians(180))
                 .splineTo(new Vector2d(-37, -4), Math.toRadians(180))
-                .splineTo(new Vector2d(-50, -27), Math.toRadians(270))
+                .splineTo(new Vector2d(-51.5, -26), Math.toRadians(270))
 
                                 .build();
 
         Trajectory newestTrajectory = drive.trajectoryBuilder(trajectory.end())
-                .strafeRight(5.2)
+                .strafeRight(5)
                         .build();
 
         Trajectory realign = drive.trajectoryBuilder(newestTrajectory.end())
-                .strafeLeft(3.0)
+                .strafeLeft(5.2)
                 .build();
 
         Trajectory across = drive.trajectoryBuilder(realign.end())
-                .splineToConstantHeading(new Vector2d(-48, -25), Math.toRadians(270))
-                .splineTo(new Vector2d(-48, 80), Math.toRadians(90))
+                .forward(110)
                         .build();
 
-        Trajectory last = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(3.0)
+        Trajectory last = drive.trajectoryBuilder(across.end(), Math.toRadians(9))
+                .strafeRight(4.0)
                 .build();
 
         waitForStart();
@@ -57,10 +56,14 @@ public class TestingAutoRR extends LinearOpMode {
 
         drive.turn(Math.toRadians(9));
         sleep(1000);
-        drive.turn(Math.toRadians(0));
+        drive.turn(Math.toRadians(-4));
 
-        //drive.followTrajectory(realign);
+        drive.followTrajectory(realign);
         drive.followTrajectory(across);
-        drive.turn(Math.toRadians(189));
+
+        drive.followTrajectory(last);
+        drive.turn(Math.toRadians(171));
+
+
     }
 }

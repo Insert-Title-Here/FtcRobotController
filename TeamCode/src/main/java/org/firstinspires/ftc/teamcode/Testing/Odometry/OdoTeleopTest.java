@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Competition.MTI.MecDriveSimple;
 import org.firstinspires.ftc.teamcode.roadrunnerfiles.util.Encoder;
 
 @TeleOp
-@Disabled
 public class OdoTeleopTest extends LinearOpMode {
 
     MecDriveSimple drive;
@@ -26,7 +25,7 @@ public class OdoTeleopTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftLift2"));
+       /* leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftLift2"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift2"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift"));
 
@@ -34,7 +33,7 @@ public class OdoTeleopTest extends LinearOpMode {
         ll2 = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftLift2"));
         rl = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift"));
         rl2 = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift2"));
-        br = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightDrive"));
+        br = new Encoder(hardwareMap.get(DcMotorEx.class, "BackRightDrive"));*/
 
 
         // center = RightLift
@@ -65,17 +64,18 @@ public class OdoTeleopTest extends LinearOpMode {
                 leftStickX = 0;
             }
 
-            drive.setPower(new Vector2D(leftStickX * NORMAL_LINEAR_MODIFIER, -leftStickY * NORMAL_LINEAR_MODIFIER), -gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
+            drive.setPower(new Vector2D(-leftStickX * NORMAL_LINEAR_MODIFIER, -leftStickY * NORMAL_LINEAR_MODIFIER), -gamepad1.right_stick_x * NORMAL_ROTATIONAL_MODIFIER, false);
 
 
-            telemetry.addData("pod 1 - Left", leftEncoder.getCurrentPosition());
-            telemetry.addData("pod 2 - Back/Center", frontEncoder.getCurrentPosition());
-            telemetry.addData("pod 3 - Right", rightEncoder.getCurrentPosition());
-            telemetry.addData("ll", ll.getCurrentPosition());
-            telemetry.addData("ll2", ll2.getCurrentPosition());
-            telemetry.addData("rl", rl.getCurrentPosition());
-            telemetry.addData("rl2", rl2.getCurrentPosition());
-            telemetry.addData("br", br.getCurrentPosition());
+            telemetry.addData("pod 1 - Left", drive.leftTics());
+            telemetry.addData("pod 2 - Back/Center", drive.auxTics());
+            telemetry.addData("pod 3 - Right", drive.rightTics());
+            telemetry.addData("X-position", drive.getX());
+            telemetry.addData("Y-position", drive.getY());
+            telemetry.addData("Heading", drive.getAngle());
+            telemetry.addData("Imu Heading (radians)", drive.getFirstAngle());
+            telemetry.addData("Imu Heading (degrees)", drive.getFirstAngle() * 180 / Math.PI);
+
             telemetry.update();
 
             if(gamepad1.a){
@@ -86,7 +86,11 @@ public class OdoTeleopTest extends LinearOpMode {
                 servo.setPosition(1);
             }
 
+            drive.update();
+
         }
+
+        drive.setPower(0,0,0,0);
     }
 
 }

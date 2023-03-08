@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Competition.MTI;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.roadrunnerfiles.util.Encoder;
@@ -8,8 +11,8 @@ public class Localizer {
     private Encoder leftEncoder, rightEncoder, auxEncoder;
 
     //TODO: tune these
-    private final static double L = 0;  //distance between encoder 1 and 2 in cm (parallel encoder distance)
-    private final static double B = 0;  //distance between the midpoint of parallel encoders and perpendicular encoder
+    private final static double L = 27.6225;  //distance between encoder 1 and 2 in cm (parallel encoder distance)
+    private final static double B = 8.89;  //distance between the midpoint of parallel encoders and perpendicular encoder
     private final static double R = 1.75;  //wheel radius in cm
     private final static double N = 4096;  //encoder ticks in ticks per revolution, AXON REDUX encoder
     private final static double cm_per_tick = 2.0 * Math.PI * R / N;
@@ -20,11 +23,29 @@ public class Localizer {
 
 
     public Localizer(HardwareMap hardwareMap){
-        leftEncoder = hardwareMap.get(Encoder.class, "name");
-        rightEncoder = hardwareMap.get(Encoder.class, "name");
-        auxEncoder = hardwareMap.get(Encoder.class, "name");
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftLift2"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightLift2"));
+        auxEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BackLeftDrive"));
+
+        leftEncoder.resetMotor();
+        rightEncoder.resetMotor();
+        auxEncoder.resetMotor();
+
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
 
 
+    }
+
+    public int leftTics(){
+        return leftEncoder.getCurrentPosition();
+    }
+
+    public int rightTics(){
+        return rightEncoder.getCurrentPosition();
+    }
+
+    public int auxTics(){
+        return auxEncoder.getCurrentPosition();
     }
 
 
@@ -49,7 +70,7 @@ public class Localizer {
         double theta = heading + (deltaTheta / 2.0);
         x += deltaX * Math.cos(theta) - deltaY * Math.sin(theta);
         y += deltaX * Math.sin(theta) + deltaY * Math.cos(theta);
-        heading += deltaTheta;
+        heading -= deltaTheta;
     }
 
     /**

@@ -699,6 +699,10 @@ public class MecDriveV2 {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.YZX, AngleUnit.RADIANS).firstAngle;
     }
 
+    public double getOtherTippingAngle() {
+        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).firstAngle;
+    }
+
     //TODO: Test this
     public void simpleMoveToPosition(int tics, MovementType movement, double power) {
 

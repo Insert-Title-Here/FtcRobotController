@@ -94,7 +94,9 @@ public class PIDFTestingDriveVel extends LinearOpMode {
             telemetry.addData("brPos", drive.getBREncoder());
 */
 
-            telemetry.addData("current", drive.getFirstAngle());
+            telemetry.addData("X Angle", drive.getOtherTippingAngle());
+            telemetry.addData("Y Angle", drive.getTippingAngle());
+            telemetry.addData("Z Angle", drive.getFirstAngle());
             telemetry.addData("target", target);
 
             telemetry.update();
