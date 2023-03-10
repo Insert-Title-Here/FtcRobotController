@@ -538,7 +538,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     //Slow down when slides are extended
                     drive.setPower(new Vector2D(-leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, -leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), -gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
                 } else {
-                    drive.setPower(new Vector2D(-leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                    drive.setPower(new Vector2D(-leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * 0.8, false);
                 }
             //}
 
