@@ -115,9 +115,6 @@ public class NoSequenceTeleOp extends LinearOpMode {
                                 e.printStackTrace();
                             }
 
-
-                            linkageDown = true;
-
                             score.setGrabberPosition(Constants.open - 0.15);
 
 
@@ -125,6 +122,10 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             //Reset to zero and no passive power
                             //score.moveToPosition(0, 0.5);
                             score.setLiftTarget(0);
+
+
+
+                            linkageDown = true;
                             //passive = PassivePower.ZERO;
 
                             //Open Grabber and reset linkage
@@ -478,6 +479,12 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+
+                        score.setLinkagePosition(0.35);
+
+                        while (score.getLiftTarget() == 0 && Math.abs(score.getLeftEncoderPos()) > 3000) {
+
+                        }
                         //score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
 
                         //TODO: fix cone stack logic
@@ -525,6 +532,10 @@ public class NoSequenceTeleOp extends LinearOpMode {
             telemetry.addData("turn", gamepad1.right_stick_x);
             //telemetry.addData("tippingAngle", imuOrientation);
             telemetry.addData("Math.PI/64", Math.PI/64);
+            telemetry.addData("Grabber", score.getGrabberPosition());
+            telemetry.addData("Left lift", score.getLeftEncoderPos());
+            telemetry.addData("Right lift", score.getRightEncoderPos() * -1);
+            telemetry.addData("Lift target", score.getLiftTarget());
             telemetry.update();
 
             /*if (gamepad1.right_bumper) {

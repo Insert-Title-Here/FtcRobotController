@@ -40,8 +40,8 @@ public class Constants {
 
 
     //Grabber Positions (tuned)
-    public static final double grabbing = 0;
-    public static final double open = 0.75;
+    public static final double grabbing = 1;
+    public static final double open = 0.65;
     public static final double openV2 = 0.60;
     public static final double openV1 = 0.65;
     public static final double score = 0.3;
