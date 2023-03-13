@@ -33,7 +33,7 @@ public class ScoringSystemNewest {
     private double startTime, currentTime;
     Telemetry telemetry;
     ElapsedTime time;
-    PIDCoefficients pidf = new PIDCoefficients(0.000475, 0, 0.0000081);
+    PIDCoefficients pidf = new PIDCoefficients(0.00049, 0, 0.0000081); //Old P = 0.000475
 
     File file = AppUtil.getInstance().getSettingsFile("motion.txt");
     String composite = "";
@@ -90,93 +90,31 @@ public class ScoringSystemNewest {
         grabber =  hardwareMap.get(Servo.class, "Grabber");
 
 
-        setLinkagePosition(Constants.linkageDownV2);
-        grabber.setPosition(Constants.open);
 
-        time = new ElapsedTime();
 
     }
 
     public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry) {
+
+        this(hardwareMap);
         this.telemetry = telemetry;
 
-        coneStack = 1;
-        height = ScoringMode.HIGH;
-        extended = false;
 
-        //distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
-
-        rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
-        lLift1 = hardwareMap.get(DcMotorEx.class, "LeftLift");
-
-        rLift2 = hardwareMap.get(DcMotorEx.class, "RightLift2");
-        lLift2 = hardwareMap.get(DcMotorEx.class, "LeftLift2");
-
-        rLift1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lLift1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        rLift2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lLift2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        rLift1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        lLift1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        rLift2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        lLift2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        rLift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lLift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-
-        rLift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lLift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
     }
 
     public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry, boolean up, ElapsedTime time) {
-        this.telemetry = telemetry;
-
-        coneStack = 1;
-        height = ScoringMode.HIGH;
-        extended = false;
-
-        //distance = hardwareMap.get(DistanceSensor.class, "DistancePole");
-
-        rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
-        lLift1 = hardwareMap.get(DcMotorEx.class, "LeftLift");
-
-        rLift2 = hardwareMap.get(DcMotorEx.class, "RightLift2");
-        lLift2 = hardwareMap.get(DcMotorEx.class, "LeftLift2");
-
-        rLift1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lLift1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        rLift2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lLift2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        this(hardwareMap, telemetry, up);
 
 
-        rLift1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        lLift1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        rLift2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        lLift2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        rLift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lLift1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        this.time = time;
 
 
-        rLift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lLift2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    }
 
-        lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
-        rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
-
-        lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
-        rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
-
-        grabber = hardwareMap.get(Servo.class, "Grabber");
+    public ScoringSystemNewest(HardwareMap hardwareMap, Telemetry telemetry, boolean up) {
+        this(hardwareMap, telemetry);
 
         if(up){
             setLinkagePosition(Constants.linkageUpV2);
@@ -184,9 +122,8 @@ public class ScoringSystemNewest {
             setLinkagePosition(Constants.linkageDownV2);
         }
         //setLinkagePosition(0.8);
-        grabber.setPosition(Constants.open);
+        grabber.setPosition(Constants.grabbing);
 
-        this.time = time;
 
 
     }
@@ -726,7 +663,7 @@ public class ScoringSystemNewest {
         //TODO: check if we need to negate any
 
         int rightPos = -1 * getRightEncoderPos();
-        int leftPos = -1 * getLeftEncoderPos();
+        int leftPos = getLeftEncoderPos();
 
         int rightError = tics - rightPos;
         int leftError = tics - leftPos;
@@ -742,7 +679,7 @@ public class ScoringSystemNewest {
             //TODO: check if we need to negate any
 
             rightPos = -1 * getRightEncoderPos();
-            leftPos = -1 * getLeftEncoderPos();
+            leftPos = getLeftEncoderPos();
 
 
 

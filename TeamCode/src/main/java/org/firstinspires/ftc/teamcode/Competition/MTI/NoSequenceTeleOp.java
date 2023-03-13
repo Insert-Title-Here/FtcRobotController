@@ -323,11 +323,11 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     }
 
-                    //telemetry.addData("target", score.getLiftTarget());
-                    //telemetry.addData("right", score.getRightEncoderPos());
-                    //telemetry.addData("left", score.getLeftEncoderPos());
+                    telemetry.addData("target", score.getLiftTarget());
+                    telemetry.addData("right", score.getRightEncoderPos());
+                    telemetry.addData("left", score.getLeftEncoderPos());
 
-                    //telemetry.update();
+                    telemetry.update();
 
 
 
@@ -520,12 +520,12 @@ public class NoSequenceTeleOp extends LinearOpMode {
                 leftStickX = 0;
             }
 
-            telemetry.addData("leftStickX", leftStickX);
+            /*telemetry.addData("leftStickX", leftStickX);
             telemetry.addData("leftSticky", leftStickY);
             telemetry.addData("turn", gamepad1.right_stick_x);
             //telemetry.addData("tippingAngle", imuOrientation);
             telemetry.addData("Math.PI/64", Math.PI/64);
-            telemetry.update();
+            telemetry.update();*/
 
             /*if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
