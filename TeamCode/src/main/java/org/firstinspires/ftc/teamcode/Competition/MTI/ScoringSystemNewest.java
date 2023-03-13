@@ -254,11 +254,11 @@ public class ScoringSystemNewest {
             setLiftTarget(60000);
 
         }else if(height == ScoringMode.MEDIUM){
-            setLiftTarget(40000);
+            setLiftTarget(34000);
 
 
         }else if(height == ScoringMode.LOW){
-            setLiftTarget(25000);
+            setLiftTarget(10000);
 
         }
 
