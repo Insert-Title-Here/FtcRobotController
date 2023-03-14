@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Competition.MTI;
 
 
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -33,7 +35,7 @@ public class ScoringSystemNewest {
     private double startTime, currentTime;
     Telemetry telemetry;
     ElapsedTime time;
-    PIDCoefficients pidf = new PIDCoefficients(0.00049, 0, 0.0000081); //Old P = 0.000475
+    PIDFCoefficients pidf = new PIDFCoefficients(0.000485, 0, 0.000005, 0.0000125); //Old P = 0.000475
 
     File file = AppUtil.getInstance().getSettingsFile("motion.txt");
     String composite = "";
@@ -201,7 +203,7 @@ public class ScoringSystemNewest {
     //TODO: Fix this
     public int getHeight(){
        if(height == ScoringMode.HIGH){
-           return 1350;
+           return 57500;
        }else if(height == ScoringMode.MEDIUM){
            return 750;
        }else if(height == ScoringMode.LOW){
@@ -251,7 +253,7 @@ public class ScoringSystemNewest {
 
     public void commandAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            setLiftTarget(60000);
+            setLiftTarget(59000);
 
         }else if(height == ScoringMode.MEDIUM){
             setLiftTarget(34000);
@@ -567,6 +569,9 @@ public class ScoringSystemNewest {
         //TODO: tune position values
         rLinkage.setPosition(position);
         lLinkage.setPosition(position);
+
+        telemetry.addData("lift thing", "potato");
+        telemetry.update();
     }
 
     public void setLinkagePositionLogistic(double target, int sleepTime) {
@@ -588,6 +593,9 @@ public class ScoringSystemNewest {
             if(time.milliseconds() - startTime > (3 * sleepTime)){
                 break;
             }
+
+            telemetry.addData("lift thing", "potato");
+            telemetry.update();
         }
         setLinkagePosition(target);
     }
@@ -759,8 +767,8 @@ public class ScoringSystemNewest {
         //telemetry.addData("rightDerivative", rightDerivative);
         //telemetry.addData("leftDerivative", leftDerivative);
 
-        double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative));
-        double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative));
+        double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
+        double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
 
         if(Math.abs(rightPower) > limiter){
             if(rightPower < 0){

@@ -5,11 +5,14 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.MTI.ScoringSystemNewest;
 import org.firstinspires.ftc.teamcode.roadrunnerfiles.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunnerfiles.trajectorysequence.TrajectorySequence;
@@ -22,6 +25,7 @@ public class TestingAutoRR extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         ScoringSystemNewest score = new ScoringSystemNewest(hardwareMap, telemetry, true);
+        Servo wheelieServo = hardwareMap.get(Servo.class, "wheelie");
 
 
 
@@ -91,15 +95,21 @@ public class TestingAutoRR extends LinearOpMode {
 
         drive.turn(Math.toRadians(9));
 
-        CommandScheduler.getInstance().schedule(
-                new SequentialCommandGroup(
-                        new InstantCommand(() -> score.newLiftPD(60000, 1, 2.0)),
-                        new WaitCommand(1000),
-                        new InstantCommand(() -> score.newLiftPD(0, 1, 7.0))
-                )
-
-        );
+        score.setLinkagePosition(Constants.linkageScoreV2);
+        wheelieServo.setPosition(Constants.wheelieHigh);
+        score.newLiftPD(58000, 1, 2.0);
+        score.setGrabberPosition(Constants.score);
         sleep(1000);
+        score.setLinkagePositionLogistic(Constants.linkageUpV2, 500);
+        score.newLiftPD(0, 0.5, 2.0);
+        score.setLinkagePositionLogistic(Constants.linkageDownV2, 500);
+
+        sleep(1000);
+
+        wheelieServo.setPosition(Constants.wheelieRetracted);
+        sleep(1000);
+
+
         /*drive.turn(Math.toRadians(-4));
 
         drive.followTrajectory(realign);

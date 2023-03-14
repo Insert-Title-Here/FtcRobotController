@@ -18,10 +18,7 @@ import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.MTI.ScoringSystemNewest;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.ScoringSystemV2EpicLift;
 
-//rLift1 = positive
-//rLift2 = negative
-//lLift1 = negative
-//lLift2 = positive
+
 @Autonomous
 @Config
 public class PIDFTestingLift extends LinearOpMode {
@@ -34,7 +31,7 @@ public class PIDFTestingLift extends LinearOpMode {
 
 
     public static int target = 300;
-    public static double p = 0, i = 0, d = 0;
+    public static double p = 0, i = 0, d = 0, f = 0;
 
     int rightPreviousError = 0;
     int leftPreviousError = 0;
@@ -54,7 +51,7 @@ public class PIDFTestingLift extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //constants = newConstants();
-        score = new ScoringSystemNewest(hardwareMap, telemetry);
+        score = new ScoringSystemNewest(hardwareMap, telemetry, true);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -144,8 +141,8 @@ public class PIDFTestingLift extends LinearOpMode {
         double leftDerivative = (leftError - leftPreviousError) / (currentTime - startTime);
 
 
-        double rightPower = ((p * rightError) + (d * rightDerivative));
-        double leftPower = ((p * leftError)+ (d * leftDerivative));
+        double rightPower = ((p * rightError) + (d * rightDerivative) + (f * Math.abs(score.getRightEncoderPos())));
+        double leftPower = ((p * leftError)+ (d * leftDerivative) + (f * Math.abs(score.getRightEncoderPos())));
 
 
         score.setPower(rightPower, leftPower);
