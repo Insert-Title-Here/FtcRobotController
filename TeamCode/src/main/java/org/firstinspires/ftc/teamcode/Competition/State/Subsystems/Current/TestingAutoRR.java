@@ -93,11 +93,13 @@ public class TestingAutoRR extends LinearOpMode {
         drive.followTrajectory(newestTrajectory);
 
 
-        drive.turn(Math.toRadians(9));
+        drive.turn(Math.toRadians(10));
 
+        score.setLinkagePosition(Constants.linkageUpV2);
+        //wheelieServo.setPosition(Constants.wheelieMedium);
+        score.newLiftPD(56000, 1, 2.0);
         score.setLinkagePosition(Constants.linkageScoreV2);
-        wheelieServo.setPosition(Constants.wheelieHigh);
-        score.newLiftPD(58000, 1, 2.0);
+        sleep(250);
         score.setGrabberPosition(Constants.score);
         sleep(1000);
         score.setLinkagePositionLogistic(Constants.linkageUpV2, 500);
