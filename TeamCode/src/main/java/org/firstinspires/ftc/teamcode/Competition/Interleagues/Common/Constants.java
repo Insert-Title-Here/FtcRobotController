@@ -44,7 +44,7 @@ public class Constants {
     public static final double open = 0.55; //was 0.65
     public static final double openV2 = 0.60;
     public static final double openV1 = 0.65;
-    public static final double score = 0.3;
+    public static final double score = 0.8;
 
     //Drive Modifiers
     public static final double NORMAL_LINEAR_MODIFIER = 0.8;

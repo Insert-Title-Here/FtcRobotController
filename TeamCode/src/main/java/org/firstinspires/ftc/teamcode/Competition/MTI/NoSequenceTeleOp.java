@@ -66,7 +66,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
 
         //score.setLinkagePositionLogistic(Constants.linkageDown, 500);
-        score.setGrabberPosition(Constants.open - 0.15);
+        score.setGrabberPosition(Constants.open - 0.25);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
@@ -120,7 +120,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                                 e.printStackTrace();
                             }
 
-                            score.setGrabberPosition(Constants.open - 0.15);
+                            score.setGrabberPosition(Constants.open - 0.25);
 
 
                             //Do nothing during movement phase
@@ -138,7 +138,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             //score.setLinkagePositionLogistic(0.8, 500);
                         } else {
 
-                            score.setGrabberPosition(Constants.open - 0.15);
+                            score.setGrabberPosition(Constants.open - 0.25);
                             try {
                                 sleep(700);
                             } catch (InterruptedException e) {
@@ -262,8 +262,8 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     //Manual open and close grabber
                     if (gamepad1.right_stick_button && manualFlag) {
-                        if (score.getGrabberPosition() != Constants.open - 0.15) {
-                            score.setGrabberPosition(Constants.open - 0.15);
+                        if (score.getGrabberPosition() != Constants.open - 0.25) {
+                            score.setGrabberPosition(Constants.open - 0.25);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -324,7 +324,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     } else {
 
-                        if (score.getLiftTarget() == 0 && Math.abs(score.getRightEncoderPos()) > 3000) {
+                        if (score.getLiftTarget() == 0 && Math.abs(score.getRightEncoderPos()) > 1000) {
                             score.newLiftPIDUpdate(0.55);
                             telemetry.addData("stuff", "slow");
 
@@ -603,6 +603,6 @@ public class NoSequenceTeleOp extends LinearOpMode {
         //score.setLinkagePositionLogistic(0.8, 500);
 
 
-        score.setGrabberPosition(Constants.open - 0.15);
+        score.setGrabberPosition(Constants.open - 0.25);
     }
 }
