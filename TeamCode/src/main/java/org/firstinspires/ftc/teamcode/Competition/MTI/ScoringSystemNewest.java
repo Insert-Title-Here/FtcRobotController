@@ -253,7 +253,7 @@ public class ScoringSystemNewest {
 
     public void commandAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            setLiftTarget(59000);
+            setLiftTarget(58000);
 
         }else if(height == ScoringMode.MEDIUM){
             setLiftTarget(34000);

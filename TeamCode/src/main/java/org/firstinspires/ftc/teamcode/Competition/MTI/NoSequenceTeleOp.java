@@ -92,7 +92,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW) {
                                 score.setLinkagePosition(0.7);
                             } else {
-                                score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
+                                score.setLinkagePosition(Constants.linkageScoreV2);
                             }
                             //passive = PassivePower.EXTENDED;
                         } else if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.ULTRA) {
@@ -115,7 +115,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             score.setGrabberPosition(Constants.score);
 
                             try {
-                                sleep(600);
+                                sleep(400);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -128,6 +128,12 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             //score.moveToPosition(0, 0.5);
                             score.setLiftTarget(0);
 
+
+                            try {
+                                sleep(200);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
 
                             linkageDown = true;
                             //passive = PassivePower.ZERO;
@@ -288,27 +294,31 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
 
                     //Changing scoring modes (toggle)
-                    if (gamepad1.y) {
-                        score.setScoringMode(ScoringSystemNewest.ScoringMode.LOW);
-                        wheeliePos = Constants.wheelieRetracted;
+
+                    if(gamepad1.y || gamepad1.a || gamepad1.x || gamepad1.b) {
+                        if (gamepad1.y) {
+                            score.setScoringMode(ScoringSystemNewest.ScoringMode.LOW);
+                            wheeliePos = Constants.wheelieRetracted;
 
 
-
-                    } else if (gamepad1.x) {
-                        score.setScoringMode(ScoringSystemNewest.ScoringMode.MEDIUM);
-                        wheeliePos = Constants.wheelieMedium;
-
-
-                    } else if (gamepad1.b) {
-                        score.setScoringMode(ScoringSystemNewest.ScoringMode.HIGH);
-                        wheeliePos = Constants.wheelieHigh;
+                        } else if (gamepad1.x) {
+                            score.setScoringMode(ScoringSystemNewest.ScoringMode.MEDIUM);
+                            wheeliePos = Constants.wheelieMedium;
 
 
-                    } else if (gamepad1.a) {
-                        //Ultra
-                        score.setScoringMode(ScoringSystemNewest.ScoringMode.ULTRA);
-                        wheeliePos = Constants.wheelieRetracted;
+                        } else if (gamepad1.b) {
+                            score.setScoringMode(ScoringSystemNewest.ScoringMode.HIGH);
+                            wheeliePos = Constants.wheelieHigh;
 
+
+                        } else if (gamepad1.a) {
+                            //Ultra
+                            score.setScoringMode(ScoringSystemNewest.ScoringMode.ULTRA);
+                            wheeliePos = Constants.wheelieRetracted;
+
+                        }
+
+                        wheelieServo.setPosition(wheeliePos);
                     }
 
 
