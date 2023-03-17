@@ -661,6 +661,8 @@ public class ScoringSystemNewest {
 
     public void newLiftPD(int tics, double limiter, double kickout){
 
+        boolean initialErrorIsNegative = false;
+
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
@@ -675,6 +677,11 @@ public class ScoringSystemNewest {
 
         int rightError = tics - rightPos;
         int leftError = tics - leftPos;
+
+
+        if(leftError < 0){
+            initialErrorIsNegative = true;
+        }
 
         int rightPreviousError = 0;
         int leftPreviousError = 0;
@@ -694,6 +701,10 @@ public class ScoringSystemNewest {
 
             rightError = tics - rightPos;
             leftError = tics - leftPos;
+
+            if((initialErrorIsNegative && (rightError > 0 || leftError > 0)) || (!initialErrorIsNegative && (rightError < 0 || leftError < 0))){
+                break;
+            }
 
             double currentTime = time.seconds();
 
