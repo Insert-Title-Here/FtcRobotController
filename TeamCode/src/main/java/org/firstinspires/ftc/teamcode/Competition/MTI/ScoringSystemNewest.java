@@ -35,7 +35,7 @@ public class ScoringSystemNewest {
     private double startTime, currentTime;
     Telemetry telemetry;
     ElapsedTime time;
-    PIDFCoefficients pidf = new PIDFCoefficients(0.000485, 0, 0.000005, 0.0000125); //Old P = 0.000475
+    PIDFCoefficients pidf = new PIDFCoefficients(0.000485, 0, 0.000005, 0.000018); //Old P = 0.000475
 
     File file = AppUtil.getInstance().getSettingsFile("motion.txt");
     String composite = "";
@@ -567,6 +567,19 @@ public class ScoringSystemNewest {
 
     public void setLinkagePosition(double position){
         //TODO: tune position values
+        rLinkage.setPosition(position);
+        lLinkage.setPosition(position);
+
+        telemetry.addData("lift thing", "potato");
+        telemetry.update();
+    }
+
+    public void setLinkagePositionSpecial(double position, int liftTics){
+        //TODO: tune position values
+        while(Math.abs(getRightEncoderPos()) < liftTics){
+
+        }
+
         rLinkage.setPosition(position);
         lLinkage.setPosition(position);
 

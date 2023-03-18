@@ -21,7 +21,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
     ScoringSystemNewest score;
     MecDriveV2 drive;
     ElapsedTime time = new ElapsedTime();
-    Servo wheelieServo;
+    Servo wheelieServo, cameraOdo;
 
     double wheeliePos = Constants.wheelieHigh;
 
@@ -45,6 +45,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         wheelieServo = hardwareMap.get(Servo.class, "wheelie");
+        cameraOdo = hardwareMap.get(Servo.class, "camera");
         //Initializing flags
         autoLinkageFlag = true;
         grabFlag = true;
@@ -57,6 +58,8 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
 
         //Feed forward is going to be off
+
+        cameraOdo.setPosition(0);
 
         score = new ScoringSystemNewest(hardwareMap, telemetry, true, time);
         //robot = new Robot(hardwareMap);
@@ -73,7 +76,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
         //Color sensor gain values
         //color.setGain(300);
-        distance.setGain(300);
+        distance.setGain(250);
 
 
         //Lift Thread
@@ -92,7 +95,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW) {
                                 score.setLinkagePosition(0.7);
                             } else {
-                                score.setLinkagePosition(Constants.linkageScoreV2);
+                                score.setLinkagePosition(Constants.linkageScoreV2 - 0.01);
                             }
                             //passive = PassivePower.EXTENDED;
                         } else if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.ULTRA) {
@@ -102,7 +105,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     }/*else {
                         if(passive == PassivePower.EXTENDED){
                             score.setPowerSingular(0.23);
-                        }else if(passive == PassivePower.ZERO){
+                        }else if(passive == PassivePower.ZEROf){
                             score.setPower(0);
                         }
                     }*/
@@ -114,13 +117,9 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         if (score.getScoringMode() != ScoringSystemNewest.ScoringMode.ULTRA) {
                             score.setGrabberPosition(Constants.score);
 
-                            try {
-                                sleep(400);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
 
-                            score.setGrabberPosition(Constants.open - 0.25);
+
+
 
 
                             //Do nothing during movement phase
@@ -129,8 +128,12 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             score.setLiftTarget(0);
 
 
+
+
+                            score.setGrabberPosition(Constants.open - 0.25);
+
                             try {
-                                sleep(200);
+                                sleep(300);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -200,6 +203,8 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             }
 
                         }
+
+
                         linkageUp = true;
                         autoLinkageFlag = false;
 
@@ -259,7 +264,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     //Linkage up position
                     if (gamepad1.left_stick_button) {
-                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
+                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.01);
                         wheelieServo.setPosition(wheeliePos);
 
 
@@ -334,7 +339,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     } else {
 
-                        if (score.getLiftTarget() == 0 && Math.abs(score.getRightEncoderPos()) > 1000) {
+                        if (score.getLiftTarget() < 2000 && Math.abs(score.getRightEncoderPos()) > 2000) {
                             score.newLiftPIDUpdate(0.55);
                             telemetry.addData("stuff", "slow");
 
@@ -494,10 +499,18 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         } else if (liftBrokenMode) {
                             score.setLinkagePosition(0.54);
                         } else {
-                            score.setLinkagePosition(Constants.linkageScoreV2 - 0.05);
+                            score.setLinkagePosition(Constants.linkageScoreV2 - 0.01);
                         }
 
                         wheelieServo.setPosition(wheeliePos);
+
+
+                        if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW){
+                            score.commandAutoGoToPosition();
+                            score.setLinkagePosition(0.7);
+                            score.setExtended(true);
+
+                        }
                         linkageUp = false;
                     } else if (linkageDown) {
 
@@ -510,9 +523,6 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                         score.setLinkagePosition(0.35);
 
-                        while (score.getLiftTarget() == 0 && Math.abs(score.getLeftEncoderPos()) > 3000) {
-
-                        }
                         //score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
 
                         //TODO: fix cone stack logic
@@ -571,11 +581,11 @@ public class NoSequenceTeleOp extends LinearOpMode {
             //if(imuOrientation > -1.4 || imuOrientation < -1.465) {
             //drive.tippingUpdate(2000, imuOrientation);
             //}else {
-            if (score.isExtended()) {
+            if (score.isExtended() && score.getScoringMode() != ScoringSystemNewest.ScoringMode.LOW) {
                 //Slow down when slides are extended
                 drive.setPower(new Vector2D(-leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, -leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), -gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
             } else {
-                drive.setPower(new Vector2D(-leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * 0.8, false);
+                drive.setPower(new Vector2D(-leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * 0.9, false);
             }
             //}
 
