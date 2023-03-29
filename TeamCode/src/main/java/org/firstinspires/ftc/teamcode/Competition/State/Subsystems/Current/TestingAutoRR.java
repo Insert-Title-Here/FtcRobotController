@@ -92,12 +92,12 @@ public class TestingAutoRR extends LinearOpMode {
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL + 3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 5)
                 )
-                .splineTo(new Vector2d(-50, 4),
+                .splineTo(new Vector2d(-51, 4),
                         Math.toRadians(180),
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL + 7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 10)
                 )
-                .splineToLinearHeading(new Pose2d(-53.5, 0, Math.toRadians(172)), Math.toRadians(172))
+                .splineToLinearHeading(new Pose2d(-54.3, 0.5, Math.toRadians(171)), Math.toRadians(171))
 
 
 
@@ -110,8 +110,8 @@ public class TestingAutoRR extends LinearOpMode {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 20)
                 )
                 .addTemporalMarker(2, () ->{
-                    score.setLinkagePosition(0.275);
-                    score.setGrabberPosition(Constants.open);
+                    score.setLinkagePosition(0.28);
+                    score.setGrabberPosition(0.47);
                 })
 
                 .build();
@@ -236,34 +236,34 @@ public class TestingAutoRR extends LinearOpMode {
         waitForStart();
 
         drive.followTrajectorySequence(first);
-        wheelieServo.setPosition(0.7);
+        wheelieServo.setPosition(0.35);
 
         score.setLinkagePosition(Constants.linkageUpV2 + 0.1);
         score.newLiftPD(60000, 1, 1.2);
         score.setLinkagePosition(Constants.linkageScoreV2 + 0.03);
-        sleep(100);
-        score.setGrabberPosition(0.59);
-        sleep(200);
+        sleep(75);
+        score.setGrabberPosition(0.47);
+        sleep(150);
         score.setLinkagePosition(0.28);
-        sleep(300);
+        sleep(225);
         score.newLiftPD(2000, 0.75, 0.75);
         score.setGrabberPosition(Constants.grabbing);
-        sleep(100);
+        sleep(75);
 
 
         for (int i = 0; i < 5; i++) {
             score.setLinkagePosition(Constants.linkageUpV2 + 0.1);
-            sleep(200);
+            sleep(150);
 
 
 
             score.newLiftPD(60000, 1, 1.2);
             score.setLinkagePosition(Constants.linkageScoreV2 + 0.03);
-            sleep(100);
-            score.setGrabberPosition(0.59);
-            sleep(200);
+            sleep(75);
+            score.setGrabberPosition(0.47);
+            sleep(150);
             if (i == 0) {
-                score.setLinkagePosition(0.23);
+                score.setLinkagePosition(0.25);
             } else if(i == 1){
                 score.setLinkagePosition(0.22);
             }else if(i == 2){
@@ -274,10 +274,10 @@ public class TestingAutoRR extends LinearOpMode {
             }else{
                 score.setLinkagePosition(Constants.linkageUpV2);
             }
-            sleep(300);
+            sleep(225);
 
             if(i == 0){
-                score.newLiftPD(2000, 0.65, 0.75);
+                score.newLiftPD(1500, 0.65, 0.75);
             }else {
                 score.newLiftPD(0, 0.65, 0.75);
             }
@@ -298,7 +298,6 @@ public class TestingAutoRR extends LinearOpMode {
         //otherdrive.setPowerAutoSpecial(0.2, MecDriveV2.MovementType.ROTATE);
 
         //score.setGrabberPosition(Constants.openV2);
-        sleep(1000);
         //drive.followTrajectorySequence(third);
 
         // put camera stuff
@@ -306,36 +305,47 @@ public class TestingAutoRR extends LinearOpMode {
         pipeline.normalizeStrafeSpecial(-0.25, 196, 2);
 
         while(color.getNormalizedColors().red < 0.6){
-            drive.setMotorPowers(0.3, 0.3, 0.3, 0.3);
+            drive.setMotorPowers(0.35, 0.35, 0.35, 0.35);
         }
         drive.setMotorPowers(0, 0, 0, 0);
 
         score.setGrabberPosition(Constants.grabbing);
 
-        sleep(200);
+        sleep(150);
 
         score.setLinkagePosition(Constants.linkageUpV2);
 
-        sleep(200);
+        sleep(150);
 
 
 
 
         //drive.followTrajectory(finalTrajectory);
-
+        wheelieServo.setPosition(0.35);
         otherdrive.tankRotatePIDMoreSpecial((Math.PI / 2) + Math.toRadians(20), 0.5, false, 1);
+
+        drive.setMotorPowers(-0.45,-0.45,-0.45,-0.45);
+        sleep(350);
+        drive.setMotorPowers(0,0,0,0);
 
         score.newLiftPD(61000, 1, 1.2);
         score.setLinkagePosition(Constants.linkageScoreV2 + 0.03);
-        sleep(300);
-        score.setGrabberPosition(0.58);
-        sleep(100);
+        sleep(225);
+        score.setGrabberPosition(0.47);
+        sleep(75);
 
         score.setLinkagePosition(Constants.linkageUpV2);
-        sleep(100);
+        sleep(75);
 
         score.newLiftPD(0, 0.85, 0.7);
 
+
+        score.setLinkagePosition(Constants.linkageScoreV2);
+
+        drive.setMotorPowers(0.45,0.45,0.45,0.45);
+        sleep(500);
+        drive.setMotorPowers(0,0,0,0);
+        sleep(50);
 
         /*drive.followTrajectory(firstTrajectory);
         drive.followTrajectory(newestTrajectory);
@@ -399,7 +409,7 @@ public class TestingAutoRR extends LinearOpMode {
 
         wheelieServo.setPosition(Constants.wheelieRetracted);
 
-        score.setGrabberPosition(0.49);
+        score.setGrabberPosition(0.47);
 
         //drive.followTrajectorySequence(stuff2);
 

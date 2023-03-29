@@ -773,7 +773,7 @@ public class ScoringSystemNewest {
     }
 
 
-    public void newLiftPIDUpdate(double limiter){
+    public void newLiftPIDUpdate(double limiter, boolean high){
         currentTime = time.seconds();
 
         int rightPos = -1 * getRightEncoderPos();
@@ -810,6 +810,11 @@ public class ScoringSystemNewest {
             }else{
                 leftPower = limiter;
             }
+        }
+
+        if(high){
+            rightPower = 1;
+            leftPower = 1;
         }
 
 

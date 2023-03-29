@@ -78,7 +78,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
         //Color sensor gain values
         //color.setGain(300);
-        distance.setGain(250);
+        distance.setGain(230);
 
 
         //Lift Thread
@@ -197,7 +197,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         score.setExtended(false);
 
                         //Automated Grab
-                    } else if ((distance.getNormalizedColors().red > 0.80 || distance.getNormalizedColors().blue > 0.80) && autoLinkageFlag) {
+                    } else if ((distance.getNormalizedColors().red > 0.90 || distance.getNormalizedColors().blue > 0.90) && autoLinkageFlag) {
 
 
                         score.setGrabberPosition(Constants.grabbing);
@@ -205,7 +205,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         grabFlag = false;
 
                         try {
-                            Thread.currentThread().sleep(150);
+                            Thread.currentThread().sleep(250);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -359,15 +359,21 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     } else {
 
                         if (score.getLiftTarget() < 2000 && Math.abs(score.getRightEncoderPos()) > 2000) {
-                            score.newLiftPIDUpdate(0.55);
+                            score.newLiftPIDUpdate(0.55, false);
                             telemetry.addData("stuff", "slow");
 
                         } else if (score.getLiftTarget() != 0) {
 
                             if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.MEDIUM){
-                                score.newLiftPIDUpdate(0.8);
-                            }else{
-                                score.newLiftPIDUpdate(1);
+                                score.newLiftPIDUpdate(0.8, false);
+                            }else if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW){
+                                score.newLiftPIDUpdate(1, false);
+                            }else if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.HIGH){
+                                if(Math.abs(score.getRightEncoderPos()) < score.getLiftTarget()) {
+                                    score.newLiftPIDUpdate(1, true);
+                                }else{
+                                    score.newLiftPIDUpdate(1, false);
+                                }
                             }
 
                             telemetry.addData("stuff", "fast");
