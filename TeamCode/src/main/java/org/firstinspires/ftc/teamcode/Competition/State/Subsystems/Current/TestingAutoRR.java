@@ -97,7 +97,7 @@ public class TestingAutoRR extends LinearOpMode {
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL + 7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 10)
                 )
-                .splineToLinearHeading(new Pose2d(-54.3, 0.5, Math.toRadians(171)), Math.toRadians(171))
+                .splineToLinearHeading(new Pose2d(-52.5, 0.5, Math.toRadians(171)), Math.toRadians(171))
 
 
 
@@ -342,7 +342,7 @@ public class TestingAutoRR extends LinearOpMode {
 
         score.setLinkagePosition(Constants.linkageScoreV2);
 
-        drive.setMotorPowers(0.45,0.45,0.45,0.45);
+        drive.setMotorPowers(0.65,0.65,0.2,0.2);
         sleep(500);
         drive.setMotorPowers(0,0,0,0);
         sleep(50);
