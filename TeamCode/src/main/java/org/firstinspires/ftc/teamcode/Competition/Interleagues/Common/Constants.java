@@ -55,9 +55,9 @@ public class Constants {
     public static final double SPRINT_ROTATIONAL_MODIFIER = 1;
 
     //Wheelie Bar Positions
-    public static final double wheelieHigh = 1;
-    public static final double wheelieMedium = 0.5;
-    public static final double wheelieRetracted = 0.05;
+    public static final double wheelieHigh = 0.7; // was 0.15
+    public static final double wheelieMedium = 0.4;
+    public static final double wheelieRetracted = 1;
 
 
 }

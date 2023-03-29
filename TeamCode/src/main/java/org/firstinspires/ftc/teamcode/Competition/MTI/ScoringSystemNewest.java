@@ -35,7 +35,9 @@ public class ScoringSystemNewest {
     private double startTime, currentTime;
     Telemetry telemetry;
     ElapsedTime time;
-    PIDFCoefficients pidf = new PIDFCoefficients(0.000485, 0, 0.000005, 0.000018); //Old P = 0.000475
+
+
+    PIDFCoefficients pidf = new PIDFCoefficients(0.000485, 0, 0.000005, 0.0000135); //Old P = 0.000475
 
     File file = AppUtil.getInstance().getSettingsFile("motion.txt");
     String composite = "";
@@ -52,7 +54,7 @@ public class ScoringSystemNewest {
 
 
         coneStack = 1;
-        height = ScoringMode.HIGH;
+        height = ScoringMode.LOW;
         extended = false;
 
         rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
@@ -157,27 +159,27 @@ public class ScoringSystemNewest {
     public void setLinkageConeStack(boolean logistic){
         if(logistic){
             if(coneStack == 5){
-                setLinkagePositionLogistic(0.2525, 300);
+                setLinkagePositionLogistic(0.31, 300);
             }else if(coneStack == 4){
-                setLinkagePositionLogistic(0.2115, 300);
+                setLinkagePositionLogistic(0.28, 300);
             }else if(coneStack == 3){
-                setLinkagePositionLogistic(0.1785, 300);
+                setLinkagePositionLogistic(0.25, 300);
             }else if(coneStack == 2){
-                setLinkagePositionLogistic(Constants.linkageDownV2, 300);
+                setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
             }else if(coneStack == 1){
-                setLinkagePositionLogistic(Constants.linkageDownV2, 300);
+                setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
             }
         }else {
             if (coneStack == 5) {
-                setLinkagePosition(0.2525);
+                setLinkagePosition(0.31);
             } else if (coneStack == 4) {
-                setLinkagePosition(0.2115);
+                setLinkagePosition(0.28);
             } else if (coneStack == 3) {
-                setLinkagePosition(0.1785);
+                setLinkagePosition(0.25);
             } else if (coneStack == 2) {
-                setLinkagePosition(Constants.linkageDownV2);
+                setLinkagePosition(Constants.linkageDownV2 + 0.1);
             } else if (coneStack == 1) {
-                setLinkagePosition(Constants.linkageDownV2);
+                setLinkagePosition(Constants.linkageDownV2 + 0.1);
             }
         }
     }
@@ -253,14 +255,14 @@ public class ScoringSystemNewest {
 
     public void commandAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            setLiftTarget(58000);
+            setLiftTarget(55000);
 
         }else if(height == ScoringMode.MEDIUM){
-            setLiftTarget(34000);
+            setLiftTarget(30000);
 
 
         }else if(height == ScoringMode.LOW){
-            setLiftTarget(10000);
+            setLiftTarget(9000);
 
         }
 
@@ -727,8 +729,8 @@ public class ScoringSystemNewest {
             double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
 
 
-            double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative));
-            double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative));
+            double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
+            double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
 
             if(Math.abs(rightPower) > limiter){
                 if(rightPower < 0){
@@ -771,7 +773,7 @@ public class ScoringSystemNewest {
     }
 
 
-    public void newLiftPIDUpdate(double  limiter){
+    public void newLiftPIDUpdate(double limiter){
         currentTime = time.seconds();
 
         int rightPos = -1 * getRightEncoderPos();

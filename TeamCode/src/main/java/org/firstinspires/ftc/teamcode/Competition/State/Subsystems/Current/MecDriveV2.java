@@ -471,7 +471,7 @@ public class MecDriveV2 {
     }
 
 
-    public void tankRotatePIDSpecial(double radians, double power, boolean slidesUp, double kickout) {
+    public void tankRotatePIDSpecial(double radians, double limiter, boolean slidesUp, double kickout) {
 
         /*if(radians > imu.getAngularOrientation().firstAngle){
             power *= -1;
@@ -530,6 +530,14 @@ public class MecDriveV2 {
                 break;
             }
 
+            if(Math.abs(newPower) > limiter){
+                if(newPower < 0){
+                    newPower = -1 * limiter;
+                }else{
+                    newPower = limiter;
+                }
+            }
+
             setPowerAuto(newPower, MecDriveV2.MovementType.ROTATE);
 
             telemetry.addData("Power", newPower);
@@ -540,7 +548,7 @@ public class MecDriveV2 {
 
         }
 
-        power = 0.27;
+        double power = 0.27;
 
         if (radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) {
             power *= -1;
@@ -549,6 +557,99 @@ public class MecDriveV2 {
 
         while (Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007) {
             setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+        }
+
+        simpleBrake();
+
+
+    }
+
+    public void tankRotatePIDMoreSpecial(double radians, double limiter, boolean slidesUp, double kickout) {
+
+        /*if(radians > imu.getAngularOrientation().firstAngle){
+            power *= -1;
+        }*/
+
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+
+        radians = wrapAngle(radians);
+        double radError = wrapAngle(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians);
+        double previousError = radError;
+        double integralSum = 0;
+
+
+        while (Math.abs(radError) > 0.005 && (time.seconds() - actualStartTime) < kickout) {
+
+            telemetry.addData("target", radians);
+
+            double newPower = 0;
+
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+
+            double currentTime = time.seconds();
+
+            radError = wrapAngle(currentAngle - radians);
+            telemetry.addData("current", currentAngle);
+
+            telemetry.addData("Error", radError);
+
+            integralSum += (radError + previousError) / (currentTime - startTime);
+            telemetry.addData("Integral", integralSum);
+
+            //TODO:See if we need an integral limit
+            if (integralSum > 10000) {
+                integralSum = 10000;
+            } else if (integralSum < -10000) {
+                integralSum = -10000;
+            }
+
+            double derivative = (radError - previousError) / (currentTime - startTime);
+            telemetry.addData("Derivative", derivative);
+
+
+            //TODO: see if we should multiply by power at the end
+
+
+            if (!slidesUp) {
+                newPower = ((rotate.p * radError) + (rotate.i * integralSum) + (rotate.d * derivative));
+            } else {
+                newPower = ((rotateFaster.p * radError) + (rotateFaster.i * integralSum) + (rotateFaster.d * derivative));
+            }
+
+
+            if (Math.abs(newPower) < 0.15) {
+                break;
+            }
+
+            if(Math.abs(newPower) > limiter){
+                if(newPower < 0){
+                    newPower = -1 * limiter;
+                }else{
+                    newPower = limiter;
+                }
+            }
+
+            setPowerAutoSpecial(newPower, MecDriveV2.MovementType.ROTATE);
+
+            telemetry.addData("Power", newPower);
+
+            startTime = currentTime;
+            previousError = radError;
+            telemetry.update();
+
+        }
+
+        double power = 0.27;
+
+        if (radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) {
+            power *= -1;
+        }
+
+
+        while (Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007) {
+            setPowerAutoSpecial(power, MecDriveV2.MovementType.ROTATE);
         }
 
         simpleBrake();
@@ -2428,6 +2529,33 @@ public class MecDriveV2 {
             setPower(power, -power, -power, power);
         } else if (movement == MecDriveV2.MovementType.ROTATE) {
             setPower(power, -power, power, -power);
+        } else if (movement == MecDriveV2.MovementType.LDIAGONAL) {
+            setPower(0, power, power, 0);
+        } else if (movement == MecDriveV2.MovementType.RDIAGONAL) {
+            //setPower(0, power, power, 0);
+            setPower(power, 0, 0, power);
+        } else if (movement == MecDriveV2.MovementType.RDIAGONALLESS) {
+            //setPower(0, power, power, 0);
+            setPower(power, power / 1.35, power / 1.35, power);
+        } else if (movement == MecDriveV2.MovementType.LDIAGONALLESS) {
+            //setPower(0, power, power, 0);
+            setPower(power / 1.35, power, power, power / 1.35);
+        }
+        return power;
+    }
+
+    public double setPowerAutoSpecial(double power, MecDriveV2.MovementType movement) {
+        if (movement == MecDriveV2.MovementType.STRAIGHT) {
+            setPower(power, power, power, power);
+        } else if (movement == MecDriveV2.MovementType.STRAFE) {
+            if(power < 0){
+                setPower(-power + 0.02, -power + 0.02, power, power);
+            }else{
+                setPower(-power - 0.02, -power - 0.02, power, power);
+            }
+
+        } else if (movement == MecDriveV2.MovementType.ROTATE) {
+            setPower(-power, -power, -power, -power);
         } else if (movement == MecDriveV2.MovementType.LDIAGONAL) {
             setPower(0, power, power, 0);
         } else if (movement == MecDriveV2.MovementType.RDIAGONAL) {

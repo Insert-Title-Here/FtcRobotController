@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionC
 import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field2RedLeft;
 import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.Field2RedRight;
 import org.firstinspires.ftc.teamcode.Competition.State.Autonomous.InUse.VisionConstants.RedCone;
+import org.firstinspires.ftc.teamcode.roadrunnerfiles.drive.SampleMecanumDrive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -127,9 +128,9 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
 
     //Cone submat
     public static int topLeftXCone = 75;
-    public static int topLeftYCone = 25;
+    public static int topLeftYCone = 75;
     public static int bottomRightXCone = 265;
-    public static int bottomRightYCone = 100;
+    public static int bottomRightYCone = 176;
 
     //RightAutoPole Submat
     public static int topLeftXRight = 250;
@@ -630,6 +631,53 @@ public class KevinGodPipelineAprilTag extends OpenCvPipeline {
                 drive.setPowerAuto(-power, MecDriveV2.MovementType.STRAFE);
             } else {
                 drive.setPowerAuto(power, MecDriveV2.MovementType.STRAFE);
+            }
+
+//            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);
+            if(time.seconds() - startTime > 2){
+                //normlizationBroke = true;
+                wrongWay = true;
+                break;
+            }
+        }
+        drive.simpleBrake();
+
+        isNormalizing = false;
+
+
+
+        if(getXContour() < startPolePosition){
+            return -(int)(startPos - drive.avgPos());
+
+        }
+
+        return (int)(startPos - drive.avgPos());
+
+
+
+
+
+    }
+
+
+    public int normalizeStrafeSpecial(double power, int target, int tolerance) {
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        contourTarget = target;
+        isNormalizing = true;
+        boolean wrongWay = false;
+        int xMax = target + tolerance;
+        int xMin = target - tolerance;
+        double startPos = drive.avgPos();
+        int startPolePosition = getXContour();
+
+
+
+        while((getXContour() > xMax || getXContour() < xMin)) {
+            if(getXContour() > xMax) {
+                drive.setPowerAutoSpecial(-power, MecDriveV2.MovementType.STRAFE);
+            } else {
+                drive.setPowerAutoSpecial(power, MecDriveV2.MovementType.STRAFE);
             }
 
 //            drive.setPowerAuto(power, MecDriveV2.MovementType.ROTATE);

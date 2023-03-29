@@ -23,7 +23,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
     ElapsedTime time = new ElapsedTime();
     Servo wheelieServo, cameraOdo;
 
-    double wheeliePos = Constants.wheelieHigh;
+    double wheeliePos = Constants.wheelieRetracted;
 
     double linkageToggleSpeed = 0.001;
 
@@ -35,6 +35,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
     volatile boolean autoLinkageFlag, grabFlag, shiftLinkageFlag, manualFlag, changeStackFlag, linkageUp, linkageDown, firstDpadUp, changeToggle;
     volatile boolean liftBrokenMode = false;
     volatile boolean optionsFlag = true;
+    volatile boolean startFlag = true;
 
     Thread liftThread, linkageThread;
 
@@ -61,6 +62,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
         cameraOdo.setPosition(0);
 
+
         score = new ScoringSystemNewest(hardwareMap, telemetry, true, time);
         //robot = new Robot(hardwareMap);
 
@@ -69,7 +71,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
 
         //score.setLinkagePositionLogistic(Constants.linkageDown, 500);
-        score.setGrabberPosition(Constants.open - 0.25);
+        score.setGrabberPosition(Constants.open - 0.04);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
@@ -94,9 +96,10 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                             if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW) {
                                 score.setLinkagePosition(0.7);
-                            } else {
-                                score.setLinkagePosition(Constants.linkageScoreV2 - 0.01);
                             }
+                            /*else {
+                                score.setLinkagePosition(Constants.linkageScoreV2 + 0.05);
+                            }*/
                             //passive = PassivePower.EXTENDED;
                         } else if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.ULTRA) {
                             score.setLinkagePosition(0.15);
@@ -113,13 +116,27 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     //Scoring feature
                     if (gamepad1.right_trigger > 0.1) {
+                        startFlag = false;
 
                         if (score.getScoringMode() != ScoringSystemNewest.ScoringMode.ULTRA) {
+
+                            if (Math.abs(score.getRightEncoderPos()) > 2000) {
+                                if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW) {
+                                    score.setLinkagePosition(Constants.linkageScoreV2 + 0.12);
+                                } else if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.MEDIUM) {
+                                    score.setLinkagePosition(Constants.linkageScoreV2 + 0.08);
+                                }else{
+                                    score.setLinkagePosition(Constants.linkageScoreV2 + 0.05);
+                                }
+                            }
+
+                            try {
+                                Thread.currentThread().sleep(100);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+
                             score.setGrabberPosition(Constants.score);
-
-
-
-
 
 
                             //Do nothing during movement phase
@@ -128,9 +145,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             score.setLiftTarget(0);
 
 
-
-
-                            score.setGrabberPosition(Constants.open - 0.25);
+                            score.setGrabberPosition(Constants.open - 0.04);
 
                             try {
                                 sleep(300);
@@ -147,7 +162,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             //score.setLinkagePositionLogistic(0.8, 500);
                         } else {
 
-                            score.setGrabberPosition(Constants.open - 0.25);
+                            score.setGrabberPosition(Constants.open - 0.04);
                             try {
                                 sleep(700);
                             } catch (InterruptedException e) {
@@ -238,7 +253,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                         //Raise linkage by height of a cone (max height of 5)
                         if (gamepad1.dpad_up) {
-                            score.setConeStack(5);
+                            score.setConeStack(4);
                             score.setLinkageConeStack(false);
                             changeStackFlag = false;
 
@@ -264,17 +279,19 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     //Linkage up position
                     if (gamepad1.left_stick_button) {
-                        score.setLinkagePosition(Constants.linkageScoreV2 - 0.01);
-                        wheelieServo.setPosition(wheeliePos);
 
 
                     }
 
 
                     //Manual open and close grabber
-                    if (gamepad1.right_stick_button && manualFlag) {
-                        if (score.getGrabberPosition() != Constants.open - 0.25) {
-                            score.setGrabberPosition(Constants.open - 0.25);
+                    if (gamepad1.right_stick_button) {
+
+                        linkageUp = true;
+                        autoLinkageFlag = false;
+                        wheelieServo.setPosition(wheeliePos);
+                        /*if (score.getGrabberPosition() != Constants.open + 0.04) {
+                            score.setGrabberPosition(Constants.open + 0.04);
                             try {
                                 sleep(300);
                             } catch (InterruptedException e) {
@@ -295,12 +312,14 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     if (!gamepad1.right_stick_button) {
                         manualFlag = true;
+                    }*/
+
                     }
 
 
                     //Changing scoring modes (toggle)
 
-                    if(gamepad1.y || gamepad1.a || gamepad1.x || gamepad1.b) {
+                    if (gamepad1.y || gamepad1.a || gamepad1.x || gamepad1.b) {
                         if (gamepad1.y) {
                             score.setScoringMode(ScoringSystemNewest.ScoringMode.LOW);
                             wheeliePos = Constants.wheelieRetracted;
@@ -308,7 +327,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                         } else if (gamepad1.x) {
                             score.setScoringMode(ScoringSystemNewest.ScoringMode.MEDIUM);
-                            wheeliePos = Constants.wheelieMedium;
+                            wheeliePos = Constants.wheelieHigh;
 
 
                         } else if (gamepad1.b) {
@@ -343,11 +362,17 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             score.newLiftPIDUpdate(0.55);
                             telemetry.addData("stuff", "slow");
 
-                        } else if(score.getLiftTarget() != 0){
-                            score.newLiftPIDUpdate(1);
+                        } else if (score.getLiftTarget() != 0) {
+
+                            if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.MEDIUM){
+                                score.newLiftPIDUpdate(0.8);
+                            }else{
+                                score.newLiftPIDUpdate(1);
+                            }
+
                             telemetry.addData("stuff", "fast");
 
-                        }else{
+                        } else {
                             score.setPower(0);
                         }
 
@@ -419,6 +444,14 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         changeToggle = true;
                     }
 
+                    if (score.getLiftTarget() == 0 && Math.abs(score.getRightEncoderPos()) < 2000 && score.getRightLinkage() != 0.15 && (score.getConeStack() == 1 || score.getConeStack() == 2) && autoLinkageFlag && !score.isExtended() && !startFlag) {
+                        if(score.getConeStack() == 1) {
+                            score.setLinkagePosition(0.15);
+                        }else{
+                            score.setLinkagePosition(0.22);
+                        }
+                    }
+
 
                 }
 
@@ -478,6 +511,8 @@ public class NoSequenceTeleOp extends LinearOpMode {
                 systems.setCapstoneExtensionPower(0);
 
 
+
+
             }
         };
 */
@@ -505,9 +540,11 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         wheelieServo.setPosition(wheeliePos);
 
 
-                        if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW){
+                        if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW || score.getScoringMode() == ScoringSystemNewest.ScoringMode.MEDIUM) {
                             score.commandAutoGoToPosition();
-                            score.setLinkagePosition(0.7);
+                            if (score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW) {
+                                score.setLinkagePosition(0.7);
+                            }
                             score.setExtended(true);
 
                         }
@@ -526,7 +563,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         //score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
 
                         //TODO: fix cone stack logic
-                        score.setLinkageConeStack(true);
+                        score.setLinkageConeStack(false);
                         linkageDown = false;
                     }
                 }
@@ -534,7 +571,6 @@ public class NoSequenceTeleOp extends LinearOpMode {
         };
 
         wheelieServo.setPosition(wheeliePos);
-
 
 
         waitForStart();
@@ -573,24 +609,26 @@ public class NoSequenceTeleOp extends LinearOpMode {
             //telemetry.addData("tippingAngle", imuOrientation);
             telemetry.addData("Math.PI/64", Math.PI/64);
 
+             */
 
-            /*if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
-            } else*/
 
-            //if(imuOrientation > -1.4 || imuOrientation < -1.465) {
-            //drive.tippingUpdate(2000, imuOrientation);
-            //}else {
-            if (score.isExtended() && score.getScoringMode() != ScoringSystemNewest.ScoringMode.LOW) {
-                //Slow down when slides are extended
-                drive.setPower(new Vector2D(-leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, -leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), -gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+            if (gamepad1.right_bumper) {
+                drive.setPower(new Vector2D(-leftStickX * Constants.SPRINT_LINEAR_MODIFIER, -leftStickY * Constants.SPRINT_LINEAR_MODIFIER), -gamepad1.right_stick_x * 0.7, false);
             } else {
-                drive.setPower(new Vector2D(-leftStickX/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * 0.9, false);
+
+                //if(imuOrientation > -1.4 || imuOrientation < -1.465) {
+                //drive.tippingUpdate(2000, imuOrientation);
+                //}else {
+                if (score.isExtended() && score.getScoringMode() != ScoringSystemNewest.ScoringMode.LOW) {
+                    //Slow down when slides are extended
+                    drive.setPower(new Vector2D(-leftStickX * 0.8, -leftStickY * 0.8), -gamepad1.right_stick_x * 0.45, false);
+                } else {
+                    drive.setPower(new Vector2D(-leftStickX * 0.8/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY * 0.8/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * 0.8, false);
+                }
             }
-            //}
 
 
-            //Telemetry
+                //Telemetry
 
             /*telemetry.addData("lMotor", -1 * score.getLeftEncoderPos());
             telemetry.addData("rMotor", score.getRightEncoderPos());
@@ -612,17 +650,17 @@ public class NoSequenceTeleOp extends LinearOpMode {
             telemetry.update();
 */
 
-        }
+            }
 
 
-        //Stop
-        drive.simpleBrake();
+            //Stop
+            drive.simpleBrake();
 
-        //score.setLinkagePositionLogistic(0.25, 500);
-        score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
-        //score.setLinkagePositionLogistic(0.8, 500);
+            //score.setLinkagePositionLogistic(0.25, 500);
+            score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
+            //score.setLinkagePositionLogistic(0.8, 500);
 
 
-        score.setGrabberPosition(Constants.open - 0.25);
+            score.setGrabberPosition(Constants.open - 0.04);
     }
 }
