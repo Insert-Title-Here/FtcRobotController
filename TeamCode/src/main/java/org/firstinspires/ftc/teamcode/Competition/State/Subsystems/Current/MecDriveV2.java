@@ -643,12 +643,17 @@ public class MecDriveV2 {
 
         double power = 0.27;
 
-        if (radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) {
-            power *= -1;
-        }
+
 
 
         while (Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007) {
+
+            if (radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) {
+                power = -0.27;
+            }else{
+                power = 0.27;
+            }
+
             setPowerAutoSpecial(power, MecDriveV2.MovementType.ROTATE);
         }
 

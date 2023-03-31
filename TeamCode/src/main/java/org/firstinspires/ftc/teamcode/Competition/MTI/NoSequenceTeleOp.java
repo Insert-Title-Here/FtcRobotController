@@ -369,7 +369,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             }else if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.LOW){
                                 score.newLiftPIDUpdate(1, false);
                             }else if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.HIGH){
-                                if(Math.abs(score.getRightEncoderPos()) < score.getLiftTarget()) {
+                                if(Math.abs(score.getRightEncoderPos()) < score.getLiftTarget() && Math.abs(score.getLeftEncoderPos()) < score.getLiftTarget()) {
                                     score.newLiftPIDUpdate(1, true);
                                 }else{
                                     score.newLiftPIDUpdate(1, false);
