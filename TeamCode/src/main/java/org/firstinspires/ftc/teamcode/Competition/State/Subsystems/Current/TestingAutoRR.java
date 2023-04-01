@@ -29,6 +29,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.List;
+
 @Autonomous
 public class TestingAutoRR extends LinearOpMode {
 
@@ -41,6 +43,7 @@ public class TestingAutoRR extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive.resetEncoders();
         MecDriveV2 otherdrive = new MecDriveV2(hardwareMap, false, telemetry, false);
         ScoringSystemNewest score = new ScoringSystemNewest(hardwareMap, telemetry, true);
         Servo wheelieServo = hardwareMap.get(Servo.class, "wheelie");
@@ -88,7 +91,10 @@ public class TestingAutoRR extends LinearOpMode {
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 10)
                 )*/
 
-                .back(54)
+                .back(54,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL + 10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 7)
+                )
 
 
 
@@ -115,13 +121,30 @@ public class TestingAutoRR extends LinearOpMode {
 
 
         TrajectorySequence second = drive.trajectorySequenceBuilder(new Pose2d(-34, 0, Math.toRadians(90)))
-                .splineTo(new Vector2d(-55.5, 6), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-57.5, 1.5, Math.toRadians(166)), Math.toRadians(166))
+                .splineTo(new Vector2d(-55.5, 6),
+                        Math.toRadians(180),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL + 12, DriveConstants.MAX_ANG_VEL + 5, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 10)
+                )
+                .splineToLinearHeading(new Pose2d(-57.5, 2.5, Math.toRadians(164)),
+                        Math.toRadians(166),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL + 12, DriveConstants.MAX_ANG_VEL + 5, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 12)
+                        )
 
 
                 .build();
 
-        TrajectorySequence third = drive.trajectorySequenceBuilder(new Pose2d(-50, 4, 0))
+        Trajectory hopeful = drive.trajectoryBuilder(second.end())
+                .splineToLinearHeading(
+                new Pose2d(-55, 6, Math.toRadians(0)), Math.toRadians(0),
+                SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL + 15, DriveConstants.MAX_ANG_VEL + 5, DriveConstants.TRACK_WIDTH),
+                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 8)
+                )
+
+                .build();
+
+        TrajectorySequence third = drive.trajectorySequenceBuilder(new Pose2d(-50, 4, 220))
                 .forward(100,
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL + 22, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL + 22)
@@ -258,10 +281,11 @@ public class TestingAutoRR extends LinearOpMode {
         wheelieServo.setPosition(0.4);
 
 
-        /*score.newLiftPD(60000, 1, 1.2);
+        //score.newLiftPD(60000, 1, 1.2);
+        score.moveToPosition(60000, 1, 1);
         score.setLinkagePosition(Constants.linkageScoreV2 + 0.03);
         sleep(75);
-        score.setGrabberPosition(0.47);
+        score.setGrabberPosition(0.5);
         sleep(150);
         score.setLinkagePosition(0.28);
         sleep(225);
@@ -276,10 +300,11 @@ public class TestingAutoRR extends LinearOpMode {
 
 
 
-            score.newLiftPD(60000, 1, 1.2);
+            //score.newLiftPD(60000, 1, 1.2);
+            score.moveToPosition(60000, 1, 1);
             score.setLinkagePosition(Constants.linkageScoreV2 + 0.03);
             sleep(75);
-            score.setGrabberPosition(0.47);
+            score.setGrabberPosition(0.5);
             sleep(150);
             if (i == 0) {
                 score.setLinkagePosition(0.25);
@@ -296,30 +321,52 @@ public class TestingAutoRR extends LinearOpMode {
             sleep(225);
 
             if(i == 0){
-                score.newLiftPD(1500, 0.55, 0.75);
+                score.newLiftPD(1500, 0.6, 0.7);
+                score.setGrabberPosition(Constants.grabbing);
+                sleep(110);
             }else {
-                score.newLiftPD(0, 0.55, 0.75);
+                score.newLiftPD(0, 0.6, 0.7);
+                score.setGrabberPosition(Constants.grabbing);
+                sleep(80);
             }
 
-            score.setGrabberPosition(Constants.grabbing);
-
-            sleep(100);
 
 
-        }*/
+
+        }
 
         wheelieServo.setPosition(Constants.wheelieRetracted);
+
+        drive.followTrajectory(hopeful);
+        otherdrive.tankRotateSpecial(-1.61, 0.2);
 
         //Move Across
 
 
-        otherdrive.tankRotatePIDMoreSpecial(-1.365, 0.8, false, 2.5);
+        //-1.5 is too far to the pole
+        //-1.46 is too far the other way
 
+
+
+        /*otherdrive.tankRotateSpecial(-1, 0.6);
+
+
+
+        while(Math.abs(-1.48 - otherdrive.getFirstAngle()) > 0.005){
+            drive.setMotorPowers(0.4, 0.4, 0.3, 0.3);
+        }
+        drive.setMotorPowers(0,0,0,0);
         sleep(2000);
+*/
 
-        drive.setPoseEstimate(new Pose2d(-50, 4, 0));
+        score.setGrabberPosition(0.49);
+        score.setLinkagePosition(0.28);
+        drive.resetEncoders();
+        drive.pid(93, 4, 3);
 
-        drive.followTrajectorySequence(third);
+
+
+
         //otherdrive.setPowerAutoSpecial(0.2, MecDriveV2.MovementType.ROTATE);
 
         //score.setGrabberPosition(Constants.openV2);
@@ -327,7 +374,7 @@ public class TestingAutoRR extends LinearOpMode {
 
         // put camera stuff
 
-        pipeline.normalizeStrafeSpecial(-0.25, 196, 2);
+        pipeline.normalizeStrafeSpecial(-0.25, 165,2);
 
         while(color.getNormalizedColors().red < 0.6){
             drive.setMotorPowers(0.4, 0.4, 0.4, 0.4);
@@ -346,15 +393,15 @@ public class TestingAutoRR extends LinearOpMode {
 
 
 
-        wheelieServo.setPosition(0.4);
+        //wheelieServo.setPosition(0.4);
 
-        otherdrive.tankRotatePIDMoreSpecial(-1, 0.5, false, 1);
+        otherdrive.tankRotatePIDMoreSpecial(-1.2, 0.5, false, 1);
 
         drive.setMotorPowers(-0.45,-0.45,-0.45,-0.45);
         sleep(350);
         drive.setMotorPowers(0,0,0,0);
 
-        /*score.newLiftPD(61000, 1, 1.2);
+        score.newLiftPD(61000, 1, 1.2);
         score.setLinkagePosition(Constants.linkageScoreV2 + 0.03);
         sleep(225);
         score.setGrabberPosition(0.47);
@@ -366,7 +413,7 @@ public class TestingAutoRR extends LinearOpMode {
         score.newLiftPD(0, 0.55, 0.75);
 
 
-        score.setLinkagePosition(Constants.linkageScoreV2);*/
+        score.setLinkagePosition(Constants.linkageScoreV2);
 
         drive.setMotorPowers(0.65,0.65,0.2,0.2);
         sleep(500);

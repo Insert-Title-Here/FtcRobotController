@@ -292,6 +292,28 @@ public class MecDriveV2 {
     }
 
 
+    public void tankRotateSpecial(double radians, double power) {
+
+        double newPower = power;
+
+        radians = wrapAngle(radians);
+
+
+        while (Math.abs(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - radians) > 0.007) {
+
+            if (radians > imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle) {
+                newPower = power * -1;
+            }else{
+                newPower = power;
+            }
+
+            setPowerAutoSpecial(newPower, MecDriveV2.MovementType.ROTATE);
+        }
+
+        simpleBrake();
+    }
+
+
     public void tankRotatePID(double radians, double power, boolean slidesUp) {
 
         /*if(radians > imu.getAngularOrientation().firstAngle){

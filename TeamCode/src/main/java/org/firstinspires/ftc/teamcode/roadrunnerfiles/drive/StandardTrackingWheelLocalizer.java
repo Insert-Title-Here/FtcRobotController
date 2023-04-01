@@ -80,4 +80,10 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 encoderTicksToInches(frontEncoder.getCorrectedVelocity())
         );
     }
+
+    public void resetEncoders(){
+        leftEncoder.resetMotor();
+        rightEncoder.resetMotor();
+        frontEncoder.resetMotor();
+    }
 }

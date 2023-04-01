@@ -161,25 +161,29 @@ public class ScoringSystemNewest {
             if(coneStack == 5){
                 setLinkagePositionLogistic(0.31, 300);
             }else if(coneStack == 4){
-                setLinkagePositionLogistic(0.28, 300);
+                setLinkagePositionLogistic(0.26, 300);
             }else if(coneStack == 3){
-                setLinkagePositionLogistic(0.25, 300);
+                setLinkagePositionLogistic(0.23, 300);
             }else if(coneStack == 2){
-                setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
+                //setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
+                setLinkagePosition(0.21);
             }else if(coneStack == 1){
-                setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
+                //setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
+                setLinkagePosition(0.15);
             }
         }else {
             if (coneStack == 5) {
                 setLinkagePosition(0.31);
             } else if (coneStack == 4) {
-                setLinkagePosition(0.28);
+                setLinkagePosition(0.26);
             } else if (coneStack == 3) {
-                setLinkagePosition(0.25);
+                setLinkagePosition(0.23);
             } else if (coneStack == 2) {
-                setLinkagePosition(Constants.linkageDownV2 + 0.1);
+                //setLinkagePosition(Constants.linkageDownV2 + 0.1);
+                setLinkagePosition(0.21);
             } else if (coneStack == 1) {
-                setLinkagePosition(Constants.linkageDownV2 + 0.1);
+                //setLinkagePosition(Constants.linkageDownV2 + 0.1);
+                setLinkagePosition(0.15);
             }
         }
     }
@@ -255,10 +259,10 @@ public class ScoringSystemNewest {
 
     public void commandAutoGoToPosition(){
         if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
-            setLiftTarget(55000);
+            setLiftTarget(56000);
 
         }else if(height == ScoringMode.MEDIUM){
-            setLiftTarget(30000);
+            setLiftTarget(32000);
 
 
         }else if(height == ScoringMode.LOW){
@@ -309,15 +313,15 @@ public class ScoringSystemNewest {
                 }
 
 
-                rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = lLift1.getCurrentPosition();
+                rLiftPos = -1 * getRightEncoderPos();
+                lLiftPos = getLeftEncoderPos();
 
                 setPower(rightPower, leftPower);
 
 
             }
         }else{
-            while ((time.seconds() - startTime) < 4 &&   (rLiftPos > tics || lLiftPos > tics)) {
+            while ((time.seconds() - startTime) < kickout &&   (rLiftPos > tics || lLiftPos > tics)) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -330,8 +334,8 @@ public class ScoringSystemNewest {
                 }
 
 
-                rLiftPos = -1 * rLift1.getCurrentPosition();
-                lLiftPos = lLift1.getCurrentPosition();
+                rLiftPos = -1 * getRightEncoderPos();
+                lLiftPos = getLeftEncoderPos();
 
                 setPower(rightPower, leftPower);
 

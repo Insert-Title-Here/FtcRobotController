@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunnerfiles.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunnerfiles.trajectorysequence.TrajectorySequenceBuilder;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.roadrunnerfiles.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunnerfiles.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunnerfiles.drive.DriveConstants.MAX_ANG_VEL;
@@ -58,6 +60,7 @@ import static org.firstinspires.ftc.teamcode.roadrunnerfiles.drive.DriveConstant
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients MY_PID = new PIDCoefficients(0.025, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -78,8 +81,14 @@ public class SampleMecanumDrive extends MecanumDrive {
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
+    StandardTrackingWheelLocalizer localizer;
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
+
+
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+
+        localizer = new StandardTrackingWheelLocalizer(hardwareMap);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -161,7 +170,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        setLocalizer(localizer);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
@@ -329,5 +338,69 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
+    }
+
+    public List<Double> getWheelPositionsLocalizer(){
+        return localizer.getWheelPositions();
+    }
+
+    public void pid(double target, double kickout, double rampSeconds){
+        List<Double> positions = localizer.getWheelPositions();
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double actualStartTime = startTime;
+
+        double leftPosition = positions.get(0);
+        double rightPosition = positions.get(1);
+
+        double leftTarget = leftPosition + target;
+        double rightTarget = rightPosition + target;
+
+        double leftError = target;
+        double rightError = target;
+
+        double slope = MY_PID.kP * leftError / rampSeconds;
+
+        double previousLeftError = leftError;
+        double previousRightError = rightError;
+
+        while(Math.abs(leftError) > 0.5 && Math.abs(rightError) > 0.5 && (time.seconds() - actualStartTime) < kickout && leftPosition < leftTarget && rightPosition < rightTarget){
+
+            positions = localizer.getWheelPositions();
+
+            leftPosition = positions.get(0);
+            rightPosition = positions.get(1);
+
+            leftError = leftTarget - leftPosition;
+            rightError = rightTarget - rightPosition;
+
+
+            if((time.seconds() - actualStartTime) < rampSeconds && (slope * (time.seconds() - actualStartTime) < MY_PID.kP * ((rightError + leftError)/2))){
+                double power = (time.seconds() - actualStartTime) * slope;
+
+                setMotorPowers(power, power, power, power);
+
+            }else {
+                double currentTime = time.seconds();
+
+
+                double leftDerivative = (leftError - previousLeftError) / (currentTime - startTime);
+                double rightDerivative = (rightError - previousRightError) / (currentTime - startTime);
+
+                double leftPower = (MY_PID.kP * leftError) + (MY_PID.kD * leftDerivative);
+                double rightPower = (MY_PID.kP * rightError) + (MY_PID.kD * rightDerivative);
+                setMotorPowers(leftPower, leftPower, rightPower, rightPower);
+            }
+
+        }
+
+        setMotorPowers(0,0,0,0);
+
+    }
+
+
+
+    public void resetEncoders(){
+        localizer.resetEncoders();
     }
 }

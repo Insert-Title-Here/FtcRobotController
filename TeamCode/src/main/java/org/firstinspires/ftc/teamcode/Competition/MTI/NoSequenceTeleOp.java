@@ -25,6 +25,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
     double wheeliePos = Constants.wheelieRetracted;
 
+    double tempTime = 0;
     double linkageToggleSpeed = 0.001;
 
 
@@ -36,6 +37,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
     volatile boolean liftBrokenMode = false;
     volatile boolean optionsFlag = true;
     volatile boolean startFlag = true;
+    volatile boolean groundFlag = false;
 
     Thread liftThread, linkageThread;
 
@@ -162,12 +164,18 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             //score.setLinkagePositionLogistic(0.8, 500);
                         } else {
 
-                            score.setGrabberPosition(Constants.open - 0.04);
+                            score.setGrabberPosition(Constants.open - 0.2);
+                            tempTime = time.milliseconds();
+                            groundFlag = true;
+
+
                             try {
                                 sleep(700);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+
+
 
                         }
 
@@ -358,11 +366,12 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     } else {
 
-                        if (score.getLiftTarget() < 2000 && Math.abs(score.getRightEncoderPos()) > 2000) {
-                            score.newLiftPIDUpdate(0.55, false);
+                        /*if (score.getLiftTarget() < 3000 && Math.abs(score.getRightEncoderPos()) > 3000) {
+                            score.newLiftPIDUpdate(0.62, false);
                             telemetry.addData("stuff", "slow");
 
-                        } else if (score.getLiftTarget() != 0) {
+                        } else */
+                        if (score.getLiftTarget() != 0) {
 
                             if(score.getScoringMode() == ScoringSystemNewest.ScoringMode.MEDIUM){
                                 score.newLiftPIDUpdate(0.8, false);
@@ -379,13 +388,15 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             telemetry.addData("stuff", "fast");
 
                         } else {
-                            score.setPower(0);
+                            score.newLiftPIDUpdate(0.62, false);
+
+                            telemetry.addData("stuff", "zero");
                         }
 
 
                     }
 
-                    telemetry.addData("stuff", "none");
+
 
                     telemetry.addData("target", score.getLiftTarget());
                     telemetry.addData("right", score.getRightEncoderPos());
@@ -450,14 +461,23 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         changeToggle = true;
                     }
 
-                    if (score.getLiftTarget() == 0 && Math.abs(score.getRightEncoderPos()) < 2000 && score.getRightLinkage() != 0.15 && (score.getConeStack() == 1 || score.getConeStack() == 2) && autoLinkageFlag && !score.isExtended() && !startFlag) {
+                    if(time.milliseconds() - tempTime > 3000 && groundFlag){
+                        score.setGrabberPosition(Constants.open - 0.04);
+
+                        groundFlag = false;
+                    }
+
+                    /*if (score.getLiftTarget() == 0 && Math.abs(score.getRightEncoderPos()) < 2000 && (score.getRightLinkage() != 0.15 || score.getRightLinkage() != 0.21) && (score.getConeStack() == 1 || score.getConeStack() == 2) && autoLinkageFlag && !startFlag) {
                         if(score.getConeStack() == 1) {
                             score.setLinkagePosition(0.15);
                         }else{
-                            score.setLinkagePosition(0.22);
+                            score.setLinkagePosition(0.21);
                         }
-                    }
-
+                        telemetry.addData("We love this", "for real");
+                        telemetry.addData("This is not working possibly", "stuff");
+                    }else{
+                        telemetry.addData("This is not working possibly", "for real");
+                    }*/
 
                 }
 
@@ -479,7 +499,8 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                         //Fine tune with left and right bumper
                     } else if (gamepad2.right_bumper) {
-                        systems.setCapstoneExtensionPower(0.25);
+                        systems
+                    .setCapstoneExtensionPower(0.25);
                     } else if (gamepad2.left_bumper) {
                         systems.setCapstoneExtensionPower(-0.25);
                     } else{
