@@ -47,12 +47,12 @@ public class Constants {
     public static final double score = 0.8;
 
     //Drive Modifiers
-    public static final double NORMAL_LINEAR_MODIFIER = 0.8;
-    public static final double NORMAL_ROTATIONAL_MODIFIER = 0.7;
-    public static final double EXTENDED_LINEAR_MODIFIER = 0.5;
-    public static final double EXTENDED_ROTATIONAL_MODIFIER = 0.3;
-    public static final double SPRINT_LINEAR_MODIFIER = 1;
-    public static final double SPRINT_ROTATIONAL_MODIFIER = 1;
+    public static final double NORMAL_LINEAR_MODIFIER = 0.5; //0.8
+    public static final double NORMAL_ROTATIONAL_MODIFIER = 0.4; //0.7
+    public static final double EXTENDED_LINEAR_MODIFIER = 0.5; //0.5
+    public static final double EXTENDED_ROTATIONAL_MODIFIER = 0.3; //0.3
+    public static final double SPRINT_LINEAR_MODIFIER = 1; //1
+    public static final double SPRINT_ROTATIONAL_MODIFIER = 1; //1
 
     //Wheelie Bar Positions
     public static final double wheelieHigh = 0.45; // was 0.7 and before was 0.15

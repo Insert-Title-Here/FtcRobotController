@@ -3,15 +3,21 @@ package org.firstinspires.ftc.teamcode.Testing.SubsystemsTest.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.android.dx.dex.code.DalvCode;
+import org.firstinspires.ftc.teamcode.Competition.MTI.ScoringSystemNewest;
 import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MecDriveV2;
 
 @TeleOp
 public class EncoderTest extends LinearOpMode {
     DcMotor fl, fr, bl, br, rl1, rl2, ll1, ll2;
+    ScoringSystemNewest score;
     @Override
     public void runOpMode() throws InterruptedException {
+
+        score = new ScoringSystemNewest(hardwareMap, telemetry, true, new ElapsedTime());
+
 
         fl = hardwareMap.get(DcMotor.class, "FrontLeftDrive");
         fr = hardwareMap.get(DcMotor.class, "FrontRightDrive");
@@ -22,6 +28,8 @@ public class EncoderTest extends LinearOpMode {
         rl2 = hardwareMap.get(DcMotor.class, "RightLift2");
         ll1 = hardwareMap.get(DcMotor.class, "LeftLift");
         ll2 = hardwareMap.get(DcMotor.class, "LeftLift2");
+
+        score.setGrabberPosition(0.13);
 
 
         waitForStart();

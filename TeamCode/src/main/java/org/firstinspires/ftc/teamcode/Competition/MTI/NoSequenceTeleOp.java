@@ -73,7 +73,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
 
         //score.setLinkagePositionLogistic(Constants.linkageDown, 500);
-        score.setGrabberPosition(Constants.open - 0.04);
+        score.setGrabberPosition(0.13);
 
         distance = hardwareMap.get(ColorRangeSensor.class, "distance");
 
@@ -138,7 +138,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                                 throw new RuntimeException(e);
                             }
 
-                            score.setGrabberPosition(Constants.score);
+                            score.setGrabberPosition(0.25);
 
 
                             //Do nothing during movement phase
@@ -147,7 +147,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             score.setLiftTarget(0);
 
 
-                            score.setGrabberPosition(Constants.open - 0.04);
+                            score.setGrabberPosition(0.13);
 
                             try {
                                 sleep(300);
@@ -164,7 +164,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             //score.setLinkagePositionLogistic(0.8, 500);
                         } else {
 
-                            score.setGrabberPosition(Constants.open - 0.2);
+                            score.setGrabberPosition(0.1);
                             tempTime = time.milliseconds();
                             groundFlag = true;
 
@@ -208,7 +208,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     } else if ((distance.getNormalizedColors().red > 0.90 || distance.getNormalizedColors().blue > 0.90) && autoLinkageFlag) {
 
 
-                        score.setGrabberPosition(Constants.grabbing);
+                        score.setGrabberPosition(0.37);
 
                         grabFlag = false;
 
@@ -462,7 +462,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     }
 
                     if(time.milliseconds() - tempTime > 3000 && groundFlag){
-                        score.setGrabberPosition(Constants.open - 0.04);
+                        score.setGrabberPosition(0.13);
 
                         groundFlag = false;
                     }
@@ -688,6 +688,6 @@ public class NoSequenceTeleOp extends LinearOpMode {
             //score.setLinkagePositionLogistic(0.8, 500);
 
 
-            score.setGrabberPosition(Constants.open - 0.04);
+            score.setGrabberPosition(0.13);
     }
 }
