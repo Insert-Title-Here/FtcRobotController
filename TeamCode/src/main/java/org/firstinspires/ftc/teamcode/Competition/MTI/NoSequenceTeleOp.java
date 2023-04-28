@@ -285,11 +285,6 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     }
 
 
-                    //Linkage up position
-                    if (gamepad1.left_stick_button) {
-
-
-                    }
 
 
                     //Manual open and close grabber
@@ -343,12 +338,12 @@ public class NoSequenceTeleOp extends LinearOpMode {
                             wheeliePos = Constants.wheelieHigh;
 
 
-                        } else if (gamepad1.a) {
+                        } /*else if (gamepad1.a) {
                             //Ultra
                             score.setScoringMode(ScoringSystemNewest.ScoringMode.ULTRA);
                             wheeliePos = Constants.wheelieRetracted;
 
-                        }
+                        }*/
 
                         wheelieServo.setPosition(wheeliePos);
                     }
@@ -418,7 +413,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     }*/
 
-                    if (gamepad1.left_bumper && optionsFlag) {
+                    /*if (gamepad1.left_bumper && optionsFlag) {
                         optionsFlag = false;
                         liftBrokenMode = !liftBrokenMode;
 
@@ -430,7 +425,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                     }
                     if (!gamepad1.left_bumper) {
                         optionsFlag = true;
-                    }
+                    }*/
 
                     /*if (gamepad2.dpad_up) {
                         score.setLinkagePosition(score.getLeftLinkage() + 0.001);
@@ -442,7 +437,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
                         score.setLinkagePosition(score.getLeftLinkage() + 0.002);
                     }*/
 
-                    if ((gamepad2.dpad_up || gamepad2.dpad_down) && changeToggle) {
+                    /*if ((gamepad2.dpad_up || gamepad2.dpad_down) && changeToggle) {
                         if (gamepad2.dpad_up) {
                             score.setLinkagePosition(score.getLeftLinkage() + 0.025);
 
@@ -459,7 +454,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
                     if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
                         changeToggle = true;
-                    }
+                    }*/
 
                     if(time.milliseconds() - tempTime > 3000 && groundFlag){
                         score.setGrabberPosition(0.13);
@@ -616,7 +611,7 @@ public class NoSequenceTeleOp extends LinearOpMode {
 
 
             //N S E W Drive
-            double leftStickX = gamepad1.left_stick_x;
+            double leftStickX = 0;
             double leftStickY = gamepad1.left_stick_y;
 
             if (Math.abs(leftStickX) > Math.abs(leftStickY)) {
@@ -639,20 +634,20 @@ public class NoSequenceTeleOp extends LinearOpMode {
              */
 
 
-            if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(-leftStickX * Constants.SPRINT_LINEAR_MODIFIER, -leftStickY * Constants.SPRINT_LINEAR_MODIFIER), -gamepad1.right_stick_x * 0.7, false);
-            } else {
+            //if (gamepad1.right_bumper) {
+                //drive.setPower(new Vector2D(-leftStickX * Constants.SPRINT_LINEAR_MODIFIER, -leftStickY * Constants.SPRINT_LINEAR_MODIFIER), -gamepad1.right_stick_x * 0.7, false);
+            //} else {
 
                 //if(imuOrientation > -1.4 || imuOrientation < -1.465) {
                 //drive.tippingUpdate(2000, imuOrientation);
                 //}else {
-                if (score.isExtended() && score.getScoringMode() != ScoringSystemNewest.ScoringMode.LOW) {
+            if (score.isExtended() && score.getScoringMode() != ScoringSystemNewest.ScoringMode.LOW) {
                     //Slow down when slides are extended
-                    drive.setPower(new Vector2D(-leftStickX * 0.8, -leftStickY * 0.8), -gamepad1.right_stick_x * 0.45, false);
-                } else {
-                    drive.setPower(new Vector2D(-leftStickX * 0.8/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY * 0.8/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * 0.8, false);
-                }
+                drive.setPower(new Vector2D(-leftStickX * 0.8, -leftStickY * 0.8), -gamepad1.right_stick_x * 0.45, false);
+            } else {
+                drive.setPower(new Vector2D(-leftStickX * 0.8/* * Constants.NORMAL_LINEAR_MODIFIER*/, -leftStickY * 0.8/* * Constants.NORMAL_LINEAR_MODIFIER*/), -gamepad1.right_stick_x * 0.38, false);
             }
+            //}
 
 
                 //Telemetry
