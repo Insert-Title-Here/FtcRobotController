@@ -159,17 +159,17 @@ public class ScoringSystemNewest {
     public void setLinkageConeStack(boolean logistic){
         if(logistic){
             if(coneStack == 5){
-                setLinkagePositionLogistic(0.31, 300);
+                setLinkagePositionLogistic(0.31, 500);
             }else if(coneStack == 4){
-                setLinkagePositionLogistic(0.26, 300);
+                setLinkagePositionLogistic(0.26, 500);
             }else if(coneStack == 3){
-                setLinkagePositionLogistic(0.23, 300);
+                setLinkagePositionLogistic(0.23, 500);
             }else if(coneStack == 2){
                 //setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
-                setLinkagePosition(0.21);
+                setLinkagePositionLogistic(0.21, 500);
             }else if(coneStack == 1){
                 //setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
-                setLinkagePosition(0.15);
+                setLinkagePositionLogistic(0.15, 500);
             }
         }else {
             if (coneStack == 5) {

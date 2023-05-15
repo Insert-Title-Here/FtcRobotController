@@ -54,7 +54,6 @@ public class Kids extends LinearOpMode {
 
                     //Scoring feature
                     if (gamepad1.right_trigger > 0.1) {
-                        score.setLinkagePositionLogistic(Constants.linkageScoreV2 + 0.05, 300, 100);
 
                         try {
                             Thread.currentThread().sleep(100);
@@ -106,13 +105,13 @@ public class Kids extends LinearOpMode {
                             e.printStackTrace();
                         }
 
-                        score.setLinkagePositionLogistic(0.54, 300, 100);
+                        score.setLinkagePositionLogistic(0.54, 500, 100);
                         autoLinkageFlag = false;
                     }
 
                     //Manual open and close grabber
                     if (gamepad1.right_stick_button) {
-                        score.setLinkagePositionLogistic(0.54, 300, 100);
+                        score.setLinkagePositionLogistic(0.54, 500, 100);
                         autoLinkageFlag = false;
                     }
 
@@ -172,7 +171,7 @@ public class Kids extends LinearOpMode {
 
         //Stop
         drive.simpleBrake();
-        score.setLinkagePositionLogistic(Constants.linkageDownV2, 300, 100);
+        score.setLinkagePositionLogistic(Constants.linkageDownV2, 500, 100);
         score.setGrabberPosition(0.13);
     }
 }
