@@ -55,4 +55,13 @@ public class DriveTrainExample {
         }
     }
 
+    public void setPower(double straight, double turn) {
+        double leftPower = straight + turn;
+        double rightPower = straight - turn;
+        fl.setPower(leftPower);
+        fr.setPower(rightPower);
+        bl.setPower(leftPower);
+        br.setPower(rightPower);
+    }
+
 }
