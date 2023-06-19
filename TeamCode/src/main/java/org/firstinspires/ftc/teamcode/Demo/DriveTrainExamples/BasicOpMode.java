@@ -15,7 +15,7 @@ public class BasicOpMode extends LinearOpMode {
         // deviceName is what its called in config
 
         // initializing motors
-        motor = hardwareMap.get(DcMotor.class, "motor");
+        motor = hardwareMap.get(DcMotor.class, "Motor");
 
         // servos
         servo = hardwareMap.get(Servo.class, "servo");
@@ -25,6 +25,7 @@ public class BasicOpMode extends LinearOpMode {
         while (opModeIsActive()) {
 
             motor.setPower(gamepad1.left_stick_y);
+
             telemetry.addData("Motor pos", motor.getCurrentPosition());
 
         }
