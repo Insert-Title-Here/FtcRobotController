@@ -167,6 +167,10 @@ public class Kids extends LinearOpMode {
                 }
 
             }
+            telemetry.addData("red", distance.getNormalizedColors().red);
+            telemetry.addData("blue", distance.getNormalizedColors().blue);
+
+
         }
 
         //Stop
