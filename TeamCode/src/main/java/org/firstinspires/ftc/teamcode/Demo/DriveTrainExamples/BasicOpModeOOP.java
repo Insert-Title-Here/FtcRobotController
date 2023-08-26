@@ -12,8 +12,8 @@ public class BasicOpModeOOP extends LinearOpMode {
     Servo servo;
     DriveTrainExample drive;
 
-    public final double LINEAR_MODIFIER = 0.7;
-    public final double ROTATIONAL_MODIFIER = 0.4;
+    public final double LINEAR_MODIFIER = 1;
+    public final double ROTATIONAL_MODIFIER = 0.7;
 
     public void runOpMode() throws InterruptedException {
         // deviceName is what its called in config
