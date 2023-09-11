@@ -35,10 +35,10 @@ public class ChubTester extends LinearOpMode {
 
         while(opModeIsActive()){
             //Forwards
-            motor0.setPower(0.1);
-            motor1.setPower(0.1);
-            motor2.setPower(0.1);
-            motor3.setPower(0.1);
+            motor0.setPower(0.05);
+            motor1.setPower(0.05);
+            motor2.setPower(0.05);
+            motor3.setPower(0.05);
 
             //Servo Position = 0
             servo0.setPosition(0);
@@ -57,10 +57,10 @@ public class ChubTester extends LinearOpMode {
             telemetry.addData("encoder position 3", motor3.getCurrentPosition());
 
             //Backwards
-            motor0.setPower(-0.1);
-            motor1.setPower(-0.1);
-            motor2.setPower(-0.1);
-            motor3.setPower(-0.1);
+            motor0.setPower(-0.05);
+            motor1.setPower(-0.05);
+            motor2.setPower(-0.05);
+            motor3.setPower(-0.05);
 
             //Servo Position = 1
             servo0.setPosition(1);
