@@ -297,7 +297,6 @@ public class ContourMultiScoreLeft1 extends OpenCvPipeline {
 //        Imgproc.drawContours(generalMat, contours, -1, new Scalar(0, 255, 255), 2/*, Imgproc.LINE_8,
 //                hierarchy, 2, new Point()*/);
 
-
             // loop through contours to find max
             int indexOfMax = 0;
             boundArea = 0;
