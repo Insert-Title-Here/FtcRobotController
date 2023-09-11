@@ -18,12 +18,12 @@ public class ChubTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        servo0 = hardwareMap.get(Servo.class, "servo");
-        servo1 = hardwareMap.get(Servo.class, "servo");
-        servo2 = hardwareMap.get(Servo.class, "servo");
-        servo3 = hardwareMap.get(Servo.class, "servo");
-        servo4 = hardwareMap.get(Servo.class, "servo");
-        servo5 = hardwareMap.get(Servo.class, "servo");
+        servo0 = hardwareMap.get(Servo.class, "servo0");
+        servo1 = hardwareMap.get(Servo.class, "servo1");
+        servo2 = hardwareMap.get(Servo.class, "servo2");
+        servo3 = hardwareMap.get(Servo.class, "servo3");
+        servo4 = hardwareMap.get(Servo.class, "servo4");
+        servo5 = hardwareMap.get(Servo.class, "servo5");
         motor0 = hardwareMap.get(DcMotor.class, "motor0");
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
         motor2 = hardwareMap.get(DcMotor.class, "motor2");
@@ -36,10 +36,10 @@ public class ChubTester extends LinearOpMode {
 
         while(opModeIsActive()){
             //Forwards
-            motor0.setPower(0.05);
-            motor1.setPower(0.05);
-            motor2.setPower(0.05);
-            motor3.setPower(0.05);
+            motor0.setPower(0.3);
+            motor1.setPower(0.3);
+            motor2.setPower(0.3);
+            motor3.setPower(0.3);
 
             //Servo Position = 0
             servo0.setPosition(0);
@@ -58,10 +58,10 @@ public class ChubTester extends LinearOpMode {
             telemetry.addData("encoder position 3", motor3.getCurrentPosition());
 
             //Backwards
-            motor0.setPower(-0.05);
-            motor1.setPower(-0.05);
-            motor2.setPower(-0.05);
-            motor3.setPower(-0.05);
+            motor0.setPower(-0.3);
+            motor1.setPower(-0.3);
+            motor2.setPower(-0.3);
+            motor3.setPower(-0.3);
 
             //Servo Position = 1
             servo0.setPosition(1);
