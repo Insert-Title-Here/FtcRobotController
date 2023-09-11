@@ -10,10 +10,10 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+//import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+//import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+//import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+//import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * This OpMode illustrates using a webcam to locate and drive towards ANY Vuforia target.
@@ -68,7 +68,7 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
     private static final String VUFORIA_KEY =
             " --- YOUR NEW VUFORIA KEY GOES HERE  --- ";
 
-    VuforiaLocalizer vuforia    = null;
+    //VuforiaLocalizer vuforia    = null;
     OpenGLMatrix targetPose     = null;
     String targetName           = "";
 
@@ -83,27 +83,27 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
          * If no camera preview is desired, use the parameter-less constructor instead (commented out below).
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        //parameters.vuforiaLicenseKey = VUFORIA_KEY;
 
         // Turn off Extended tracking.  Set this true if you want Vuforia to track beyond the target.
-        parameters.useExtendedTracking = false;
+        //parameters.useExtendedTracking = false;
 
         // Connect to the camera we are to use.  This name must match what is set up in Robot Configuration
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        //parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Load the trackable objects from the Assets file, and give them meaningful names
-        VuforiaTrackables targetsPowerPlay = this.vuforia.loadTrackablesFromAsset("PowerPlay");
-        targetsPowerPlay.get(0).setName("Red Audience Wall");
-        targetsPowerPlay.get(1).setName("Red Rear Wall");
-        targetsPowerPlay.get(2).setName("Blue Audience Wall");
-        targetsPowerPlay.get(3).setName("Blue Rear Wall");
-
-        // Start tracking targets in the background
-        targetsPowerPlay.activate();
+        //VuforiaTrackables targetsPowerPlay = this.vuforia.loadTrackablesFromAsset("PowerPlay");
+//        targetsPowerPlay.get(0).setName("Red Audience Wall");
+//        targetsPowerPlay.get(1).setName("Red Rear Wall");
+//        targetsPowerPlay.get(2).setName("Blue Audience Wall");
+//        targetsPowerPlay.get(3).setName("Blue Rear Wall");
+//
+//        // Start tracking targets in the background
+//        targetsPowerPlay.activate();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -128,76 +128,76 @@ public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
         double  drive           = 0;        // Desired forward power (-1 to +1)
         double  turn            = 0;        // Desired turning power (-1 to +1)
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             // Look for first visible target, and save its pose.
             targetFound = false;
-            for (VuforiaTrackable trackable : targetsPowerPlay)
-            {
-                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible())
-                {
-                    targetPose = ((VuforiaTrackableDefaultListener)trackable.getListener()).getVuforiaCameraFromTarget();
-
-                    // if we have a target, process the "pose" to determine the position of the target relative to the robot.
-                    if (targetPose != null)
-                    {
-                        targetFound = true;
-                        targetName  = trackable.getName();
-                        VectorF trans = targetPose.getTranslation();
-
-                        // Extract the X & Y components of the offset of the target relative to the robot
-                        double targetX = trans.get(0) / MM_PER_INCH; // Image X axis
-                        double targetY = trans.get(2) / MM_PER_INCH; // Image Z axis
-
-                        // target range is based on distance from robot position to origin (right triangle).
-                        targetRange = Math.hypot(targetX, targetY);
-
-                        // target bearing is based on angle formed between the X axis and the target range line
-                        targetBearing = Math.toDegrees(Math.asin(targetX / targetRange));
-
-                        break;  // jump out of target tracking loop if we find a target.
-                    }
-                }
-            }
-
-            // Tell the driver what we see, and what to do.
-            if (targetFound) {
-                telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
-                telemetry.addData("Target", " %s", targetName);
-                telemetry.addData("Range",  "%5.1f inches", targetRange);
-                telemetry.addData("Bearing","%3.0f degrees", targetBearing);
-            } else {
-                telemetry.addData(">","Drive using joystick to find target\n");
-            }
-
-            // Drive to target Automatically if Left Bumper is being pressed, AND we have found a target.
-            if (gamepad1.left_bumper && targetFound) {
-
-                // Determine heading and range error so we can use them to control the robot automatically.
-                double  rangeError   = (targetRange - DESIRED_DISTANCE);
-                double  headingError = targetBearing;
-
-                // Use the speed and turn "gains" to calculate how we want the robot to move.
-                drive = rangeError * SPEED_GAIN;
-                turn  = headingError * TURN_GAIN ;
-
-                telemetry.addData("Auto","Drive %5.2f, Turn %5.2f", drive, turn);
-            } else {
-
-                // drive using manual POV Joystick mode.
-                drive = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
-                turn  =  gamepad1.right_stick_x / 4.0;  // Reduce turn rate to 25%.
-                telemetry.addData("Manual","Drive %5.2f, Turn %5.2f", drive, turn);
-            }
-            telemetry.update();
-
-            // Calculate left and right wheel powers and send to them to the motors.
-            double leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            double rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-
-            sleep(10);
+//            for (VuforiaTrackable trackable : targetsPowerPlay)
+//            {
+//                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible())
+//                {
+//                    targetPose = ((VuforiaTrackableDefaultListener)trackable.getListener()).getVuforiaCameraFromTarget();
+//
+//                    // if we have a target, process the "pose" to determine the position of the target relative to the robot.
+//                    if (targetPose != null)
+//                    {
+//                        targetFound = true;
+//                        targetName  = trackable.getName();
+//                        VectorF trans = targetPose.getTranslation();
+//
+//                        // Extract the X & Y components of the offset of the target relative to the robot
+//                        double targetX = trans.get(0) / MM_PER_INCH; // Image X axis
+//                        double targetY = trans.get(2) / MM_PER_INCH; // Image Z axis
+//
+//                        // target range is based on distance from robot position to origin (right triangle).
+//                        targetRange = Math.hypot(targetX, targetY);
+//
+//                        // target bearing is based on angle formed between the X axis and the target range line
+//                        targetBearing = Math.toDegrees(Math.asin(targetX / targetRange));
+//
+//                        break;  // jump out of target tracking loop if we find a target.
+//                    }
+//                }
+//            }
+//
+//            // Tell the driver what we see, and what to do.
+//            if (targetFound) {
+//                telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
+//                telemetry.addData("Target", " %s", targetName);
+//                telemetry.addData("Range",  "%5.1f inches", targetRange);
+//                telemetry.addData("Bearing","%3.0f degrees", targetBearing);
+//            } else {
+//                telemetry.addData(">","Drive using joystick to find target\n");
+//            }
+//
+//            // Drive to target Automatically if Left Bumper is being pressed, AND we have found a target.
+//            if (gamepad1.left_bumper && targetFound) {
+//
+//                // Determine heading and range error so we can use them to control the robot automatically.
+//                double  rangeError   = (targetRange - DESIRED_DISTANCE);
+//                double  headingError = targetBearing;
+//
+//                // Use the speed and turn "gains" to calculate how we want the robot to move.
+//                drive = rangeError * SPEED_GAIN;
+//                turn  = headingError * TURN_GAIN ;
+//
+//                telemetry.addData("Auto","Drive %5.2f, Turn %5.2f", drive, turn);
+//            } else {
+//
+//                // drive using manual POV Joystick mode.
+//                drive = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
+//                turn  =  gamepad1.right_stick_x / 4.0;  // Reduce turn rate to 25%.
+//                telemetry.addData("Manual","Drive %5.2f, Turn %5.2f", drive, turn);
+//            }
+//            telemetry.update();
+//
+//            // Calculate left and right wheel powers and send to them to the motors.
+//            double leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+//            double rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+//            leftDrive.setPower(leftPower);
+//            rightDrive.setPower(rightPower);
+//
+//            sleep(10);
+//        }
         }
     }
 }
