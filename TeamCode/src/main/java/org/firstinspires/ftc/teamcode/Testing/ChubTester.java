@@ -17,12 +17,12 @@ public class ChubTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        servo0 = hardwareMap.get(Servo.class, "servo");
-        servo1 = hardwareMap.get(Servo.class, "servo");
-        servo2 = hardwareMap.get(Servo.class, "servo");
-        servo3 = hardwareMap.get(Servo.class, "servo");
-        servo4 = hardwareMap.get(Servo.class, "servo");
-        servo5 = hardwareMap.get(Servo.class, "servo");
+        servo0 = hardwareMap.get(Servo.class, "servo0");
+        servo1 = hardwareMap.get(Servo.class, "servo1");
+        servo2 = hardwareMap.get(Servo.class, "servo2");
+        servo3 = hardwareMap.get(Servo.class, "servo3");
+        servo4 = hardwareMap.get(Servo.class, "servo4");
+        servo5 = hardwareMap.get(Servo.class, "servo5");
         motor0 = hardwareMap.get(DcMotor.class, "motor0");
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
         motor2 = hardwareMap.get(DcMotor.class, "motor2");
