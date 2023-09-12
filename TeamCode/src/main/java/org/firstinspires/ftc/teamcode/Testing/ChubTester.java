@@ -55,6 +55,7 @@ public class ChubTester extends LinearOpMode {
             telemetry.addData("encoder position 1", motor1.getCurrentPosition());
             telemetry.addData("encoder position 2", motor2.getCurrentPosition());
             telemetry.addData("encoder position 3", motor3.getCurrentPosition());
+            telemetry.update();
 
             //Backwards
             motor0.setPower(-0.3);
