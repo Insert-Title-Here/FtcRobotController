@@ -15,10 +15,10 @@ public class BasicOpMode extends LinearOpMode {
         // deviceName is what its called in config
 
         // initializing motors
-        motor = hardwareMap.get(DcMotor.class, "motor");
+        motor = hardwareMap.get(DcMotor.class, "motor1");
 
         // servos
-        servo = hardwareMap.get(Servo.class, "servo");
+        //servo = hardwareMap.get(Servo.class, "servo");
 
         // everything before this line happens on innit. everything after is on start.
         waitForStart();
@@ -34,7 +34,7 @@ public class BasicOpMode extends LinearOpMode {
 
             // servos are set to a position between 0 and 1
             // they automatically go to this position - no need to set power
-            servo.setPosition(gamepad1.left_trigger);
+            //servo.setPosition(gamepad1.left_trigger);
 
 
 
