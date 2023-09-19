@@ -24,33 +24,33 @@ public class Intake extends LinearOpMode {
         boolean YFlag = true;
         while (opModeIsActive()) {
             servoLeft.setPower(powerLeft);
-            if (gamepad1.a && AFlag){
+            if (gamepad1.left_trigger > 0.1 && AFlag){
                 powerLeft += .05;
                 AFlag = false;
             }
-            if(!gamepad1.a){
+            if(gamepad1.left_trigger < 0.1){
                 AFlag = true;
             }
-            if (gamepad1.b && BFlag){
+            if (gamepad1.left_bumper && BFlag){
                 powerLeft -= .05;
                 BFlag = false;
             }
-            if(!gamepad1.b){
+            if(!gamepad1.left_bumper){
                 BFlag = true;
             }
             servoRight.setPower(powerRight);
-            if (gamepad1.x && XFlag){
+            if (gamepad1.right_trigger > .1 && XFlag){
                 powerRight += .05;
                 XFlag = false;
             }
-            if(!gamepad1.x){
+            if(gamepad1.right_trigger < .1){
                 XFlag = true;
             }
-            if (gamepad1.y && YFlag){
-                powerLeft -= .05;
+            if (gamepad1.right_bumper && YFlag){
+                powerRight -= .05;
                 YFlag = false;
             }
-            if(!gamepad1.y){
+            if(!gamepad1.right_bumper){
                 YFlag = true;
             }
 
