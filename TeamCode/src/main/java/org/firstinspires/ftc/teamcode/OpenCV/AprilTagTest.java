@@ -31,6 +31,7 @@ public class AprilTagTest extends LinearOpMode {
                     telemetry.addData("X pos", tag.ftcPose.x);
                     telemetry.addData("Y pos", tag.ftcPose.y);
                     telemetry.addData("Z pos", tag.ftcPose.z);
+                    // thing
                 }
             }
 
