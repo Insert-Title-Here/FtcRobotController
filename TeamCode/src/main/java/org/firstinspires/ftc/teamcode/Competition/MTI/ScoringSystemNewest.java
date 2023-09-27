@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Competition.MTI;
 
 
+import static org.firstinspires.ftc.teamcode.Competition.MTI.ScoringSystemNewest.ScoringMode.*;
+
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -18,7 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
-import org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current.MotionProfiler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,7 +55,7 @@ public class ScoringSystemNewest {
 
 
         coneStack = 1;
-        height = ScoringMode.LOW;
+        height = LOW;
         extended = false;
 
         rLift1 = hardwareMap.get(DcMotorEx.class, "RightLift");
@@ -208,11 +209,11 @@ public class ScoringSystemNewest {
 
     //TODO: Fix this
     public int getHeight(){
-       if(height == ScoringMode.HIGH){
+       if(height == HIGH){
            return 57500;
-       }else if(height == ScoringMode.MEDIUM){
+       }else if(height == MEDIUM){
            return 750;
-       }else if(height == ScoringMode.LOW){
+       }else if(height == LOW){
            return 250;
        }
 
@@ -258,14 +259,14 @@ public class ScoringSystemNewest {
     }
 
     public void commandAutoGoToPosition(){
-        if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
+        if(height == HIGH /*|| height == ScoringMode.ULTRA*/){
             setLiftTarget(56000);
 
-        }else if(height == ScoringMode.MEDIUM){
+        }else if(height == MEDIUM){
             setLiftTarget(32000);
 
 
-        }else if(height == ScoringMode.LOW){
+        }else if(height == LOW){
             setLiftTarget(9000);
 
         }

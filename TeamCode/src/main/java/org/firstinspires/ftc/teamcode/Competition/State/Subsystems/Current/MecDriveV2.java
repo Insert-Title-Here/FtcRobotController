@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Competition.State.Subsystems.Current;
 
-////import com.acmerobotics.dashboard.config.Config;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -12,21 +10,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.OpModeWrapper;
-import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Point;
-import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Robot;
-import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Utils;
-import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Vector2D;
+import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.Vector;
 
 ////@Config
 public class MecDriveV2 {
@@ -104,7 +98,7 @@ public class MecDriveV2 {
         fr = hardwareMap.get(DcMotorEx.class, "FrontRightDrive");
         bl = hardwareMap.get(DcMotorEx.class, "BackLeftDrive");
         br = hardwareMap.get(DcMotorEx.class, "BackRightDrive");
-        this.robot = robot;
+        //this.robot = robot;
         this.pidEnabled = pidEnabled;
         this.telemetry = telemetry;
 
@@ -249,7 +243,7 @@ public class MecDriveV2 {
     }
 
 
-    public void rotate(double angle, double power) {
+    /*public void rotate(double angle, double power) {
 
         angle = Utils.wrapAngle(angle);
 
@@ -273,7 +267,7 @@ public class MecDriveV2 {
         simpleBrake();
 
     }
-
+*/
 
     public void tankRotate(double radians, double power) {
 
@@ -697,7 +691,7 @@ public class MecDriveV2 {
     }
 
 
-    public void newMoveToPosition(Point p, double power) {
+    /*public void newMoveToPosition(Point p, double power) {
         double direction = Utils.wrapAngle(p.getDirection()) - (Math.PI / 4);
 
         int flPosition = Math.abs((int) (Math.cos(direction) * p.magFromOrigin()));
@@ -705,11 +699,11 @@ public class MecDriveV2 {
         int blPosition = Math.abs((int) (Math.sin(direction) * p.magFromOrigin()));
         int brPosition = Math.abs((int) (Math.cos(direction) * p.magFromOrigin()));
 
-        /*double flVelocity = Math.max(1, velocity * Math.cos(direction));
+        *//*double flVelocity = Math.max(1, velocity * Math.cos(direction));
         double frVelocity = Math.max(1, velocity * Math.sin(direction));
         double blVelocity = Math.max(1, velocity * Math.sin(direction));
         double brVelocity = Math.max(1, velocity * Math.cos(direction));
-*/
+*//*
         double flPower = Math.cos(direction) * power;
         double frPower = Math.sin(direction) * power;
         double blPower = Math.sin(direction) * power;
@@ -818,7 +812,7 @@ public class MecDriveV2 {
             brake();
         }
     }
-
+*/
     public double getFirstAngle() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
     }
@@ -855,7 +849,7 @@ public class MecDriveV2 {
     }
 
 
-    public void moveToPosition(Point p, double velocity) {
+    /*public void moveToPosition(Point p, double velocity) {
 
         double robotDirection = robot.getDirection();
         double direction = Utils.wrapAngle(p.getDirection()) - Utils.wrapAngle(robotDirection);
@@ -871,13 +865,13 @@ public class MecDriveV2 {
         double brVelocity = Math.max(1, velocity * Math.sin(direction));
 
 
-/*
+*//*
 
         double flPower = Math.sin(direction) * 0.5;
         double frPower = Math.cos(direction) * 0.5;
         double blPower = Math.cos(direction) * 0.5;
         double brPower = Math.sin(direction) * 0.5;
-*/
+*//*
 
 
         if (pidEnabled) {
@@ -917,7 +911,7 @@ public class MecDriveV2 {
             brake();
         }
     }
-
+*/
     public void simpleBrake() {
         setPower(0, 0, 0, 0);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -971,13 +965,8 @@ public class MecDriveV2 {
 
     double integralSumLimit = 1000;
 
-    /**
-     * @param flV        target velocity d/dx position
-     * @param flPosition target
-     *                   Zeiger-Nichols method
-     *                   low pass filtering
-     */
-    private void setPIDVelocity(double flV, int flPosition, double frV, int frPosition, double blV, int blPosition, double brV, int brPosition) {
+
+    /*private void setPIDVelocity(double flV, int flPosition, double frV, int frPosition, double blV, int blPosition, double brV, int brPosition) {
         double flIntegralSum = 0;
         double flPreviousError = 0;
         double frIntegralSum = 0;
@@ -1067,7 +1056,7 @@ public class MecDriveV2 {
         }
         brake();
     }
-
+*/
 
     private double calculateAvgStartPower(int tics) {
 
@@ -2214,7 +2203,7 @@ public class MecDriveV2 {
     */
 
 
-    public void PIDPowerNoBulk(double power, int targetPosition) {
+    /*public void PIDPowerNoBulk(double power, int targetPosition) {
         double flIntegralSum = 0;
         double flPreviousError = 0;
         double frIntegralSum = 0;
@@ -2335,12 +2324,12 @@ public class MecDriveV2 {
         }
         simpleBrake();
     }
-
+*/
 
     PIDCoefficients pid = new PIDCoefficients(0, 0, 0);
 
     //TODO: see if can make more efficient using timer.reset() and maybe add pid for each motor
-    private void setPIDRotateVelocity(double targetAngle, double targetPower) {
+    /*private void setPIDRotateVelocity(double targetAngle, double targetPower) {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double integralSum = 0;
@@ -2383,7 +2372,7 @@ public class MecDriveV2 {
     private boolean opModeIsRunning() {
         return OpModeWrapper.currentOpMode().opModeIsActive() && !OpModeWrapper.currentOpMode().isStopRequested();
     }
-    /*
+    *//*
     46
 
      */
@@ -2514,7 +2503,6 @@ public class MecDriveV2 {
 
 
         double power = velocity.magnitude();
-
         double angle = direction + 3 * Math.PI / 4.0;
         double sin = Math.sin(angle);
         double cos = Math.cos(angle);
