@@ -11,46 +11,68 @@ import com.qualcomm.robotcore.hardware.ServoController;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 /*
 Cardinal Drive vs. All Directions
-Gamepad
-Buttons
-Triggers
+Gamepad done
+Buttons done
+Triggers done
 Sticks
-Rumble
+Rumble done
 Toggle Logic
-Telemetry (update/addData)
+Telemetry (update/addData) done
 
  */
 @TeleOp (name = "ProgramingLesson3")
 public class Lesson3 extends LinearOpMode {
 
-    CRServo left,right;
+
 
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        left = hardwareMap.get(CRServo.class, "leftServo");
-        right = hardwareMap.get(CRServo.class, "rightServo");
+
 
 
         waitForStart();
-        
 
         while(opModeIsActive()){
-            if(gamepad1.left_trigger > 0.06){
-                left.setPower(-gamepad1.left_trigger);
-            }else{
-                left.setPower(0);
-            }
-            if(gamepad1.right_trigger > 0.06){
-                right.setPower(gamepad1.right_trigger);
-            }else{
-                right.setPower(0);
-            }
-        }
-        left.setPower(0);
-        right.setPower(0);
+            /*
+            Gamepad
+             */
+           if(gamepad1.right_trigger > 0.05){
+               //left trigger or right trigger
+           }
+           if(gamepad1.right_stick_button){
+               //right stick button or left stick button press donw etc.
+           }
+           if(gamepad1.a){
+               // x, y, a, b
+           }
+           if(gamepad1.dpad_down){
+               //dpad_up, dpad_down, dpad_left, dpad_right
+           }
+           if(gamepad1.isRumbling()){
+               gamepad1.rumble(1000);
+           }
+          /*
+          Toggle Logic
+          */
 
+            
+            /*
+            Drive(Cardinal vs. All direction
+            */
+
+           /*
+           Telemetry
+           */
+           telemetry.addData("Left Motor Power", 0.5);
+           telemetry.addData("Right Motor Power", 0.5);
+           telemetry.addData("Left motor position", 1200);
+           telemetry.update();
+
+
+        }
+        //Stop motors here(set power to zero)
     }
 }
 
