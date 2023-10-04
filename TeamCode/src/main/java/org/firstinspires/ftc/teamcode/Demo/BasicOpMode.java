@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Demo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -17,17 +18,24 @@ public class BasicOpMode extends LinearOpMode {
 
         // initializing motors
         motor = hardwareMap.get(DcMotor.class, "motor1");
+        ColorSensor sensor = hardwareMap.get(ColorSensor.class, "sensor");
+
+
 
         // servos
-        //servo = hardwareMap.get(Servo.class, "servo");
+        servo = hardwareMap.get(Servo.class, "servo");
 
         // everything before this line happens on innit. everything after is on start.
         waitForStart();
+
+        goToPositon(100);
 
         while (opModeIsActive()) {
             // powering a motor and accessing gamepads
             // motors accept a power between -1 and 1, where 1 is max power, -1, is max power in the opposite direction, and 0 is stopped
             motor.setPower(gamepad1.left_stick_y);
+
+            motor.getCurrentPosition();
 
             // telemetry - sends data to driver hub
             telemetry.addData("Motor pos", motor.getCurrentPosition());
@@ -38,7 +46,17 @@ public class BasicOpMode extends LinearOpMode {
             //servo.setPosition(gamepad1.left_trigger);
 
 
-
         }
+
+
     }
+
+    public void goToPositon(int pos) {
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while (motor.getCurrentPosition() < pos) {
+            motor.setPower(0.5);
+        }
+        motor.setPower(0);
+    }
+
 }

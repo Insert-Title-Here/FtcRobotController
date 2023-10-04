@@ -49,6 +49,14 @@ public class DriveTrainYay {
         br.setPower(power);
     }
 
+    public void setDistance(int distance) {
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while (motor.getCurrentPosition() < pos) {
+            motor.setPower(0.5);
+        }
+        motor.setPower(0);
+    }
+
     public void setPower(double straight, double turn) {
         double LeftPower = straight - turn;
         double RightPower = straight + turn;
