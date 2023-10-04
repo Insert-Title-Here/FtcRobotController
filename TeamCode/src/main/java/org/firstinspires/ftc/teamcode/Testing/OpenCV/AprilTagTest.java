@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpenCV;
+package org.firstinspires.ftc.teamcode.Testing.OpenCV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,6 +31,7 @@ public class AprilTagTest extends LinearOpMode {
                     telemetry.addData("X pos", tag.ftcPose.x);
                     telemetry.addData("Y pos", tag.ftcPose.y);
                     telemetry.addData("Z pos", tag.ftcPose.z);
+                    // thing
                 }
             }
 
