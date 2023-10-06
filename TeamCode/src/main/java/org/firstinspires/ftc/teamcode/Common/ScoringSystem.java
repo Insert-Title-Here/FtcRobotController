@@ -89,7 +89,7 @@ public class ScoringSystem {
         setIntakePower(0);
 
 
-        setIntakeLiftPos(Constants.intakeLinkageUp);
+        setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
 
     }
 
@@ -615,9 +615,9 @@ public class ScoringSystem {
 
     public void linkageUpAndDown(boolean up){
         if(up) {
-            setLinkagePosition(Constants.linkageUp);
+            setLinkagePosition(Constants.LINKAGE_UP);
         }else{
-            setLinkagePosition(Constants.linkageDown);
+            setLinkagePosition(Constants.LINKAGE_DOWN);
         }
     }
 
@@ -813,9 +813,9 @@ public class ScoringSystem {
 
     public void grabberOpenAndClose(boolean close){
         if(close) {
-            setGrabberPosition(Constants.grabbing);
+            setGrabberPosition(Constants.GRABBING);
         }else{
-            setGrabberPosition(Constants.open);
+            setGrabberPosition(Constants.OPEN);
         }
     }
 
@@ -856,13 +856,16 @@ public class ScoringSystem {
 
     public void setIntakePower(double power) {
         lIntake.setPower(power);
+        // set the right wheel slightly slower to rotate pixels into place
         rIntake.setPower(-power * 0.8);
     }
 
     public void setIntakeLiftPos(double pos) {
-        // 0.24 - 73
+        // Equation: actual position = target * (max position - min position) + min position
+
+        // Range of left servo: 0.24 -> 0.73
         double leftPos = pos * (0.73 - 0.24) + 0.24;
-        // 0.24 - 0
+        // Range of right servo: 0.24 -> 0
         double rightPos = pos * (0 - 0.24) + 0.24;
         lIntakeLift.setPosition(leftPos);
         rIntakeLift.setPosition(rightPos);

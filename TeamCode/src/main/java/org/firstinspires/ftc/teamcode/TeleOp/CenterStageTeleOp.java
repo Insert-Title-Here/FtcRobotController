@@ -46,8 +46,8 @@ public class CenterStageTeleOp extends LinearOpMode {
 
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
 
-        score.setLinkagePositionLogistic(Constants.linkageDown, 500, 100);
-        score.setGrabberPosition(Constants.open);
+        score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 500, 100);
+        score.setGrabberPosition(Constants.OPEN);
 
         //Lift Thread
         liftThread = new Thread() {
@@ -79,7 +79,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                     //Scoring feature
                     if (gamepad1.right_trigger > 0.1) {
-                        score.setGrabberPosition(Constants.open);
+                        score.setGrabberPosition(Constants.OPEN);
 
                         try {
                             Thread.currentThread().sleep(500);
@@ -269,16 +269,16 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                 while (opModeIsActive()) {
 
-                    if (gamepad1.left_bumper && score.getLeftLinkage() <= Constants.linkageDown) {
-                        score.setGrabberPosition(Constants.open);
-                        score.setLinkagePosition(Constants.linkageIntake);
-                        score.setIntakeLiftPos(Constants.intakeLinkageDown);
+                    if (gamepad1.left_bumper && score.getLeftLinkage() <= Constants.LINKAGE_DOWN) {
+                        score.setGrabberPosition(Constants.OPEN);
+                        score.setLinkagePosition(Constants.LINKAGE_INTAKE);
+                        score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN);
                         score.setIntakePower(1);
                         leftBumper = true;
                     } else if (leftBumper) {
-                        score.setGrabberPosition(Constants.grabbing);
-                        score.setLinkagePosition(Constants.linkageDown);
-                        score.setIntakeLiftPos(Constants.intakeLinkageUp);
+                        score.setGrabberPosition(Constants.GRABBING);
+                        score.setLinkagePosition(Constants.LINKAGE_DOWN);
+                        score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
 
                         score.setIntakePower(0);
                         leftBumper = false;
@@ -292,7 +292,7 @@ public class CenterStageTeleOp extends LinearOpMode {
                             e.printStackTrace();
                         }
 
-                        score.setLinkagePositionLogistic(Constants.linkageUp, 1000, 100);
+                        score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1000, 100);
 
                         /*
                         if (score.getScoringMode() == ScoringSystem.ScoringMode.LOW || score.getScoringMode() == ScoringSystem.ScoringMode.MEDIUM) {
@@ -309,7 +309,7 @@ public class CenterStageTeleOp extends LinearOpMode {
                         linkageUp = false;
                     } else if (linkageDown) {
 
-                        score.setLinkagePositionLogistic(Constants.linkageDown, 1000, 100);
+                        score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
 
 
                         //TODO: fix cone stack logic
@@ -367,7 +367,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
             //Stop
             drive.simpleBrake();
-            score.setLinkagePositionLogistic(Constants.linkageDown, 300, 100);
-            score.setGrabberPosition(Constants.open);
+            score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 300, 100);
+            score.setGrabberPosition(Constants.OPEN);
     }
 }
