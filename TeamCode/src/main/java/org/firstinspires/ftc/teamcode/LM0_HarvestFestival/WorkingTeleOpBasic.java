@@ -55,9 +55,10 @@ public class WorkingTeleOpBasic extends LinearOpMode {
                 leftStickX = 0;
             }
 
+            // right bumper press = sprint
             if (gamepad1.right_bumper) {
                 setPower(new Vector2D(-leftStickX * Constants.SPRINT_LINEAR_MODIFIER, -leftStickY * Constants.SPRINT_LINEAR_MODIFIER), -gamepad1.right_stick_x * 0.7, false);
-            } else {
+            } else { // no bumper press = regular drive
                 setPower(new Vector2D(-leftStickX * 0.5, -leftStickY * 0.5), -gamepad1.right_stick_x * 0.5, false);
             }
         }
