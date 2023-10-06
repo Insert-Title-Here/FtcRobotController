@@ -31,4 +31,10 @@ public class Constants {
     public static int LIFT_MEDIUM = 350;
     public static int LIFT_HIGH = 400;
 
+    // Lift PID
+    public static int LIFT_P = 0;
+    public static int LIFT_I = 0;
+    public static int LIFT_D = 0;
+    public static int LIFT_F = 0;
+
 }

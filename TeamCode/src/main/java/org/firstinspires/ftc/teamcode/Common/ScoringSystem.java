@@ -34,7 +34,7 @@ public class ScoringSystem {
     ElapsedTime time;
 
 
-    PIDFCoefficients pidf = new PIDFCoefficients(0, 0, 0, 0); //Old P = 0.000475
+    PIDFCoefficients pidf = new PIDFCoefficients(Constants.LIFT_P, Constants.LIFT_I, Constants.LIFT_D, Constants.LIFT_F); //Old P = 0.000475
 
     File file = AppUtil.getInstance().getSettingsFile("motion.txt");
     String composite = "";
