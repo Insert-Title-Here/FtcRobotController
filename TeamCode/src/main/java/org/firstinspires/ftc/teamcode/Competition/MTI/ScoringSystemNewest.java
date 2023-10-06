@@ -135,6 +135,8 @@ public class ScoringSystemNewest {
 
 
 
+
+
     public int getConeStack(){
         return coneStack;
     }
@@ -777,6 +779,7 @@ public class ScoringSystemNewest {
 
     }
 
+    PIDFCoefficients centerStagepidf = new PIDFCoefficients(0.000485, 0, 0.000005, 0.0000135); //Old P = 0.000475
 
     public void newLiftPIDUpdate(double limiter, boolean high){
         currentTime = time.seconds();
@@ -798,8 +801,8 @@ public class ScoringSystemNewest {
         //telemetry.addData("rightDerivative", rightDerivative);
         //telemetry.addData("leftDerivative", leftDerivative);
 
-        double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
-        double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
+        double rightPower = ((centerStagepidf.p * rightError) + (centerStagepidf.d * rightDerivative) + (centerStagepidf.f * Math.abs(getRightEncoderPos())));
+        double leftPower = ((centerStagepidf.p * leftError) + (centerStagepidf.d * leftDerivative) + (centerStagepidf.f * Math.abs(getRightEncoderPos())));
 
         if(Math.abs(rightPower) > limiter){
             if(rightPower < 0){
