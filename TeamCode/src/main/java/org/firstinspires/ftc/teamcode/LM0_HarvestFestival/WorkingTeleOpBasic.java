@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Constants;
 import org.firstinspires.ftc.teamcode.Competition.Interleagues.Common.Vector2D;
 
 @TeleOp(name = "WorkingTeleOpBasic")
@@ -54,7 +55,11 @@ public class WorkingTeleOpBasic extends LinearOpMode {
                 leftStickX = 0;
             }
 
-            setPower(new Vector2D(-leftStickX*0.5, -leftStickY*0.5), -gamepad1.right_stick_x * 0.5, false);
+            if (gamepad1.right_bumper) {
+                setPower(new Vector2D(-leftStickX * Constants.SPRINT_LINEAR_MODIFIER, -leftStickY * Constants.SPRINT_LINEAR_MODIFIER), -gamepad1.right_stick_x * 0.7, false);
+            } else {
+                setPower(new Vector2D(-leftStickX * 0.5, -leftStickY * 0.5), -gamepad1.right_stick_x * 0.5, false);
+            }
         }
 
     }
