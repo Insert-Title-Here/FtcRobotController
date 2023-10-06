@@ -76,18 +76,20 @@ public class ScoringSystem {
         lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
         rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
-        grabber =  hardwareMap.get(Servo.class, "Grabber");
+        grabber =  hardwareMap.get(Servo.class, "ClampServo");
 
         // Intake
-        lIntakeLift = hardwareMap.get(Servo.class, "LeftIntakeLift");
-        rIntakeLift = hardwareMap.get(Servo.class, "RightIntakeLift");
+        lIntakeLift = hardwareMap.get(Servo.class, "LeftIntakeLinkage");
+        rIntakeLift = hardwareMap.get(Servo.class, "RightIntakeLinkage");
 
-        lIntake = hardwareMap.get(CRServo.class, "leftIntake");
-        lIntake = hardwareMap.get(CRServo.class, "rightIntake");
+        lIntake = hardwareMap.get(CRServo.class, "LeftIntake");
+        rIntake = hardwareMap.get(CRServo.class, "RightIntake");
 
-        setLinkagePosition(Constants.linkageDown);
+        //setLinkagePosition(Constants.linkageDown);
         setIntakePower(0);
-        setIntakeLiftPos(0);
+
+
+        setIntakeLiftPos(Constants.intakeLinkageUp);
 
     }
 
@@ -516,7 +518,7 @@ public class ScoringSystem {
 
 
 
-        return 1 / (1 + (b * Math.pow(Math.E, (k * (time / 1000)))));
+        return 1 / (1 + (b * Math.pow(Math.E, (k * (time / 1000.0)))));
     }
 
 
@@ -542,6 +544,11 @@ public class ScoringSystem {
         telemetry.update();
     }
 
+    /**
+     * Sets the linkage position of the robot by stepping through a logistic function
+     * @param target Desired position
+     * @param sleepTime Total time in milliseconds
+     */
     public void setLinkagePositionLogistic(double target, int sleepTime) {
 
         ElapsedTime time = new ElapsedTime();
@@ -568,6 +575,12 @@ public class ScoringSystem {
         setLinkagePosition(target);
     }
 
+    /**
+     * Sets the linkage position of the robot by stepping through a logistic function
+     * @param target Desired position
+     * @param sleepTime Total time in milliseconds
+     * @param resolution Number of steps
+     */
     public void setLinkagePositionLogistic(double target, int sleepTime, int resolution) {
         ElapsedTime timer = new ElapsedTime();
         double step = 4.0 / resolution;
@@ -842,13 +855,17 @@ public class ScoringSystem {
     }
 
     public void setIntakePower(double power) {
-        lIntake.setPower(-power);
-        rIntake.setPower(power * 0.8);
+        lIntake.setPower(power);
+        rIntake.setPower(-power * 0.8);
     }
 
     public void setIntakeLiftPos(double pos) {
-        lIntakeLift.setPosition(pos);
-        rIntakeLift.setPosition(pos);
+        // 0.24 - 73
+        double leftPos = pos * (0.73 - 0.24) + 0.24;
+        // 0.24 - 0
+        double rightPos = pos * (0 - 0.24) + 0.24;
+        lIntakeLift.setPosition(leftPos);
+        rIntakeLift.setPosition(rightPos);
     }
 
     public void writeLoggerToFile(){
