@@ -21,6 +21,7 @@ import java.io.PrintStream;
 
 public class ScoringSystem {
     public DcMotorEx lLift, rLift;
+    public DcMotor climb;
     public Servo grabber;
     public Servo lIntakeLift, rIntakeLift;
     public CRServo lIntake, rIntake;
@@ -85,7 +86,11 @@ public class ScoringSystem {
         lIntake = hardwareMap.get(CRServo.class, "LeftIntake");
         rIntake = hardwareMap.get(CRServo.class, "RightIntake");
 
-        //setLinkagePosition(Constants.linkageDown);
+        climb = hardwareMap.get(DcMotor.class, "Climb");
+        climb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        climb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        setLinkagePosition(Constants.LINKAGE_DOWN);
         setIntakePower(0);
 
 
@@ -181,7 +186,7 @@ public class ScoringSystem {
     }
 
     public void setPower(double power) {
-        rLift.setPower(power);
+        rLift.setPower(-power);
         lLift.setPower(-power);
     }
 
@@ -189,7 +194,7 @@ public class ScoringSystem {
 
     public void setPower(double rightPower, double leftPower){
         rLift.setPower(rightPower);
-        lLift.setPower(-leftPower);
+        lLift.setPower(leftPower);
     }
 
     public void setVelocity(double rightPower, double leftPower){
@@ -735,11 +740,11 @@ public class ScoringSystem {
         currentTime = time.seconds();
 
         int rightPos = -1 * getRightEncoderPos();
-        int leftPos = getLeftEncoderPos();
+        int leftPos = -1 * getLeftEncoderPos();
 
 
-        //telemetry.addData("rightPos", rightPos);
-        //telemetry.addData("leftPos", leftPos);
+        telemetry.addData("rightPos", rightPos);
+        telemetry.addData("leftPos", leftPos);
 
         int rightError = liftTarget - rightPos;
         int leftError = liftTarget - leftPos;
@@ -756,9 +761,9 @@ public class ScoringSystem {
 
         if(Math.abs(rightPower) > limiter){
             if(rightPower < 0){
-                rightPower = -1 * limiter;
-            }else{
                 rightPower = limiter;
+            }else{
+                rightPower = -1 * limiter;
             }
         }
 
@@ -791,8 +796,20 @@ public class ScoringSystem {
 
     }
 
-
-
+    /**
+     * Updates lift Bang Bang controller
+     * @param power The power at which the lift should move
+     * @param feedForward The power applied when the lift is not in motion
+     */
+    public void liftUpdateNoPID(double power, double feedForward) {
+        int rightPos = -1 * getRightEncoderPos();
+        if (Math.abs(rightPos - liftTarget) > 20) {
+            setPower(power * Math.signum(liftTarget - rightPos));
+        } else {
+            setPower(feedForward);
+        }
+    }
+    
     public void setLiftTarget(int target){
         liftTarget = target;
     }
@@ -869,6 +886,21 @@ public class ScoringSystem {
         double rightPos = pos * (0 - 0.24) + 0.24;
         lIntakeLift.setPosition(leftPos);
         rIntakeLift.setPosition(rightPos);
+    }
+
+    public void climbToPosition(int target, double power) {
+        while (Math.abs(climb.getCurrentPosition() - target) > 20) {
+            climb.setPower(power * Math.signum(target - climb.getCurrentPosition()));
+        }
+        climb.setPower(0);
+    }
+
+    public void setClimbPower(double power) {
+        climb.setPower(power);
+    }
+
+    public double getClimbPosition() {
+        return climb.getCurrentPosition();
     }
 
     public void writeLoggerToFile(){

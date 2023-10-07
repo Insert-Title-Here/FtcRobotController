@@ -28,6 +28,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
     volatile boolean /*, changeStackFlag,*/ linkageUp, linkageDown/*, changeToggle*/;
     volatile boolean liftBrokenMode = false;
+    volatile boolean climbed = false;
     Thread liftThread, linkageThread;
 
     //Enums for feed forward
@@ -55,9 +56,11 @@ public class CenterStageTeleOp extends LinearOpMode {
             public void run() {
                 while (opModeIsActive()) {
 
-                    //Lift up to scoring position
-                    if (gamepad1.left_trigger > 0.1) {
+                    //Lift up to scoring position if climber has not been activated
+                    if (gamepad1.left_trigger > 0.1 && !climbed) {
                         //score.setPower(0.2);
+                        score.setGrabberPosition(Constants.GRABBING);
+
                         linkageUp = true;
 
                         try {
@@ -68,13 +71,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                         score.commandAutoGoToPosition();
                         score.setExtended(true);
-                    }/*else {
-                        if(passive == PassivePower.EXTENDED){
-                            score.setPowerSingular(0.23);
-                        }else if(passive == PassivePower.ZEROf){
-                            score.setPower(0);
-                        }
-                    }*/
+                    }
 
 
                     //Scoring feature
@@ -94,6 +91,8 @@ public class CenterStageTeleOp extends LinearOpMode {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+
+                        score.setGrabberPosition(Constants.GRABBING);
 
 
                         score.setLiftTarget(0);
@@ -160,7 +159,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                     //Linkage up
                     //TODO: see if we want to put auto grabber close
-                    if (gamepad1.right_stick_button) {
+                    if (gamepad1.start) {
 
 
                         linkageUp = true;
@@ -170,7 +169,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                     //Changing scoring modes (toggle)
 
-                    if (gamepad1.y) {
+                    if (gamepad1.a) {
                         score.setScoringMode(ScoringSystem.ScoringMode.LOW);
 
 
@@ -178,31 +177,29 @@ public class CenterStageTeleOp extends LinearOpMode {
                         score.setScoringMode(ScoringSystem.ScoringMode.MEDIUM);
 
 
-                    } else if (gamepad1.b) {
+                    } else if (gamepad1.y) {
                         score.setScoringMode(ScoringSystem.ScoringMode.HIGH);
 
-
-                    } else if (gamepad1.a) {
-                        //Ultra
-                        score.setScoringMode(ScoringSystem.ScoringMode.ULTRA);
 
                     }
 
 
                     //Manual slides (dpad right and left)
                     if (gamepad1.dpad_right) {
-                        score.setPower(1);
+                        score.setPower(0.5);
                         score.setLiftTarget(-1 * score.getRightEncoderPos());
                     } else if (gamepad1.dpad_left) {
-                        score.setPower(-0.55);
+                        score.setPower(-0.5);
                         score.setLiftTarget(-1 * score.getRightEncoderPos());
 
                     } else {
 
                         if (score.getLiftTarget() != 0) {
-                            score.newLiftPIDUpdate(0.8, false);
+                            //score.newLiftPIDUpdate(0.8, false);
+                            score.liftUpdateNoPID(0.8, Constants.LIFT_F);
                         } else {
-                            score.newLiftPIDUpdate(0.62, false);
+                            score.liftUpdateNoPID(0.4, 0);
+                            //score.newLiftPIDUpdate(0.62, false);
 
                         }
 
@@ -210,6 +207,10 @@ public class CenterStageTeleOp extends LinearOpMode {
                     }
 
 
+                    telemetry.addData("climb", score.getClimbPosition());
+                    telemetry.addData("left", score.getLeftEncoderPos());
+                    telemetry.addData("right", score.getRightEncoderPos());
+                    telemetry.addData("Target", score.getLiftTarget());
                     telemetry.update();
 
                     //TODO: lift broken?
@@ -269,6 +270,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                 while (opModeIsActive()) {
 
+                    // Intake when LB pressed
                     if (gamepad1.left_bumper && score.getLeftLinkage() <= Constants.LINKAGE_DOWN) {
                         score.setGrabberPosition(Constants.OPEN);
                         score.setLinkagePosition(Constants.LINKAGE_INTAKE);
@@ -277,14 +279,45 @@ public class CenterStageTeleOp extends LinearOpMode {
                         leftBumper = true;
                     } else if (leftBumper) {
                         score.setGrabberPosition(Constants.GRABBING);
+                        score.setIntakePower(0);
+                        try {
+                            Thread.currentThread().sleep(250);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         score.setLinkagePosition(Constants.LINKAGE_DOWN);
                         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
-
-                        score.setIntakePower(0);
                         leftBumper = false;
                     }
 
-                    if (linkageUp) {
+                    // Extend climb mechanism when dpad up pressed
+                    if (gamepad1.dpad_up) {
+                        // don't extend if lift or linkage is up
+                        if (score.getLeftLinkage() > Constants.LINKAGE_DOWN || score.getLiftTarget() > 50) {
+                            score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
+                            score.setLiftTarget(0);
+
+                            try {
+                                Thread.currentThread().sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        score.climbToPosition(Constants.CLIMB_HEIGHT, 1);
+                        // flag to lock scoring system after climber is extended
+                        climbed = true;
+                    }
+                    // lift robot if dpad down is pressed
+                    if (gamepad1.dpad_down) {
+                        score.setClimbPower(-1);
+                    } else {
+                        score.setClimbPower(0);
+                    }
+
+                    // only move linkage to up  position if climber isn't extended
+                    if (linkageUp && !climbed) {
 
                         try {
                             Thread.currentThread().sleep(100);
@@ -337,6 +370,8 @@ public class CenterStageTeleOp extends LinearOpMode {
             double leftStickX = gamepad1.left_stick_x;
             double leftStickY = gamepad1.left_stick_y;
 
+            // Uncomment this to lock to cardinal directions
+            /*
             if (Math.abs(leftStickX) > Math.abs(leftStickY)) {
                 leftStickY = 0;
 
@@ -347,6 +382,8 @@ public class CenterStageTeleOp extends LinearOpMode {
                 leftStickY = 0;
                 leftStickX = 0;
             }
+
+             */
 
 
             if (gamepad1.right_bumper) {

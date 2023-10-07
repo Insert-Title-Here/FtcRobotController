@@ -7,7 +7,7 @@ public class Constants {
 
     // Linkage positions
     public static double LINKAGE_DOWN = 0.2;
-    public static double LINKAGE_UP = 1;
+    public static double LINKAGE_UP = 0.92;
     public static double LINKAGE_INTAKE = 0.17;
 
     // Intake linkage positions
@@ -29,12 +29,15 @@ public class Constants {
     // Lift Heights
     public static int LIFT_LOW = 145;
     public static int LIFT_MEDIUM = 350;
-    public static int LIFT_HIGH = 400;
+    public static int LIFT_HIGH = 450;
 
     // Lift PID
-    public static int LIFT_P = 0;
-    public static int LIFT_I = 0;
-    public static int LIFT_D = 0;
-    public static int LIFT_F = 0;
+    public static double LIFT_P = 0.001;
+    public static double LIFT_I = 0;
+    public static double LIFT_D = 0;
+    public static double LIFT_F = 0.2;
+
+    // Climb Target
+    public static int CLIMB_HEIGHT = 2400;
 
 }

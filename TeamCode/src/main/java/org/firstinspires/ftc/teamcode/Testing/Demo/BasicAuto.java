@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.Testing.Demo;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@Disabled
 @TeleOp(name = "BasicTeleop")
 public class BasicAuto extends LinearOpMode {
 
