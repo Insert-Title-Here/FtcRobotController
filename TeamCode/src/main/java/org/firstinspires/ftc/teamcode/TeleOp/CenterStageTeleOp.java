@@ -54,74 +54,8 @@ public class CenterStageTeleOp extends LinearOpMode {
         liftThread = new Thread() {
             @Override
             public void run() {
+
                 while (opModeIsActive()) {
-
-                    //Lift up to scoring position if climber has not been activated
-                    if (gamepad1.left_trigger > 0.1 && !climbed) {
-                        //score.setPower(0.2);
-                        score.setGrabberPosition(Constants.GRABBING);
-
-                        linkageUp = true;
-
-                        try {
-                            Thread.currentThread().sleep(650);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                        score.commandAutoGoToPosition();
-                        score.setExtended(true);
-                    }
-
-
-                    //Scoring feature
-                    if (gamepad1.right_trigger > 0.1) {
-                        score.setGrabberPosition(Constants.OPEN);
-
-                        try {
-                            Thread.currentThread().sleep(500);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                        linkageDown = true;
-
-                        try {
-                            sleep(300);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        score.setGrabberPosition(Constants.GRABBING);
-
-
-                        score.setLiftTarget(0);
-
-
-
-                        if (liftBrokenMode) {
-                            try {
-                                sleep(2000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        //TODO: fix this
-                        //score.lowerConeStack();
-
-
-
-
-                        try {
-                            Thread.currentThread().sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        //Not extended anymore
-                        score.setExtended(false);
-                    }
 
                     //TODO: stack stuff
 
@@ -161,7 +95,6 @@ public class CenterStageTeleOp extends LinearOpMode {
                     //TODO: see if we want to put auto grabber close
                     if (gamepad1.start) {
 
-
                         linkageUp = true;
 
                     }
@@ -194,13 +127,13 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                     } else {
 
-                        if (score.getLiftTarget() != 0) {
+                        if (score.getLeftEncoderPos() * -1 < score.getLiftTarget() && score.getLiftTarget() != 0) {
                             //score.newLiftPIDUpdate(0.8, false);
                             score.liftUpdateNoPID(0.8, Constants.LIFT_F);
-                        } else {
+                        } else if (score.getLiftTarget() == 0){
                             score.liftUpdateNoPID(0.4, 0);
-                            //score.newLiftPIDUpdate(0.62, false);
-
+                        } else {
+                            score.liftUpdateNoPID(0.4, Constants.LIFT_F);
                         }
 
 
@@ -270,12 +203,88 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                 while (opModeIsActive()) {
 
+                    //Lift up to scoring position if climber has not been activated
+                    if (gamepad1.left_trigger > 0.1 && !climbed) {
+                        //score.setPower(0.2);
+                        score.setLiftTarget(Constants.LIFT_LOW);
+                        score.setLinkagePositionLogistic(0.5, 500, 100);
+                        try {
+                            Thread.currentThread().sleep(750);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        score.setGrabberPosition(Constants.OPEN);
+                        try {
+                            Thread.currentThread().sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        score.setGrabberPosition(Constants.GRABBING);
+                        score.commandAutoGoToPosition();
+
+                        linkageUp = true;
+
+                        score.setExtended(true);
+                    }
+
+                    //Scoring feature
+                    if (gamepad1.right_trigger > 0.1) {
+                        score.setGrabberPosition(Constants.OPEN);
+
+                        try {
+                            Thread.currentThread().sleep(500);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        score.setGrabberPosition(Constants.GRABBING);
+
+                        score.setLinkagePositionLogistic(0.3, 500, 100);
+
+                        score.setLiftTarget(100);
+
+                        try {
+                            sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 750, 100);
+
+                        score.setLiftTarget(0);
+
+
+
+                        if (liftBrokenMode) {
+                            try {
+                                sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        //TODO: fix this
+                        //score.lowerConeStack();
+
+
+
+
+                        try {
+                            Thread.currentThread().sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Not extended anymore
+                        score.setExtended(false);
+                    }
+
                     // Intake when LB pressed
                     if (gamepad1.left_bumper && score.getLeftLinkage() <= Constants.LINKAGE_DOWN) {
                         score.setGrabberPosition(Constants.OPEN);
                         score.setLinkagePosition(Constants.LINKAGE_INTAKE);
                         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN);
-                        score.setIntakePower(1);
+                        score.setIntakePower(Constants.INTAKE_SPEED);
                         leftBumper = true;
                     } else if (leftBumper) {
                         score.setGrabberPosition(Constants.GRABBING);

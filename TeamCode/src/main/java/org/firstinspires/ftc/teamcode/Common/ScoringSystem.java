@@ -93,6 +93,8 @@ public class ScoringSystem {
         setLinkagePosition(Constants.LINKAGE_DOWN);
         setIntakePower(0);
 
+        climb.setPower(0);
+
 
         setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
 

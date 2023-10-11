@@ -8,11 +8,12 @@ public class Constants {
     // Linkage positions
     public static double LINKAGE_DOWN = 0.2;
     public static double LINKAGE_UP = 0.92;
-    public static double LINKAGE_INTAKE = 0.17;
+    public static double LINKAGE_INTAKE = 0.16;
 
     // Intake linkage positions
-    public static double INTAKE_LINKAGE_DOWN = 0.04;
+    public static double INTAKE_LINKAGE_DOWN = 0.03;
     public static double INTAKE_LINKAGE_UP = 0.5;
+    public static double INTAKE_SPEED = 0.45;
 
     //Grabber Positions
     public static double GRABBING = 0.15;
@@ -28,8 +29,8 @@ public class Constants {
 
     // Lift Heights
     public static int LIFT_LOW = 145;
-    public static int LIFT_MEDIUM = 350;
-    public static int LIFT_HIGH = 450;
+    public static int LIFT_MEDIUM = 450;
+    public static int LIFT_HIGH = 750;
 
     // Lift PID
     public static double LIFT_P = 0.001;
