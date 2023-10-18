@@ -54,7 +54,7 @@ public class CenterStageTeleOp extends LinearOpMode {
         liftThread = new Thread() {
             @Override
             public void run() {
-
+                boolean startFlag = false;
                 while (opModeIsActive()) {
 
                     //TODO: stack stuff
@@ -93,10 +93,16 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                     //Linkage up
                     //TODO: see if we want to put auto grabber close
-                    if (gamepad1.start) {
-
-                        linkageUp = true;
-
+                    if (gamepad1.start && !startFlag) {
+                        if (score.getLeftLinkage() <= Constants.LINKAGE_DOWN) {
+                            linkageUp = true;
+                        } else {
+                            linkageDown = true;
+                        }
+                        startFlag = true;
+                    }
+                    if (!gamepad1.start) {
+                        startFlag = false;
                     }
 
 
