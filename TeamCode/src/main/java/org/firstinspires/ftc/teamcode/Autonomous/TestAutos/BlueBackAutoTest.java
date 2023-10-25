@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous.TestAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,20 +21,20 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
         score = new ScoringSystem(hardwareMap, telemetry, time);
         score.setGrabberPosition(Constants.OPEN);
+        score.setGrabberPosition(Constants.GRABBING);
 
         waitForStart();
-        score.setGrabberPosition(Constants.GRABBING);
-        drive.simpleMoveToPosition(645, 0.4);
+        drive.simpleMoveToPosition(625, 0.4);
         score.setIntakePower(-0.2);
-        sleep(500);
+        sleep(300);
         score.setIntakePower(0);
-        drive.simpleMoveToPosition(-50, 0.2);
+        drive.simpleMoveToPosition(-20, 0.2);
 
         drive.tankRotate((Math.PI/(-2.1)), 0.3);
 
         drive.simpleMoveToPosition(-650, 0.4);
-        drive.simpleMoveToPosition(-190, 0.3);
-        drive.simpleMoveToPosition(-130, 0.1);
+        drive.simpleMoveToPosition(-150, 0.3);
+        drive.simpleMoveToPosition(-107, 0.1);
 
         //  score.
         score.setLinkagePositionLogistic(0.5, 1000, 100);
@@ -49,9 +49,7 @@ public class BlueBackAutoTest extends LinearOpMode {
 
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, 0.4);
 
-        drive.tankRotate(Math.PI, 0.3);
-
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAIGHT, 0.4);
+        drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAFE, 0.4);
 
         drive.simpleBrake();
 

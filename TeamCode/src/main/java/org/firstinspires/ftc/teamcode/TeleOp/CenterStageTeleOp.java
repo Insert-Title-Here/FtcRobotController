@@ -358,14 +358,14 @@ public class CenterStageTeleOp extends LinearOpMode {
 
 
             if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(-leftStickX * Constants.SPRINT_LINEAR_MODIFIER, -leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
+                drive.setPower(new Vector2D(-leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             } else {
 
                 if (score.isExtended() && score.getScoringMode() != ScoringSystem.ScoringMode.LOW) {
                     //Slow down when slides are extended
-                    drive.setPower(new Vector2D(-leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, -leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                    drive.setPower(new Vector2D(-leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
                 } else {
-                    drive.setPower(new Vector2D(-leftStickX * Constants.NORMAL_LINEAR_MODIFIER, -leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                    drive.setPower(new Vector2D(-leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
 

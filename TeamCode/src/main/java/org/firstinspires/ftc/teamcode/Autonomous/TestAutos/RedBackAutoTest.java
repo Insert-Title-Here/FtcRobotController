@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous.TestAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 @Autonomous
-public class RedBackAutoBetter extends LinearOpMode {
+public class RedBackAutoTest extends LinearOpMode {
 
     MecDriveV2 drive;
     ScoringSystem score;
@@ -38,13 +38,13 @@ public class RedBackAutoBetter extends LinearOpMode {
 
         //  score.
         score.setLinkagePositionLogistic(0.5, 1000, 100);
-      //  score.goToLiftTarget(Constants.LIFT_LOW, 0.8);
+        //  score.goToLiftTarget(Constants.LIFT_LOW, 0.8);
         score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1500, 100);
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
-     //   score.goToLiftTarget(0, 0.3);
+        //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
 
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, 0.3);

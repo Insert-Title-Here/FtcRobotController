@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 @Autonomous
-public class RedBackAutoTest extends LinearOpMode {
+public class BlueBackAutoBetter extends LinearOpMode {
 
     MecDriveV2 drive;
     ScoringSystem score;
@@ -21,31 +21,35 @@ public class RedBackAutoTest extends LinearOpMode {
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
         score = new ScoringSystem(hardwareMap, telemetry, time);
         score.setGrabberPosition(Constants.OPEN);
+        score.setGrabberPosition(Constants.GRABBING);
 
         waitForStart();
-        score.setGrabberPosition(Constants.GRABBING);
-        drive.simpleMoveToPosition(650, 0.4);
+        drive.simpleMoveToPosition(625, 0.4);
+        score.setIntakePower(-0.2);
+        sleep(300);
+        score.setIntakePower(0);
+        drive.simpleMoveToPosition(-20, 0.2);
 
-        drive.tankRotate((Math.PI/2), 0.3);
+        drive.tankRotate((Math.PI/(-2.1)), 0.3);
 
         drive.simpleMoveToPosition(-650, 0.4);
-        drive.simpleMoveToPosition(-200, 0.3);
-        drive.simpleMoveToPosition(-175, 0.1);
+        drive.simpleMoveToPosition(-150, 0.3);
+        drive.simpleMoveToPosition(-107, 0.1);
 
         //  score.
         score.setLinkagePositionLogistic(0.5, 1000, 100);
-        score.goToLiftTarget(Constants.LIFT_LOW, 0.8);
-        score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1000, 100);
+        //  score.goToLiftTarget(Constants.LIFT_LOW, 0.8);
+        score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1500, 100);
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
-        score.goToLiftTarget(Constants.LIFT_DOWN, 0.3);
+        //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
 
-        drive.tankRotate(Math.PI/(2), 0.2);
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, 0.4);
 
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAIGHT, 0.3);
+        drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAFE, 0.4);
 
         drive.simpleBrake();
 
