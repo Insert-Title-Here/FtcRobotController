@@ -152,46 +152,6 @@ public class CenterStageTeleOp extends LinearOpMode {
                     telemetry.addData("Target", score.getLiftTarget());
                     telemetry.update();
 
-                    //TODO: lift broken?
-                    /*
-                    if (gamepad1.left_bumper && optionsFlag) {
-                        optionsFlag = false;
-                        liftBrokenMode = !liftBrokenMode;
-
-                        if (liftBrokenMode) {
-                            gamepad1.rumble(1500);
-                        } else {
-                            gamepad1.rumble(200);
-                        }
-                    }
-                    if (!gamepad1.left_bumper) {
-                        optionsFlag = true;
-                    }
-
-                     */
-
-
-                    /*if ((gamepad2.dpad_up || gamepad2.dpad_down) && changeToggle) {
-                        if (gamepad2.dpad_up) {
-                            score.setLinkagePosition(score.getLeftLinkage() + 0.025);
-
-                        } else {
-                            score.setLinkagePosition(score.getLeftLinkage() - 0.025);
-
-
-                        }
-
-                        changeToggle = false;
-
-
-                    }
-
-                    if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
-                        changeToggle = true;
-                    }*/
-
-
-
 
                 }
 
@@ -208,23 +168,19 @@ public class CenterStageTeleOp extends LinearOpMode {
                 boolean leftBumper = false;
 
                 while (opModeIsActive()) {
-
+                    if (gamepad1.b) {
+                        score.releaseAirplane();
+                    }
                     //Lift up to scoring position if climber has not been activated
                     if (gamepad1.left_trigger > 0.1 && !climbed) {
                         //score.setPower(0.2);
-                        score.setLiftTarget(Constants.LIFT_LOW);
-                        score.setLinkagePositionLogistic(0.5, 500, 100);
+                        score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1000, 100);
                         try {
                             Thread.currentThread().sleep(750);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        score.setGrabberPosition(Constants.OPEN);
-                        try {
-                            Thread.currentThread().sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+
                         score.setGrabberPosition(Constants.GRABBING);
                         score.commandAutoGoToPosition();
 

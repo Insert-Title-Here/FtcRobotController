@@ -798,6 +798,19 @@ public class MecDriveV2 {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).firstAngle;
     }
 
+    public void simpleMoveToPosition(int tics, double power) {
+
+        if (avgPos() > tics) {
+            power *= -1;
+        }
+        while (avgPos() < Math.abs(tics)) {
+            setPower(power + Math.signum(power) * 0.05, power, power + Math.signum(power) * 0.05, power);
+        }
+
+        simpleBrake();
+
+    }
+
     //TODO: Test this
     public void simpleMoveToPosition(int tics, MovementType movement, double power) {
 

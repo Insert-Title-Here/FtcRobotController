@@ -8,11 +8,11 @@ public class Constants {
     // Linkage positions
     public static double LINKAGE_DOWN = 0.2;
     public static double LINKAGE_UP = 0.92;
-    public static double LINKAGE_INTAKE = 0.16;
+    public static double LINKAGE_INTAKE = 0.18;
 
     // Intake linkage positions
-    public static double INTAKE_LINKAGE_DOWN = 0.03;
-    public static double INTAKE_LINKAGE_UP = 0.5;
+    public static double INTAKE_LINKAGE_DOWN = 0.2;
+    public static double INTAKE_LINKAGE_UP = 0.55;
     public static double INTAKE_SPEED = 0.45;
 
     //Grabber Positions
@@ -28,6 +28,7 @@ public class Constants {
     public static double SPRINT_ROTATIONAL_MODIFIER = 1;
 
     // Lift Heights
+    public static int LIFT_DOWN=0;
     public static int LIFT_LOW = 145;
     public static int LIFT_MEDIUM = 450;
     public static int LIFT_HIGH = 750;
@@ -40,5 +41,9 @@ public class Constants {
 
     // Climb Target
     public static int CLIMB_HEIGHT = 2400;
+
+    //airplaneeeey
+    public static double AIRPLANE_START_POS = 0.0;
+    public static double AIRPLANE_RELEASE_POS = 0.8;
 
 }

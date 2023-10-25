@@ -1,0 +1,56 @@
+package org.firstinspires.ftc.teamcode.Autonomous;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Common.Constants;
+import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
+import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+
+@Autonomous
+public class RedBackAutoTest extends LinearOpMode {
+
+    MecDriveV2 drive;
+    ScoringSystem score;
+    ElapsedTime time;
+
+    public void runOpMode() {
+
+        time = new ElapsedTime();
+        drive = new MecDriveV2(hardwareMap, false, telemetry, time);
+        score = new ScoringSystem(hardwareMap, telemetry, time);
+        score.setGrabberPosition(Constants.OPEN);
+
+        waitForStart();
+        score.setGrabberPosition(Constants.GRABBING);
+        drive.simpleMoveToPosition(650, 0.4);
+
+        drive.tankRotate((Math.PI/2), 0.3);
+
+        drive.simpleMoveToPosition(-650, 0.4);
+        drive.simpleMoveToPosition(-200, 0.3);
+        drive.simpleMoveToPosition(-175, 0.1);
+
+        //  score.
+        score.setLinkagePositionLogistic(0.5, 1000, 100);
+        score.goToLiftTarget(Constants.LIFT_LOW, 0.8);
+        score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1000, 100);
+        sleep(300);
+        score.setGrabberPosition(Constants.OPEN);
+        sleep(300);
+        score.setLinkagePositionLogistic(0.5, 1000, 100);
+        score.goToLiftTarget(Constants.LIFT_DOWN, 0.3);
+        score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
+
+        drive.tankRotate(Math.PI/(2), 0.2);
+
+        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAIGHT, 0.3);
+
+        drive.simpleBrake();
+
+        sleep(500);
+
+    }
+
+}
