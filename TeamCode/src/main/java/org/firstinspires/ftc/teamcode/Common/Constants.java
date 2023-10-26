@@ -52,4 +52,8 @@ public class Constants {
     public static double AIRPLANE_START_POS = 0.0;
     public static double AIRPLANE_RELEASE_POS = 0.8;
 
+    //bumper/auto score device
+    public static double AUTO_SCORING_CLAMP_OPEN = 0.5;
+    public static double AUTO_SCORING_CLAMP_CLOSED = 0;
+
 }

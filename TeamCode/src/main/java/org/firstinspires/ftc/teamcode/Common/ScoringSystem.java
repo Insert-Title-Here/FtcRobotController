@@ -22,7 +22,7 @@ import java.io.PrintStream;
 public class ScoringSystem {
     public DcMotorEx lLift, rLift;
     public DcMotor climb;
-    public Servo grabber, airplane;
+    public Servo grabber, airplane, bumperGrabber;
     public Servo lIntakeLift, rIntakeLift;
     public CRServo lIntake, rIntake;
     public DistanceSensor distance;
@@ -929,5 +929,8 @@ public class ScoringSystem {
     public void releaseAirplane() {
         airplane.setPosition(Constants.AIRPLANE_RELEASE_POS);
 
+    }
+    public void setBumperPixelRelease(double position) {
+        bumperGrabber.setPosition(position);
     }
 }

@@ -22,8 +22,9 @@ public class RedBackAutoTest extends LinearOpMode {
         time = new ElapsedTime();
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
         score = new ScoringSystem(hardwareMap, telemetry, time);
-        score.setGrabberPosition(Constants.OPEN);
         score.setGrabberPosition(Constants.GRABBING);
+        score.setGrabberPosition(Constants.AUTO_SCORING_CLAMP_CLOSED);
+
         int rando = 2;
         //vision stuff to assign 1, 2, or 3 to rando
 
@@ -43,12 +44,18 @@ public class RedBackAutoTest extends LinearOpMode {
 
     }
     public void random1() {
-        drive.simpleMoveToPosition(600, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/2, Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
 
+        spikeScore();
+
+/*
         score.setIntakePower(-0.2);
         sleep(500);
         score.setIntakePower(0);
+      */
+
+        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
 
         drive.simpleMoveToPosition(-650, Constants.AUTO_LINEAR_SPEED);
 
@@ -60,13 +67,18 @@ public class RedBackAutoTest extends LinearOpMode {
 
     }
     public void random2 () {
-        drive.simpleMoveToPosition(635, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-635, Constants.AUTO_LINEAR_SPEED);
+
+        spikeScore();
+        /*
         score.setIntakePower(-0.2);
         sleep(500);
         score.setIntakePower(0);
-        drive.simpleMoveToPosition(-50, Constants.AUTO_SAFE_MO);
 
-        drive.tankRotate((Math.PI/2), Constants.AUTO_ROTATIONAL_SPEED);
+         */
+        drive.simpleMoveToPosition(50, Constants.AUTO_SAFE_MO);
+
+        drive.tankRotate((Math.PI/(-2)), Constants.AUTO_ROTATIONAL_SPEED);
 
         drive.simpleMoveToPosition(-650, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-145, Constants.AUTO_SAFE_MO);
@@ -80,13 +92,18 @@ public class RedBackAutoTest extends LinearOpMode {
     }
 
     public void random3() {
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+
+        spikeScore();
+        /*
         score.setIntakePower(-0.2);
         sleep(500);
         score.setIntakePower(0);
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+
+         */
+        drive.simpleMoveToPosition(-300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/2, Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
         creep();
         autoScore();
         drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
@@ -108,9 +125,18 @@ public class RedBackAutoTest extends LinearOpMode {
 
     public void creep() {
         drive.setPowerAuto(Constants.AUTO_SLOWED_SPEED, MecDriveV2.MovementType.STRAIGHT);
-        //Tweak me!
+        //Change me!
         sleep(300);
         drive.setPowerAuto(0, MecDriveV2.MovementType.STRAIGHT);
+    }
+
+    public void spikeScore() {
+        drive.simpleMoveToPosition(-50, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SLOWED_SPEED);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SLOWED_SPEED);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SLOWED_SPEED);
+
     }
 
 
