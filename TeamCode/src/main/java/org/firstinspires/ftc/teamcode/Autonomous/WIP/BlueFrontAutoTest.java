@@ -1,13 +1,14 @@
-package org.firstinspires.ftc.teamcode.Autonomous.TestAutos;
+package org.firstinspires.ftc.teamcode.Autonomous.WIP;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
-
+@Disabled
 @Autonomous
 public class BlueFrontAutoTest extends LinearOpMode {
 

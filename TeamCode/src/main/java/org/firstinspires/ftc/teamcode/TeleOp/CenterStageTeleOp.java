@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
-/*
+/**
  add go down without scoring
  score off stack
  manual open close grabber
@@ -27,8 +27,6 @@ public class CenterStageTeleOp extends LinearOpMode {
     ElapsedTime time = new ElapsedTime();
     double tempTime = 0;
     double linkageToggleSpeed = 0.001;
-
-
 
     //PassivePower passive;
 

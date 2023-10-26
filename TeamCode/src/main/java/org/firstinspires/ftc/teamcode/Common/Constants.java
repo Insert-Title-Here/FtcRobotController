@@ -27,6 +27,12 @@ public class Constants {
     public static double SPRINT_LINEAR_MODIFIER = 1;
     public static double SPRINT_ROTATIONAL_MODIFIER = 1;
 
+    //Auto Drive speeds
+    public static double AUTO_LINEAR_SPEED = 0.4;
+    public static double AUTO_ROTATIONAL_SPEED = 0.3;
+    public static double AUTO_SLOWED_SPEED = -0.1;
+    public static double AUTO_SAFE_MO = 0.2;
+
     // Lift Heights
     public static int LIFT_DOWN=0;
     public static int LIFT_LOW = 145;
