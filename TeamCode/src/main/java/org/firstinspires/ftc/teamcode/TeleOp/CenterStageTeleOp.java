@@ -12,6 +12,12 @@ import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
+/*
+ add go down without scoring
+ score off stack
+ manual open close grabber
+ engie fix grabber
+**/
 
 @TeleOp(name = "CenterStageTeleOp")
 public class CenterStageTeleOp extends LinearOpMode {
@@ -355,17 +361,26 @@ public class CenterStageTeleOp extends LinearOpMode {
             }
 
              */
-
-
+            boolean isOpen;
+            if (gamepad1.share) {
+                score.setGrabberPosition(Constants.OPEN);
+                isOpen = true;
+            }
+        /*     else if (gamepad1.share && isOpen) {
+                score.setGrabberPosition(Constants.GRABBING);
+                isOpen = false;
+            }
+        */
             if (gamepad1.right_bumper) {
-                drive.setPower(new Vector2D(-leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
-            } else {
+                drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
+            }
+            else {
 
                 if (score.isExtended() && score.getScoringMode() != ScoringSystem.ScoringMode.LOW) {
                     //Slow down when slides are extended
-                    drive.setPower(new Vector2D(-leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
+                    drive.setPower(new Vector2D(leftStickX * Constants.EXTENDED_LINEAR_MODIFIER, leftStickY * Constants.EXTENDED_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.EXTENDED_ROTATIONAL_MODIFIER, false);
                 } else {
-                    drive.setPower(new Vector2D(-leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
+                    drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
                 }
             }
 

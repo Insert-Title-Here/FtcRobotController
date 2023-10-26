@@ -46,6 +46,4 @@ public class Constants {
     public static double AIRPLANE_START_POS = 0.0;
     public static double AIRPLANE_RELEASE_POS = 0.8;
 
-    //
-
 }
