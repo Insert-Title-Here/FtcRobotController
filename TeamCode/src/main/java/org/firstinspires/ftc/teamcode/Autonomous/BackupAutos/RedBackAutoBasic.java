@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous.BackupAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 
 @Autonomous
-public class RedBackAutoBetter extends LinearOpMode {
+public class RedBackAutoBasic extends LinearOpMode {
 
     MecDriveV2 drive;
     ScoringSystem score;
@@ -20,7 +20,6 @@ public class RedBackAutoBetter extends LinearOpMode {
         time = new ElapsedTime();
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
         score = new ScoringSystem(hardwareMap, telemetry, time);
-        score.setGrabberPosition(Constants.OPEN);
         score.setGrabberPosition(Constants.GRABBING);
 
         waitForStart();

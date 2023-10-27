@@ -23,12 +23,18 @@ public class BlueFrontAutoTest extends LinearOpMode {
         score = new ScoringSystem(hardwareMap, telemetry, time);
         //  score.setGrabberPosition(Constants.OPEN);
         score.setGrabberPosition(Constants.GRABBING);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
 
         int rando = 2;
         //vision stuff to assign 1, 2, or 3 to rando
 
         waitForStart();
+
+        score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+
+
         if (rando == 1) {
             random1();
         }
@@ -46,12 +52,15 @@ public class BlueFrontAutoTest extends LinearOpMode {
 
     public void random1() {
         drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
         spikeScore();
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-700, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(5*Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
+
     }
+
 
     public void random2() {
         drive.simpleMoveToPosition(-610, Constants.AUTO_LINEAR_SPEED);
@@ -63,14 +72,14 @@ public class BlueFrontAutoTest extends LinearOpMode {
         spikeScore();
         drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
 
-        drive.simpleMoveToPosition(650, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate((Math.PI/(2)), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(-650, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate((Math.PI/(-2)), Constants.AUTO_ROTATIONAL_SPEED);
 
     }
 
     public void random3() {
         drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(200, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
 
         /*
         score.setIntakePower(-0.2);
@@ -80,7 +89,7 @@ public class BlueFrontAutoTest extends LinearOpMode {
         spikeScore();
         drive.simpleMoveToPosition(300, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(650, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate((Math.PI/(2)), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate((Math.PI/(-2)), Constants.AUTO_ROTATIONAL_SPEED);
         drive.simpleMoveToPosition(300, Constants.AUTO_LINEAR_SPEED);
 
     }
