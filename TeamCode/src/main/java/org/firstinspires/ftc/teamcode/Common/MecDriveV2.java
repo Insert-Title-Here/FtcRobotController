@@ -2529,6 +2529,7 @@ public class MecDriveV2 {
 
     public double setPowerAuto(double power, MecDriveV2.MovementType movement) {
         if (movement == MecDriveV2.MovementType.STRAIGHT) {
+
             setPower(power+power*(0.05), power, power+power*(0.05), power);
         } else if (movement == MecDriveV2.MovementType.STRAFE) {
             setPower(power, -power, -power, power);

@@ -1,12 +1,13 @@
 //Auto for if we are just scoring preload
 //mostly done?
 
-package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
+package org.firstinspires.ftc.teamcode.Autonomous.DoneAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
@@ -27,13 +28,13 @@ public class RedBackAutoTest extends LinearOpMode {
         score.setGrabberPosition(Constants.AUTO_SCORING_CLAMP_OPEN);
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
 
-        int rando = 2;
-        //vision stuff to assign 1, 2, or 3 to rando
+        int rando = 3;
+        //vision stuff to assign 1, 2, or 3 to rando7 0
 
         waitForStart();
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        sleep(1000);
+        sleep(1500);
 
         if (rando == 1) {
             random1();
@@ -59,19 +60,20 @@ public class RedBackAutoTest extends LinearOpMode {
         sleep(500);
         score.setIntakePower(0);
       */
-        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(200, Constants.AUTO_SAFE_MO);
+        drive.tankRotate(Math.PI/(-2.1), Constants.AUTO_ROTATIONAL_SPEED);
 
-        drive.simpleMoveToPosition(-650, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-750, Constants.AUTO_LINEAR_SPEED);
 
         creep();
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(610, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-300, Constants.AUTO_LINEAR_SPEED);
     }
     public void random2 () {
-        drive.simpleMoveToPosition(-550, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-575, Constants.AUTO_LINEAR_SPEED);
 
         spikeScore();
         /*
@@ -80,25 +82,28 @@ public class RedBackAutoTest extends LinearOpMode {
         score.setIntakePower(0);
 
          */
-        drive.simpleMoveToPosition(50, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(150, Constants.AUTO_SAFE_MO);
 
-        drive.tankRotate((Math.PI/(-2.1)), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate((Math.PI/(-2.15)), Constants.AUTO_ROTATIONAL_SPEED);
 
         drive.simpleMoveToPosition(-650, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-145, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-250, Constants.AUTO_SAFE_MO);
 
         creep();
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(610, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(625, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
+        score.setLinkagePositionLogistic(Constants.INTAKE_LINKAGE_UP-0.2, 2000);
 
 
     }
 
     public void random3() {
-        drive.simpleMoveToPosition(-300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-50, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-325, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
 
         spikeScore();
         /*
@@ -107,15 +112,17 @@ public class RedBackAutoTest extends LinearOpMode {
         score.setIntakePower(0);
 
          */
-        drive.simpleMoveToPosition(-300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-450, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-250, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(-250, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
+
         creep();
         autoScore();
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(610, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
-
+        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-400, Constants.AUTO_LINEAR_SPEED);
     }
 
     public void autoScore() {
@@ -139,11 +146,11 @@ public class RedBackAutoTest extends LinearOpMode {
     }
 
     public void spikeScore() {
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_SAFE_MO);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(50, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(50, Constants.AUTO_SAFE_MO);
 
     }
 

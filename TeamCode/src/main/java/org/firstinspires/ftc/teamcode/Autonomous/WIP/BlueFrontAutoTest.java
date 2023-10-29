@@ -1,3 +1,5 @@
+//blue path 2 plows over team game element
+
 package org.firstinspires.ftc.teamcode.Autonomous.WIP;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -8,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
-@Disabled
+//@Disabled
 @Autonomous
 public class BlueFrontAutoTest extends LinearOpMode {
 
@@ -33,7 +35,7 @@ public class BlueFrontAutoTest extends LinearOpMode {
 
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-
+        sleep(1000);
 
         if (rando == 1) {
             random1();
@@ -53,33 +55,37 @@ public class BlueFrontAutoTest extends LinearOpMode {
     public void random1() {
         drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
+
         spikeScore();
+
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-700, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(5*Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+
+        drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
 
     }
 
 
     public void random2() {
-        drive.simpleMoveToPosition(-610, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI, Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_SAFE_MO);
         /*
         score.setIntakePower(-0.2);
         sleep(500);
         score.setIntakePower(0);
          */
         spikeScore();
-        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
-
-        drive.simpleMoveToPosition(-650, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(300, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate((Math.PI/(-2)), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
+
 
     }
 
     public void random3() {
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
 
         /*
         score.setIntakePower(-0.2);
@@ -87,19 +93,19 @@ public class BlueFrontAutoTest extends LinearOpMode {
         score.setIntakePower(0);
          */
         spikeScore();
-        drive.simpleMoveToPosition(300, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(650, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate((Math.PI/(-2)), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(300, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
 
+        drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
     }
 
     public void spikeScore() {
-        drive.simpleMoveToPosition(-50, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_SAFE_MO);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
 
     }
 

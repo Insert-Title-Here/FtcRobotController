@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.Autonomous.Archive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
-
+@Disabled
 @Autonomous
 public class LM0Auto extends LinearOpMode {
 

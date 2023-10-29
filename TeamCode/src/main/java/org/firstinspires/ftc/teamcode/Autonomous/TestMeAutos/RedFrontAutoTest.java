@@ -1,3 +1,5 @@
+//red path two avoids team game element
+
 package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -101,11 +103,11 @@ public class RedFrontAutoTest extends LinearOpMode {
     }
 
     public void spikeScore() {
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_SAFE_MO);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
 
     }
 
