@@ -59,6 +59,8 @@ public class CenterStageTeleOp extends LinearOpMode {
             @Override
             public void run() {
                 boolean startFlag = false;
+                boolean backFlag = false;
+
                 while (opModeIsActive()) {
 
                     //TODO: stack stuff
@@ -95,7 +97,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
 
 
-                    //Linkage up
+                    //Manual Linkage up and down
                     //TODO: see if we want to put auto grabber close
                     if (gamepad1.start && !startFlag) {
                         if (score.getLeftLinkage() <= Constants.LINKAGE_DOWN) {
@@ -106,6 +108,19 @@ public class CenterStageTeleOp extends LinearOpMode {
                         startFlag = true;
                     }
                     if (!gamepad1.start) {
+                        startFlag = false;
+                    }
+
+                    //Manual Grabbing and open
+                    if (gamepad1.back && !backFlag) {
+                        if (score.getGrabberPosition() == Constants.GRABBING) {
+                            score.setGrabberPosition(Constants.OPEN);
+                        } else {
+                            score.setGrabberPosition(Constants.GRABBING);
+                        }
+                        backFlag = true;
+                    }
+                    if (!gamepad1.back) {
                         startFlag = false;
                     }
 
@@ -127,7 +142,7 @@ public class CenterStageTeleOp extends LinearOpMode {
                     }
 
 
-                    //Manual slides (dpad right and left)
+                    //Manual slides (dpad right goes up and left goes down)
                     if (gamepad1.dpad_right) {
                         score.setPower(0.5);
                         score.setLiftTarget(-1 * score.getRightEncoderPos());
