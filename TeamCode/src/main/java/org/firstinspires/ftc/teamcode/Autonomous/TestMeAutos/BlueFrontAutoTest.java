@@ -1,6 +1,6 @@
 //blue path 2 plows over team game element
 
-package org.firstinspires.ftc.teamcode.Autonomous.WIP;
+package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -68,7 +68,7 @@ public class BlueFrontAutoTest extends LinearOpMode {
 
     public void random2() {
         drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI, Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate(3.1, Constants.AUTO_ROTATIONAL_SPEED);
         drive.simpleMoveToPosition(-100, Constants.AUTO_SAFE_MO);
         /*
         score.setIntakePower(-0.2);

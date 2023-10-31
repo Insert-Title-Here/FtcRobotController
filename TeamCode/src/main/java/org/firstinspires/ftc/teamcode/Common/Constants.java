@@ -30,8 +30,12 @@ public class Constants {
     //Auto Drive speeds
     public static double AUTO_LINEAR_SPEED = 0.4;
     public static double AUTO_ROTATIONAL_SPEED = 0.3;
-    public static double AUTO_SLOWED_SPEED = -0.1;
+    public static double AUTO_SLOWED_SPEED = 0.1;
     public static double AUTO_SAFE_MO = 0.2;
+
+    public static double AUTO_SUPER_MO = 0.6;
+
+    public static double AUTO_SUPER_TURN = 0.5;
 
     // Lift Heights
     public static int LIFT_DOWN=0;
@@ -54,6 +58,6 @@ public class Constants {
 
     //bumper/auto score device
     public static double AUTO_SCORING_CLAMP_OPEN = 0;
-    public static double AUTO_SCORING_CLAMP_CLOSED = 0.9;
+    public static double AUTO_SCORING_CLAMP_CLOSED = 0.7;
 
 }

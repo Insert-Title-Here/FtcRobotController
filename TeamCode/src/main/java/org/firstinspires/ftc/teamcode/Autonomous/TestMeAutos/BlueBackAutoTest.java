@@ -28,7 +28,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
 
-        int rando = 1;
+        int rando = 2;
         //vision stuff to assign 1, 2, or 3 to rando
 
         waitForStart();
@@ -88,9 +88,9 @@ public class BlueBackAutoTest extends LinearOpMode {
         score.setIntakePower(0);
 
          */
-        drive.simpleMoveToPosition(125, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
 
-        drive.tankRotate((Math.PI/(2.2)), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate((Math.PI/(2.3)), Constants.AUTO_ROTATIONAL_SPEED);
 
         drive.simpleMoveToPosition(-650, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-260, Constants.AUTO_SAFE_MO);
