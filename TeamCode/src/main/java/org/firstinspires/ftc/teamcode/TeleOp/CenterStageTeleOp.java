@@ -11,6 +11,17 @@ import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
+/*Left Stick: Sprint
+Dpad Left = Manual Up
+Dpad Right = Manual Down
+a = low 
+x = medium 
+y = high
+left Trigger = Auto Lift
+rightTrigger = score
+start = manual linkage
+back = manual grabber
+right bumper = intake*/
 
 @TeleOp(name = "CenterStageTeleOp")
 public class CenterStageTeleOp extends LinearOpMode {
@@ -167,7 +178,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
             @Override
             public void run() {
-                boolean leftBumper = false;
+                boolean right_bumper = false;
 
                 while (opModeIsActive()) {
                     /*if (gamepad1.b) {
@@ -240,13 +251,13 @@ public class CenterStageTeleOp extends LinearOpMode {
                     }
 
                     // Intake when LB pressed
-                    if (gamepad1.left_bumper && score.getLeftLinkage() <= Constants.LINKAGE_DOWN) {
+                    if (gamepad1.right_bumper && score.getLeftLinkage() <= Constants.LINKAGE_DOWN) {
                         score.setGrabberPosition(Constants.OPEN);
                         score.setLinkagePosition(Constants.LINKAGE_INTAKE);
                         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN);
                         score.setIntakePower(Constants.INTAKE_SPEED);
-                        leftBumper = true;
-                    } else if (leftBumper) {
+                        right_bumper = true;
+                    } else if (right_bumper) {
                         score.setGrabberPosition(Constants.GRABBING);
                         score.setIntakePower(0);
                         try {
@@ -256,7 +267,7 @@ public class CenterStageTeleOp extends LinearOpMode {
                         }
                         score.setLinkagePosition(Constants.LINKAGE_DOWN);
                         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
-                        leftBumper = false;
+                        right_bumper = false;
                     }
 
                     // Extend climb mechanism when dpad up pressed
@@ -371,7 +382,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
 
  */
-            if (gamepad1.right_bumper) {
+            if (gamepad1.left_stick_button) {
                 drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             }
             else {
