@@ -9,6 +9,10 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
 @Disabled
@@ -17,10 +21,39 @@ public class AprilTagTest extends LinearOpMode {
 
     private AprilTagProcessor aprilTag;
     VisionPortal visionPortal;
+    OpenCvWebcam camera;
+    BarcodePipeline pipeline;
+    BarcodePipeline.BarcodePosition barcodePos;
     public void runOpMode() {
-        initAprilTags();
+
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        pipeline = new BarcodePipeline();
+
+        camera.setPipeline(pipeline);
+
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+
+            }
+        });
 
         waitForStart();
+
+        barcodePos = pipeline.getPos();
+        camera.closeCameraDevice();
+
+        initAprilTags();
 
         while(opModeIsActive()) {
 
