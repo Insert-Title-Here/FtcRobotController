@@ -35,6 +35,8 @@ public class CenterStageTeleOp extends LinearOpMode {
     volatile boolean climbed = false;
     Thread liftThread, linkageThread;
 
+    boolean swappied = false;
+
     //Enums for feed forward
 
 
@@ -43,6 +45,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
 
         //Initializing flags
+
         linkageDown = false;
         linkageUp = false;
         //changeToggle = true;
@@ -187,9 +190,11 @@ public class CenterStageTeleOp extends LinearOpMode {
                 boolean leftBumper = false;
 
                 while (opModeIsActive()) {
-                    if (gamepad1.b) {
+                    /*if (gamepad1.b) {
                         score.releaseAirplane();
                     }
+
+                     */
                     //Lift up to scoring position if climber has not been activated
                     if (gamepad1.left_trigger > 0.1 && !climbed) {
                         //score.setPower(0.2);
@@ -375,15 +380,23 @@ public class CenterStageTeleOp extends LinearOpMode {
 
              */
             boolean isOpen;
-            if (gamepad1.share) {
-                score.setGrabberPosition(Constants.OPEN);
-                isOpen = true;
+/*
+        Neha finish this
+
+            if (gamepad1.b && !swappied) {
+                if (score.getGrabberPosition() == Constants.GRABBING) {
+                    score.setGrabberPosition(Constants.OPEN);
+                } else {
+                    score.setGrabberPosition(Constants.GRABBING);
+                }
+                backFlag = true;
             }
-        /*     else if (gamepad1.share && isOpen) {
-                score.setGrabberPosition(Constants.GRABBING);
-                isOpen = false;
+            if (!gamepad1.b) {
+                startFlag = false;
             }
-        */
+
+
+ */
             if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             }

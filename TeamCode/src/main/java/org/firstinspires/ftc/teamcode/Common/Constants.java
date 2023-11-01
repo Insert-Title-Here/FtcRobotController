@@ -7,22 +7,22 @@ public class Constants {
 
     // Linkage positions
     public static double LINKAGE_DOWN = 0.2;
-    public static double LINKAGE_UP = 0.92;
+    public static double LINKAGE_UP = 0.96;
     public static double LINKAGE_INTAKE = 0.18;
 
     // Intake linkage positions
     public static double INTAKE_LINKAGE_DOWN = 0.2;
     public static double INTAKE_LINKAGE_UP = 0.55;
-    public static double INTAKE_SPEED = 0.45;
+    public static double INTAKE_SPEED = 0.35;
 
     //Grabber Positions
-    public static double GRABBING = 0.15;
-    public static double OPEN = 0.35;
+    public static double GRABBING = 0.07;
+    public static double OPEN = 0.5;
 
     //Drive Modifiers
-    public static double NORMAL_LINEAR_MODIFIER = 0.5;
+    public static double NORMAL_LINEAR_MODIFIER = 0.25;
     public static double NORMAL_ROTATIONAL_MODIFIER = 0.4;
-    public static double EXTENDED_LINEAR_MODIFIER = 0.5;
+    public static double EXTENDED_LINEAR_MODIFIER = 0.4;
     public static double EXTENDED_ROTATIONAL_MODIFIER = 0.3;
     public static double SPRINT_LINEAR_MODIFIER = 1;
     public static double SPRINT_ROTATIONAL_MODIFIER = 1;
@@ -30,7 +30,7 @@ public class Constants {
     //Auto Drive speeds
     public static double AUTO_LINEAR_SPEED = 0.4;
     public static double AUTO_ROTATIONAL_SPEED = 0.3;
-    public static double AUTO_SLOWED_SPEED = 0.1;
+    public static double AUTO_SLOWED_SPEED = -0.1;
     public static double AUTO_SAFE_MO = 0.2;
 
     public static double AUTO_SUPER_MO = 0.6;
