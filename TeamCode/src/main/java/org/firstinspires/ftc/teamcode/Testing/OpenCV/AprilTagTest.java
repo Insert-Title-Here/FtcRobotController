@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
-@Disabled
+//@Disabled
 @TeleOp
 public class AprilTagTest extends LinearOpMode {
 
@@ -37,7 +37,7 @@ public class AprilTagTest extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(320, 176, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(320, 240 , OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
