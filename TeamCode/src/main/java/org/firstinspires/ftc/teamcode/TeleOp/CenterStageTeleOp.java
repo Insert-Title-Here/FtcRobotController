@@ -12,13 +12,6 @@ import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
-/**
- add go down without scoring
- score off stack
- manual open close grabber
- engie fix grabber
-**/
-
 @TeleOp(name = "CenterStageTeleOp")
 public class CenterStageTeleOp extends LinearOpMode {
 
@@ -27,13 +20,18 @@ public class CenterStageTeleOp extends LinearOpMode {
     ElapsedTime time = new ElapsedTime();
 
     //PassivePower passive;
-    volatile boolean linkageUp, linkageDown, climbed;
+    volatile boolean linkageUp, linkageDown, climbed, movingUp;
 
     Thread liftThread, linkageThread;
+
+    boolean swappied = false;
+
+    //Enums for feed forward
 
     @Override
     public void runOpMode() throws InterruptedException {
         //Initializing flags
+
         linkageDown = false;
         linkageUp = false;
         climbed = false;
@@ -172,13 +170,21 @@ public class CenterStageTeleOp extends LinearOpMode {
                 boolean leftBumper = false;
 
                 while (opModeIsActive()) {
-                    if (gamepad1.b) {
+                    /*if (gamepad1.b) {
                         score.releaseAirplane();
+                    }
+
+                     */
+
+                    if(movingUp && -1 * score.getLeftEncoderPos() >= score.getLiftTarget()/2) {
+                        linkageUp = true;
+                        movingUp = false;
                     }
                     //Lift up to scoring position if climber has not been activated
                     if (gamepad1.left_trigger > 0.1 && !climbed) {
+                        movingUp = true;
                         //score.setPower(0.2);
-                        score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1000, 100);
+                        score.setLinkagePositionLogistic(0.6, 1000, 100);
                         try {
                             Thread.currentThread().sleep(750);
                         } catch (InterruptedException e) {
@@ -187,8 +193,6 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                         score.setGrabberPosition(Constants.GRABBING);
                         score.commandAutoGoToPosition();
-
-                        linkageUp = true;
 
                         score.setExtended(true);
                     }
@@ -350,15 +354,23 @@ public class CenterStageTeleOp extends LinearOpMode {
 
              */
             boolean isOpen;
-            if (gamepad1.share) {
-                score.setGrabberPosition(Constants.OPEN);
-                isOpen = true;
+/*
+        Neha finish this
+
+            if (gamepad1.b && !swappied) {
+                if (score.getGrabberPosition() == Constants.GRABBING) {
+                    score.setGrabberPosition(Constants.OPEN);
+                } else {
+                    score.setGrabberPosition(Constants.GRABBING);
+                }
+                backFlag = true;
             }
-        /*     else if (gamepad1.share && isOpen) {
-                score.setGrabberPosition(Constants.GRABBING);
-                isOpen = false;
+            if (!gamepad1.b) {
+                startFlag = false;
             }
-        */
+
+
+ */
             if (gamepad1.right_bumper) {
                 drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             }
