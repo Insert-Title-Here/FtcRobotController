@@ -1,7 +1,7 @@
 //Auto for if we are just scoring preload
 //mostly done?
 
-package org.firstinspires.ftc.teamcode.Autonomous.DoneAutos;
+package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -26,9 +26,9 @@ public class RedBackAutoTest extends LinearOpMode {
         score = new ScoringSystem(hardwareMap, telemetry, time);
         score.setGrabberPosition(Constants.GRABBING);
         score.setGrabberPosition(Constants.AUTO_SCORING_CLAMP_OPEN);
-        score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
+        score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
 
-        int rando = 3;
+        int rando = 2;
         //vision stuff to assign 1, 2, or 3 to rando7 0
 
         waitForStart();
