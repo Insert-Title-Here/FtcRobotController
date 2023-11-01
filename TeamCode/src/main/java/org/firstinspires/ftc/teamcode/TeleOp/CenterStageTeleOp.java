@@ -25,27 +25,18 @@ public class CenterStageTeleOp extends LinearOpMode {
     ScoringSystem score;
     MecDriveV2 drive;
     ElapsedTime time = new ElapsedTime();
-    double tempTime = 0;
-    double linkageToggleSpeed = 0.001;
 
     //PassivePower passive;
+    volatile boolean linkageUp, linkageDown, climbed;
 
-    volatile boolean /*, changeStackFlag,*/ linkageUp, linkageDown/*, changeToggle*/;
-    volatile boolean liftBrokenMode = false;
-    volatile boolean climbed = false;
     Thread liftThread, linkageThread;
-
-    //Enums for feed forward
-
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-
         //Initializing flags
         linkageDown = false;
         linkageUp = false;
-        //changeToggle = true;
+        climbed = false;
 
         score = new ScoringSystem(hardwareMap, telemetry, time);
 
@@ -58,12 +49,13 @@ public class CenterStageTeleOp extends LinearOpMode {
         liftThread = new Thread() {
             @Override
             public void run() {
+                //Linkage up and down
                 boolean startFlag = false;
+
+                //Grabber open and close
                 boolean backFlag = false;
 
                 while (opModeIsActive()) {
-
-                    //TODO: stack stuff
 
                     /*
                     //Linkage stack cone heights with dpad up and down
@@ -95,12 +87,10 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                      */
 
-
-
                     //Manual Linkage up and down
                     //TODO: see if we want to put auto grabber close
                     if (gamepad1.start && !startFlag) {
-                        if (score.getLeftLinkage() <= Constants.LINKAGE_DOWN) {
+                        if (score.getLeftLinkage() == Constants.LINKAGE_DOWN) {
                             linkageUp = true;
                         } else {
                             linkageDown = true;
@@ -126,7 +116,6 @@ public class CenterStageTeleOp extends LinearOpMode {
 
 
                     //Changing scoring modes (toggle)
-
                     if (gamepad1.a) {
                         score.setScoringMode(ScoringSystem.ScoringMode.LOW);
 
@@ -161,7 +150,6 @@ public class CenterStageTeleOp extends LinearOpMode {
                             score.liftUpdateNoPID(0.4, Constants.LIFT_F);
                         }
 
-
                     }
 
 
@@ -170,8 +158,6 @@ public class CenterStageTeleOp extends LinearOpMode {
                     telemetry.addData("right", score.getRightEncoderPos());
                     telemetry.addData("Target", score.getLiftTarget());
                     telemetry.update();
-
-
                 }
 
             }
@@ -183,7 +169,6 @@ public class CenterStageTeleOp extends LinearOpMode {
 
             @Override
             public void run() {
-
                 boolean leftBumper = false;
 
                 while (opModeIsActive()) {
@@ -233,16 +218,6 @@ public class CenterStageTeleOp extends LinearOpMode {
                         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 750, 100);
 
                         score.setLiftTarget(0);
-
-
-
-                        if (liftBrokenMode) {
-                            try {
-                                sleep(2000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
 
                         //TODO: fix this
                         //score.lowerConeStack();
