@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Testing.OpenCV;
 
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -10,6 +11,12 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class BarcodePipeline extends OpenCvPipeline{
+    Telemetry telemetry;
+
+    public BarcodePipeline(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
+
     // define position enums
     public enum BarcodePosition
     {
@@ -23,9 +30,9 @@ public class BarcodePipeline extends OpenCvPipeline{
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 210);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(110, 210);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(190, 200);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 100);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(100, 100);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 100);
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 20;
 
@@ -118,9 +125,12 @@ public class BarcodePipeline extends OpenCvPipeline{
                 2
         );
 
-        int min = Math.min(Math.min(avg1, avg2), avg3);
+        int min = Math.min(avg2, avg3);
+        telemetry.addData("Value", min);
+        telemetry.addData("Position", position);
+        telemetry.update();
 
-        if (min == avg1) {
+        if (min > 96) {
 
             Imgproc.rectangle(
                     input,
@@ -130,7 +140,7 @@ public class BarcodePipeline extends OpenCvPipeline{
                     2
             );
 
-            position = BarcodePosition.LEFT;
+            position = BarcodePosition.RIGHT;
         } else if (min == avg2) {
 
             Imgproc.rectangle(
@@ -152,7 +162,7 @@ public class BarcodePipeline extends OpenCvPipeline{
                     2
             );
 
-            position = BarcodePosition.RIGHT;
+            position = BarcodePosition.LEFT;
         }
 
         return input;

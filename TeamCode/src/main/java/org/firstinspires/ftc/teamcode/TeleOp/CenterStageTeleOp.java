@@ -193,24 +193,36 @@ public class CenterStageTeleOp extends LinearOpMode {
                     }
                     //Lift up to scoring position if climber has not been activated
                     if (gamepad1.left_trigger > 0.1 && !climbed) {
-                        movingUp = true;
-                        //score.setPower(0.2);
-                        score.setLinkagePositionLogistic(0.6, 1000, 100);
-                        try {
-                            Thread.currentThread().sleep(750);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        if (score.isExtended()) {
+                            score.commandAutoGoToPosition();
+                        } else {
+                            movingUp = true;
+                            //score.setPower(0.2);
+                            score.setLinkagePositionLogistic(0.6, 1000, 100);
+                            try {
+                                Thread.currentThread().sleep(750);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            score.setGrabberPosition(Constants.GRABBING);
+                            score.commandAutoGoToPosition();
+
+                            score.setExtended(true);
                         }
-
-                        score.setGrabberPosition(Constants.GRABBING);
-                        score.commandAutoGoToPosition();
-
-                        score.setExtended(true);
                     }
 
                     //Scoring feature
                     if (gamepad1.right_trigger > 0.1) {
                         score.setGrabberPosition(Constants.OPEN);
+
+                        try {
+                            Thread.currentThread().sleep(500);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        score.setLiftTarget(score.getLiftTarget() + 50);
 
                         try {
                             Thread.currentThread().sleep(500);
