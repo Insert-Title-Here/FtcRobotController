@@ -44,9 +44,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         score.setGrabberPosition(Constants.GRABBING);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
-
-        int rando = 2;
-        //vision stuff to assign 1, 2, or 3 to rando
+        score.setIntakeLiftPos(0.1);
 
         // camera initialization
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -72,8 +70,6 @@ public class BlueBackAutoTest extends LinearOpMode {
         });
 
         FtcDashboard.getInstance().startCameraStream(camera, 0);
-        score.setIntakeLiftPos(0.1);
-
 
         waitForStart();
 
@@ -94,6 +90,7 @@ public class BlueBackAutoTest extends LinearOpMode {
             random3();
         }
 
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         drive.simpleBrake();
         sleep(500);
 
@@ -103,7 +100,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(-50, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(350, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-250, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(0.2, Constants.AUTO_ROTATIONAL_SPEED);
+      //  drive.tankRotate(0.2, Constants.AUTO_ROTATIONAL_SPEED);
         spikeScore();
 
         /*
@@ -123,8 +120,8 @@ public class BlueBackAutoTest extends LinearOpMode {
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-400, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
     }
 
     public void random2 () {
@@ -155,9 +152,10 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void random3() {
-        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-550, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
-
+        drive.simpleMoveToPosition(-200, Constants.AUTO_SAFE_MO);
+        sleep(500);
         spikeScore();
         /*
         score.setIntakePower(-0.2);
@@ -175,8 +173,8 @@ public class BlueBackAutoTest extends LinearOpMode {
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-300, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);
 
     }
 
@@ -189,6 +187,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
         //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
@@ -202,7 +201,7 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void spikeScore() {
-        drive.simpleMoveToPosition(-100, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-80, Constants.AUTO_SAFE_MO);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);

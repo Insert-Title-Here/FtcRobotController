@@ -811,6 +811,21 @@ public class MecDriveV2 {
 
     }
 
+    public void simpleMoveToPositionTimeout(int tics, double power, double time) {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        if (avgPos() > tics) {
+            power *= -1;
+        }
+        while (avgPos() < Math.abs(tics) && timer.time() < time) {
+            setPower(power + Math.signum(power) * 0.05, power, power + Math.signum(power) * 0.05, power);
+        }
+
+        simpleBrake();
+
+    }
+
     //TODO: Test this
     public void simpleMoveToPosition(int tics, MovementType movement, double power) {
 

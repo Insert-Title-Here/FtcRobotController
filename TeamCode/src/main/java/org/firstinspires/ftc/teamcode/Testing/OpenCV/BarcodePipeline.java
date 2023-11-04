@@ -77,7 +77,7 @@ public class BarcodePipeline extends OpenCvPipeline{
 
     void inputToB(Mat input) {
         Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
-        Core.extractChannel(RGB, B, 0);
+        Core.extractChannel(RGB, B, 1);
     }
 
     @Override
