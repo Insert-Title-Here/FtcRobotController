@@ -145,6 +145,7 @@ public class CenterStageTeleOp extends LinearOpMode {
                         score.setPower(0.5);
                         score.setLiftTarget(-1 * score.getRightEncoderPos());
                     } else if (gamepad1.dpad_left) {
+
                         score.setPower(-0.5);
                         score.setLiftTarget(-1 * score.getRightEncoderPos());
 
@@ -284,7 +285,7 @@ public class CenterStageTeleOp extends LinearOpMode {
                     }
 
                     // Extend climb mechanism when dpad up pressed
-                    if (gamepad1.dpad_up) {
+                    if (gamepad1.dpad_up && !climbed) {
                         // don't extend if lift or linkage is up
                         if (score.getLeftLinkage() > Constants.LINKAGE_DOWN || score.getLiftTarget() > 50) {
                             score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
@@ -301,9 +302,9 @@ public class CenterStageTeleOp extends LinearOpMode {
                         score.climbToPosition(Constants.CLIMB_HEIGHT, 1);
                         // flag to lock scoring system after climber is extended
                         climbed = true;
-                    }
-                    // lift robot if dpad down is pressed
-                    if (gamepad1.dpad_down) {
+                    } else if (gamepad1.dpad_up) {
+                        score.setClimbPower(0.3);
+                    } else if (gamepad1.dpad_down) {
                         score.setClimbPower(-1);
                     } else {
                         score.setClimbPower(0);

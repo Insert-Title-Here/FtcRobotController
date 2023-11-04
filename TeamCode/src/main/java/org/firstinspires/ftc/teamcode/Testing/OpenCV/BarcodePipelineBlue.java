@@ -11,10 +11,10 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class BarcodePipeline extends OpenCvPipeline{
+public class BarcodePipelineBlue extends OpenCvPipeline{
     Telemetry telemetry;
 
-    public BarcodePipeline(Telemetry telemetry) {
+    public BarcodePipelineBlue(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
@@ -77,7 +77,7 @@ public class BarcodePipeline extends OpenCvPipeline{
 //    }
 
     void inputToB(Mat input) {
-        Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
+        Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2GRAY);
         Core.extractChannel(RGB, B, 0);
     }
 

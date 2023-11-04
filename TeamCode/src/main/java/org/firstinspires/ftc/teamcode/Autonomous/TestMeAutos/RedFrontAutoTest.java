@@ -2,14 +2,22 @@
 
 package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
+import org.firstinspires.ftc.teamcode.Testing.OpenCV.BarcodePipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+
 //@Disabled
 @Autonomous
 public class RedFrontAutoTest extends LinearOpMode {
@@ -17,6 +25,9 @@ public class RedFrontAutoTest extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystem score;
     ElapsedTime time;
+    BarcodePipeline pipeline;
+    OpenCvWebcam camera;
+    BarcodePipeline.BarcodePosition barcodePos;
 
     public void runOpMode() {
 
@@ -30,19 +41,40 @@ public class RedFrontAutoTest extends LinearOpMode {
 
         int rando = 2;
         //vision stuff to assign 1, 2, or 3 to rando
+        // camera initialization
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        pipeline = new BarcodePipeline(telemetry);
+        camera.setPipeline(pipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(320, 240 , OpenCvCameraRotation.UPRIGHT);
+            }
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Init Error", errorCode);
+                telemetry.update();
+            }
+        });
+        FtcDashboard.getInstance().startCameraStream(camera, 0);
 
         waitForStart();
+        barcodePos = pipeline.getPos();
+
+
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         sleep(1000);
 
-        if (rando == 1) {
+        if (barcodePos == BarcodePipeline.BarcodePosition.LEFT) {
              random1();
         }
-        else if (rando == 2) {
+        else if (barcodePos == BarcodePipeline.BarcodePosition.CENTER) {
             random2();
         }
-        else if (rando == 3) {
+        else if (barcodePos == BarcodePipeline.BarcodePosition.RIGHT) {
             random3();
         }
 

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Testing.OpenCV.BarcodePipeline;
+import org.firstinspires.ftc.teamcode.Testing.OpenCV.BarcodePipelineBlue;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -34,8 +35,8 @@ public class BlueBackAutoTest extends LinearOpMode {
     ElapsedTime time;
     VisionPortal visionPortal;
     OpenCvWebcam camera;
-    BarcodePipeline pipeline;
-    BarcodePipeline.BarcodePosition barcodePos;
+    BarcodePipelineBlue pipeline;
+    BarcodePipelineBlue.BarcodePosition barcodePos;
     public void runOpMode() {
 
         time = new ElapsedTime();
@@ -50,7 +51,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new BarcodePipeline(telemetry);
+        pipeline = new BarcodePipelineBlue(telemetry);
 
         camera.setPipeline(pipeline);
 
@@ -80,13 +81,13 @@ public class BlueBackAutoTest extends LinearOpMode {
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         sleep(1000);
 
-        if (barcodePos == BarcodePipeline.BarcodePosition.LEFT) {
+        if (barcodePos == BarcodePipelineBlue.BarcodePosition.LEFT) {
             random1();
         }
-        else if (barcodePos == BarcodePipeline.BarcodePosition.CENTER) {
+        else if (barcodePos == BarcodePipelineBlue.BarcodePosition.CENTER) {
             random2();
         }
-        else if (barcodePos == BarcodePipeline.BarcodePosition.RIGHT) {
+        else if (barcodePos == BarcodePipelineBlue.BarcodePosition.RIGHT) {
             random3();
         }
 
@@ -120,12 +121,12 @@ public class BlueBackAutoTest extends LinearOpMode {
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(700, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
     }
 
     public void random2 () {
-        drive.simpleMoveToPosition(-575, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-570, Constants.AUTO_LINEAR_SPEED);
 
         spikeScore();
         /*
@@ -143,19 +144,19 @@ public class BlueBackAutoTest extends LinearOpMode {
         //drive.simpleMoveToPosition(-260, Constants.AUTO_SAFE_MO);
         normalizeStraight(8, 0.2, 2);
         drive.simpleMoveToPosition(-130, 0.2);
-        //creep();
+        creep();
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-750, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(750, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-350, Constants.AUTO_LINEAR_SPEED);
     }
 
     public void random3() {
         drive.simpleMoveToPosition(-550, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(-200, Constants.AUTO_SAFE_MO);
-        sleep(500);
+        drive.simpleMoveToPositionTimeout(50, Constants.AUTO_SAFE_MO, 5);
+     //   sleep(500);
         spikeScore();
         /*
         score.setIntakePower(-0.2);
@@ -166,14 +167,15 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(200, Constants.AUTO_SAFE_MO);
         drive.tankRotate(Math.PI/(2.1), Constants.AUTO_ROTATIONAL_SPEED);
 
-        drive.simpleMoveToPosition(-750, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.5, 3);
+        drive.simpleMoveToPosition(250, Constants.AUTO_LINEAR_SPEED);
 
         creep();
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);
 
     }
@@ -201,9 +203,9 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void spikeScore() {
-        drive.simpleMoveToPosition(-80, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPositionTimeout(-80, Constants.AUTO_SAFE_MO, 5);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPositionTimeout(100, Constants.AUTO_SLOWED_SPEED, 2);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
 

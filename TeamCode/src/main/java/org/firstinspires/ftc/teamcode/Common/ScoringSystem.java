@@ -904,7 +904,9 @@ public class ScoringSystem {
     }
 
     public void climbToPosition(int target, double power) {
-        while (Math.abs(climb.getCurrentPosition() - target) > 20) {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (Math.abs(climb.getCurrentPosition() - target) > 20 && timer.seconds() < 2) {
             climb.setPower(power * Math.signum(target - climb.getCurrentPosition()));
         }
         climb.setPower(0);

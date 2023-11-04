@@ -60,4 +60,6 @@ public class Constants {
     public static double AUTO_SCORING_CLAMP_OPEN = 0;
     public static double AUTO_SCORING_CLAMP_CLOSED = 0.7;
 
+    public static int RETURN_MAT = 0;
+
 }
