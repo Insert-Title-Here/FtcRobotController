@@ -30,9 +30,9 @@ public class BarcodePipeline extends OpenCvPipeline{
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 100);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(100, 100);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 100);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 135);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(185, 135);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 135);
     static final int REGION_WIDTH = 40;
     static final int REGION_HEIGHT = 20;
 
@@ -77,7 +77,7 @@ public class BarcodePipeline extends OpenCvPipeline{
 
     void inputToB(Mat input) {
         Imgproc.cvtColor(input, RGB, Imgproc.COLOR_RGB2BGR);
-        Core.extractChannel(RGB, B, 1);
+        Core.extractChannel(RGB, B, 0);
     }
 
     @Override

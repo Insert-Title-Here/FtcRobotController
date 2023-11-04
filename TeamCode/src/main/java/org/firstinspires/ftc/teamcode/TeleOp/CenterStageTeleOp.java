@@ -197,13 +197,14 @@ public class CenterStageTeleOp extends LinearOpMode {
                             score.commandAutoGoToPosition();
                         } else {
                             movingUp = true;
-                            //score.setPower(0.2);
-                            score.setLinkagePositionLogistic(0.6, 1000, 100);
+                            score.setLiftTarget(100);
                             try {
-                                Thread.currentThread().sleep(750);
+                                Thread.currentThread().sleep(300);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+                            //score.setPower(0.2);
+                            score.setLinkagePositionLogistic(0.6, 1000, 100);
 
                             score.setGrabberPosition(Constants.GRABBING);
                             score.commandAutoGoToPosition();
@@ -348,7 +349,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
 
         waitForStart();
-
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
 
 
         //Starting Threads
