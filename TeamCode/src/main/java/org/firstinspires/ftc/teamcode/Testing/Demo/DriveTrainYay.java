@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Testing.Demo;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,6 +12,7 @@ public class DriveTrainYay {
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
+    BNO055IMU imu;
     // constructor
     public DriveTrainYay (HardwareMap hardwareMap) {
         fl = hardwareMap.get(DcMotor.class, "FrontLeftDrive");
@@ -32,6 +35,17 @@ public class DriveTrainYay {
         bl.setDirection(DcMotorSimple.Direction.FORWARD);
         br.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
 
 
     }
@@ -49,6 +63,36 @@ public class DriveTrainYay {
         br.setPower(power);
     }
 
+    public double getFLMotorPosition() {
+        return fl.getCurrentPosition();
+    }
+
+    public double getFRMotorPosition() {
+        return fr.getCurrentPosition();
+    }
+
+    public double getBLMotorPosition() {
+        return bl.getCurrentPosition();
+    }
+
+    public double getBRMotorPosition() {
+        return br.getCurrentPosition();
+    }
+
+    public void bangBangController(double targetPosition, double power) {
+        while (Math.abs(targetPosition - fl.getCurrentPosition()) > 5) {
+            if (targetPosition - fl.getCurrentPosition() > 5) {
+                fl.setPower(power);
+            }
+
+            else if (targetPosition - fl.getCurrentPosition() < -5) {
+                fl.setPower(-power);
+            }
+        }
+
+        fl.setPower(0);
+    }
+
     /*
     public void setDistance(int distance) {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -64,5 +108,20 @@ public class DriveTrainYay {
         double LeftPower = straight - turn;
         double RightPower = straight + turn;
         setPower(LeftPower, RightPower, LeftPower, RightPower);
+    }
+
+    public void bangBangThing(double power, double angleTarget) {
+        while (Math.abs((angleTarget - imu.getAngularOrientation().firstAngle)) > 0.05) {
+            if (angleTarget - imu.getAngularOrientation().firstAngle > 0.05) {
+                setPower(0,power);
+            }
+
+            else if (angleTarget - imu.getAngularOrientation().firstAngle < -0.05) {
+                setPower(0,-power);
+            }
+        }
+        
+        setPower(0,0);
+
     }
 }
