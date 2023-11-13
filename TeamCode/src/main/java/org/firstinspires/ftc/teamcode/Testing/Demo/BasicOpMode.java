@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Testing.Demo;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,7 +14,42 @@ public class BasicOpMode extends LinearOpMode {
     DcMotor motor;
     Servo servo;
 
+    //object keeping track of enum
+    Thing keepingTrack;
+
+    //Initialize Thread
+    public Thread testingThread;
+
+    //enum syntax
+    public enum Thing{
+        A,
+        B,
+        C
+    }
+
+
+
+
     public void runOpMode() throws InterruptedException {
+
+        //setting object to a specific enum
+        keepingTrack = Thing.A;
+
+        //Declare Thread
+        testingThread = new Thread(){
+
+            //Overriden method that is called when thread is started
+            @Override
+            public void run(){
+
+                //While match is going
+                while(opModeIsActive()){
+                    //Running in parallel
+                }
+            }
+        };
+
+
         // deviceName is what its called in config
 
         // initializing motors
@@ -29,6 +63,11 @@ public class BasicOpMode extends LinearOpMode {
 
         // everything before this line happens on innit. everything after is on start.
         waitForStart();
+
+
+        //Start the thread and run the run() method
+        //Make sure to have this after the waitForStart();
+        testingThread.start();
 
         goToPositon(100);
 

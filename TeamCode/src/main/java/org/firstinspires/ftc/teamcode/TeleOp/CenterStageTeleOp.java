@@ -51,6 +51,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
 
+        //Start with linkage down and grabber open
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 500, 100);
         score.setGrabberPosition(Constants.OPEN);
 
@@ -97,18 +98,30 @@ public class CenterStageTeleOp extends LinearOpMode {
                      */
 
                     //Manual Linkage up and down
+                    //If you pressed the start button and the flag is false the continue
                     //TODO: see if we want to put auto grabber close
                     if (gamepad1.start && !startFlag) {
+
+                        //If linkage is down then move it up
                         if (score.getLeftLinkage() == Constants.LINKAGE_DOWN) {
                             linkageUp = true;
+
+                            //If the linkage is up then move it down
                         } else {
                             linkageDown = true;
                         }
+
+                        //Set flag to true so that it won't run over and over again when the button is pressed
+                        //Basically stating that you already pressed the button
                         startFlag = true;
                     }
+
+                    //If you release the start button then set the flag to false
+                    //Basically stating that you released the button
                     if (!gamepad1.start) {
                         startFlag = false;
                     }
+
 
                     //Manual Grabbing and open
                     if (gamepad1.back && !backFlag) {
@@ -120,7 +133,7 @@ public class CenterStageTeleOp extends LinearOpMode {
                         backFlag = true;
                     }
                     if (!gamepad1.back) {
-                        startFlag = false;
+                        backFlag = false;
                     }
 
 
