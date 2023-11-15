@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
+
+//Gamepad 1
 /*Left Stick: Sprint
 Dpad Left = Manual Up
 Dpad Right = Manual Down
@@ -22,6 +24,14 @@ rightTrigger = score
 start = manual linkage
 back = manual grabber
 right bumper = intake*/
+
+//Game Pad 2
+/*Dpad Up = Climber Auto + Manual Up
+Dpad Down = Climber Manual Down */
+
+
+
+
 
 @TeleOp(name = "CenterStageTeleOp")
 public class CenterStageTeleOp extends LinearOpMode {
@@ -298,7 +308,7 @@ public class CenterStageTeleOp extends LinearOpMode {
                     }
 
                     // Extend climb mechanism when dpad up pressed
-                    if (gamepad1.dpad_up && !climbed) {
+                    if (gamepad2.dpad_up && !climbed) {
                         // don't extend if lift or linkage is up
                         if (score.getLeftLinkage() > Constants.LINKAGE_DOWN || score.getLiftTarget() > 50) {
                             score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
@@ -315,9 +325,9 @@ public class CenterStageTeleOp extends LinearOpMode {
                         score.climbToPosition(Constants.CLIMB_HEIGHT, 1);
                         // flag to lock scoring system after climber is extended
                         climbed = true;
-                    } else if (gamepad1.dpad_up) {
+                    } else if (gamepad2.dpad_up) {
                         score.setClimbPower(0.3);
-                    } else if (gamepad1.dpad_down) {
+                    } else if (gamepad2.dpad_down) {
                         score.setClimbPower(-1);
                     } else {
                         score.setClimbPower(0);
