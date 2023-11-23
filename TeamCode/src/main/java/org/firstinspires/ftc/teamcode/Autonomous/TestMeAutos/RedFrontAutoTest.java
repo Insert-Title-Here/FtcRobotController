@@ -25,8 +25,12 @@ public class RedFrontAutoTest extends LinearOpMode {
     MecDriveV2 drive;
     ScoringSystem score;
     ElapsedTime time;
+
+    //Pipeline is a class made by Kevin to choose which auto to run based on TSE position
     BarcodePipeline pipeline;
     OpenCvWebcam camera;
+
+    //The actual position being stored (changes each time)
     BarcodePipeline.BarcodePosition barcodePos;
 
     public void runOpMode() {
@@ -34,19 +38,21 @@ public class RedFrontAutoTest extends LinearOpMode {
         time = new ElapsedTime();
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
         score = new ScoringSystem(hardwareMap, telemetry, time);
-      //  score.setGrabberPosition(Constants.OPEN);
         score.setGrabberPosition(Constants.GRABBING);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
 
-        int rando = 2;
-        //vision stuff to assign 1, 2, or 3 to rando
-        // camera initialization
+        //Vision stuff to assign 1, 2, or 3 to rando
+        //Camera initialization
+        //Mapping camera to the code
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        //Create a webcam + pipeline and assign the pipeline to the webcam
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         pipeline = new BarcodePipeline(telemetry);
         camera.setPipeline(pipeline);
+
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
