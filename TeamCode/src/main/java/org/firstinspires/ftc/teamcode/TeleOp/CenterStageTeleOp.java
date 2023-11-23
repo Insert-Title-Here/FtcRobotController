@@ -69,7 +69,7 @@ public class CenterStageTeleOp extends LinearOpMode {
         liftThread = new Thread() {
             @Override
             public void run() {
-                //Linkage up and down
+                //Linkage up anshe sd down
                 boolean startFlag = false;
 
                 //Grabber open and close
