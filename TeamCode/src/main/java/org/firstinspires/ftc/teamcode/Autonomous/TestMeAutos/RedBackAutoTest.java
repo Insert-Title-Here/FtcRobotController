@@ -117,7 +117,7 @@ public class RedBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(-250, Constants.AUTO_LINEAR_SPEED);
     }
     public void random2 () {
-        drive.simpleMoveToPosition(-575, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-550, Constants.AUTO_LINEAR_SPEED);
        //
         spikeScore();
         /*
@@ -138,7 +138,7 @@ public class RedBackAutoTest extends LinearOpMode {
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
       //  score.setLinkagePositionLogistic(Constants.INTAKE_LINKAGE_UP-0.2, 2000);
 
@@ -186,12 +186,13 @@ public class RedBackAutoTest extends LinearOpMode {
         drive.setPowerAuto(0, MecDriveV2.MovementType.STRAIGHT);
     }
 
-    public void spikeScore() {
-        drive.simpleMoveToPositionTimeout(-100, Constants.AUTO_SAFE_MO, 5);
+        public void spikeScore() {
+        drive.simpleMoveToPositionTimeout(-50, Constants.AUTO_SAFE_MO, 5);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         drive.simpleMoveToPosition(50, Constants.AUTO_SLOWED_SPEED);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+     //   score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         drive.simpleMoveToPosition(50, Constants.AUTO_SAFE_MO);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
 
     }
 

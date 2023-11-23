@@ -60,7 +60,7 @@ public class BlueFrontAutoTest extends LinearOpMode {
 
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-
+        sleep(5000);
         drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
 
     }
@@ -78,6 +78,7 @@ public class BlueFrontAutoTest extends LinearOpMode {
          */
         spikeScore();
         drive.tankRotate((3.12/2), Constants.AUTO_ROTATIONAL_SPEED);
+        sleep(5000);
         drive.simpleMoveToPosition(-1900, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         creep();

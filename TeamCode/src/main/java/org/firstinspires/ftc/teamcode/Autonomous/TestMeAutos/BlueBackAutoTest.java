@@ -43,7 +43,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
         score = new ScoringSystem(hardwareMap, telemetry, time);
         score.setGrabberPosition(Constants.GRABBING);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
         score.setIntakeLiftPos(0.1);
 
@@ -78,7 +78,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         camera.closeCameraDevice();
         initAprilTags();
 
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+     //   score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         sleep(1000);
 
         if (barcodePos == BarcodePipelineBlue.BarcodePosition.LEFT) {
@@ -189,7 +189,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPositionTimeout(100, Constants.AUTO_SAFE_MO, 2);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
         //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
@@ -206,9 +206,9 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPositionTimeout(-80, Constants.AUTO_SAFE_MO, 5);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         drive.simpleMoveToPositionTimeout(100, Constants.AUTO_SLOWED_SPEED, 2);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+       // score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
-
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
     }
 
     public void initAprilTags() {
