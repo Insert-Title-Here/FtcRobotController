@@ -75,6 +75,9 @@ public class CenterStageTeleOp extends LinearOpMode {
                 //Grabber open and close
                 boolean backFlag = false;
 
+                //Rest the encoders
+                boolean restEncoderFlag = false;
+
                 while (opModeIsActive()) {
 
                     /*
@@ -146,7 +149,6 @@ public class CenterStageTeleOp extends LinearOpMode {
                         backFlag = false;
                     }
 
-
                     //Changing scoring modes (toggle)
                     if (gamepad1.a) {
                         score.setScoringMode(ScoringSystem.ScoringMode.LOW);
@@ -162,6 +164,15 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                     }
 
+                    //Reset Encoder if slides bully us
+                    if (gamepad1.b && !restEncoderFlag) {
+                        score.reset();
+                        score.setLiftTarget(0);
+                        restEncoderFlag = true;
+                    }
+                    if (!gamepad1.b) {
+                        restEncoderFlag = false;
+                    }
 
                     //Manual slides (dpad right goes up and left goes down)
                     if (gamepad1.dpad_right) {
