@@ -1,7 +1,7 @@
 //Auto for if we are just scoring preload
 //mostly done?
 
-package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
+package org.firstinspires.ftc.teamcode.Autonomous.DoneAutos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -153,21 +153,21 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void random3() {
-        drive.simpleMoveToPosition(-550, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPositionTimeout(50, Constants.AUTO_SAFE_MO, 5);
-     //   sleep(500);
-        spikeScore();
-        /*
-        score.setIntakePower(-0.2);
-        sleep(500);
-        score.setIntakePower(0);
-
-         */
-        drive.simpleMoveToPosition(200, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(550, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2.1), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPositionTimeout(50, Constants.AUTO_SAFE_MO, 2);
 
-        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
+        spikeScore();
+
+        drive.simpleMoveToPosition(200, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+
+        sleep(5000);
+
+        drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+
         normalizeStrafe(0, 0.5, 3);
         drive.simpleMoveToPosition(250, Constants.AUTO_LINEAR_SPEED);
 
@@ -208,7 +208,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPositionTimeout(100, Constants.AUTO_SLOWED_SPEED, 2);
        // score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
     }
 
     public void initAprilTags() {

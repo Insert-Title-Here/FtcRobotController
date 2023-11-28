@@ -90,31 +90,30 @@ public class RedFrontAutoTest extends LinearOpMode {
     }
 
     public void random1() {
-        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/2, Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(600, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(-50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
 
-        /*
-        score.setIntakePower(-0.2);
-        sleep(500);
-        score.setIntakePower(0);
-         */
         spikeScore();
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
 
+        sleep(5000);
         drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
+        creep();
+        autoScore();
+        drive.simpleMoveToPosition(50, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);
     }
 
     public void random2() {
-        drive.simpleMoveToPosition(-1200, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(-3.12, Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);/*
-        score.setIntakePower(-0.2);
-        sleep(500);
-        score.setIntakePower(0);
-         */
+        drive.simpleMoveToPosition(1200, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+
         spikeScore();
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(-(3.12/2), Constants.AUTO_ROTATIONAL_SPEED);
@@ -131,8 +130,8 @@ public class RedFrontAutoTest extends LinearOpMode {
     }
 
     public void random3() {
-        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(600, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
 
         /*
         score.setIntakePower(-0.2);
@@ -144,6 +143,12 @@ public class RedFrontAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
 
         drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
+
+        creep();
+        autoScore();
+        drive.simpleMoveToPosition(50, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);
 
     }
 

@@ -1,7 +1,7 @@
 //Auto for if we are just scoring preload
 //mostly done?
 
-package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
+package org.firstinspires.ftc.teamcode.Autonomous.DoneAutos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -95,7 +95,7 @@ public class RedBackAutoTest extends LinearOpMode {
     public void random1() {
         drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
-
+        drive.simpleMoveToPosition(-50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
         spikeScore();
         /*
         score.setIntakePower(-0.2);

@@ -45,7 +45,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
     Thread liftThread, linkageThread;
 
-    boolean swappied = false;
+ //   boolean swappied = false;
 
     //Enums for feed forward
 
@@ -64,6 +64,8 @@ public class CenterStageTeleOp extends LinearOpMode {
         //Start with linkage down and grabber open
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 500, 100);
         score.setGrabberPosition(Constants.OPEN);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
 
         //Lift Thread
         liftThread = new Thread() {
@@ -382,7 +384,7 @@ public class CenterStageTeleOp extends LinearOpMode {
         };
 
         waitForStart();
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
 
 
         //Starting Threads
@@ -448,6 +450,6 @@ public class CenterStageTeleOp extends LinearOpMode {
             //Stop
             drive.simpleBrake();
             score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 300, 100);
-            score.setGrabberPosition(Constants.OPEN);
+        //    score.setGrabberPosition(Constants.OPEN);
     }
 }
