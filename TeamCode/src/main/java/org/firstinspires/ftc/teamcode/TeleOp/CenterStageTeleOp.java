@@ -178,11 +178,11 @@ public class CenterStageTeleOp extends LinearOpMode {
 
                     //Manual slides (dpad right goes up and left goes down)
                     if (gamepad1.dpad_right) {
-                        score.setPower(0.5);
+                        score.setPower(0.7);
                         score.setLiftTarget(-1 * score.getRightEncoderPos());
                     } else if (gamepad1.dpad_left) {
 
-                        score.setPower(-0.5);
+                        score.setPower(-0.7);
                         score.setLiftTarget(-1 * score.getRightEncoderPos());
 
                     } else {
