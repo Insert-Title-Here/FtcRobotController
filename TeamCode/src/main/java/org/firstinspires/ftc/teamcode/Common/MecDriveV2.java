@@ -36,6 +36,9 @@ public class MecDriveV2 {
 
     //Original
     PIDCoefficients pidf = new PIDCoefficients(0.006, 0, 0.0003);
+
+    PIDCoefficients pidfNew = new PIDCoefficients(0.0, 0, 0.0);
+    double flFF = 0, frFF = 0, blFF = 0, brFF = 0;
     int pStraightVel = 4;
     int pRotateVel = 1700;
     int pTipping = 0;
@@ -213,6 +216,44 @@ public class MecDriveV2 {
 
     public int getBREncoder() {
         return br.getCurrentPosition();
+    }
+
+    public void drivePDF(double targetPosition) {
+        while (Math.abs(fl.getCurrentPosition() - targetPosition) > 5 || Math.abs(fr.getCurrentPosition() - targetPosition) > 5 ||
+                Math.abs(bl.getCurrentPosition() - targetPosition) > 5 || Math.abs(br.getCurrentPosition() - targetPosition) > 5) {
+            double errorFL = targetPosition - fl.getCurrentPosition();
+            fl.setVelocity(errorFL * pidfNew.p + flFF);
+            //Velocity is more consistent than power because power is based on amps
+
+            double errorFR = targetPosition - fr.getCurrentPosition();
+            fr.setVelocity(errorFR * pidfNew.p + frFF);
+
+            double errorBL = targetPosition - bl.getCurrentPosition();
+            bl.setVelocity(errorBL * pidfNew.p + blFF);
+
+            double errorBR = targetPosition - br.getCurrentPosition();
+            br.setVelocity(errorBR * pidfNew.p + brFF);
+        }
+        simpleBrake();
+    }
+
+
+    public void drivePDFTesting(double targetPosition, double flF, double frF, double blF, double brF, double kp, double kd) {
+
+        double errorFL = targetPosition - fl.getCurrentPosition();
+        fl.setVelocity(errorFL * kp + flF);
+        //Velocity is more consistent than power because power is based on amps
+
+        double errorFR = targetPosition - fr.getCurrentPosition();
+        fr.setVelocity(errorFR * kp + frF);
+
+        double errorBL = targetPosition - bl.getCurrentPosition();
+        bl.setVelocity(errorBL * kp + blF);
+
+        double errorBR = targetPosition - br.getCurrentPosition();
+        br.setVelocity(errorBR * kp + brF);
+
+        simpleBrake();
     }
 
 
