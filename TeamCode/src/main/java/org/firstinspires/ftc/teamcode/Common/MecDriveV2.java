@@ -256,6 +256,10 @@ public class MecDriveV2 {
         simpleBrake();
     }
 
+    public void setFLVelocity(double velocity){
+        fl.setVelocity(velocity);
+    }
+
 
     /*public void rotate(double angle, double power) {
 
