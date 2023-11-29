@@ -105,7 +105,11 @@ public class BlueFrontAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         sleep(5000);
         drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
+<<<<<<< Updated upstream
 
+=======
+      //  drive
+>>>>>>> Stashed changes
 
 
     }
