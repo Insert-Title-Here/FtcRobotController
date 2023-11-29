@@ -930,7 +930,7 @@ public class ScoringSystem {
     }
 
     public void releaseAirplane() {
-        airplane.setPosition(Constants.AIRPLANE_RELEASE_POS);
+        airplane.setPosition(Constants.AIRPLANE_START_POS);
 
     }
     public void setBumperPixelRelease(double position) {

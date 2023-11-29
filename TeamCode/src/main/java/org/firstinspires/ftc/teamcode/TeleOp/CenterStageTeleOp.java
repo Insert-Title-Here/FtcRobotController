@@ -219,11 +219,9 @@ public class CenterStageTeleOp extends LinearOpMode {
                 boolean right_bumper = false;
 
                 while (opModeIsActive()) {
-                    /*if (gamepad1.b) {
+                    if (gamepad1.left_bumper) {
                         score.releaseAirplane();
                     }
-
-                     */
 
                     if(movingUp && -1 * score.getLeftEncoderPos() >= score.getLiftTarget()/2) {
                         linkageUp = true;
