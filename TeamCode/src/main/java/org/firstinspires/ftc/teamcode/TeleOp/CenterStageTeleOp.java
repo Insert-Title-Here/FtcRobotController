@@ -20,7 +20,6 @@ a = low
 x = medium 
 y = high
 b = encoder reset
-
 left Trigger = Auto Lift
 rightTrigger = score
 start = manual linkage
@@ -47,7 +46,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
     Thread liftThread, linkageThread;
 
- //   boolean swappied = false;
+ //   boolean swapped = false;
 
     //Enums for feed forward
 
