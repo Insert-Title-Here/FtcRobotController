@@ -19,6 +19,8 @@ Dpad Right = Manual Down
 a = low 
 x = medium 
 y = high
+b = encoder reset
+
 left Trigger = Auto Lift
 rightTrigger = score
 start = manual linkage
@@ -413,23 +415,7 @@ public class CenterStageTeleOp extends LinearOpMode {
 
              */
             boolean isOpen;
-/*
-        Neha finish this
 
-            if (gamepad1.b && !swappied) {
-                if (score.getGrabberPosition() == Constants.GRABBING) {
-                    score.setGrabberPosition(Constants.OPEN);
-                } else {
-                    score.setGrabberPosition(Constants.GRABBING);
-                }
-                backFlag = true;
-            }
-            if (!gamepad1.b) {
-                startFlag = false;
-            }
-
-
- */
             if (gamepad1.left_stick_button) {
                 drive.setPower(new Vector2D(leftStickX * Constants.SPRINT_LINEAR_MODIFIER, leftStickY * Constants.SPRINT_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.SPRINT_ROTATIONAL_MODIFIER, false);
             }
@@ -445,8 +431,6 @@ public class CenterStageTeleOp extends LinearOpMode {
 
 
         }
-
-
             //Stop
             drive.simpleBrake();
             score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 300, 100);
