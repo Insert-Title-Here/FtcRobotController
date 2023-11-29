@@ -1,0 +1,31 @@
+Important Auto Info:
+So when reading the field, from the robot's POV, the left spike mark is 1, middle ia 2, right is 3.
+robot starts in the backwards pos
+Robot can go under stage doing going towards backstage, and *can* going towards audience, but may damage field and or robot
+cannot currently pick up off stack :sob:
+
+start robot off with the intake wheels touching the wall, pixel distance from right wheel to edge of tile,
+pixel preloaded in dump truck and one leaning against the back of the robot.  Make sure the bumper clamp is upright and vertical
+
+TO DO:
+Before L1:
+
+Auto:
+- Finish basic 12 auto paths per quad
+- Make backup basic 3 autos for alliance partner issues
+
+Tele:
+- Fix Tele issues and add features
+
+
+Before L2:
+
+Auto:
+- Make super autos for getting good
+- Get vision set up and running
+- April tags!!
+
+Tele:
+- Move airplane + climb + copy a drive onto gamepad2.
+
+
