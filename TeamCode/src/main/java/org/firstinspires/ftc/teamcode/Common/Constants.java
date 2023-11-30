@@ -41,7 +41,7 @@ public class Constants {
     public static int LIFT_DOWN=0;
     public static int LIFT_LOW = 200; //145
     public static int LIFT_MEDIUM = 500; //450
-    public static int LIFT_HIGH = 750;
+    public static int LIFT_HIGH = 800;
 
     // Lift PID
     public static double LIFT_P = 0.001;
