@@ -55,7 +55,6 @@ public class ScoringSystem {
 
         airplane = hardwareMap.get(Servo.class, "airplane");
         bumperGrabber = hardwareMap.get(Servo.class, "bumperGrabber");
-        airplane.setPosition(Constants.AIRPLANE_START_POS);
 
         this.time = time;
         this.telemetry = telemetry;
