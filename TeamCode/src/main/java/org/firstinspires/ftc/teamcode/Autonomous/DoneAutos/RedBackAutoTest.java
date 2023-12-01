@@ -44,7 +44,6 @@ public class RedBackAutoTest extends LinearOpMode {
         score.setGrabberPosition(Constants.AUTO_SCORING_CLAMP_OPEN);
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
 
-        int rando = 2;
         //vision stuff to assign 1, 2, or 3 to rando7 0
 
         // camera initialization
@@ -117,7 +116,7 @@ public class RedBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(-250, Constants.AUTO_LINEAR_SPEED);
     }
     public void random2 () {
-        drive.simpleMoveToPosition(-550, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
        //
         spikeScore();
         /*
@@ -126,11 +125,14 @@ public class RedBackAutoTest extends LinearOpMode {
         score.setIntakePower(0);
 
          */
-        drive.simpleMoveToPosition(150, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
 
         drive.tankRotate((Math.PI/(-2.15)), Constants.AUTO_ROTATIONAL_SPEED);
+        sleep(500);
 
-        drive.simpleMoveToPosition(-650, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+
         normalizeStrafe(0, 0.3, 5);
         drive.simpleMoveToPosition(-250, Constants.AUTO_SAFE_MO);
 
@@ -165,6 +167,7 @@ public class RedBackAutoTest extends LinearOpMode {
     }
 
     public void autoScore() {
+        score.setGrabberPosition(Constants.GRABBING);
         score.goToLiftTarget(100, 0.8);
         sleep(500);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
@@ -182,19 +185,18 @@ public class RedBackAutoTest extends LinearOpMode {
     public void creep() {
         drive.setPowerAuto(Constants.AUTO_SLOWED_SPEED, MecDriveV2.MovementType.STRAIGHT);
         //Change me!
-        sleep(600);
+        sleep(500);
         drive.setPowerAuto(0, MecDriveV2.MovementType.STRAIGHT);
     }
 
         public void spikeScore() {
-        drive.simpleMoveToPositionTimeout(-50, Constants.AUTO_SAFE_MO, 5);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(50, Constants.AUTO_SLOWED_SPEED);
-     //   score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(50, Constants.AUTO_SAFE_MO);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-
-    }
+            drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_SAFE_MO, 2);
+            drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED-0.1);
+            score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+            drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
+            sleep(500);
+            score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+        }
 
     public void initAprilTags() {
         aprilTag = new AprilTagProcessor.Builder().build();

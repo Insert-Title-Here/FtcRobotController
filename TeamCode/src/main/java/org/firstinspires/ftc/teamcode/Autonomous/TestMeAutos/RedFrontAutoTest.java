@@ -13,24 +13,26 @@ import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Testing.OpenCV.BarcodePipeline;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.List;
+
 //@Disabled
 @Autonomous
 public class RedFrontAutoTest extends LinearOpMode {
-
+    AprilTagProcessor aprilTag;
     MecDriveV2 drive;
     ScoringSystem score;
     ElapsedTime time;
-
-    //Pipeline is a class made by Kevin to choose which auto to run based on TSE position
-    BarcodePipeline pipeline;
+    VisionPortal visionPortal;
     OpenCvWebcam camera;
-
-    //The actual position being stored (changes each time)
+    BarcodePipeline pipeline;
     BarcodePipeline.BarcodePosition barcodePos;
 
     public void runOpMode() {
@@ -39,20 +41,18 @@ public class RedFrontAutoTest extends LinearOpMode {
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
         score = new ScoringSystem(hardwareMap, telemetry, time);
         score.setGrabberPosition(Constants.GRABBING);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
+        score.setGrabberPosition(Constants.AUTO_SCORING_CLAMP_OPEN);
+        score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
 
-        //Vision stuff to assign 1, 2, or 3 to rando
-        //Camera initialization
-        //Mapping camera to the code
+        int rando = 2;
+        //vision stuff to assign 1, 2, or 3 to rando7 0
+
+        // camera initialization
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        //Create a webcam + pipeline and assign the pipeline to the webcam
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         pipeline = new BarcodePipeline(telemetry);
         camera.setPipeline(pipeline);
-
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -65,17 +65,20 @@ public class RedFrontAutoTest extends LinearOpMode {
             }
         });
         FtcDashboard.getInstance().startCameraStream(camera, 0);
+        score.setIntakeLiftPos(0.1);
 
         waitForStart();
-        barcodePos = pipeline.getPos();
 
+        barcodePos = pipeline.getPos();
+        camera.closeCameraDevice();
+        initAprilTags();
 
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        sleep(1000);
+        sleep(1500);
 
         if (barcodePos == BarcodePipeline.BarcodePosition.LEFT) {
-             random1();
+            random1();
         }
         else if (barcodePos == BarcodePipeline.BarcodePosition.CENTER) {
             random2();
@@ -84,6 +87,7 @@ public class RedFrontAutoTest extends LinearOpMode {
             random3();
         }
 
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         drive.simpleBrake();
         sleep(500);
 
@@ -102,6 +106,7 @@ public class RedFrontAutoTest extends LinearOpMode {
         sleep(5000);
         drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        normalizeStrafe(0, 0.3, 4);
         drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
         creep();
         autoScore();
@@ -119,6 +124,7 @@ public class RedFrontAutoTest extends LinearOpMode {
         drive.tankRotate(-(3.12/2), Constants.AUTO_ROTATIONAL_SPEED);
         drive.simpleMoveToPosition(-1900, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        normalizeStrafe(0, 0.3, 5);
         drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);
         creep();
         autoScore();
@@ -142,7 +148,9 @@ public class RedFrontAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(150, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
 
-        drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
+        normalizeStrafe(0, 0.3, 6);
+        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
 
         creep();
         autoScore();
@@ -178,6 +186,46 @@ public class RedFrontAutoTest extends LinearOpMode {
         //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
 
+    }
+
+    public void initAprilTags() {
+        aprilTag = new AprilTagProcessor.Builder().build();
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        builder.addProcessor(aprilTag);
+        visionPortal = builder.build();
+    }
+    public void normalizeStrafe(double target, double power, int tagID) {
+        while(Math.abs(getXPose(tagID) - target) > 0.2 && getXPose(tagID) > Integer.MIN_VALUE) {
+            drive.setPowerAuto(power * Math.signum(getXPose(tagID) - target), MecDriveV2.MovementType.STRAFE);
+            telemetry.addData("x", getXPose(tagID));
+        }
+        drive.simpleBrake();
+    }
+    public void normalizeStraight(double target, double power, int tagID) {
+        while(Math.abs(getYPose(tagID) - target) > 0.2 && getYPose(tagID) > Integer.MIN_VALUE) {
+            drive.setPowerAuto(-power * Math.signum(getYPose(tagID) - target), MecDriveV2.MovementType.STRAIGHT);
+            telemetry.addData("x", getXPose(tagID));
+        }
+        drive.simpleBrake();
+    }
+    public double getXPose(int tagID) {
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection tag : detections) {
+            if (tag.metadata != null && tag.id == tagID) {
+                return tag.ftcPose.x;
+            }
+        }
+        return Integer.MIN_VALUE;
+    }
+    public double getYPose(int tagID) {
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection tag : detections) {
+            if (tag.metadata != null && tag.id == tagID) {
+                return tag.ftcPose.y;
+            }
+        }
+        return Integer.MIN_VALUE;
     }
 
 }

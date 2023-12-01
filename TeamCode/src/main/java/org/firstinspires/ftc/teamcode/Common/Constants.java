@@ -16,7 +16,7 @@ public class Constants {
     public static double INTAKE_SPEED = 0.35;
 
     //Grabber Positions
-    public static double GRABBING = 0.07;
+    public static double GRABBING = 0.05;
     public static double OPEN = 0.5;
 
     //Drive Modifiers
@@ -30,7 +30,7 @@ public class Constants {
     //Auto Drive speeds
     public static double AUTO_LINEAR_SPEED = 0.5;
     public static double AUTO_ROTATIONAL_SPEED = 0.4;
-    public static double AUTO_SLOWED_SPEED = 0.2;
+    public static double AUTO_SLOWED_SPEED = -0.2;
     public static double AUTO_SAFE_MO = 0.3;
 
     public static double AUTO_SUPER_MO = 0.8;
@@ -56,8 +56,8 @@ public class Constants {
     public static double AIRPLANE_START_POS = 0.25;
 
     //bumper/auto score device
-    public static double AUTO_SCORING_CLAMP_OPEN = 0.8;
-    public static double AUTO_SCORING_CLAMP_CLOSED = 0.2;
+    public static double AUTO_SCORING_CLAMP_OPEN = 1;
+    public static double AUTO_SCORING_CLAMP_CLOSED = 0.5;
 
     public static int RETURN_MAT = 0;
 

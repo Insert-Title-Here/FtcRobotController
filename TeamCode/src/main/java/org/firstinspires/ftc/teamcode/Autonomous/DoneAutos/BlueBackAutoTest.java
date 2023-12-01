@@ -203,11 +203,11 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void spikeScore() {
-        drive.simpleMoveToPositionTimeout(-80, Constants.AUTO_SAFE_MO, 5);
+        drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_SAFE_MO, 2);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED-0.1);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPositionTimeout(100, Constants.AUTO_SLOWED_SPEED, 2);
-       // score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
+        sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
     }
 
