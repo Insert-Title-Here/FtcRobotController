@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
 //Gamepad 1
 /*Left Stick: Sprint
-Dpad Left = Manual Up
-Dpad Right = Manual Down
+Dpad Left = Manual Down
+Dpad Right = Manual Up
 a = low 
 x = medium 
 y = high
