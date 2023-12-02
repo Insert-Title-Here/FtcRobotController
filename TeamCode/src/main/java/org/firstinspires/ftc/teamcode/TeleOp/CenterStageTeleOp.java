@@ -383,7 +383,7 @@ public class CenterStageTeleOp extends LinearOpMode {
         };
 
         waitForStart();
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
 
 
         //Starting Threads

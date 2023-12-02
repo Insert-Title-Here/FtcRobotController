@@ -57,7 +57,7 @@ public class Constants {
 
     //bumper/auto score device
     public static double AUTO_SCORING_CLAMP_OPEN = 1;
-    public static double AUTO_SCORING_CLAMP_CLOSED = 0.5;
+    public static double AUTO_SCORING_CLAMP_CLOSED = 0.2;
 
     public static int RETURN_MAT = 0;
 

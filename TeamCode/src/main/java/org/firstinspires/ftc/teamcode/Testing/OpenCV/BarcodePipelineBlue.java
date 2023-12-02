@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Testing.OpenCV;
 
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.opencv.core.Core;
@@ -11,6 +13,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+@Config
 public class BarcodePipelineBlue extends OpenCvPipeline{
     Telemetry telemetry;
 
@@ -31,11 +34,11 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
     static final Scalar GREEN = new Scalar(0, 255, 0);
 
     // get anchor points for each region
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 135);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(185, 135);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 135);
-    static final int REGION_WIDTH = 20;
-    static final int REGION_HEIGHT = 20;
+    public static Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);
+    public static Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(185, 155);
+    public static Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 155);
+    public static int REGION_WIDTH = 20;
+    public static int REGION_HEIGHT = 20;
 
     // define top left and bottom right region points
     Point region1_pointA = new Point(

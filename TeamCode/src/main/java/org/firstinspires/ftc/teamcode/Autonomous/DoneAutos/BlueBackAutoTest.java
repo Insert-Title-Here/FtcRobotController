@@ -181,6 +181,7 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void autoScore() {
+        score.setGrabberPosition(Constants.GRABBING);
         score.goToLiftTarget(100, 0.8);
         sleep(500);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
@@ -189,7 +190,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
-        drive.simpleMoveToPositionTimeout(100, Constants.AUTO_SAFE_MO, 2);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
         //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
@@ -204,9 +205,9 @@ public class BlueBackAutoTest extends LinearOpMode {
 
     public void spikeScore() {
         drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_SAFE_MO, 2);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED-0.1);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
     }
