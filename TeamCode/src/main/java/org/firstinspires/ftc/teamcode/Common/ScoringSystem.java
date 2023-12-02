@@ -809,8 +809,7 @@ public class ScoringSystem {
     public void liftUpdateNoPID(double power, double feedForward) {
         int rightPos = -1 * getRightEncoderPos();
         if (Math.abs(rightPos - liftTarget) > 20) {
-            rLift.setPower(power * Math.signum(liftTarget - rightPos));
-            lLift.setPower(-power * Math.signum(liftTarget - rightPos));
+            setPower(power * Math.signum(liftTarget - rightPos));
         } else {
             setPower(feedForward);
         }
