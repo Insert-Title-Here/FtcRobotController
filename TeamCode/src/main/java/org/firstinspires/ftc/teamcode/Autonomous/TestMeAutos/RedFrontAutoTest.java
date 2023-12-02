@@ -121,8 +121,7 @@ public class RedFrontAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(-700, Constants.AUTO_LINEAR_SPEED);
         spikeScore();
         drive.simpleMoveToPosition(-300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-300, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(-(3.12/2), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
 
 
         /*drive.simpleMoveToPosition(-1900, Constants.AUTO_LINEAR_SPEED);
