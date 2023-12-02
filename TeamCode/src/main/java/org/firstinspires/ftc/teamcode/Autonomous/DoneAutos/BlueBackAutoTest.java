@@ -126,7 +126,9 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void random2 () {
-        drive.simpleMoveToPosition(-570, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        sleep(500);
+        drive.simpleMoveToPosition(-590, Constants.AUTO_LINEAR_SPEED);
 
         spikeScore();
         /*
@@ -153,6 +155,8 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void random3() {
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        sleep(500);
         drive.simpleMoveToPosition(550, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2.1), Constants.AUTO_ROTATIONAL_SPEED);
         drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
