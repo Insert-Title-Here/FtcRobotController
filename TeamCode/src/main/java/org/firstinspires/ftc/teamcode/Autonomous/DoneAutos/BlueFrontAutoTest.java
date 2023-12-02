@@ -89,7 +89,7 @@ public class BlueFrontAutoTest extends LinearOpMode {
             random3();
         }
 
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         drive.simpleBrake();
         sleep(500);
 
