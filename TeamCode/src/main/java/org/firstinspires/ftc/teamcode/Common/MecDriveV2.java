@@ -874,6 +874,8 @@ public class MecDriveV2 {
     //TODO: Test this
     public void simpleMoveToPosition(int tics, MovementType movement, double power) {
 
+
+
         if (avgPos() > tics) {
             power *= -1;
         }
