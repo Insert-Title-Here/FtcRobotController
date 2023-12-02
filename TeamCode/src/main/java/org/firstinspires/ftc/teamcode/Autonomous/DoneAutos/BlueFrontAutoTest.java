@@ -103,10 +103,10 @@ public class BlueFrontAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(350, Constants.AUTO_SLOWED_SPEED);
         drive.simpleMoveToPosition(-120, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(-150, Constants.AUTO_SLOWED_SPEED);
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(-50, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(-20, Constants.AUTO_SLOWED_SPEED);
 
         /*creep();
         autoScore();
