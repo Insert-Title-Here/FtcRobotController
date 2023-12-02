@@ -1,6 +1,6 @@
 //red path two avoids team game element
 
-package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
+package org.firstinspires.ftc.teamcode.Autonomous.DoneAutos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
