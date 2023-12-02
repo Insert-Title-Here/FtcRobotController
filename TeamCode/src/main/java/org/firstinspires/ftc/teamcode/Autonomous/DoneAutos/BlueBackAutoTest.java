@@ -1,7 +1,7 @@
 //Auto for if we are just scoring preload
 //mostly done?
 
-package org.firstinspires.ftc.teamcode.Autonomous.TestMeAutos;
+package org.firstinspires.ftc.teamcode.Autonomous.DoneAutos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -121,7 +121,7 @@ public class BlueBackAutoTest extends LinearOpMode {
     public void random2 () {
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
-        drive.simpleMoveToPosition(-590, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-610, Constants.AUTO_LINEAR_SPEED);
 
         spikeScore();
         /*
@@ -132,12 +132,12 @@ public class BlueBackAutoTest extends LinearOpMode {
          */
         drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
 
-        drive.tankRotate((Math.PI/(2.3)), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate((Math.PI/(2.2)), Constants.AUTO_ROTATIONAL_SPEED);
 
         drive.simpleMoveToPosition(-650, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.5, 2);
         //drive.simpleMoveToPosition(-260, Constants.AUTO_SAFE_MO);
-        normalizeStraight(8, 0.2, 2);
+        normalizeStraight(0, 0.2, 2);
         drive.simpleMoveToPosition(-130, 0.2);
         creep();
         autoScore();
@@ -195,7 +195,7 @@ public class BlueBackAutoTest extends LinearOpMode {
 
     public void creep() {
         drive.setPowerAuto(Constants.AUTO_SLOWED_SPEED, MecDriveV2.MovementType.STRAIGHT);
-        sleep(600);
+        sleep(500);
         drive.setPowerAuto(0, MecDriveV2.MovementType.STRAIGHT);
     }
 
