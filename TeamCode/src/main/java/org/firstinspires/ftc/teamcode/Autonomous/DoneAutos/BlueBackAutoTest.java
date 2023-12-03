@@ -106,9 +106,9 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-350, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/(1.9), Constants.AUTO_ROTATIONAL_SPEED);
-        normalizeStrafe(0, 0.5, 1);
+        drive.tankRotate(Math.PI/(3), Constants.AUTO_ROTATIONAL_SPEED);
         drive.simpleMoveToPosition(400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        normalizeStrafe(0, 0.5, 1);
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
 
@@ -116,7 +116,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         autoScore();
 
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
     }
 
@@ -140,22 +140,23 @@ public class BlueBackAutoTest extends LinearOpMode {
         normalizeStrafe(0, 0.5, 2);
         //drive.simpleMoveToPosition(-260, Constants.AUTO_SAFE_MO);
         normalizeStraight(0, 0.2, 2);
+        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-130, 0.2);
         creep();
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-350, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-250, Constants.AUTO_LINEAR_SPEED);
     }
 
     public void random3() {
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/(-2.01), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-100, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-450, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(-2.1), Constants.AUTO_ROTATIONAL_SPEED);
+      //  drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
+         drive.simpleMoveToPosition(-50, Constants.AUTO_SAFE_MO);
+       // drive.simpleMoveToPosition(-50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
 
         spikeScore();
         /*
@@ -164,17 +165,18 @@ public class BlueBackAutoTest extends LinearOpMode {
         score.setIntakePower(0);
       */
         drive.simpleMoveToPosition(200, Constants.AUTO_SAFE_MO);
-        drive.tankRotate(Math.PI/(2.01), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.tankRotate(Math.PI/(1.9), Constants.AUTO_ROTATIONAL_SPEED);
 
         drive.simpleMoveToPosition(-300, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 4);
-        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-150, Constants.AUTO_LINEAR_SPEED);
 
         creep();
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-250, Constants.AUTO_LINEAR_SPEED);
     }
 
@@ -188,7 +190,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(150, Constants.AUTO_SAFE_MO);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
         //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);

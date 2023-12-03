@@ -92,13 +92,19 @@ public class RedBackAutoTest extends LinearOpMode {
 
     }
     public void random1() {
-        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(150, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-50, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
-
-        spikeScore();
+        drive.simpleMoveToPosition(-550, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(2.01), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.setPowerAuto(Constants.AUTO_SLOWED_SPEED, MecDriveV2.MovementType.STRAIGHT);
+        sleep(1000);
+        //drive.simpleMoveToPosition(150, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
+      //  drive.simpleMoveToPosition(-50, Constants.AUTO_SAFE_MO);
+        //drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(75, Constants.AUTO_SLOWED_SPEED);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        sleep(200);
+        drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
+        sleep(300);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         /*
         score.setIntakePower(-0.2);
         sleep(500);
@@ -115,8 +121,8 @@ public class RedBackAutoTest extends LinearOpMode {
         creep();
         autoScore();
 
-        drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-750, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-250, Constants.AUTO_LINEAR_SPEED);
     }
     public void random2 () {
@@ -180,7 +186,8 @@ public class RedBackAutoTest extends LinearOpMode {
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(200, Constants.AUTO_SAFE_MO-0.2);
+        sleep(300);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
         //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
