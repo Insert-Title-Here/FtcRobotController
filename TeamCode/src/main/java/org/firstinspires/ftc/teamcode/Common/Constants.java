@@ -52,9 +52,6 @@ public class Constants {
     // Climb Target
     public static int CLIMB_HEIGHT = 2400;
 
-    //airplane
-    public static double AIRPLANE_START_POS = 0;
-
     //bumper/auto score device
     public static double AUTO_SCORING_CLAMP_OPEN = 1;
     public static double AUTO_SCORING_CLAMP_CLOSED = 0.2;

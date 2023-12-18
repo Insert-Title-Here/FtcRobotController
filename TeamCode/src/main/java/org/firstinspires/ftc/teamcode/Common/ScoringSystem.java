@@ -22,7 +22,9 @@ import java.io.PrintStream;
 public class ScoringSystem {
     public DcMotorEx lLift, rLift;
     public DcMotor climb;
-    public Servo grabber, airplane, bumperGrabber;
+    public Servo grabber, bumperGrabber;
+
+    public CRServo airplane;
     public Servo lIntakeLift, rIntakeLift;
     public CRServo lIntake, rIntake;
     public DistanceSensor distance;
@@ -53,7 +55,7 @@ public class ScoringSystem {
         height = ScoringMode.LOW;
         extended = false;
 
-        airplane = hardwareMap.get(Servo.class, "airplane");
+        airplane = hardwareMap.get(CRServo.class, "airplane");
         bumperGrabber = hardwareMap.get(Servo.class, "bumperGrabber");
 
         this.time = time;
@@ -929,7 +931,13 @@ public class ScoringSystem {
     }
 
     public void releaseAirplane() {
-        airplane.setPosition(Constants.AIRPLANE_START_POS);
+        airplane.setPower(0.3);
+        airplane.setPower(0);
+
+    }
+    public void windAirplane() {
+        airplane.setPower(-0.3);
+        airplane.setPower(0);
 
     }
     public void setBumperPixelRelease(double position) {
