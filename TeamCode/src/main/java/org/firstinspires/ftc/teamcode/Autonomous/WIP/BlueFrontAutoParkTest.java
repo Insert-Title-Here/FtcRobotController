@@ -121,29 +121,21 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
     public void random2() {
         drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
-        drive.simpleMoveToPosition(850, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(-850, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-120, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(1000, Constants.AUTO_SLOWED_SPEED);
         drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(1000, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPositionTimeout(820, Constants.AUTO_LINEAR_SPEED, MecDriveV2.MovementType.STRAFE, 3);
+        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-850, Constants.AUTO_LINEAR_SPEED);
 
-
-        /*spikeScore();
-        drive.tankRotate((3.12/2), Constants.AUTO_ROTATIONAL_SPEED);
-        sleep(5000);
-        drive.simpleMoveToPosition(-1900, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        creep();
-        autoScore();
-        drive.simpleMoveToPosition(200, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-300, Constants.AUTO_LINEAR_SPEED);*/
+        /* Without Hitting the Wall, doesn't rly work
+        drive.simpleMoveToPosition(1200, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(4), Constants.AUTO_ROTATIONAL_SPEED);*/
 
     }
 

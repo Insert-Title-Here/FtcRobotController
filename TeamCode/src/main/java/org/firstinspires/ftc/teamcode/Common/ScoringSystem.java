@@ -936,36 +936,6 @@ public class ScoringSystem {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public void windAirplane() {
         airplane.setPower(-0.3);
         airplane.setPower(0);

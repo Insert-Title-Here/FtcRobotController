@@ -40,7 +40,6 @@ public class BlueFrontAutoTest extends LinearOpMode {
         time = new ElapsedTime();
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
         score = new ScoringSystem(hardwareMap, telemetry, time);
-        //  score.setGrabberPosition(Constants.OPEN);
         score.setGrabberPosition(Constants.GRABBING);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         score.setIntakeLiftPos(Constants.INTAKE_LINKAGE_DOWN-0.1);
@@ -110,12 +109,6 @@ public class BlueFrontAutoTest extends LinearOpMode {
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         drive.simpleMoveToPosition(50, Constants.AUTO_SLOWED_SPEED);
 
-        /*creep();
-        autoScore();
-        drive.simpleMoveToPosition(50, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(-500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);*/
-
     }
 
 
@@ -128,18 +121,6 @@ public class BlueFrontAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-
-        /*spikeScore();
-        drive.tankRotate((3.12/2), Constants.AUTO_ROTATIONAL_SPEED);
-        sleep(5000);
-        drive.simpleMoveToPosition(-1900, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        creep();
-        autoScore();
-        drive.simpleMoveToPosition(200, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-700, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-300, Constants.AUTO_LINEAR_SPEED);*/
-
     }
 
     public void random3() {
@@ -151,17 +132,6 @@ public class BlueFrontAutoTest extends LinearOpMode {
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-
-        /*sleep(5000);
-        drive.simpleMoveToPosition(-1000, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        normalizeStrafe(0, 0.3, 3);
-        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
-        creep();
-        autoScore();
-        drive.simpleMoveToPosition(50, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);*/
     }
 
     public void spikeScore() {
