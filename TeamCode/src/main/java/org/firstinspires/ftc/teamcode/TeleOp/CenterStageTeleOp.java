@@ -29,8 +29,8 @@ right bumper = intake*/
 //Game Pad 2
 /*Dpad Up = Climber Auto + Manual Up
 Dpad Down = Climber Manual Down
- x = release Airplane
- b = wind Airplane */
+ left bumper = release Airplane
+ right bumper = wind Airplane */
 
 
 
@@ -221,11 +221,11 @@ public class CenterStageTeleOp extends LinearOpMode {
                 boolean right_bumper = false;
 
                 while (opModeIsActive()) {
-                    if (gamepad2.x) {
+                    if (gamepad2.left_bumper) {
                         score.releaseAirplane();
                     }
 
-                    if (gamepad2.b) {
+                    if (gamepad2.right_bumper) {
                         score.windAirplane();
                     }
 
