@@ -137,55 +137,42 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         sleep(500);
         drive.simpleMoveToPositionTimeout(-1100, Constants.AUTO_LINEAR_SPEED, MecDriveV2.MovementType.STRAFE, 3.5);
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        /*This use to be for going all the way to the backstage and parkng without scoring on bd
         drive.simpleMoveToPosition(-1800, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);*/
 
-        /*drive.simpleMoveToPosition(150, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-
-        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
+        //Everything below here needs to be tested to score on backdrop
+        drive.simpleMoveToPosition(-1400, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(50, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 6);
-        drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
-
+        drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_LINEAR_SPEED, 2);
         creep();
         autoScore();
-        drive.simpleMoveToPosition(50, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);*/
-
-    }
-
-    public void spikeScore() {
-        drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_SAFE_MO, 2);
-        drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
-        sleep(500);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
     }
-
-    public void creep() {
-        drive.setPowerAuto(Constants.AUTO_SLOWED_SPEED, MecDriveV2.MovementType.STRAIGHT);
-        //Change me!
-        sleep(600);
-        drive.setPowerAuto(0, MecDriveV2.MovementType.STRAIGHT);
-    }
-
     public void autoScore() {
         score.setGrabberPosition(Constants.GRABBING);
         score.goToLiftTarget(100, 0.8);
         sleep(500);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
-        //  score.goToLiftTarget(Constants.LIFT_LOW, 0.8);
         score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1500, 100);
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(200, Constants.AUTO_SAFE_MO-0.2);
+        sleep(300);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
-        //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
+    }
+
+    public void creep() {
+        drive.setPowerAuto(Constants.AUTO_SLOWED_SPEED, MecDriveV2.MovementType.STRAIGHT);
+        //Change me!
+        sleep(500);
+        drive.setPowerAuto(0, MecDriveV2.MovementType.STRAIGHT);
     }
 
     public void initAprilTags() {
