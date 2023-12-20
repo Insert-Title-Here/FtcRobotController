@@ -87,12 +87,15 @@ public class RedFrontAutoParkTest extends LinearOpMode {
     }
 
     public void random1() {
+        //Score Purple Pixel
         drive.simpleMoveToPosition(320, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         sleep(1000);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+
+        //Get To Wall + Go Through Truss
         drive.simpleMoveToPosition(300, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
         sleep(500);
@@ -100,12 +103,26 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         sleep(500);
         drive.simpleMoveToPositionTimeout(-800, Constants.AUTO_LINEAR_SPEED, MecDriveV2.MovementType.STRAFE, 3);
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-2000, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);
+        /*drive.simpleMoveToPosition(-2000, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);*/
+        drive.simpleMoveToPosition(-1800, Constants.AUTO_LINEAR_SPEED);
+
+        //Untested Scoring on Backdrop
+        normalizeStrafe(0, 0.3, 4);
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
+        creep();
+        autoScore();
+
+        //Park
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-750, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
     }
 
     public void random2() {
+        //Score Purple Pixel
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         drive.simpleMoveToPosition(-830, Constants.AUTO_LINEAR_SPEED);
@@ -115,15 +132,31 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+
+        //Get To Wall + Go Through Truss
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
         drive.simpleMoveToPositionTimeout(-800, Constants.AUTO_LINEAR_SPEED, MecDriveV2.MovementType.STRAFE, 3.5);
         drive.simpleMoveToPosition(150, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-1900, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(-1400, Constants.AUTO_LINEAR_SPEED);
+        /*drive.simpleMoveToPosition(-1900, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);*/
+
+        //Backdrop Score Untested
+        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        normalizeStrafe(0, 0.3, 5);
+        drive.simpleMoveToPositionTimeout(-250, Constants.AUTO_SAFE_MO, 2);
+        creep();
+        autoScore();
+
+        //Park
+        drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
     }
 
     public void random3() {
+        //Score Purple Pixel
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-450, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
@@ -135,20 +168,24 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         sleep(500);
+
+        //Get to Wall + Through Truss
         drive.simpleMoveToPositionTimeout(-1100, Constants.AUTO_LINEAR_SPEED, MecDriveV2.MovementType.STRAFE, 3.5);
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-1400, Constants.AUTO_LINEAR_SPEED);
         /*This use to be for going all the way to the backstage and parkng without scoring on bd
         drive.simpleMoveToPosition(-1800, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);*/
 
-        //Everything below here needs to be tested to score on backdrop
-        drive.simpleMoveToPosition(-1400, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        //Untested Score on Backdrop
+        drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(50, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 6);
         drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_LINEAR_SPEED, 2);
         creep();
         autoScore();
+
+        //Park
         drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
