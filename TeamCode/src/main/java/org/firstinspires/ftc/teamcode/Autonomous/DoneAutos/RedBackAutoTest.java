@@ -141,7 +141,7 @@ public class RedBackAutoTest extends LinearOpMode {
         sleep(500);
 
         drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
-      //  drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
 
         normalizeStrafe(0, 0.3, 5);
         drive.simpleMoveToPosition(-250, Constants.AUTO_SAFE_MO);
@@ -160,7 +160,7 @@ public class RedBackAutoTest extends LinearOpMode {
     public void random3() {
         drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-250, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-220, Constants.AUTO_LINEAR_SPEED);
         spikeScore();
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
