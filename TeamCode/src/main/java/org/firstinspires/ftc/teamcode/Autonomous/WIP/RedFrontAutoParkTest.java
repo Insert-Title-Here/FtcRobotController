@@ -171,24 +171,24 @@ public class RedFrontAutoParkTest extends LinearOpMode {
 
         //Get to Wall + Through Truss
         drive.simpleMoveToPositionTimeout(-1100, Constants.AUTO_LINEAR_SPEED, MecDriveV2.MovementType.STRAFE, 3.5);
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-1400, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(130, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-1700, Constants.AUTO_LINEAR_SPEED);
         /*This use to be for going all the way to the backstage and parkng without scoring on bd
         drive.simpleMoveToPosition(-1800, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);*/
 
         //Untested Score on Backdrop
-        drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(50, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        //drive.simpleMoveToPosition(50, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 6);
         drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_LINEAR_SPEED, 2);
         creep();
         autoScore();
 
         //Park
-        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);
     }
     public void autoScore() {
         score.setGrabberPosition(Constants.GRABBING);
@@ -199,8 +199,9 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
-        drive.simpleMoveToPosition(200, Constants.AUTO_SAFE_MO-0.2);
+        drive.simpleMoveToPositionTimeout(250, Constants.AUTO_SAFE_MO-0.2, 2);
         sleep(300);
+        drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_SAFE_MO, 2);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
     }
