@@ -91,6 +91,7 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
     }
 
     public void random1() {
+        //Score Purple Pixel
         drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-580, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
@@ -98,19 +99,20 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         drive.simpleMoveToPositionTimeout(320, Constants.AUTO_SLOWED_SPEED, 4);
         drive.simpleMoveToPosition(-50, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+
+        //Slam Wall + Go Through Truss
         drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         sleep(500);
         drive.simpleMoveToPositionTimeout(1500, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 4);
         drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-1800, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+
     }
 
 
     public void random2() {
+        //Score Purple Pixel
         drive.simpleMoveToPosition(-75, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         drive.simpleMoveToPosition(-820, Constants.AUTO_LINEAR_SPEED);
@@ -120,22 +122,25 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+
+        //Slam Wall + Go Through Truss
         drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
         sleep(500);
         drive.simpleMoveToPositionTimeout(1500, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 4);
         drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-2100, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+
     }
 
     public void random3() {
+        //Score Purple Pixel
         drive.simpleMoveToPosition(-250, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         sleep(1000);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
+
+        //Slam Wall + Go Through Truss 
         drive.simpleMoveToPosition(300, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
         sleep(500);
@@ -143,68 +148,39 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         sleep(500);
         drive.simpleMoveToPositionTimeout(800, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 2);
         drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-2000, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-
-
-        /*Complicated Way
-        drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
-        sleep(500);
-        drive.simpleMoveToPositionTimeout(-300, Constants.AUTO_SLOWED_SPEED, 3);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        sleep(500);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(-500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_SLOWED_SPEED);
-        drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
-        sleep(500);
-        drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
-        sleep(500);
-        drive.simpleMoveToPositionTimeout(-600, Constants.AUTO_LINEAR_SPEED, MecDriveV2.MovementType.STRAFE, 3);
-        drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(1600, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(300, Constants.AUTO_SLOWED_SPEED);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);*/
-    }
-
-    public void spikeScore() {
-        drive.simpleMoveToPosition(-100, Constants.AUTO_SAFE_MO);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
-        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
-        drive.simpleMoveToPosition(100, Constants.AUTO_SAFE_MO);
 
     }
-    public void creep() {
-        drive.setPowerAuto(Constants.AUTO_SLOWED_SPEED, MecDriveV2.MovementType.STRAIGHT);
-        //Change me!
-        sleep(600);
-        drive.setPowerAuto(0, MecDriveV2.MovementType.STRAIGHT);
-    }
+
     public void autoScore() {
+        score.setGrabberPosition(Constants.GRABBING);
+        score.goToLiftTarget(100, 0.8);
+        sleep(500);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
-        //  score.goToLiftTarget(Constants.LIFT_LOW, 0.8);
         score.setLinkagePositionLogistic(Constants.LINKAGE_UP, 1500, 100);
         sleep(300);
         score.setGrabberPosition(Constants.OPEN);
         sleep(300);
+        drive.simpleMoveToPositionTimeout(250, Constants.AUTO_SAFE_MO-0.2, 2);
+        sleep(300);
+        drive.simpleMoveToPositionTimeout(200, Constants.AUTO_LINEAR_SPEED, 3);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
-        //   score.goToLiftTarget(0, 0.3);
         score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 1000, 100);
-
     }
+
+    public void creep() {
+        drive.setPowerAuto(Constants.AUTO_SLOWED_SPEED, MecDriveV2.MovementType.STRAIGHT);
+        //Change me!
+        sleep(500);
+        drive.setPowerAuto(0, MecDriveV2.MovementType.STRAIGHT);
+    }
+
     public void initAprilTags() {
         aprilTag = new AprilTagProcessor.Builder().build();
-
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
         builder.addProcessor(aprilTag);
         visionPortal = builder.build();
-
     }
-
     public void normalizeStrafe(double target, double power, int tagID) {
         while(Math.abs(getXPose(tagID) - target) > 0.2 && getXPose(tagID) > Integer.MIN_VALUE) {
             drive.setPowerAuto(power * Math.signum(getXPose(tagID) - target), MecDriveV2.MovementType.STRAFE);
@@ -212,7 +188,6 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         }
         drive.simpleBrake();
     }
-
     public void normalizeStraight(double target, double power, int tagID) {
         while(Math.abs(getYPose(tagID) - target) > 0.2 && getYPose(tagID) > Integer.MIN_VALUE) {
             drive.setPowerAuto(-power * Math.signum(getYPose(tagID) - target), MecDriveV2.MovementType.STRAIGHT);
@@ -220,28 +195,22 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         }
         drive.simpleBrake();
     }
-
     public double getXPose(int tagID) {
         List<AprilTagDetection> detections = aprilTag.getDetections();
-
         for (AprilTagDetection tag : detections) {
             if (tag.metadata != null && tag.id == tagID) {
                 return tag.ftcPose.x;
             }
         }
-
         return Integer.MIN_VALUE;
     }
-
     public double getYPose(int tagID) {
         List<AprilTagDetection> detections = aprilTag.getDetections();
-
         for (AprilTagDetection tag : detections) {
             if (tag.metadata != null && tag.id == tagID) {
                 return tag.ftcPose.y;
             }
         }
-
         return Integer.MIN_VALUE;
     }
 
