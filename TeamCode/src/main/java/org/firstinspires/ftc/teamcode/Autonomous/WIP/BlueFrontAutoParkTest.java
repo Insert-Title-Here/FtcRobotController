@@ -107,6 +107,19 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         sleep(500);
         drive.simpleMoveToPositionTimeout(1500, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 4);
         drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-1700, Constants.AUTO_LINEAR_SPEED);
+
+        //Scoring on Backdrop (Untested)
+        drive.simpleMoveToPosition(-520, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        normalizeStrafe(0, 0.5, 1);
+        drive.simpleMoveToPositionTimeout(200, Constants.AUTO_SLOWED_SPEED, 2);
+        creep();
+        autoScore();
+
+        //Park
+        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        drive.simpleMoveToPosition(200, Constants.AUTO_SLOWED_SPEED);
 
     }
 
@@ -128,7 +141,19 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         sleep(500);
         drive.simpleMoveToPositionTimeout(1500, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 4);
         drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-1950, Constants.AUTO_LINEAR_SPEED);
 
+        //Backdrop Score (Untested)
+        drive.simpleMoveToPosition(-600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        normalizeStraight(0, 0.2, 2);
+        drive.simpleMoveToPositionTimeout(-250, Constants.AUTO_SAFE_MO, 2);
+        creep();
+        autoScore();
+
+        //Park
+        drive.simpleMoveToPosition(600, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        drive.simpleMoveToPosition(200, Constants.AUTO_SLOWED_SPEED);
     }
 
     public void random3() {
@@ -148,17 +173,17 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         sleep(500);
         drive.simpleMoveToPositionTimeout(800, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 2);
         drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-1700, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-2100, Constants.AUTO_LINEAR_SPEED);
 
-        //Scoring on Backdrop
-        drive.simpleMoveToPosition(-520, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        normalizeStrafe(0, 0.5, 1);
-        drive.simpleMoveToPositionTimeout(200, Constants.AUTO_SLOWED_SPEED, 2);
+        //Scoring on Backdrop (Untested)
+        drive.simpleMoveToPosition(-850, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        normalizeStrafe(0, 0.3, 3);
+        drive.simpleMoveToPosition(200, Constants.AUTO_SLOWED_SPEED);
         creep();
         autoScore();
 
         //Park
-        drive.simpleMoveToPosition(500, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(850, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         drive.simpleMoveToPosition(200, Constants.AUTO_SLOWED_SPEED);
 

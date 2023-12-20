@@ -169,7 +169,7 @@ public class BlueBackAutoTest extends LinearOpMode {
 
         drive.simpleMoveToPosition(-300, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        normalizeStrafe(0, 0.3, 4);
+        normalizeStrafe(0, 0.3, 3);
         drive.simpleMoveToPosition(-150, Constants.AUTO_LINEAR_SPEED);
 
         creep();
