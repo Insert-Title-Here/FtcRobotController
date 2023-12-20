@@ -28,6 +28,7 @@ public class Constants {
     public static double SPRINT_ROTATIONAL_MODIFIER = 1;
 
     //Auto Drive speeds
+    public static double AUTO_SLAM_SPEED = 0.8;
     public static double AUTO_LINEAR_SPEED = 0.5;
     public static double AUTO_ROTATIONAL_SPEED = 0.4;
     public static double AUTO_SLOWED_SPEED = -0.2;

@@ -879,7 +879,7 @@ public class MecDriveV2 {
             power *= -1;
         }
         while (avgPos() < Math.abs(tics) && timer.time() < time) {
-            setPower(power + Math.signum(power) * 0.05, power, power + Math.signum(power) * 0.05, power);
+            setPowerAuto(power, move);
         }
 
         simpleBrake();
