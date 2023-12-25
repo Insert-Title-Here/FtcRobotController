@@ -99,7 +99,7 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         drive.simpleMoveToPosition(300, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
         sleep(500);
-        drive.simpleMoveToPositionTimeout(-800, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 3);
+        drive.simpleMoveToPositionTimeout(-1100, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 3);
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-2100, Constants.AUTO_LINEAR_SPEED);
 
@@ -132,7 +132,7 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
         sleep(500);
         drive.simpleMoveToPositionTimeout(-1100, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 3.5);
-        drive.simpleMoveToPosition(130, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-1950, Constants.AUTO_LINEAR_SPEED);
 
         //Backdrop Score
@@ -163,12 +163,12 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         sleep(500);
 
         //Get to Wall + Through Truss
-        drive.simpleMoveToPositionTimeout(-1100, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 3.5);
+        drive.simpleMoveToPositionTimeout(-1600, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 3.5);
         drive.simpleMoveToPosition(130, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-1700, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-2000, Constants.AUTO_LINEAR_SPEED);
 
         //Scoring on Backdrop
-        drive.simpleMoveToPosition(520, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(390, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 6);
         drive.simpleMoveToPositionTimeout(200, Constants.AUTO_SLOWED_SPEED, 2);
         creep();
