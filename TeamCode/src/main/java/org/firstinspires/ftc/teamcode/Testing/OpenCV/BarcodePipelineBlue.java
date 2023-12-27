@@ -35,8 +35,8 @@ public class BarcodePipelineBlue extends OpenCvPipeline{
 
     // get anchor points for each region
     public static Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0, 155);
-    public static Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(185, 155);
-    public static Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(280, 155);
+    public static Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(175, 155);
+    public static Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(270, 155);
     public static int REGION_WIDTH = 20;
     public static int REGION_HEIGHT = 20;
 
