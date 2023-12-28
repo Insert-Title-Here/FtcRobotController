@@ -92,12 +92,15 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
 
     public void random1() {
         //Score Purple Pixel
-        drive.simpleMoveToPosition(-580, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-600, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
         sleep(500);
-        drive.simpleMoveToPositionTimeout(130, Constants.AUTO_SLOWED_SPEED, 4);
-        sleep(500);
+        drive.simpleMoveToPositionTimeout(240, Constants.AUTO_SLOWED_SPEED, 4);
+        drive.simpleMoveToPosition(-140, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
+        drive.simpleMoveToPosition(-10, Constants.AUTO_SLOWED_SPEED);
+        sleep(500);
+        score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         sleep(500);
 
         //Slam Wall + Go Through Truss
@@ -105,9 +108,9 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         sleep(500);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_CLOSED);
         sleep(500);
-        drive.simpleMoveToPositionTimeout(1500, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 4);
-        drive.simpleMoveToPosition(-150, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-1800, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPositionTimeout(1800, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 4);
+        drive.simpleMoveToPosition(-130, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-1810, Constants.AUTO_LINEAR_SPEED);
 
         drive.simpleMoveToPosition(-550, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.5, 1);
