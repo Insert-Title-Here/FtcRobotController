@@ -99,7 +99,7 @@ public class RedBackAutoTest extends LinearOpMode {
         //drive.simpleMoveToPosition(150, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
       //  drive.simpleMoveToPosition(-50, Constants.AUTO_SAFE_MO);
         //drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_SAFE_MO);
-        drive.simpleMoveToPosition(75, Constants.AUTO_SLOWED_SPEED);
+        drive.simpleMoveToPosition(100, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         sleep(200);
         drive.simpleMoveToPosition(-100, Constants.AUTO_SLOWED_SPEED);
@@ -121,7 +121,7 @@ public class RedBackAutoTest extends LinearOpMode {
         creep();
         autoScore();
 
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
+        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
         drive.simpleMoveToPosition(-750, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
     }
@@ -141,7 +141,7 @@ public class RedBackAutoTest extends LinearOpMode {
         sleep(500);
 
         drive.simpleMoveToPosition(-500, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
 
         normalizeStrafe(0, 0.3, 5);
         drive.simpleMoveToPosition(-250, Constants.AUTO_SAFE_MO);
@@ -158,14 +158,14 @@ public class RedBackAutoTest extends LinearOpMode {
     }
 
     public void random3() {
-        drive.simpleMoveToPosition(-100, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-250, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-200, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-350, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-220, Constants.AUTO_LINEAR_SPEED);
         spikeScore();
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
-        drive.tankRotate(Math.PI/(-2.01), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.tankRotate(Math.PI/(-2.05), Constants.AUTO_ROTATIONAL_SPEED);
+        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(50, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 6);
         drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_LINEAR_SPEED, 2);
