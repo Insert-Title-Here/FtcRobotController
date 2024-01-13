@@ -129,7 +129,7 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
     public void random2() {
         //Score Purple Pixel
         sleep(500);
-        drive.simpleMoveToPosition(-870, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-850, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-120, Constants.AUTO_SLOWED_SPEED);
         score.setBumperPixelRelease(Constants.AUTO_SCORING_CLAMP_OPEN);
         drive.simpleMoveToPosition(-300, Constants.AUTO_SLOWED_SPEED);
@@ -144,7 +144,7 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         drive.simpleMoveToPosition(-1880, Constants.AUTO_LINEAR_SPEED);
 
         //Backdrop Score (Untested)
-        drive.simpleMoveToPosition(-760, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-740, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         normalizeStraight(0, 0.2, 2);
         drive.simpleMoveToPositionTimeout(200, Constants.AUTO_SLOWED_SPEED, 2);
         creep();
@@ -171,8 +171,8 @@ public class BlueFrontAutoParkTest extends LinearOpMode {
         drive.simpleMoveToPosition(400, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2), Constants.AUTO_ROTATIONAL_SPEED);
         sleep(500);
-        drive.simpleMoveToPositionTimeout(1500, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 4);
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPositionTimeout(1700, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 5);
+        drive.simpleMoveToPosition(-130, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-1880, Constants.AUTO_LINEAR_SPEED);
 
         //Scoring on Backdrop (Untested)

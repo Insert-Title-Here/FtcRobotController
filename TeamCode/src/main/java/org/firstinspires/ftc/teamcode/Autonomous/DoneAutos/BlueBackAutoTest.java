@@ -107,7 +107,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-350, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(2.2), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(340, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.5, 1);
       //  drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-220, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_LINEAR_SPEED);
@@ -121,7 +121,7 @@ public class BlueBackAutoTest extends LinearOpMode {
     }
 
     public void random2 () {
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(50, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         drive.simpleMoveToPosition(-610, Constants.AUTO_LINEAR_SPEED);
 
@@ -140,7 +140,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         normalizeStrafe(0, 0.5, 2);
         //drive.simpleMoveToPosition(-260, Constants.AUTO_SAFE_MO);
         normalizeStraight(0, 0.2, 2);
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-70, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-130, 0.2);
         creep();
         autoScore();
@@ -168,7 +168,7 @@ public class BlueBackAutoTest extends LinearOpMode {
         drive.tankRotate(Math.PI/(2.1), Constants.AUTO_ROTATIONAL_SPEED);
 
         drive.simpleMoveToPosition(-300, Constants.AUTO_LINEAR_SPEED);
-        drive.simpleMoveToPosition(-270, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-250, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 3);
         drive.simpleMoveToPosition(-150, Constants.AUTO_LINEAR_SPEED);
 

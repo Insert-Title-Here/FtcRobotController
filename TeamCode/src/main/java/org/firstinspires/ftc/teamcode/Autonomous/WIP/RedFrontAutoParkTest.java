@@ -118,7 +118,7 @@ public class RedFrontAutoParkTest extends LinearOpMode {
 
     public void random2() {
         //Score Purple Pixel
-        drive.simpleMoveToPosition(75, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(55, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         drive.simpleMoveToPosition(-840, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-120, Constants.AUTO_SLOWED_SPEED);
@@ -130,7 +130,7 @@ public class RedFrontAutoParkTest extends LinearOpMode {
 
         //Get To Wall + Go Through Truss
         drive.tankRotate(Math.PI/(-2), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(-175, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-165, Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         drive.simpleMoveToPositionTimeout(-1100, Constants.AUTO_SLAM_SPEED, MecDriveV2.MovementType.STRAFE, 3.5);
         drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
@@ -168,7 +168,7 @@ public class RedFrontAutoParkTest extends LinearOpMode {
         drive.simpleMoveToPosition(-2000, Constants.AUTO_LINEAR_SPEED);
 
         //Scoring on Backdrop
-        drive.simpleMoveToPosition(300, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(330, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 6);
         drive.simpleMoveToPositionTimeout(200, Constants.AUTO_SLOWED_SPEED, 2);
         creep();

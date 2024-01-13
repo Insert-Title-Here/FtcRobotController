@@ -147,6 +147,7 @@ public class RedBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(-250, Constants.AUTO_SAFE_MO);
 
         creep();
+        score.goToLiftTarget(50, 0.8);
         autoScore();
 
         drive.simpleMoveToPosition(200, MecDriveV2.MovementType.STRAIGHT, Constants.AUTO_SAFE_MO);
@@ -165,7 +166,7 @@ public class RedBackAutoTest extends LinearOpMode {
         drive.simpleMoveToPosition(100, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(-400, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.tankRotate(Math.PI/(-2.05), Constants.AUTO_ROTATIONAL_SPEED);
-        drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
+       // drive.simpleMoveToPosition(100, MecDriveV2.MovementType.STRAFE, Constants.AUTO_LINEAR_SPEED);
         drive.simpleMoveToPosition(50, Constants.AUTO_LINEAR_SPEED);
         normalizeStrafe(0, 0.3, 6);
         drive.simpleMoveToPositionTimeout(-200, Constants.AUTO_LINEAR_SPEED, 2);
@@ -178,7 +179,7 @@ public class RedBackAutoTest extends LinearOpMode {
 
     public void autoScore() {
         score.setGrabberPosition(Constants.GRABBING);
-        score.goToLiftTarget(100, 0.8);
+        score.goToLiftTarget(100, 0.85);
         sleep(500);
         score.setLinkagePositionLogistic(0.5, 1000, 100);
         //  score.goToLiftTarget(Constants.LIFT_LOW, 0.8);

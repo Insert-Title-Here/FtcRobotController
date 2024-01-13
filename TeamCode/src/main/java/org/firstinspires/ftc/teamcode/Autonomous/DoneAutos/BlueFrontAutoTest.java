@@ -113,7 +113,7 @@ public class BlueFrontAutoTest extends LinearOpMode {
 
 
     public void random2() {
-        drive.simpleMoveToPosition(-100, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
+        drive.simpleMoveToPosition(-90, MecDriveV2.MovementType.STRAFE,Constants.AUTO_LINEAR_SPEED);
         sleep(500);
         drive.simpleMoveToPosition(850, Constants.AUTO_SLOWED_SPEED);
         drive.simpleMoveToPosition(-120, Constants.AUTO_SLOWED_SPEED);
