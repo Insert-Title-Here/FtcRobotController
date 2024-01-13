@@ -21,7 +21,7 @@ public class JudgingTeleOp extends LinearOpMode {
 
     Thread liftThread, linkageThread;
 
-    //   boolean swapped = false;
+    //boolean swapped = false;
 
     //Enums for feed forward
 
@@ -340,7 +340,6 @@ public class JudgingTeleOp extends LinearOpMode {
             }
 
 
-        }
         //Stop
         drive.simpleBrake()*/
             score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 300, 100);
