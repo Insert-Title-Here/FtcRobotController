@@ -337,12 +337,11 @@ public class JudgingTeleOp extends LinearOpMode {
                 } else {
                     drive.setPower(new Vector2D(leftStickX * Constants.NORMAL_LINEAR_MODIFIER, leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
                 }
-            }
-
+            }*/
+        }
 
         //Stop
-        drive.simpleBrake()*/
-            score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 300, 100);
-        }
+        //drive.simpleBrake()
+        score.setLinkagePositionLogistic(Constants.LINKAGE_DOWN, 300, 100);
     }
 }
