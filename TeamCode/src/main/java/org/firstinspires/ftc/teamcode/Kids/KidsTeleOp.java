@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Common.Constants;
 import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
@@ -20,7 +21,6 @@ public class KidsTeleOp extends LinearOpMode {
 
         time = new ElapsedTime();
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
-
         waitForStart();
 
         while(opModeIsActive()) {
@@ -47,6 +47,7 @@ public class KidsTeleOp extends LinearOpMode {
                 drive.setPower(new Vector2D(-leftStickX * Constants.NORMAL_LINEAR_MODIFIER, -leftStickY * Constants.NORMAL_LINEAR_MODIFIER), gamepad1.right_stick_x * Constants.NORMAL_ROTATIONAL_MODIFIER, false);
 
             }
+
 
         }
 
