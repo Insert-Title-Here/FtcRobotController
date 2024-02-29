@@ -11,20 +11,23 @@ import org.firstinspires.ftc.teamcode.Common.MecDriveV2;
 import org.firstinspires.ftc.teamcode.Common.ScoringSystem;
 import org.firstinspires.ftc.teamcode.Common.Vector2D;
 
-@Disabled
+
 @TeleOp
 public class KidsTeleOpTank extends LinearOpMode {
 
     MecDriveV2 drive;
     ElapsedTime time;
+    ScoringSystem score;
     public void runOpMode() {
 
         time = new ElapsedTime();
         drive = new MecDriveV2(hardwareMap, false, telemetry, time);
+        score = new ScoringSystem(hardwareMap, telemetry, time);
+
         waitForStart();
 
         while(opModeIsActive()) {
-            double rotatePow = gamepad1.left_stick_x;
+            double rotatePow = -gamepad1.right_stick_x;
             double drivePow = gamepad1.left_stick_y * -1;
             double leftPower = Range.clip(drivePow - rotatePow, -1, 1);
             double rightPower = Range.clip(drivePow + rotatePow, -1, 1);

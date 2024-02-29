@@ -43,7 +43,7 @@ public class ScoringSystem {
     String composite = "";
 
 
-    public enum ScoringMode{
+    public enum ScoringMode {
         HIGH,
         MEDIUM,
         LOW,
@@ -62,27 +62,27 @@ public class ScoringSystem {
         this.telemetry = telemetry;
 
         // Lift
-        rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
-        lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
+        // rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
+        // lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
 
-        rLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        //rLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        // lLift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        rLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        lLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        //rLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        //lLift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        rLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        //rLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        //lLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // Linkage
-        lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
-        rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
+        //lLinkage = hardwareMap.get(ServoImplEx.class, "LeftLinkage");
+        //rLinkage = hardwareMap.get(ServoImplEx.class, "RightLinkage");
 
-        lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
-        rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        //lLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        //rLinkage.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
-        grabber =  hardwareMap.get(Servo.class, "ClampServo");
+        grabber = hardwareMap.get(Servo.class, "ClampServo");
 
         // Intake
         lIntakeLift = hardwareMap.get(Servo.class, "LeftIntakeLinkage");
@@ -91,60 +91,60 @@ public class ScoringSystem {
         lIntake = hardwareMap.get(CRServo.class, "LeftIntake");
         rIntake = hardwareMap.get(CRServo.class, "RightIntake");
 
-        climb = hardwareMap.get(DcMotor.class, "Climb");
-        climb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        climb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //climb = hardwareMap.get(DcMotor.class, "Climb");
+        //climb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //climb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        setLinkagePosition(Constants.LINKAGE_DOWN);
+        // setLinkagePosition(Constants.LINKAGE_DOWN);
         setIntakePower(0);
 
-        climb.setPower(0);
+        // climb.setPower(0);
 
 
-        setIntakeLiftPos(Constants.INTAKE_LINKAGE_UP);
-
+        setIntakeLiftPosition(Constants.INTAKE_LINKAGE_UP, 0.2);//000
+        //plzzzzzzzz work
+        weDoLoveTheseBugsHashTagANnoyingServos();
     }
+    public void weDoLoveTheseBugsHashTagANnoyingServos(){    }
 
-
-
-    public int getConeStack(){
+    public int getConeStack() {
         return coneStack;
     }
 
-    public void lowerConeStack(){
-        if(coneStack - 1 > 0) {
+    public void lowerConeStack() {
+        if (coneStack - 1 > 0) {
             coneStack -= 1;
         }
     }
 
-    public void raiseConeStack(){
-        if(coneStack + 1 < 6) {
+    public void raiseConeStack() {
+        if (coneStack + 1 < 6) {
             coneStack += 1;
         }
     }
 
-    public void setConeStack(int height){
+    public void setConeStack(int height) {
         coneStack = height;
 
     }
 
     //TODO: tune this
-    public void setLinkageConeStack(boolean logistic){
-        if(logistic){
-            if(coneStack == 5){
+    public void setLinkageConeStack(boolean logistic) {
+        if (logistic) {
+            if (coneStack == 5) {
                 setLinkagePositionLogistic(0.31, 500);
-            }else if(coneStack == 4){
+            } else if (coneStack == 4) {
                 setLinkagePositionLogistic(0.26, 500);
-            }else if(coneStack == 3){
+            } else if (coneStack == 3) {
                 setLinkagePositionLogistic(0.23, 500);
-            }else if(coneStack == 2){
+            } else if (coneStack == 2) {
                 //setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
                 setLinkagePositionLogistic(0.21, 500);
-            }else if(coneStack == 1){
+            } else if (coneStack == 1) {
                 //setLinkagePositionLogistic(Constants.linkageDownV2 + 0.1, 300);
                 setLinkagePositionLogistic(0.15, 500);
             }
-        }else {
+        } else {
             if (coneStack == 5) {
                 setLinkagePosition(0.31);
             } else if (coneStack == 4) {
@@ -169,27 +169,26 @@ public class ScoringSystem {
         this.extended = extended;
     }
 
-    public void setScoringMode(ScoringMode height){
+    public void setScoringMode(ScoringMode height) {
         this.height = height;
     }
 
-    public ScoringMode getScoringMode(){
+    public ScoringMode getScoringMode() {
         return height;
     }
 
 
-
     //TODO: Fix this
-    public int getHeight(){
-       if(height == ScoringMode.HIGH){
-           return Constants.LIFT_HIGH;
-       }else if(height == ScoringMode.MEDIUM){
-           return Constants.LIFT_MEDIUM;
-       }else if(height == ScoringMode.LOW){
-           return Constants.LIFT_LOW;
-       }
+    public int getHeight() {
+        if (height == ScoringMode.HIGH) {
+            return Constants.LIFT_HIGH;
+        } else if (height == ScoringMode.MEDIUM) {
+            return Constants.LIFT_MEDIUM;
+        } else if (height == ScoringMode.LOW) {
+            return Constants.LIFT_LOW;
+        }
 
-       return 0;
+        return 0;
     }
 
     public void setPower(double power) {
@@ -198,13 +197,12 @@ public class ScoringSystem {
     }
 
 
-
-    public void setPower(double rightPower, double leftPower){
+    public void setPower(double rightPower, double leftPower) {
         rLift.setPower(rightPower);
         lLift.setPower(leftPower);
     }
 
-    public void setVelocity(double rightPower, double leftPower){
+    public void setVelocity(double rightPower, double leftPower) {
         rLift.setVelocity(rightPower);
         lLift.setVelocity(-leftPower);
     }
@@ -217,18 +215,18 @@ public class ScoringSystem {
         return rLift.getCurrentPosition();
     }
 
-    public void changeMode(ScoringMode score){
+    public void changeMode(ScoringMode score) {
         height = score;
     }
 
-    public void commandAutoGoToPosition(){
-        if(height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/){
+    public void commandAutoGoToPosition() {
+        if (height == ScoringMode.HIGH /*|| height == ScoringMode.ULTRA*/) {
             setLiftTarget(Constants.LIFT_HIGH);
 
-        }else if(height == ScoringMode.MEDIUM){
+        } else if (height == ScoringMode.MEDIUM) {
             setLiftTarget(Constants.LIFT_MEDIUM);
 
-        }else if(height == ScoringMode.LOW){
+        } else if (height == ScoringMode.LOW) {
             setLiftTarget(Constants.LIFT_LOW);
 
         }
@@ -237,8 +235,7 @@ public class ScoringSystem {
     }
 
 
-
-    public void moveToPosition(int tics, double power, double kickout){
+    public void moveToPosition(int tics, double power, double kickout) {
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
@@ -247,7 +244,7 @@ public class ScoringSystem {
         int lLiftPos = lLift.getCurrentPosition();
 
 
-        if(tics < ((rLiftPos + lLiftPos) / 2)){
+        if (tics < ((rLiftPos + lLiftPos) / 2)) {
             power *= -1;
         }
 
@@ -255,15 +252,12 @@ public class ScoringSystem {
         double leftPower = power;
 
 
-
-
-
         //Dont know if need the != condition
         //if ((tics == 0 && rLiftPos != 0 && lLiftPos != 0)) {
 
         //TODO: Check if logic for encoder positions works
 
-        if(power > 0) {
+        if (power > 0) {
             while ((time.seconds() - startTime) < kickout && (rLiftPos < tics || lLiftPos < tics)) {
 
                 //TODO: figure out if we need to negate either of them
@@ -283,8 +277,8 @@ public class ScoringSystem {
 
 
             }
-        }else{
-            while ((time.seconds() - startTime) < kickout &&   (rLiftPos > tics || lLiftPos > tics)) {
+        } else {
+            while ((time.seconds() - startTime) < kickout && (rLiftPos > tics || lLiftPos > tics)) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -311,7 +305,7 @@ public class ScoringSystem {
     }
 
 
-    public int moveToPosition(int tics, double power, double kickout, boolean distanceSensor){
+    public int moveToPosition(int tics, double power, double kickout, boolean distanceSensor) {
 
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
@@ -320,7 +314,7 @@ public class ScoringSystem {
         int lLiftPos = -1 * lLift.getCurrentPosition();
 
 
-        if(tics < ((rLiftPos + lLiftPos) / 2)){
+        if (tics < ((rLiftPos + lLiftPos) / 2)) {
             power *= -1;
         }
 
@@ -343,7 +337,7 @@ public class ScoringSystem {
         double prevmillis = 0;
 
 
-        if(power > 0) {
+        if (power > 0) {
             while ((time.seconds() - startTime) < 2.25 && (rLiftPos < tics || lLiftPos < tics) && distance.getDistance(DistanceUnit.CM) > 15) {
 
                 //TODO: figure out if we need to negate either of them
@@ -369,8 +363,8 @@ public class ScoringSystem {
                 setPower(rightPower, leftPower);
 
             }
-        }else{
-            while ((time.seconds() - startTime) < 2.5 &&   (rLiftPos > tics || lLiftPos > tics) && distance.getDistance(DistanceUnit.CM) > 15) {
+        } else {
+            while ((time.seconds() - startTime) < 2.5 && (rLiftPos > tics || lLiftPos > tics) && distance.getDistance(DistanceUnit.CM) > 15) {
 
                 //TODO: figure out if we need to negate either of them
 
@@ -402,7 +396,7 @@ public class ScoringSystem {
 
     }
 
-    public void newLiftPID(int tics, double power){
+    public void newLiftPID(int tics, double power) {
 
 
         ElapsedTime time = new ElapsedTime();
@@ -422,7 +416,6 @@ public class ScoringSystem {
 
         int leftPreviousError = leftError;
         int rightPreviousError = rightError;
-
 
 
         //Dont know if need the != condition
@@ -455,15 +448,15 @@ public class ScoringSystem {
             leftIntegralSum += (0.5 * (leftError + leftPreviousError) * (currentTime - intStartTime));
             rightIntegralSum += (0.5 * (rightError + rightPreviousError) * (currentTime - intStartTime));
 
-            if(leftIntegralSum > 20000){
+            if (leftIntegralSum > 20000) {
                 leftIntegralSum = 20000;
-            }else if(leftIntegralSum < -20000){
+            } else if (leftIntegralSum < -20000) {
                 leftIntegralSum = -20000;
             }
 
-            if(rightIntegralSum > 20000){
+            if (rightIntegralSum > 20000) {
                 rightIntegralSum = 20000;
-            }else if(rightIntegralSum < -20000){
+            } else if (rightIntegralSum < -20000) {
                 rightIntegralSum = -20000;
             }
 
@@ -483,9 +476,6 @@ public class ScoringSystem {
             telemetry.addData("leftPower", leftPower);
 
 
-
-
-
             setPower(rightPower, leftPower);
 
             telemetry.update();
@@ -496,7 +486,6 @@ public class ScoringSystem {
             rightPreviousError = rightError;
 
 
-
         }
 
         setPower(0);
@@ -505,19 +494,17 @@ public class ScoringSystem {
     }
 
 
-
-
     public void setTimeServoPosLogistic(double target, int time) {
         ElapsedTime timer = new ElapsedTime();
         double startTime = timer.milliseconds();
         double endTime = startTime + time;
         int timeResolution = 20;
         double start = getLeftLinkage();
-        double b = (1 - start)/ start;
-        double k = (Math.log(((start/target) * (1 - target))/(1 - start)) / time);
+        double b = (1 - start) / start;
+        double k = (Math.log(((start / target) * (1 - target)) / (1 - start)) / time);
 
 
-        while(startTime < endTime) {
+        while (startTime < endTime) {
             setLinkagePosition(logisticFormula(start, target, time, b, k));
             startTime = timer.milliseconds();
             sleep(timeResolution);
@@ -525,16 +512,14 @@ public class ScoringSystem {
         setLinkagePosition(target);
     }
 
-    private double logisticFormula(double start, double end, int time, double b, double k){
-
-
+    private double logisticFormula(double start, double end, int time, double b, double k) {
 
 
         return 1 / (1 + (b * Math.pow(Math.E, (k * (time / 1000.0)))));
     }
 
 
-    public void setLinkagePosition(double position){
+    public void setLinkagePosition(double position) {
         //TODO: tune position values
         rLinkage.setPosition(position);
         lLinkage.setPosition(position);
@@ -543,9 +528,9 @@ public class ScoringSystem {
         telemetry.update();
     }
 
-    public void setLinkagePositionSpecial(double position, int liftTics){
+    public void setLinkagePositionSpecial(double position, int liftTics) {
         //TODO: tune position values
-        while(Math.abs(getRightEncoderPos()) < liftTics){
+        while (Math.abs(getRightEncoderPos()) < liftTics) {
 
         }
 
@@ -558,7 +543,8 @@ public class ScoringSystem {
 
     /**
      * Sets the linkage position of the robot by stepping through a logistic function
-     * @param target Desired position
+     *
+     * @param target    Desired position
      * @param sleepTime Total time in milliseconds
      */
     public void setLinkagePositionLogistic(double target, int sleepTime) {
@@ -572,12 +558,12 @@ public class ScoringSystem {
         double startTime = time.milliseconds();
 
 
-        for(int i = 0; i < resolution; i++) {
+        for (int i = 0; i < resolution; i++) {
             setLinkagePosition(logistic(startX, start, target));
             startX += step;
             sleep(sleepTime / resolution);
 
-            if(time.milliseconds() - startTime > (3 * sleepTime)){
+            if (time.milliseconds() - startTime > (3 * sleepTime)) {
                 break;
             }
 
@@ -589,8 +575,9 @@ public class ScoringSystem {
 
     /**
      * Sets the linkage position of the robot by stepping through a logistic function
-     * @param target Desired position
-     * @param sleepTime Total time in milliseconds
+     *
+     * @param target     Desired position
+     * @param sleepTime  Total time in milliseconds
      * @param resolution Number of steps
      */
     public void setLinkagePositionLogistic(double target, int sleepTime, int resolution) {
@@ -600,13 +587,13 @@ public class ScoringSystem {
         double startX = -2.0;
         double startLoopTime;
         double loopTime;
-        for(int i = 0; i < resolution; i++) {
+        for (int i = 0; i < resolution; i++) {
             startLoopTime = timer.milliseconds();
             setLinkagePosition(logistic(startX, start, target));
             startX += step;
             loopTime = timer.milliseconds() - startLoopTime;
-            if ((double)sleepTime / resolution > loopTime) {
-                sleep((long)(sleepTime / resolution - loopTime));
+            if ((double) sleepTime / resolution > loopTime) {
+                sleep((long) (sleepTime / resolution - loopTime));
             } else {
                 if (timer.milliseconds() > sleepTime) {
                     break;
@@ -616,24 +603,24 @@ public class ScoringSystem {
         setLinkagePosition(target);
     }
 
-    public double getRightLinkage(){
+    public double getRightLinkage() {
         return rLinkage.getPosition();
     }
 
-    public double getLeftLinkage(){
+    public double getLeftLinkage() {
         return lLinkage.getPosition();
     }
 
 
-    public void linkageUpAndDown(boolean up){
-        if(up) {
+    public void linkageUpAndDown(boolean up) {
+        if (up) {
             setLinkagePosition(Constants.LINKAGE_UP);
-        }else{
+        } else {
             setLinkagePosition(Constants.LINKAGE_DOWN);
         }
     }
 
-    public void reset(){
+    public void reset() {
         lLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -642,9 +629,7 @@ public class ScoringSystem {
     }
 
 
-
-
-    public void newLiftPD(int tics, double limiter, double kickout){
+    public void newLiftPD(int tics, double limiter, double kickout) {
 
         boolean initialErrorIsNegative = false;
 
@@ -652,7 +637,6 @@ public class ScoringSystem {
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double actualStartTime = startTime;
-
 
 
         //TODO: check if we need to negate any
@@ -664,7 +648,7 @@ public class ScoringSystem {
         int leftError = tics - leftPos;
 
 
-        if(leftError < 0){
+        if (leftError < 0) {
             initialErrorIsNegative = true;
         }
 
@@ -672,7 +656,7 @@ public class ScoringSystem {
         int leftPreviousError = 0;
 
 
-        while(Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < kickout){
+        while (Math.abs(rightError) > 2 && Math.abs(leftError) > 2 && (time.seconds() - actualStartTime) < kickout) {
             //telemetry.addData("target", tics);
 
 
@@ -682,38 +666,35 @@ public class ScoringSystem {
             leftPos = getLeftEncoderPos();
 
 
-
-
             rightError = tics - rightPos;
             leftError = tics - leftPos;
 
-            if((initialErrorIsNegative && (rightError > 0 || leftError > 0)) || (!initialErrorIsNegative && (rightError < 0 || leftError < 0))){
+            if ((initialErrorIsNegative && (rightError > 0 || leftError > 0)) || (!initialErrorIsNegative && (rightError < 0 || leftError < 0))) {
                 break;
             }
 
             double currentTime = time.seconds();
 
 
-
-            double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
-            double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
+            double rightDerivative = (rightError - rightPreviousError) / (currentTime - startTime);
+            double leftDerivative = (leftError - leftPreviousError) / (currentTime - startTime);
 
 
             double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
             double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
 
-            if(Math.abs(rightPower) > limiter){
-                if(rightPower < 0){
+            if (Math.abs(rightPower) > limiter) {
+                if (rightPower < 0) {
                     rightPower = -1 * limiter;
-                }else{
+                } else {
                     rightPower = limiter;
                 }
             }
 
-            if(Math.abs(leftPower) > limiter){
-                if(leftPower < 0){
+            if (Math.abs(leftPower) > limiter) {
+                if (leftPower < 0) {
                     leftPower = -1 * limiter;
-                }else{
+                } else {
                     leftPower = limiter;
                 }
             }
@@ -730,10 +711,6 @@ public class ScoringSystem {
             leftPreviousError = leftError;
 
 
-
-
-
-
         }
 
         //setPower(0,0,0,0);
@@ -743,7 +720,7 @@ public class ScoringSystem {
     }
 
 
-    public void newLiftPIDUpdate(double limiter, boolean high){
+    public void newLiftPIDUpdate(double limiter, boolean high) {
         currentTime = time.seconds();
 
         int rightPos = -1 * getRightEncoderPos();
@@ -757,8 +734,8 @@ public class ScoringSystem {
         int leftError = liftTarget - leftPos;
 
 
-        double rightDerivative = (rightError - rightPreviousError)/(currentTime - startTime);
-        double leftDerivative = (leftError - leftPreviousError)/(currentTime - startTime);
+        double rightDerivative = (rightError - rightPreviousError) / (currentTime - startTime);
+        double leftDerivative = (leftError - leftPreviousError) / (currentTime - startTime);
 
         //telemetry.addData("rightDerivative", rightDerivative);
         //telemetry.addData("leftDerivative", leftDerivative);
@@ -766,27 +743,26 @@ public class ScoringSystem {
         double rightPower = ((pidf.p * rightError) + (pidf.d * rightDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
         double leftPower = ((pidf.p * leftError) + (pidf.d * leftDerivative) + (pidf.f * Math.abs(getRightEncoderPos())));
 
-        if(Math.abs(rightPower) > limiter){
-            if(rightPower < 0){
+        if (Math.abs(rightPower) > limiter) {
+            if (rightPower < 0) {
                 rightPower = limiter;
-            }else{
+            } else {
                 rightPower = -1 * limiter;
             }
         }
 
-        if(Math.abs(leftPower) > limiter){
-            if(leftPower < 0){
+        if (Math.abs(leftPower) > limiter) {
+            if (leftPower < 0) {
                 leftPower = -1 * limiter;
-            }else{
+            } else {
                 leftPower = limiter;
             }
         }
 
-        if(high){
+        if (high) {
             rightPower = 1;
             leftPower = 1;
         }
-
 
 
         setPower(rightPower, leftPower);
@@ -797,15 +773,12 @@ public class ScoringSystem {
         leftPreviousError = leftError;
 
 
-
-
-
-
     }
 
     /**
      * Updates lift Bang Bang controller
-     * @param power The power at which the lift should move
+     *
+     * @param power       The power at which the lift should move
      * @param feedForward The power applied when the lift is not in motion
      */
     public void liftUpdateNoPID(double power, double feedForward) {
@@ -825,30 +798,30 @@ public class ScoringSystem {
         }
         setPower(0);
     }
-    
-    public void setLiftTarget(int target){
+
+    public void setLiftTarget(int target) {
         liftTarget = target;
     }
 
-    public int getLiftTarget(){
+    public int getLiftTarget() {
         return liftTarget;
     }
 
 
-    public void setGrabberPosition(double position){
+    public void setGrabberPosition(double position) {
         grabber.setPosition(position);
     }
 
-    public double getGrabberPosition(){
+    public double getGrabberPosition() {
         return grabber.getPosition();
     }
 
 
-    public void grabberOpenAndClose(boolean close){
-        if(close) {
+    public void grabberOpenAndClose(boolean close) {
+        if (close) {
             setGrabberPosition(Constants.GRABBING);
-        }else{
-                    setGrabberPosition(Constants.OPEN);
+        } else {
+            setGrabberPosition(Constants.OPEN);
         }
     }
 
@@ -856,7 +829,7 @@ public class ScoringSystem {
         double k = 2;
         double x0 = 0;
         upper -= lower;
-        return (upper / (1 + Math.pow(Math.E, -k * ( x - x0 )))) + lower;
+        return (upper / (1 + Math.pow(Math.E, -k * (x - x0)))) + lower;
     }
 
     public final void sleep(long milliseconds) {
@@ -883,7 +856,7 @@ public class ScoringSystem {
         return linkageUp;
     }
 
-    public void addToLoggingString(String add){
+    public void addToLoggingString(String add) {
         composite += (add + "\n");
     }
 
@@ -892,6 +865,13 @@ public class ScoringSystem {
         // set the right wheel slightly slower to rotate pixels into place
         rIntake.setPower(-power * 0.8);
     }
+
+    public void intakePowerSet(double power) {
+        lIntake.setPower(power);
+        rIntake.setPower(power);
+    }
+
+
 
     public void setIntakeLiftPos(double pos) {
         // Equation: actual position = target * (max position - min position) + min position
@@ -903,45 +883,50 @@ public class ScoringSystem {
         lIntakeLift.setPosition(leftPos);
         rIntakeLift.setPosition(rightPos);
     }
+    public void setIntakeLiftPosition(double leftPos, double rightPos){
+        lIntakeLift.setPosition(leftPos);
+        rIntakeLift.setPosition(rightPos);
+    }
 
-    public void climbToPosition(int target, double power) {
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-        while (Math.abs(climb.getCurrentPosition() - target) > 20 && timer.seconds() < 2) {
-            climb.setPower(power * Math.signum(target - climb.getCurrentPosition()));
+        public void climbToPosition ( int target, double power){
+            ElapsedTime timer = new ElapsedTime();
+            timer.reset();
+            while (Math.abs(climb.getCurrentPosition() - target) > 20 && timer.seconds() < 2) {
+                climb.setPower(power * Math.signum(target - climb.getCurrentPosition()));
+            }
+            climb.setPower(0);
         }
-        climb.setPower(0);
-    }
 
-    public void setClimbPower(double power) {
-        climb.setPower(power);
-    }
-
-    public double getClimbPosition() {
-        return climb.getCurrentPosition();
-    }
-
-    public void writeLoggerToFile(){
-        try{
-            PrintStream toFile = new PrintStream(file);
-            toFile.print(composite);
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
+        public void setClimbPower ( double power){
+            climb.setPower(power);
         }
-    }
 
-    public void releaseAirplane() {
-        airplane.setPower(0.35);
-        airplane.setPower(0);
+        public double getClimbPosition () {
+            return climb.getCurrentPosition();
+        }
 
-    }
+        public void writeLoggerToFile () {
+            try {
+                PrintStream toFile = new PrintStream(file);
+                toFile.print(composite);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 
-    public void windAirplane() {
-        airplane.setPower(-0.3);
-        airplane.setPower(0);
+        public void releaseAirplane () {
+            airplane.setPower(0.35);
+            airplane.setPower(0);
 
-    }
-    public void setBumperPixelRelease(double position) {
-        bumperGrabber.setPosition(position);
-    }
+        }
+
+        public void windAirplane () {
+            airplane.setPower(-0.3);
+            airplane.setPower(0);
+
+        }
+        public void setBumperPixelRelease ( double position){
+            bumperGrabber.setPosition(position);
+        }
+
 }
